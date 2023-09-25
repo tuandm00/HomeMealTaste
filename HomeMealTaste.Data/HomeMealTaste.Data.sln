@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.31919.166
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HomeMealTaste.Data", "HomeMealTaste.Data\HomeMealTaste.Data.csproj", "{7E66C8D8-3BE3-40F7-B0B0-654B4570926E}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{7E66C8D8-3BE3-40F7-B0B0-654B4570926E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7E66C8D8-3BE3-40F7-B0B0-654B4570926E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7E66C8D8-3BE3-40F7-B0B0-654B4570926E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7E66C8D8-3BE3-40F7-B0B0-654B4570926E}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {12AC3A88-C8E1-4722-B421-2AA14DADE2F9}
+	EndGlobalSection
+EndGlobal
