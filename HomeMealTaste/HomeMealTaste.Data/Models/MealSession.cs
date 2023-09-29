@@ -1,17 +1,17 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace HomeMealTaste.Models
+namespace HomeMealTaste.Data.Models
 {
-    public partial class FoodPackageSession
+    public partial class MealSession
     {
-        public FoodPackageSession()
+        public MealSession()
         {
-            OrderItems = new HashSet<OrderItem>();
+            Orders = new HashSet<Order>();
         }
 
-        public int FoodPackageSessionId { get; set; }
-        public int? FoodPackageId { get; set; }
+        public int MealSessionId { get; set; }
+        public int? MealId { get; set; }
         public int? SessionId { get; set; }
         public decimal? Price { get; set; }
         public int? Quantity { get; set; }
@@ -19,8 +19,8 @@ namespace HomeMealTaste.Models
         public bool? Status { get; set; }
         public DateTime? CreateDate { get; set; }
 
-        public virtual FoodPackage? FoodPackage { get; set; }
+        public virtual Meal? Meal { get; set; }
         public virtual Session? Session { get; set; }
-        public virtual ICollection<OrderItem> OrderItems { get; set; }
+        public virtual ICollection<Order> Orders { get; set; }
     }
 }

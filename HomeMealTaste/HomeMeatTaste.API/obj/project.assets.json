@@ -2882,11 +2882,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "E:\\Capstone2\\Code_BE\\HomeMealTaste\\HomeMeatTaste.API\\HomeMealTaste.Services.csproj",
+      "projectUniqueName": "E:\\Capstone2\\Code_BE\\HomeMealTaste\\HomeMealTaste\\HomeMeatTaste.API\\HomeMealTaste.Services.csproj",
       "projectName": "HomeMealTaste.Services",
-      "projectPath": "E:\\Capstone2\\Code_BE\\HomeMealTaste\\HomeMeatTaste.API\\HomeMealTaste.Services.csproj",
+      "projectPath": "E:\\Capstone2\\Code_BE\\HomeMealTaste\\HomeMealTaste\\HomeMeatTaste.API\\HomeMealTaste.Services.csproj",
       "packagesPath": "C:\\Users\\Asus\\.nuget\\packages\\",
-      "outputPath": "E:\\Capstone2\\Code_BE\\HomeMealTaste\\HomeMeatTaste.API\\obj\\",
+      "outputPath": "E:\\Capstone2\\Code_BE\\HomeMealTaste\\HomeMealTaste\\HomeMeatTaste.API\\obj\\",
       "projectStyle": "PackageReference",
       "configFilePaths": [
         "C:\\Users\\Asus\\AppData\\Roaming\\NuGet\\NuGet.Config",
@@ -2903,8 +2903,8 @@
         "net6.0": {
           "targetAlias": "net6.0",
           "projectReferences": {
-            "E:\\Capstone2\\Code_BE\\HomeMealTaste\\HomeMealTaste.Data\\HomeMealTaste.Data.csproj": {
-              "projectPath": "E:\\Capstone2\\Code_BE\\HomeMealTaste\\HomeMealTaste.Data\\HomeMealTaste.Data.csproj"
+            "E:\\Capstone2\\Code_BE\\HomeMealTaste\\HomeMealTaste\\HomeMealTaste.Data\\HomeMealTaste.Data.csproj": {
+              "projectPath": "E:\\Capstone2\\Code_BE\\HomeMealTaste\\HomeMealTaste\\HomeMealTaste.Data\\HomeMealTaste.Data.csproj"
             }
           }
         }

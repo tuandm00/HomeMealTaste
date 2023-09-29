@@ -1,26 +1,25 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace HomeMealTaste.Models
+namespace HomeMealTaste.Data.Models
 {
-    public partial class Chef
+    public partial class Kitchen
     {
-        public Chef()
+        public Kitchen()
         {
-            DishTypes = new HashSet<DishType>();
             Dishes = new HashSet<Dish>();
-            Feedbacks = new HashSet<Feedback>();
+            Groups = new HashSet<Group>();
         }
 
-        public int ChefId { get; set; }
+        public int KitchenId { get; set; }
         public int? UserId { get; set; }
         public string? Name { get; set; }
         public string? Phone { get; set; }
         public string? Address { get; set; }
         public bool? AccountStatus { get; set; }
 
-        public virtual ICollection<DishType> DishTypes { get; set; }
+        public virtual User? User { get; set; }
         public virtual ICollection<Dish> Dishes { get; set; }
-        public virtual ICollection<Feedback> Feedbacks { get; set; }
+        public virtual ICollection<Group> Groups { get; set; }
     }
 }
