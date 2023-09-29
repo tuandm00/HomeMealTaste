@@ -3236,11 +3236,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "E:\\Capstone2\\Code_BE\\HomeMealTaste\\HomeMealTaste\\HomeMealTaste.csproj",
+      "projectUniqueName": "E:\\Capstone2\\Code_BE\\HomeMealTaste\\HomeMealTaste\\HomeMealTaste\\HomeMealTaste.csproj",
       "projectName": "HomeMealTaste",
-      "projectPath": "E:\\Capstone2\\Code_BE\\HomeMealTaste\\HomeMealTaste\\HomeMealTaste.csproj",
+      "projectPath": "E:\\Capstone2\\Code_BE\\HomeMealTaste\\HomeMealTaste\\HomeMealTaste\\HomeMealTaste.csproj",
       "packagesPath": "C:\\Users\\Asus\\.nuget\\packages\\",
-      "outputPath": "E:\\Capstone2\\Code_BE\\HomeMealTaste\\HomeMealTaste\\obj\\",
+      "outputPath": "E:\\Capstone2\\Code_BE\\HomeMealTaste\\HomeMealTaste\\HomeMealTaste\\obj\\",
       "projectStyle": "PackageReference",
       "configFilePaths": [
         "C:\\Users\\Asus\\AppData\\Roaming\\NuGet\\NuGet.Config",
@@ -3257,11 +3257,11 @@
         "net6.0": {
           "targetAlias": "net6.0",
           "projectReferences": {
-            "E:\\Capstone2\\Code_BE\\HomeMealTaste\\HomeMealTaste.Data\\HomeMealTaste.Data.csproj": {
-              "projectPath": "E:\\Capstone2\\Code_BE\\HomeMealTaste\\HomeMealTaste.Data\\HomeMealTaste.Data.csproj"
+            "E:\\Capstone2\\Code_BE\\HomeMealTaste\\HomeMealTaste\\HomeMealTaste.Data\\HomeMealTaste.Data.csproj": {
+              "projectPath": "E:\\Capstone2\\Code_BE\\HomeMealTaste\\HomeMealTaste\\HomeMealTaste.Data\\HomeMealTaste.Data.csproj"
             },
-            "E:\\Capstone2\\Code_BE\\HomeMealTaste\\HomeMeatTaste.API\\HomeMealTaste.Services.csproj": {
-              "projectPath": "E:\\Capstone2\\Code_BE\\HomeMealTaste\\HomeMeatTaste.API\\HomeMealTaste.Services.csproj"
+            "E:\\Capstone2\\Code_BE\\HomeMealTaste\\HomeMealTaste\\HomeMeatTaste.API\\HomeMealTaste.Services.csproj": {
+              "projectPath": "E:\\Capstone2\\Code_BE\\HomeMealTaste\\HomeMealTaste\\HomeMeatTaste.API\\HomeMealTaste.Services.csproj"
             }
           }
         }

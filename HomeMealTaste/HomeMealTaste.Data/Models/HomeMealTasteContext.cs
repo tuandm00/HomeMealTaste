@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata;
 
-namespace HomeMealTaste.Models
+namespace HomeMealTaste.Data.Models
 {
     public partial class HomeMealTasteContext : DbContext
     {
@@ -16,53 +16,48 @@ namespace HomeMealTaste.Models
         {
         }
 
-        public virtual DbSet<Admin> Admins { get; set; } = null!;
-        public virtual DbSet<Chef> Chefs { get; set; } = null!;
+        public virtual DbSet<Area> Areas { get; set; } = null!;
         public virtual DbSet<Customer> Customers { get; set; } = null!;
-        public virtual DbSet<Discount> Discounts { get; set; } = null!;
+        public virtual DbSet<Disctrict> Disctricts { get; set; } = null!;
         public virtual DbSet<Dish> Dishes { get; set; } = null!;
         public virtual DbSet<DishType> DishTypes { get; set; } = null!;
-        public virtual DbSet<Feedback> Feedbacks { get; set; } = null!;
-        public virtual DbSet<FoodPackage> FoodPackages { get; set; } = null!;
-        public virtual DbSet<FoodPackageDish> FoodPackageDishes { get; set; } = null!;
-        public virtual DbSet<FoodPackageSession> FoodPackageSessions { get; set; } = null!;
+        public virtual DbSet<Group> Groups { get; set; } = null!;
+        public virtual DbSet<Kitchen> Kitchens { get; set; } = null!;
+        public virtual DbSet<Meal> Meals { get; set; } = null!;
+        public virtual DbSet<MealDish> MealDishes { get; set; } = null!;
+        public virtual DbSet<MealSession> MealSessions { get; set; } = null!;
         public virtual DbSet<Order> Orders { get; set; } = null!;
-        public virtual DbSet<OrderItem> OrderItems { get; set; } = null!;
+        public virtual DbSet<Payment> Payments { get; set; } = null!;
         public virtual DbSet<Session> Sessions { get; set; } = null!;
+        public virtual DbSet<Transaction> Transactions { get; set; } = null!;
         public virtual DbSet<User> Users { get; set; } = null!;
         public virtual DbSet<Wallet> Wallets { get; set; } = null!;
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            
+
         }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            modelBuilder.Entity<Admin>(entity =>
+            modelBuilder.Entity<Area>(entity =>
             {
-                entity.ToTable("Admin");
+                entity.ToTable("Area");
 
-                entity.Property(e => e.AdminId).ValueGeneratedNever();
-
-                entity.Property(e => e.Name).HasMaxLength(50);
-
-                entity.Property(e => e.Password).HasMaxLength(50);
-
-                entity.Property(e => e.Username).HasMaxLength(50);
-            });
-
-            modelBuilder.Entity<Chef>(entity =>
-            {
-                entity.ToTable("Chef");
-
-                entity.Property(e => e.ChefId).ValueGeneratedNever();
+                entity.Property(e => e.AreaId).ValueGeneratedNever();
 
                 entity.Property(e => e.Address).HasMaxLength(50);
 
-                entity.Property(e => e.Name).HasMaxLength(50);
+                entity.Property(e => e.District).HasMaxLength(50);
 
-                entity.Property(e => e.Phone).HasMaxLength(50);
+                entity.Property(e => e.Street).HasMaxLength(50);
+
+                entity.Property(e => e.Ward).HasMaxLength(50);
+
+                entity.HasOne(d => d.Session)
+                    .WithMany(p => p.Areas)
+                    .HasForeignKey(d => d.SessionId)
+                    .HasConstraintName("FK_Area_Session");
             });
 
             modelBuilder.Entity<Customer>(entity =>
@@ -73,24 +68,31 @@ namespace HomeMealTaste.Models
 
                 entity.Property(e => e.Address).HasMaxLength(50);
 
+                entity.Property(e => e.District).HasMaxLength(50);
+
                 entity.Property(e => e.Name).HasMaxLength(50);
 
                 entity.Property(e => e.Phone).HasMaxLength(50);
+
+                entity.Property(e => e.Street).HasMaxLength(50);
+
+                entity.Property(e => e.Ward).HasMaxLength(50);
+
+                entity.HasOne(d => d.User)
+                    .WithMany(p => p.Customers)
+                    .HasForeignKey(d => d.UserId)
+                    .HasConstraintName("FK_Customer_User");
             });
 
-            modelBuilder.Entity<Discount>(entity =>
+            modelBuilder.Entity<Disctrict>(entity =>
             {
-                entity.ToTable("Discount");
+                entity.HasKey(e => e.DistrictId);
 
-                entity.Property(e => e.DiscountId).ValueGeneratedNever();
+                entity.ToTable("Disctrict");
 
-                entity.Property(e => e.Description).HasMaxLength(50);
+                entity.Property(e => e.DistrictId).ValueGeneratedNever();
 
-                entity.Property(e => e.DiscountCode).HasMaxLength(50);
-
-                entity.Property(e => e.EndDate).HasColumnType("date");
-
-                entity.Property(e => e.StartDate).HasColumnType("date");
+                entity.Property(e => e.DistrictName).HasMaxLength(50);
             });
 
             modelBuilder.Entity<Dish>(entity =>
@@ -103,19 +105,19 @@ namespace HomeMealTaste.Models
 
                 entity.Property(e => e.Name).HasMaxLength(50);
 
-                entity.HasOne(d => d.Chef)
-                    .WithMany(p => p.Dishes)
-                    .HasForeignKey(d => d.ChefId)
-                    .HasConstraintName("FK_Dish_Chef");
-
                 entity.HasOne(d => d.DishType)
                     .WithMany(p => p.Dishes)
                     .HasForeignKey(d => d.DishTypeId)
                     .HasConstraintName("FK_Dish_DishType");
 
-                entity.HasOne(d => d.FoodPackage)
+                entity.HasOne(d => d.Kitchen)
                     .WithMany(p => p.Dishes)
-                    .HasForeignKey(d => d.FoodPackageId)
+                    .HasForeignKey(d => d.KitchenId)
+                    .HasConstraintName("FK_Dish_Kitchen");
+
+                entity.HasOne(d => d.Meal)
+                    .WithMany(p => p.Dishes)
+                    .HasForeignKey(d => d.MealId)
                     .HasConstraintName("FK_Dish_FoodPackage");
             });
 
@@ -128,37 +130,58 @@ namespace HomeMealTaste.Models
                 entity.Property(e => e.Description).HasMaxLength(50);
 
                 entity.Property(e => e.Name).HasMaxLength(50);
-
-                entity.HasOne(d => d.Chef)
-                    .WithMany(p => p.DishTypes)
-                    .HasForeignKey(d => d.ChefId)
-                    .HasConstraintName("FK_DishType_Chef");
             });
 
-            modelBuilder.Entity<Feedback>(entity =>
+            modelBuilder.Entity<Group>(entity =>
             {
-                entity.ToTable("Feedback");
+                entity.ToTable("Group");
 
-                entity.Property(e => e.FeedbackId).ValueGeneratedNever();
+                entity.Property(e => e.GroupId).ValueGeneratedNever();
 
-                entity.Property(e => e.Description).HasMaxLength(50);
-
-                entity.HasOne(d => d.Chef)
-                    .WithMany(p => p.Feedbacks)
-                    .HasForeignKey(d => d.ChefId)
-                    .HasConstraintName("FK_Feedback_Chef");
+                entity.HasOne(d => d.Area)
+                    .WithMany(p => p.Groups)
+                    .HasForeignKey(d => d.AreaId)
+                    .HasConstraintName("FK_Group_Area");
 
                 entity.HasOne(d => d.Customer)
-                    .WithMany(p => p.Feedbacks)
+                    .WithMany(p => p.Groups)
                     .HasForeignKey(d => d.CustomerId)
-                    .HasConstraintName("FK_Feedback_Customer");
+                    .HasConstraintName("FK_Group_Customer");
+
+                entity.HasOne(d => d.Kitchen)
+                    .WithMany(p => p.Groups)
+                    .HasForeignKey(d => d.KitchenId)
+                    .HasConstraintName("FK_Group_Kitchen");
+
+                entity.HasOne(d => d.Session)
+                    .WithMany(p => p.Groups)
+                    .HasForeignKey(d => d.SessionId)
+                    .HasConstraintName("FK_Group_Session");
             });
 
-            modelBuilder.Entity<FoodPackage>(entity =>
+            modelBuilder.Entity<Kitchen>(entity =>
             {
-                entity.ToTable("FoodPackage");
+                entity.ToTable("Kitchen");
 
-                entity.Property(e => e.FoodPackageId).ValueGeneratedNever();
+                entity.Property(e => e.KitchenId).ValueGeneratedNever();
+
+                entity.Property(e => e.Address).HasMaxLength(50);
+
+                entity.Property(e => e.Name).HasMaxLength(50);
+
+                entity.Property(e => e.Phone).HasMaxLength(50);
+
+                entity.HasOne(d => d.User)
+                    .WithMany(p => p.Kitchens)
+                    .HasForeignKey(d => d.UserId)
+                    .HasConstraintName("FK_Kitchen_User");
+            });
+
+            modelBuilder.Entity<Meal>(entity =>
+            {
+                entity.ToTable("Meal");
+
+                entity.Property(e => e.MealId).ValueGeneratedNever();
 
                 entity.Property(e => e.DefaultPrice).HasColumnType("money");
 
@@ -167,44 +190,44 @@ namespace HomeMealTaste.Models
                 entity.Property(e => e.Name).HasMaxLength(50);
             });
 
-            modelBuilder.Entity<FoodPackageDish>(entity =>
+            modelBuilder.Entity<MealDish>(entity =>
             {
-                entity.ToTable("FoodPackage_Dish");
+                entity.ToTable("Meal_Dish");
 
-                entity.Property(e => e.FoodPackageDishId)
+                entity.Property(e => e.MealDishId)
                     .ValueGeneratedNever()
-                    .HasColumnName("FoodPackage_DishId");
+                    .HasColumnName("Meal_DishId");
 
                 entity.HasOne(d => d.Dish)
-                    .WithMany(p => p.FoodPackageDishes)
+                    .WithMany(p => p.MealDishes)
                     .HasForeignKey(d => d.DishId)
                     .HasConstraintName("FK_FoodPackage_Dish_Dish");
 
-                entity.HasOne(d => d.FoodPackage)
-                    .WithMany(p => p.FoodPackageDishes)
-                    .HasForeignKey(d => d.FoodPackageId)
+                entity.HasOne(d => d.Meal)
+                    .WithMany(p => p.MealDishes)
+                    .HasForeignKey(d => d.MealId)
                     .HasConstraintName("FK_FoodPackage_Dish_FoodPackage");
             });
 
-            modelBuilder.Entity<FoodPackageSession>(entity =>
+            modelBuilder.Entity<MealSession>(entity =>
             {
-                entity.ToTable("FoodPackage_Session");
+                entity.ToTable("Meal_Session");
 
-                entity.Property(e => e.FoodPackageSessionId)
+                entity.Property(e => e.MealSessionId)
                     .ValueGeneratedNever()
-                    .HasColumnName("FoodPackage_SessionId");
+                    .HasColumnName("Meal_SessionId");
 
                 entity.Property(e => e.CreateDate).HasColumnType("date");
 
                 entity.Property(e => e.Price).HasColumnType("money");
 
-                entity.HasOne(d => d.FoodPackage)
-                    .WithMany(p => p.FoodPackageSessions)
-                    .HasForeignKey(d => d.FoodPackageId)
+                entity.HasOne(d => d.Meal)
+                    .WithMany(p => p.MealSessions)
+                    .HasForeignKey(d => d.MealId)
                     .HasConstraintName("FK_FoodPackage_Session_FoodPackage");
 
                 entity.HasOne(d => d.Session)
-                    .WithMany(p => p.FoodPackageSessions)
+                    .WithMany(p => p.MealSessions)
                     .HasForeignKey(d => d.SessionId)
                     .HasConstraintName("FK_FoodPackage_Session_Session");
             });
@@ -217,34 +240,54 @@ namespace HomeMealTaste.Models
 
                 entity.Property(e => e.Date).HasColumnType("date");
 
+                entity.Property(e => e.Feedback).HasMaxLength(50);
+
+                entity.Property(e => e.MealSessionId).HasColumnName("Meal_SessionId");
+
+                entity.Property(e => e.Status).HasMaxLength(50);
+
                 entity.HasOne(d => d.Customer)
                     .WithMany(p => p.Orders)
                     .HasForeignKey(d => d.CustomerId)
                     .HasConstraintName("FK_Order_Customer");
+
+                entity.HasOne(d => d.MealSession)
+                    .WithMany(p => p.Orders)
+                    .HasForeignKey(d => d.MealSessionId)
+                    .HasConstraintName("FK_Order_Meal_Session");
             });
 
-            modelBuilder.Entity<OrderItem>(entity =>
+            modelBuilder.Entity<Payment>(entity =>
             {
-                entity.ToTable("OrderItem");
+                entity.ToTable("Payment");
 
-                entity.Property(e => e.OrderItemId).ValueGeneratedNever();
+                entity.Property(e => e.PaymentId).ValueGeneratedNever();
 
-                entity.Property(e => e.FoodPackageSessionId).HasColumnName("FoodPackage_SessionId");
+                entity.Property(e => e.Method).HasMaxLength(50);
 
-                entity.HasOne(d => d.FoodPackage)
-                    .WithMany(p => p.OrderItems)
-                    .HasForeignKey(d => d.FoodPackageId)
-                    .HasConstraintName("FK_OrderItem_FoodPackage");
+                entity.Property(e => e.Status).HasMaxLength(50);
 
-                entity.HasOne(d => d.FoodPackageSession)
-                    .WithMany(p => p.OrderItems)
-                    .HasForeignKey(d => d.FoodPackageSessionId)
-                    .HasConstraintName("FK_OrderItem_FoodPackage_Session");
+                entity.Property(e => e.Time).HasColumnType("date");
+
+                entity.HasOne(d => d.Customer)
+                    .WithMany(p => p.Payments)
+                    .HasForeignKey(d => d.CustomerId)
+                    .HasConstraintName("FK_Payment_Customer");
 
                 entity.HasOne(d => d.Order)
-                    .WithMany(p => p.OrderItems)
+                    .WithMany(p => p.Payments)
                     .HasForeignKey(d => d.OrderId)
-                    .HasConstraintName("FK_OrderItem_Order");
+                    .HasConstraintName("FK_Payment_Order");
+
+                entity.HasOne(d => d.Transaction)
+                    .WithMany(p => p.Payments)
+                    .HasForeignKey(d => d.TransactionId)
+                    .HasConstraintName("FK_Payment_Transaction");
+
+                entity.HasOne(d => d.Wallet)
+                    .WithMany(p => p.Payments)
+                    .HasForeignKey(d => d.WalletId)
+                    .HasConstraintName("FK_Payment_Wallet");
             });
 
             modelBuilder.Entity<Session>(entity =>
@@ -256,6 +299,36 @@ namespace HomeMealTaste.Models
                 entity.Property(e => e.CreateDate).HasColumnType("date");
 
                 entity.Property(e => e.EndDate).HasColumnType("date");
+
+                entity.HasOne(d => d.User)
+                    .WithMany(p => p.Sessions)
+                    .HasForeignKey(d => d.UserId)
+                    .HasConstraintName("FK_Session_User");
+            });
+
+            modelBuilder.Entity<Transaction>(entity =>
+            {
+                entity.ToTable("Transaction");
+
+                entity.Property(e => e.TransactionId).ValueGeneratedNever();
+
+                entity.Property(e => e.Amount).HasColumnType("money");
+
+                entity.Property(e => e.Date).HasColumnType("date");
+
+                entity.Property(e => e.Description).HasMaxLength(50);
+
+                entity.Property(e => e.Status).HasMaxLength(50);
+
+                entity.HasOne(d => d.Order)
+                    .WithMany(p => p.Transactions)
+                    .HasForeignKey(d => d.OrderId)
+                    .HasConstraintName("FK_Transaction_Order");
+
+                entity.HasOne(d => d.Wallet)
+                    .WithMany(p => p.Transactions)
+                    .HasForeignKey(d => d.WalletId)
+                    .HasConstraintName("FK_Transaction_Wallet");
             });
 
             modelBuilder.Entity<User>(entity =>

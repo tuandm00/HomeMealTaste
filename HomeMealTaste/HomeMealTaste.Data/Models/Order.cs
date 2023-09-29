@@ -1,24 +1,26 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace HomeMealTaste.Models
+namespace HomeMealTaste.Data.Models
 {
     public partial class Order
     {
         public Order()
         {
-            OrderItems = new HashSet<OrderItem>();
+            Payments = new HashSet<Payment>();
+            Transactions = new HashSet<Transaction>();
         }
 
         public int OrderId { get; set; }
         public DateTime? Date { get; set; }
         public int? CustomerId { get; set; }
-        public int? FoodPackageId { get; set; }
-        public int? Status { get; set; }
-        public int? DeliveryStatus { get; set; }
-        public int? FoodPackageSessionId { get; set; }
+        public string? Status { get; set; }
+        public int? MealSessionId { get; set; }
+        public string? Feedback { get; set; }
 
         public virtual Customer? Customer { get; set; }
-        public virtual ICollection<OrderItem> OrderItems { get; set; }
+        public virtual MealSession? MealSession { get; set; }
+        public virtual ICollection<Payment> Payments { get; set; }
+        public virtual ICollection<Transaction> Transactions { get; set; }
     }
 }

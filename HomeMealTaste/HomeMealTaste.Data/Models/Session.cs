@@ -1,13 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace HomeMealTaste.Models
+namespace HomeMealTaste.Data.Models
 {
     public partial class Session
     {
         public Session()
         {
-            FoodPackageSessions = new HashSet<FoodPackageSession>();
+            Areas = new HashSet<Area>();
+            Groups = new HashSet<Group>();
+            MealSessions = new HashSet<MealSession>();
         }
 
         public int SessionId { get; set; }
@@ -15,7 +17,11 @@ namespace HomeMealTaste.Models
         public TimeSpan? StartTime { get; set; }
         public TimeSpan? EndTime { get; set; }
         public DateTime? EndDate { get; set; }
+        public int? UserId { get; set; }
 
-        public virtual ICollection<FoodPackageSession> FoodPackageSessions { get; set; }
+        public virtual User? User { get; set; }
+        public virtual ICollection<Area> Areas { get; set; }
+        public virtual ICollection<Group> Groups { get; set; }
+        public virtual ICollection<MealSession> MealSessions { get; set; }
     }
 }
