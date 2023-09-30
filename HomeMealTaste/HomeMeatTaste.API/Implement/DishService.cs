@@ -28,8 +28,8 @@ namespace HomeMealTaste.Services.Implement
                 Name = dish.Name,
                 Image = dish.Image,
                 DishTypeId = dish.DishTypeId,
-                ChefId = dish.ChefId,
-                FoodPackageId = dish.FoodPackageId,
+                KitchenId = dish.KitchenId,
+                MealId = dish.MealId,
             };
 
             await _context.AddAsync(result);
