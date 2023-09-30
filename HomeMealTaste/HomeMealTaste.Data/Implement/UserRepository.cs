@@ -1,6 +1,6 @@
 ﻿using HomeMealTaste.Data.Repositories;
 using HomeMealTaste.Data.Models;
-
+using HomeMealTaste.Data.RequestModel;
 
 namespace HomeMealTaste.Data.Implement
 {
@@ -28,18 +28,18 @@ namespace HomeMealTaste.Data.Implement
             return result.ToList();
         }
 
-        public async Task<User> GetUsernamePassword(User user)
+        public async Task<User> GetUsernamePassword(UserRequestModel userRequest)
         {
 
-            var result = _context.Users.FirstOrDefault(x => x.Username == user.Username);
+            var result = _context.Users.FirstOrDefault(x => x.Username == userRequest.Username);
             if (result == null) return null;
 
-            bool isPasswordValid = BCrypt.Net.BCrypt.Verify(user.Password, result.Password);
+            bool isPasswordValid = BCrypt.Net.BCrypt.Verify(userRequest.Password, result.Password);
             if (isPasswordValid) 
             {
                 return new User
                 {
-                    UserId = user.UserId,
+                    UserId = userRequest.UserId,
                     Name = result.Name,
                     Username = result.Username,
                     Phone = result.Phone,

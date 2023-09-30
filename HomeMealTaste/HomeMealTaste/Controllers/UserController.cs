@@ -1,8 +1,9 @@
 ﻿using HomeMealTaste.Data.Models;
+using HomeMealTaste.Services.ResponseModel;
 using HomeMealTaste.Services.Interface;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-
+using HomeMealTaste.Data.RequestModel;
 
 namespace HomeMealTaste.Controllers
 {
@@ -24,9 +25,9 @@ namespace HomeMealTaste.Controllers
         [AllowAnonymous]
         [HttpPost]
         [Route("login")]
-        public async Task<IActionResult> Login(User users)
+        public async Task<IActionResult> Login(UserRequestModel userRequest)
         {
-            var result = await _userService.LoginAsync(users);
+            var result = await _userService.LoginAsync(userRequest);
             return Ok(result);
         }
 
