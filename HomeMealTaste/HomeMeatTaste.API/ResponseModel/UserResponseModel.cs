@@ -4,9 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace HomeMealTaste.Services.Dto
+namespace HomeMealTaste.Services.ResponseModel
 {
-    public class LoginDto
+    public class UserResponseModel
     {
         public int UserId { get; set; }
         public string? Name { get; set; }

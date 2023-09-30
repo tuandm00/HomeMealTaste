@@ -1,6 +1,6 @@
 ﻿using HomeMealTaste.Data.Repositories;
 using HomeMealTaste.Data.Models;
-using HomeMealTaste.Services.Dto;
+using HomeMealTaste.Services.ResponseModel;
 using HomeMealTaste.Services.Interface;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
@@ -8,7 +8,7 @@ using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 
 using System.Text;
-
+using HomeMealTaste.Data.RequestModel;
 
 namespace HomeMealTaste.Services.Implement
 {
@@ -35,15 +35,15 @@ namespace HomeMealTaste.Services.Implement
             return new JwtSecurityTokenHandler().WriteToken(token);
         }
 
-        public async Task<LoginDto> LoginAsync(User user)
+        public async Task<UserResponseModel> LoginAsync(UserRequestModel userRequest)
         {
-            var existedUser = await _userRepository.GetFirstOrDefault(x => x.Username == user.Username);
-            var chekhash = BCrypt.Net.BCrypt.Verify(user.Password, existedUser?.Password);
+            var existedUser = await _userRepository.GetFirstOrDefault(x => x.Username == userRequest.Username);
+            var chekhash = BCrypt.Net.BCrypt.Verify(userRequest.Password, existedUser?.Password);
             if (!chekhash) throw new Exception("Username or Password not match!");
-            var result = await _userRepository.GetUsernamePassword(user);
+            var result = await _userRepository.GetUsernamePassword(userRequest);
             if(result != null)
             {
-                return new LoginDto
+                return new UserResponseModel
                 {
                     Name = result.Name,
                     UserId = result.UserId,

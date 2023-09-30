@@ -1,11 +1,12 @@
 ﻿using HomeMealTaste.Data.Models;
-using HomeMealTaste.Services.Dto;
+using HomeMealTaste.Data.RequestModel;
+using HomeMealTaste.Services.ResponseModel;
 
 namespace HomeMealTaste.Services.Interface
 {
     public interface IUserService
     {
-        Task<LoginDto> LoginAsync(User user);
+        Task<UserResponseModel> LoginAsync(UserRequestModel user);
         Task<User> RegisterForCustomer(User user);
         Task<User> RegisterForChef(User user);
         Task<User> DeleteUserById(int id);
