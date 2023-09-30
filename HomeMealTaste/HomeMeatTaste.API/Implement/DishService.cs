@@ -1,5 +1,5 @@
 ﻿using HomeMealTaste.Data.Repositories;
-using HomeMealTaste.Models;
+using HomeMealTaste.Data.Models;
 using HomeMealTaste.Services.Interface;
 using System;
 using System.Collections.Generic;
