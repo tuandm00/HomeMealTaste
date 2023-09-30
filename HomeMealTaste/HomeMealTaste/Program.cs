@@ -1,6 +1,6 @@
 using HomeMealTaste.Data.Implement;
 using HomeMealTaste.Data.Repositories;
-using HomeMealTaste.Models;
+using HomeMealTaste.Data.Models;
 using HomeMealTaste.Services.Implement;
 using HomeMealTaste.Services.Interface;
 using Microsoft.AspNetCore.Authentication.JwtBearer;

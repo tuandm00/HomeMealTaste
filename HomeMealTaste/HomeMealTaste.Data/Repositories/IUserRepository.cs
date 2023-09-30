@@ -1,4 +1,4 @@
-﻿using HomeMealTaste.Models;
+﻿using HomeMealTaste.Data.Models;
 
 
 namespace HomeMealTaste.Data.Repositories
