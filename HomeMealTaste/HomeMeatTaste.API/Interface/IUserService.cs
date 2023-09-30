@@ -1,4 +1,4 @@
-﻿using HomeMealTaste.Models;
+﻿using HomeMealTaste.Data.Models;
 using HomeMealTaste.Services.Dto;
 
 namespace HomeMealTaste.Services.Interface

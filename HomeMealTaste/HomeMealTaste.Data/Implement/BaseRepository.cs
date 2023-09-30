@@ -1,5 +1,5 @@
 ﻿using HomeMealTaste.Data.Repositories;
-using HomeMealTaste.Models;
+using HomeMealTaste.Data.Models;
 using Microsoft.EntityFrameworkCore;
 using System.Linq.Expressions;
 
