@@ -1,4 +1,4 @@
-﻿using HomeMealTaste.Models;
+﻿using HomeMealTaste.Data.Models;
 using HomeMealTaste.Services.Interface;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
