@@ -1,13 +1,11 @@
 ﻿using HomeMealTaste.Data.Models;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using HomeMealTaste.Data.RequestModel;
 
 namespace HomeMealTaste.Data.Repositories
 {
-    public interface IDishRepository
+    public interface IDishRepository : IBaseRepository<Dish>
     {
+        List<DishRequestModel> GetAllDish();
+        
     }
 }

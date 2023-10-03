@@ -12,5 +12,7 @@ namespace HomeMealTaste.Services.Interface
     public interface IDishService
     {
         Task<DishResponseModel> CreateDish(DishRequestModel dish);
+        List<DishRequestModel> GetAllDish();
+        Task<Dish> DeleteDishId(int id);
     }
 }

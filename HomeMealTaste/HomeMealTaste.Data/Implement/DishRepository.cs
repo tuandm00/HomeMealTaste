@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using HomeMealTaste.Data.RequestModel;
 
 namespace HomeMealTaste.Data.Implement
 {
@@ -16,5 +17,21 @@ namespace HomeMealTaste.Data.Implement
         {
             _context = context;
         }
+
+        public List<DishRequestModel> GetAllDish()
+        {
+            var result = _context.Dishes.Select(d => new DishRequestModel
+            { 
+                DishId = d.DishId,
+                Name = d.Name,  
+                Image = d.Image,
+                DishTypeId = d.DishTypeId,
+                KitchenId = d.KitchenId,
+                MealId = d.MealId,
+            }).ToList();
+
+            return result;
+        }
+
     }
 }
