@@ -1,5 +1,7 @@
 ﻿using HomeMealTaste.Data.Models;
+using HomeMealTaste.Data.RequestModel;
 using HomeMealTaste.Services.Interface;
+using HomeMealTaste.Services.ResponseModel;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -21,9 +23,9 @@ namespace HomeMealTaste.Controllers
         [HttpPost]
         [Route("adddish")]
 
-        public async Task<Dish> CreateDish(Dish dish)
+        public async Task<DishResponseModel> CreateDish(DishRequestModel dishRequest)
         {
-            var result = await _dishService.CreateDish(dish);
+            var result = await _dishService.CreateDish(dishRequest);
             return result;
         } 
         

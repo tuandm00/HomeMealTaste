@@ -1,4 +1,6 @@
 ﻿using HomeMealTaste.Data.Models;
+using HomeMealTaste.Data.RequestModel;
+using HomeMealTaste.Services.ResponseModel;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,6 +11,6 @@ namespace HomeMealTaste.Services.Interface
 {
     public interface IDishService
     {
-        Task<Dish> CreateDish(Dish dish);
+        Task<DishResponseModel> CreateDish(DishRequestModel dish);
     }
 }

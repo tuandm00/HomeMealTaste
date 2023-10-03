@@ -1,11 +1,8 @@
 ﻿using HomeMealTaste.Data.Repositories;
 using HomeMealTaste.Data.Models;
 using HomeMealTaste.Services.Interface;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using HomeMealTaste.Services.ResponseModel;
+using HomeMealTaste.Data.RequestModel;
 
 namespace HomeMealTaste.Services.Implement
 {
@@ -20,22 +17,33 @@ namespace HomeMealTaste.Services.Implement
             _context = context;
         }
 
-        public async Task<Dish> CreateDish(Dish dish)
+        public async Task<DishResponseModel> CreateDish(DishRequestModel dishRequest)
         {
-            var result = new Dish()
+            var request = new Dish()
             {
-                DishId = dish.DishId,
-                Name = dish.Name,
-                Image = dish.Image,
-                DishTypeId = dish.DishTypeId,
-                KitchenId = dish.KitchenId,
-                MealId = dish.MealId,
+                DishId = dishRequest.DishId,
+                Name = dishRequest.Name,
+                Image = dishRequest.Image,
+                DishTypeId = dishRequest.DishTypeId,
+                KitchenId = dishRequest.KitchenId,
+                MealId = dishRequest.MealId,
             };
 
-            await _context.AddAsync(result);
+            await _context.AddAsync(request);
             await _context.SaveChangesAsync();
 
-            return result;
+            var response = new DishResponseModel()
+            {
+                DishId = request.DishId,
+                Name = request.Name,
+                Image = request.Image,
+                DishTypeId = request.DishTypeId,
+                KitchenId = request.KitchenId,
+                MealId = request.MealId,
+            };
+
+            return response;
+            
         }
     }
 }
