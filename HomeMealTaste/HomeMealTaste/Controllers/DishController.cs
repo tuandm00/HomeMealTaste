@@ -28,6 +28,17 @@ namespace HomeMealTaste.Controllers
             var result = await _dishService.CreateDish(dishRequest);
             return result;
         } 
-        
+
+        [HttpGet]
+        [Route("getalldish")]
+        public  List<DishRequestModel> GetAllDish() => _dishService.GetAllDish();
+
+        [HttpDelete]
+        [Route("deletedishid")]
+        public async Task<IActionResult> DeleteDishId(int id)
+        {
+            var result = await _dishService.DeleteDishId(id);
+            return Ok(result);
+        }        
     }
 }

@@ -12,13 +12,9 @@ namespace HomeMealTaste.Controllers
     public class UserController : ControllerBase
     {
 
-        private IConfiguration _config;
-        private readonly HomeMealTasteContext _ctx;
         private readonly IUserService _userService;
-        public UserController(IConfiguration configuration, HomeMealTasteContext context, IUserService userService)
+        public UserController(IUserService userService)
         {
-            _config = configuration;
-            _ctx = context;
             _userService = userService;
         }
 

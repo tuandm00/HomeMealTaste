@@ -45,5 +45,20 @@ namespace HomeMealTaste.Services.Implement
             return response;
             
         }
+
+        public async Task<Dish> DeleteDishId(int id)
+        {
+            if(id >= 0)
+            {
+                await _dishRepository.Delete(id, false);
+            }
+            return null;
+        }
+
+        public  List<DishRequestModel> GetAllDish()
+        {
+            var result = _dishRepository.GetAllDish();
+            return result;
+        }
     }
 }
