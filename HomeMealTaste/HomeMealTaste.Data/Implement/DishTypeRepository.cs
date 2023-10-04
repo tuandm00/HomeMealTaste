@@ -1,10 +1,7 @@
-﻿using HomeMealTaste.Data.Models;
+﻿
+using HomeMealTaste.Data.Models;
 using HomeMealTaste.Data.Repositories;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using HomeMealTaste.Data.RequestModel;
 
 namespace HomeMealTaste.Data.Implement
 {
@@ -16,6 +13,17 @@ namespace HomeMealTaste.Data.Implement
             _context = context;
         }
 
+        public List<DishTypeRequestModel> GetAllDishType()
+        {
+           var result = _context.DishTypes.Select(d => new DishTypeRequestModel
+           {
+               DishTypeId = d.DishTypeId,
+               Name = d.Name,
+               Description = d.Description,
+           }).ToList();
+
+           return result;
+        }
 
     }
 }
