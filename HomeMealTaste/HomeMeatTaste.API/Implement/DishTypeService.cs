@@ -4,7 +4,6 @@ using HomeMealTaste.Data.RequestModel;
 using HomeMealTaste.Services.Interface;
 using HomeMealTaste.Services.ResponseModel;
 
-
 namespace HomeMealTaste.Services.Implement
 {
     public class DishTypeService : IDishTypeService
@@ -37,6 +36,12 @@ namespace HomeMealTaste.Services.Implement
             };
 
             return response;
+        }
+
+        public List<DishTypeRequestModel> GetAllDishType()
+        {
+            var result = _dishTypeRepository.GetAllDishType();
+            return result;
         }
     }
 }

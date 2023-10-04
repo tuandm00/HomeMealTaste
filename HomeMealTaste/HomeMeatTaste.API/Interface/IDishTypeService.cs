@@ -7,5 +7,6 @@ namespace HomeMealTaste.Services.Interface
     public interface IDishTypeService
     {
         Task<DishTypeResponseModel> CreateDishType(DishTypeRequestModel requestModel);
+        List<DishTypeRequestModel> GetAllDishType();
     }
 }
