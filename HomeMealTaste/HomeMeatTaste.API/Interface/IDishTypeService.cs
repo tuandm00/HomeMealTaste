@@ -8,5 +8,7 @@ namespace HomeMealTaste.Services.Interface
     {
         Task<DishTypeResponseModel> CreateDishType(DishTypeRequestModel requestModel);
         List<DishTypeRequestModel> GetAllDishType();
+
+        Task DeleteDishTypeById(int id);
     }
 }

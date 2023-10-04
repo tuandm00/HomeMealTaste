@@ -38,6 +38,16 @@ namespace HomeMealTaste.Services.Implement
             return response;
         }
 
+        public Task DeleteDishTypeById(int id)
+        {
+            if(id >= 0)
+            {
+                var result = _dishTypeRepository.Delete(id);
+                return result;
+            }
+            return null;
+        }
+
         public List<DishTypeRequestModel> GetAllDishType()
         {
             var result = _dishTypeRepository.GetAllDishType();
