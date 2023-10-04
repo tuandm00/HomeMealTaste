@@ -29,5 +29,13 @@ namespace HomeMealTaste.Controllers
         [HttpGet]
         [Route("getalldishtype")]
         public List<DishTypeRequestModel> GetAllDishType() => _dishTypeServices.GetAllDishType();   
+        
+        [HttpDelete]
+        [Route("deletedishtypebyid")]
+        public Task DeleteDishTypeById(int id)
+        {
+            var result = _dishTypeServices.DeleteDishTypeById(id);
+            return result;
+        }
     }
 }
