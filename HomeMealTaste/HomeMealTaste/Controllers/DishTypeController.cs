@@ -25,5 +25,9 @@ namespace HomeMealTaste.Controllers
             var result = await _dishTypeServices.CreateDishType(dishTypeRequest);
             return result;
         }
+
+        [HttpGet]
+        [Route("getalldishtype")]
+        public List<DishTypeRequestModel> GetAllDishType() => _dishTypeServices.GetAllDishType();   
     }
 }
