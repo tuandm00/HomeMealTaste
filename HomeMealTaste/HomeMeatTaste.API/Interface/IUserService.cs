@@ -12,5 +12,7 @@ namespace HomeMealTaste.Services.Interface
         Task<User> DeleteUserById(int id);
         List<User> GetAllUser();
 
+        Task<User> ForgetPassword(string user);
+
     }
 }

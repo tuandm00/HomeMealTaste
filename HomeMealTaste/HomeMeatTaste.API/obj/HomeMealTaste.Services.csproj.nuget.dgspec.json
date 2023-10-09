@@ -130,6 +130,10 @@
             "Microsoft.Identity.Client": {
               "target": "Package",
               "version": "[4.56.0, )"
+            },
+            "SendGrid": {
+              "target": "Package",
+              "version": "[9.28.1, )"
             }
           },
           "imports": [
