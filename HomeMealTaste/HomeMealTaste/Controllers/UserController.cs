@@ -4,9 +4,12 @@ using HomeMealTaste.Services.Interface;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using HomeMealTaste.Data.RequestModel;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.Google;
 
 namespace HomeMealTaste.Controllers
 {
+    [Authorize()]
     [Route("api/[controller]")]
     [ApiController]
     public class UserController : ControllerBase
@@ -54,5 +57,14 @@ namespace HomeMealTaste.Controllers
         [HttpGet]
         [Route("getalluser")]
         public List<User> GetAllUser() => _userService.GetAllUser();
+
+        [HttpPatch]
+        [Route("forgetpassword")]
+        public async Task<IActionResult> ForgetPassword(string user)
+        {
+            var result = await _userService.ForgetPassword(user);
+            return Ok(result);
+        }
+
     }
 }

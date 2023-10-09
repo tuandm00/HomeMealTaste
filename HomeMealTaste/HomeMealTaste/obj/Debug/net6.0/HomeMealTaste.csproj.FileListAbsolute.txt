@@ -132,3 +132,7 @@ E:\Capstone2\Code_BE\HomeMealTaste\HomeMealTaste\HomeMealTaste\obj\Debug\net6.0\
 E:\Capstone2\Code_BE\HomeMealTaste\HomeMealTaste\HomeMealTaste\obj\Debug\net6.0\ref\HomeMealTaste.dll
 E:\Capstone2\Code_BE\HomeMealTaste\HomeMealTaste\HomeMealTaste\obj\Debug\net6.0\HomeMealTaste.pdb
 E:\Capstone2\Code_BE\HomeMealTaste\HomeMealTaste\HomeMealTaste\obj\Debug\net6.0\HomeMealTaste.genruntimeconfig.cache
+E:\Capstone2\Code_BE\HomeMealTaste\HomeMealTaste\HomeMealTaste\bin\Debug\net6.0\Microsoft.AspNetCore.Authentication.Google.dll
+E:\Capstone2\Code_BE\HomeMealTaste\HomeMealTaste\HomeMealTaste\bin\Debug\net6.0\Newtonsoft.Json.dll
+E:\Capstone2\Code_BE\HomeMealTaste\HomeMealTaste\HomeMealTaste\bin\Debug\net6.0\SendGrid.dll
+E:\Capstone2\Code_BE\HomeMealTaste\HomeMealTaste\HomeMealTaste\bin\Debug\net6.0\StarkbankEcdsa.dll

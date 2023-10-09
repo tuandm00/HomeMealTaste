@@ -9,6 +9,10 @@ using System.IdentityModel.Tokens.Jwt;
 
 using System.Text;
 using HomeMealTaste.Data.RequestModel;
+using Microsoft.EntityFrameworkCore;
+using SendGrid;
+using System.Net.Mail;
+using System.Net;
 
 namespace HomeMealTaste.Services.Implement
 {
@@ -16,12 +20,14 @@ namespace HomeMealTaste.Services.Implement
     {
         private readonly IUserRepository _userRepository;
         private readonly IConfiguration _config;
+        private readonly HomeMealTasteContext _context;
 
 
-        public UserService(IUserRepository userRepository, IConfiguration config)
+        public UserService(IUserRepository userRepository, IConfiguration config, HomeMealTasteContext context)
         {
             _userRepository = userRepository;
             _config = config;
+            _context = context;
         }
 
         private string GenerateToken(User users)
@@ -89,6 +95,54 @@ namespace HomeMealTaste.Services.Implement
         {
             var getall = _userRepository.GetAllUser();
             return getall;
+        }
+
+        private async Task SendResetPasswordToEmail(string userEmail, string resetPassword)
+        {
+            using (SmtpClient smtpClient = new SmtpClient("smtp.gmail.com"))
+            {
+                smtpClient.Port = 587;
+                smtpClient.Credentials = new NetworkCredential("dominhtuan23102000@gmail.com", "djmr tgxz wfao upwq"); // password use app pasword in gmeow
+                smtpClient.EnableSsl = true;
+
+                var mailMessage = new MailMessage
+                {
+                    From = new MailAddress("dominhtuan23102000@gmail.com"),
+                    Subject = resetPassword,
+                    Body = "Your new password is: " +resetPassword,
+                    IsBodyHtml = false
+                };
+                mailMessage.To.Add(userEmail);
+                await smtpClient.SendMailAsync(mailMessage);
+            }
+        }
+        private string GenerateRandomResetPassword()
+        {
+            return Guid.NewGuid().ToString();
+        }
+        public async  Task<User> ForgetPassword(string user)
+        {
+            var users = await _context.Users.Where(u => u.Username == user).FirstOrDefaultAsync();
+            if (user != null)
+            {
+                var resetPassword = GenerateRandomResetPassword();
+
+                var response = new User
+                {
+                    Password = resetPassword
+                };
+                var hash = BCrypt.Net.BCrypt.HashPassword(response.Password);
+                users.Password = hash;
+
+                await _context.SaveChangesAsync();
+                await SendResetPasswordToEmail(users.Email, resetPassword);
+                return response;
+            }
+            else
+            {
+                throw new Exception("Username not exist");
+            }
+
         }
     }
 }
