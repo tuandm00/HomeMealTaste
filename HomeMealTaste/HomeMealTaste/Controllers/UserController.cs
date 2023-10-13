@@ -60,11 +60,17 @@ namespace HomeMealTaste.Controllers
 
         [HttpPatch]
         [Route("forgetpassword")]
-        public async Task<IActionResult> ForgetPassword(string user)
+        public async Task<IActionResult> ForgetPassword(string username)
         {
-            var result = await _userService.ForgetPassword(user);
+            var result = await _userService.ForgetPassword(username);
             return Ok(result);
         }
 
+        [HttpPut]
+        [Route("updateaccountforuser")]
+        public async Task UpdatePasswordAccount(string username, string newPassword)
+        {
+            await _userService.UpdatePasswordAccount(username,newPassword);
+        }
     }
 }

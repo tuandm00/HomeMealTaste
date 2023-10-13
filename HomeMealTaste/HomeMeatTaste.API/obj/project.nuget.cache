@@ -1,11 +1,12 @@
 {
   "version": 2,
-  "dgSpecHash": "FjMyJgO3/J9qy/FSajPlR2fg1CYNiWpqj8tMUaehFUN0s+roT0XmSGpZ0nd0JItrRjNmp6A2tlIKlfCXMRQw7g==",
+  "dgSpecHash": "ivEmxt1Q68HNzEk9godrQOl2qOaw3AsKNRzmooh4W0xC/+gaX3O4cZpzanhVUu6drFCHkRnJw9uVMmhsbLoZqA==",
   "success": true,
   "projectFilePath": "E:\\Capstone2\\Code_BE\\HomeMealTaste\\HomeMealTaste\\HomeMeatTaste.API\\HomeMealTaste.Services.csproj",
   "expectedPackageFiles": [
+    "C:\\Users\\Asus\\.nuget\\packages\\automapper\\12.0.1\\automapper.12.0.1.nupkg.sha512",
     "C:\\Users\\Asus\\.nuget\\packages\\bcrypt.net-next\\4.0.3\\bcrypt.net-next.4.0.3.nupkg.sha512",
-    "C:\\Users\\Asus\\.nuget\\packages\\microsoft.csharp\\4.5.0\\microsoft.csharp.4.5.0.nupkg.sha512",
+    "C:\\Users\\Asus\\.nuget\\packages\\microsoft.csharp\\4.7.0\\microsoft.csharp.4.7.0.nupkg.sha512",
     "C:\\Users\\Asus\\.nuget\\packages\\microsoft.data.sqlclient\\2.1.4\\microsoft.data.sqlclient.2.1.4.nupkg.sha512",
     "C:\\Users\\Asus\\.nuget\\packages\\microsoft.data.sqlclient.sni.runtime\\2.1.1\\microsoft.data.sqlclient.sni.runtime.2.1.1.nupkg.sha512",
     "C:\\Users\\Asus\\.nuget\\packages\\microsoft.entityframeworkcore\\6.0.0\\microsoft.entityframeworkcore.6.0.0.nupkg.sha512",

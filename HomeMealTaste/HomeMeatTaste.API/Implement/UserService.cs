@@ -4,15 +4,13 @@ using HomeMealTaste.Services.ResponseModel;
 using HomeMealTaste.Services.Interface;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
-
 using System.IdentityModel.Tokens.Jwt;
-
 using System.Text;
 using HomeMealTaste.Data.RequestModel;
 using Microsoft.EntityFrameworkCore;
-using SendGrid;
 using System.Net.Mail;
 using System.Net;
+using AutoMapper;
 
 namespace HomeMealTaste.Services.Implement
 {
@@ -21,13 +19,15 @@ namespace HomeMealTaste.Services.Implement
         private readonly IUserRepository _userRepository;
         private readonly IConfiguration _config;
         private readonly HomeMealTasteContext _context;
+        private readonly IMapper _mapper;
 
 
-        public UserService(IUserRepository userRepository, IConfiguration config, HomeMealTasteContext context)
+        public UserService(IUserRepository userRepository, IConfiguration config, HomeMealTasteContext context, IMapper mapper)
         {
             _userRepository = userRepository;
             _config = config;
             _context = context;
+            _mapper = mapper;
         }
 
         private string GenerateToken(User users)
@@ -120,14 +120,14 @@ namespace HomeMealTaste.Services.Implement
         {
             return Guid.NewGuid().ToString();
         }
-        public async  Task<User> ForgetPassword(string user)
+        public async  Task<UserResponseForgetPasswordModel> ForgetPassword(string username)
         {
-            var users = await _context.Users.Where(u => u.Username == user).FirstOrDefaultAsync();
-            if (user != null)
+            var users = await _context.Users.Where(u => u.Username == username).FirstOrDefaultAsync();
+            if (users != null)
             {
                 var resetPassword = GenerateRandomResetPassword();
 
-                var response = new User
+                var response = new UserResponseForgetPasswordModel
                 {
                     Password = resetPassword
                 };
@@ -143,6 +143,16 @@ namespace HomeMealTaste.Services.Implement
                 throw new Exception("Username not exist");
             }
 
+        }
+
+        public async Task UpdatePasswordAccount(string username, string newPassword)
+        {
+            var result = await _context.Users.Where(u => u.Username == username).FirstOrDefaultAsync();
+            if (result != null)
+                {
+                    result.Password = BCrypt.Net.BCrypt.HashPassword(newPassword); ;
+                    await _context.SaveChangesAsync();
+                }
         }
     }
 }

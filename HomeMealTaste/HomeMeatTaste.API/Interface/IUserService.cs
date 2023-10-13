@@ -11,8 +11,7 @@ namespace HomeMealTaste.Services.Interface
         Task<User> RegisterForChef(User user);
         Task<User> DeleteUserById(int id);
         List<User> GetAllUser();
-
-        Task<User> ForgetPassword(string user);
-
+        Task<UserResponseForgetPasswordModel> ForgetPassword(string username);
+        Task UpdatePasswordAccount(string username, string newPassword);
     }
 }
