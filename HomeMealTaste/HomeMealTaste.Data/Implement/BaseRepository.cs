@@ -50,9 +50,8 @@ namespace HomeMealTaste.Data.Implement
             return  Task.FromResult((_context.Set<T>().FirstOrDefault(expression)));
         }
 
-        public async Task<T> Update(int id, bool completeSingle = false)
+        public async Task<T> Update(T entity, bool completeSingle = false)
         {
-            var entity =await _context.Set<T>().FindAsync(id);
             _context.Entry(entity).State = EntityState.Modified;
             await _context.SaveChangesAsync();
             return entity;
