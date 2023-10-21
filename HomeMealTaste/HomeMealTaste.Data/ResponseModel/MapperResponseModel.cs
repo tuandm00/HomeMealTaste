@@ -11,6 +11,7 @@ namespace HomeMealTaste.Services.ResponseModel
             CreateMap<UserResponseForgetPasswordModel, User>().ReverseMap();
             CreateMap<UserResponseModel, User>().ReverseMap();
             CreateMap<UserResponseUpdatePasswordAccountModel, User>().ReverseMap();
+            CreateMap<SessionResponseModel, Session>().ReverseMap();
         }
     }
 }
