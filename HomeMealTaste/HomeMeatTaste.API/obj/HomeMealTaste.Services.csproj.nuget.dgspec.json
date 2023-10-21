@@ -1,20 +1,20 @@
 {
   "format": 1,
   "restore": {
-    "E:\\Capstone2\\Code_BE\\HomeMealTaste\\HomeMealTaste\\HomeMeatTaste.API\\HomeMealTaste.Services.csproj": {}
+    "D:\\C#\\HomeMealTaste\\HomeMealTaste\\HomeMeatTaste.API\\HomeMealTaste.Services.csproj": {}
   },
   "projects": {
-    "E:\\Capstone2\\Code_BE\\HomeMealTaste\\HomeMealTaste\\HomeMealTaste.Data\\HomeMealTaste.Data.csproj": {
+    "D:\\C#\\HomeMealTaste\\HomeMealTaste\\HomeMealTaste.Data\\HomeMealTaste.Data.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "E:\\Capstone2\\Code_BE\\HomeMealTaste\\HomeMealTaste\\HomeMealTaste.Data\\HomeMealTaste.Data.csproj",
+        "projectUniqueName": "D:\\C#\\HomeMealTaste\\HomeMealTaste\\HomeMealTaste.Data\\HomeMealTaste.Data.csproj",
         "projectName": "HomeMealTaste.Data",
-        "projectPath": "E:\\Capstone2\\Code_BE\\HomeMealTaste\\HomeMealTaste\\HomeMealTaste.Data\\HomeMealTaste.Data.csproj",
-        "packagesPath": "C:\\Users\\Asus\\.nuget\\packages\\",
-        "outputPath": "E:\\Capstone2\\Code_BE\\HomeMealTaste\\HomeMealTaste\\HomeMealTaste.Data\\obj\\",
+        "projectPath": "D:\\C#\\HomeMealTaste\\HomeMealTaste\\HomeMealTaste.Data\\HomeMealTaste.Data.csproj",
+        "packagesPath": "C:\\Users\\Admin\\.nuget\\packages\\",
+        "outputPath": "D:\\C#\\HomeMealTaste\\HomeMealTaste\\HomeMealTaste.Data\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
-          "C:\\Users\\Asus\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Users\\Admin\\AppData\\Roaming\\NuGet\\NuGet.Config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
         "originalTargetFrameworks": [
@@ -83,21 +83,21 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\6.0.405\\RuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\7.0.102\\RuntimeIdentifierGraph.json"
         }
       }
     },
-    "E:\\Capstone2\\Code_BE\\HomeMealTaste\\HomeMealTaste\\HomeMeatTaste.API\\HomeMealTaste.Services.csproj": {
+    "D:\\C#\\HomeMealTaste\\HomeMealTaste\\HomeMeatTaste.API\\HomeMealTaste.Services.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "E:\\Capstone2\\Code_BE\\HomeMealTaste\\HomeMealTaste\\HomeMeatTaste.API\\HomeMealTaste.Services.csproj",
+        "projectUniqueName": "D:\\C#\\HomeMealTaste\\HomeMealTaste\\HomeMeatTaste.API\\HomeMealTaste.Services.csproj",
         "projectName": "HomeMealTaste.Services",
-        "projectPath": "E:\\Capstone2\\Code_BE\\HomeMealTaste\\HomeMealTaste\\HomeMeatTaste.API\\HomeMealTaste.Services.csproj",
-        "packagesPath": "C:\\Users\\Asus\\.nuget\\packages\\",
-        "outputPath": "E:\\Capstone2\\Code_BE\\HomeMealTaste\\HomeMealTaste\\HomeMeatTaste.API\\obj\\",
+        "projectPath": "D:\\C#\\HomeMealTaste\\HomeMealTaste\\HomeMeatTaste.API\\HomeMealTaste.Services.csproj",
+        "packagesPath": "C:\\Users\\Admin\\.nuget\\packages\\",
+        "outputPath": "D:\\C#\\HomeMealTaste\\HomeMealTaste\\HomeMeatTaste.API\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
-          "C:\\Users\\Asus\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Users\\Admin\\AppData\\Roaming\\NuGet\\NuGet.Config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
         "originalTargetFrameworks": [
@@ -111,8 +111,8 @@
           "net6.0": {
             "targetAlias": "net6.0",
             "projectReferences": {
-              "E:\\Capstone2\\Code_BE\\HomeMealTaste\\HomeMealTaste\\HomeMealTaste.Data\\HomeMealTaste.Data.csproj": {
-                "projectPath": "E:\\Capstone2\\Code_BE\\HomeMealTaste\\HomeMealTaste\\HomeMealTaste.Data\\HomeMealTaste.Data.csproj"
+              "D:\\C#\\HomeMealTaste\\HomeMealTaste\\HomeMealTaste.Data\\HomeMealTaste.Data.csproj": {
+                "projectPath": "D:\\C#\\HomeMealTaste\\HomeMealTaste\\HomeMealTaste.Data\\HomeMealTaste.Data.csproj"
               }
             }
           }
@@ -156,7 +156,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\6.0.405\\RuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\7.0.102\\RuntimeIdentifierGraph.json"
         }
       }
     }
