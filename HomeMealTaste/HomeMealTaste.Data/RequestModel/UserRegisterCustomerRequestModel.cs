@@ -6,9 +6,8 @@ using System.Threading.Tasks;
 
 namespace HomeMealTaste.Data.RequestModel
 {
-    public class UserRequestModel
+    public class UserRegisterCustomerRequestModel
     {
-        public int UserId { get; set; }
         public string? Name { get; set; }
         public string? Username { get; set; }
         public string? Password { get; set; }
@@ -18,7 +17,6 @@ namespace HomeMealTaste.Data.RequestModel
         public string? Street { get; set; }
         public string? Ward { get; set; }
         public string? District { get; set; }
-        public int? Role { get; set; }
         public bool? Status { get; set; }
 
     }

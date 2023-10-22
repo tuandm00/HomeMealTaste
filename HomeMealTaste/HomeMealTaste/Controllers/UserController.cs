@@ -7,7 +7,7 @@ using HomeMealTaste.Data.RequestModel;
 
 namespace HomeMealTaste.Controllers
 {
-    [Authorize()]
+    
     [Route("api/[controller]")]
     [ApiController]
     public class UserController : ControllerBase
@@ -30,9 +30,9 @@ namespace HomeMealTaste.Controllers
 
         [HttpPost]
         [Route("registerforcustomer")]
-        public async Task<IActionResult> RegisterForCustomer(User user)
+        public async Task<IActionResult> RegisterForCustomer(UserRegisterCustomerRequestModel userRegisterCustomerRequest)
         {
-            var result = await _userService.RegisterForCustomer(user);
+            var result = await _userService.RegisterForCustomer(userRegisterCustomerRequest);
             return Ok(result);
         }
 
