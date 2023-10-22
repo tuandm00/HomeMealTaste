@@ -2,6 +2,7 @@
 using HomeMealTaste.Data.Models;
 using Microsoft.EntityFrameworkCore;
 using System.Linq.Expressions;
+using HomeMealTaste.Data.Helper;
 using HomeMealTaste.Services.Helper;
 
 
@@ -40,10 +41,10 @@ namespace HomeMealTaste.Data.Implement
             return _context.Set<T>().AsNoTracking();
         }
 
-        public PagedList<T> GetWithPaging(PagingParams pagingParams)
+        public async Task<PagedList<T>> GetWithPaging(PagingParams pagingParams)
         {
             var dataSource = GetAll();
-            return PagedList<T>.ToPagedList(dataSource, pagingParams.PageNumber, pagingParams.PageSize);
+            return await PagedList<T>.ToPagedList(dataSource, pagingParams.PageNumber, pagingParams.PageSize);
         }
 
         public async Task<IEnumerable<T>> GetByCondition(Expression<Func<T, bool>> expression, bool completeSingle = false)

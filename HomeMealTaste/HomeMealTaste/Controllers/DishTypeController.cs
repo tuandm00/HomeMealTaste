@@ -1,4 +1,8 @@
-﻿using HomeMealTaste.Data.RequestModel;
+﻿using HomeMealTaste.Data.Helper;
+using HomeMealTaste.Data.Models;
+using HomeMealTaste.Data.RequestModel;
+using HomeMealTaste.Response;
+using HomeMealTaste.Services.Helper;
 using HomeMealTaste.Services.Interface;
 using HomeMealTaste.Services.ResponseModel;
 using Microsoft.AspNetCore.Http;
@@ -19,19 +23,29 @@ namespace HomeMealTaste.Controllers
         }
 
         [HttpPost]
-        [Route("createdishtype")]
         public async Task<DishTypeResponseModel> CreateDishType(DishTypeRequestModel dishTypeRequest)
         {
             var result = await _dishTypeServices.CreateDishType(dishTypeRequest);
             return result;
         }
 
-        [HttpGet]
-        [Route("getalldishtype")]
-        public List<DishTypeRequestModel> GetAllDishType() => _dishTypeServices.GetAllDishType();   
+        [HttpGet("get-all-dish-type")]
+        public async Task<ApiResponse<PagedList<DishType>>> GetAllDish([FromQuery] PagingParams pagingParams)
+        {
+            var result = await _dishTypeServices.GetAllDishType(pagingParams);
+            var metadata = new
+            {
+                result.TotalCount,
+                result.TotalPages,
+                result.PageSize,
+                result.CurrentPage,
+                result.HasNext,
+                result.HasPrevious
+            };
+            return ApiResponse<List<DishType>>.Success(result, metadata);
+        }   
         
         [HttpDelete]
-        [Route("deletedishtypebyid")]
         public Task DeleteDishTypeById(int id)
         {
             var result = _dishTypeServices.DeleteDishTypeById(id);
