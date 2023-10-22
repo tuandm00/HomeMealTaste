@@ -64,8 +64,6 @@ namespace HomeMealTaste.Data.Models
             {
                 entity.ToTable("Customer");
 
-                entity.Property(e => e.CustomerId).ValueGeneratedNever();
-
                 entity.Property(e => e.Address).HasMaxLength(50);
 
                 entity.Property(e => e.District).HasMaxLength(50);
@@ -90,16 +88,12 @@ namespace HomeMealTaste.Data.Models
 
                 entity.ToTable("Disctrict");
 
-                entity.Property(e => e.DistrictId).ValueGeneratedNever();
-
                 entity.Property(e => e.DistrictName).HasMaxLength(50);
             });
 
             modelBuilder.Entity<Dish>(entity =>
             {
                 entity.ToTable("Dish");
-
-                entity.Property(e => e.DishId).ValueGeneratedNever();
 
                 entity.Property(e => e.Image).HasMaxLength(50);
 
@@ -125,8 +119,6 @@ namespace HomeMealTaste.Data.Models
             {
                 entity.ToTable("DishType");
 
-                entity.Property(e => e.DishTypeId).ValueGeneratedNever();
-
                 entity.Property(e => e.Description).HasMaxLength(50);
 
                 entity.Property(e => e.Name).HasMaxLength(50);
@@ -135,8 +127,6 @@ namespace HomeMealTaste.Data.Models
             modelBuilder.Entity<Group>(entity =>
             {
                 entity.ToTable("Group");
-
-                entity.Property(e => e.GroupId).ValueGeneratedNever();
 
                 entity.HasOne(d => d.Area)
                     .WithMany(p => p.Groups)
@@ -163,8 +153,6 @@ namespace HomeMealTaste.Data.Models
             {
                 entity.ToTable("Kitchen");
 
-                entity.Property(e => e.KitchenId).ValueGeneratedNever();
-
                 entity.Property(e => e.Address).HasMaxLength(50);
 
                 entity.Property(e => e.Name).HasMaxLength(50);
@@ -181,8 +169,6 @@ namespace HomeMealTaste.Data.Models
             {
                 entity.ToTable("Meal");
 
-                entity.Property(e => e.MealId).ValueGeneratedNever();
-
                 entity.Property(e => e.DefaultPrice).HasColumnType("money");
 
                 entity.Property(e => e.Image).HasMaxLength(50);
@@ -194,9 +180,7 @@ namespace HomeMealTaste.Data.Models
             {
                 entity.ToTable("Meal_Dish");
 
-                entity.Property(e => e.MealDishId)
-                    .ValueGeneratedNever()
-                    .HasColumnName("Meal_DishId");
+                entity.Property(e => e.MealDishId).HasColumnName("Meal_DishId");
 
                 entity.HasOne(d => d.Dish)
                     .WithMany(p => p.MealDishes)
@@ -213,9 +197,7 @@ namespace HomeMealTaste.Data.Models
             {
                 entity.ToTable("Meal_Session");
 
-                entity.Property(e => e.MealSessionId)
-                    .ValueGeneratedNever()
-                    .HasColumnName("Meal_SessionId");
+                entity.Property(e => e.MealSessionId).HasColumnName("Meal_SessionId");
 
                 entity.Property(e => e.CreateDate).HasColumnType("date");
 
@@ -235,8 +217,6 @@ namespace HomeMealTaste.Data.Models
             modelBuilder.Entity<Order>(entity =>
             {
                 entity.ToTable("Order");
-
-                entity.Property(e => e.OrderId).ValueGeneratedNever();
 
                 entity.Property(e => e.Date).HasColumnType("date");
 
@@ -260,8 +240,6 @@ namespace HomeMealTaste.Data.Models
             modelBuilder.Entity<Payment>(entity =>
             {
                 entity.ToTable("Payment");
-
-                entity.Property(e => e.PaymentId).ValueGeneratedNever();
 
                 entity.Property(e => e.Method).HasMaxLength(50);
 
@@ -294,8 +272,6 @@ namespace HomeMealTaste.Data.Models
             {
                 entity.ToTable("Session");
 
-                entity.Property(e => e.SessionId).ValueGeneratedNever();
-
                 entity.Property(e => e.CreateDate).HasColumnType("date");
 
                 entity.Property(e => e.EndDate).HasColumnType("date");
@@ -313,8 +289,6 @@ namespace HomeMealTaste.Data.Models
             modelBuilder.Entity<Transaction>(entity =>
             {
                 entity.ToTable("Transaction");
-
-                entity.Property(e => e.TransactionId).ValueGeneratedNever();
 
                 entity.Property(e => e.Amount).HasColumnType("money");
 
@@ -355,8 +329,6 @@ namespace HomeMealTaste.Data.Models
             modelBuilder.Entity<Wallet>(entity =>
             {
                 entity.ToTable("Wallet");
-
-                entity.Property(e => e.WalletId).ValueGeneratedNever();
             });
 
             OnModelCreatingPartial(modelBuilder);

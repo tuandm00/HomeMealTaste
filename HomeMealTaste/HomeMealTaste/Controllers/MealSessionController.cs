@@ -1,7 +1,6 @@
 ﻿using HomeMealTaste.Data.RequestModel;
 using HomeMealTaste.Data.ResponseModel;
 using HomeMealTaste.Services.Interface;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace HomeMealTaste.Controllers

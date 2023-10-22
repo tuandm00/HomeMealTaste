@@ -1,11 +1,9 @@
 ﻿using HomeMealTaste.Data.Models;
-using HomeMealTaste.Services.ResponseModel;
 using HomeMealTaste.Services.Interface;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using HomeMealTaste.Data.RequestModel;
-using Microsoft.AspNetCore.Authentication;
-using Microsoft.AspNetCore.Authentication.Google;
+
 
 namespace HomeMealTaste.Controllers
 {
