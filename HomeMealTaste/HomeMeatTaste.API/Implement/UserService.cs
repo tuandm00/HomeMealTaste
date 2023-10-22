@@ -89,14 +89,31 @@ namespace HomeMealTaste.Services.Implement
             return _mapper.Map<UserRegisterCustomerResponseModel>(result);
         }
 
-        public async Task<User> RegisterForChef(User user)
+        public async Task<UserRegisterChefResponseModel> RegisterForChef(UserRegisterChefRequestModel userRegisterChefRequest)
         {
-            var existedUser = await _userRepository.GetByCondition(x => x.Username == user.Username);
+            var entity = _mapper.Map<User>(userRegisterChefRequest);
+            var existedUser = await _userRepository.GetByCondition(x => x.Username == entity.Username);
             if (existedUser.Count() != 0) throw new Exception("existed Username");
-            user.Password = BCrypt.Net.BCrypt.HashPassword(user.Password);
-            user.Role = 3;
-            var result = await _userRepository.Create(user, true);
-            return result;
+            entity.Password = BCrypt.Net.BCrypt.HashPassword(entity.Password);
+            entity.Role = 3;
+            var result = await _userRepository.Create(entity, true);
+            if (result != null)
+            {
+                var chef = new Kitchen
+                {
+                    UserId = result.UserId,
+                    Name = result.Name,
+                    Phone = result.Phone,
+                    Address = result.Address,
+                    Street = result.Street,
+                    Ward = result.Ward,
+                    District = result.District,
+                    AccountStatus = true
+                };
+                await _context.AddAsync(chef);
+                await _context.SaveChangesAsync();
+            }
+            return _mapper.Map<UserRegisterChefResponseModel>(result);
         }
 
         public async Task<User> DeleteUserById(int id)
