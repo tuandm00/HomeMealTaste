@@ -1,8 +1,11 @@
-﻿using HomeMealTaste.Data.Models;
+﻿using HomeMealTaste.Data.Helper;
+using HomeMealTaste.Data.Models;
 using HomeMealTaste.Services.Interface;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using HomeMealTaste.Data.RequestModel;
+using HomeMealTaste.Response;
+using HomeMealTaste.Services.Helper;
 
 
 namespace HomeMealTaste.Controllers
@@ -20,24 +23,21 @@ namespace HomeMealTaste.Controllers
         }
 
         [AllowAnonymous]
-        [HttpPost]
-        [Route("login")]
+        [HttpPost("login")]
         public async Task<IActionResult> Login(UserRequestModel userRequest)
         {
             var result = await _userService.LoginAsync(userRequest);
             return Ok(result);
         }
 
-        [HttpPost]
-        [Route("registerforcustomer")]
+        [HttpPost("register-for-customer")]
         public async Task<IActionResult> RegisterForCustomer(UserRegisterCustomerRequestModel userRegisterCustomerRequest)
         {
             var result = await _userService.RegisterForCustomer(userRegisterCustomerRequest);
             return Ok(result);
         }
 
-        [HttpPost]
-        [Route("registerforchef")]
+        [HttpPost("register-for-chef")]
         public async Task<IActionResult> RegisterForChef(User user)
         {
             var result = await _userService.RegisterForChef(user);
@@ -45,27 +45,36 @@ namespace HomeMealTaste.Controllers
         }
 
         [HttpDelete]
-        [Route("deleteuserbyid")]
         public async Task<IActionResult> DeleteUserById(int id)
         {
             var result = await _userService.DeleteUserById(id);
             return Ok(result);
         }
 
-        [HttpGet]
-        [Route("getalluser")]
-        public List<User> GetAllUser() => _userService.GetAllUser();
+        [HttpGet("get-all-user")]
+        public async Task<ApiResponse<PagedList<User>>> GetAllUser([FromQuery] PagingParams pagingParams)
+        {
+            var result = await _userService.GetAllUser(pagingParams);
+            var metadata = new
+            {
+                result.TotalCount,
+                result.TotalPages,
+                result.PageSize,
+                result.CurrentPage,
+                result.HasNext,
+                result.HasPrevious
+            };
+            return ApiResponse<List<User>>.Success(result, metadata);
+        }
 
-        [HttpPatch]
-        [Route("forgetpassword")]
+        [HttpPatch("forget-password")]
         public async Task<IActionResult> ForgetPassword(string username)
         {
             var result = await _userService.ForgetPassword(username);
             return Ok(result);
         }
 
-        [HttpPut]
-        [Route("updateaccountforuser")]
+        [HttpPut("update-account-for-user")]
         public async Task UpdatePasswordAccount(string username, string newPassword)
         {
             await _userService.UpdatePasswordAccount(username,newPassword);

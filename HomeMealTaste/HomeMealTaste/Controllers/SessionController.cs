@@ -19,16 +19,13 @@ namespace HomeMealTaste.Controllers
         }
 
         [HttpPost]
-        [Route("create-session")]
         public async Task<SessionResponseModel> CreateSession(SessionRequestModel sessionRequest)
         {
             var result = await _sessionService.CreateSession(sessionRequest);
             return result;
         }
 
-        [HttpPatch]
-        [Route("update-end-time-session")]
-
+        [HttpPatch("update-end-time-session")]
         public async Task<SessionResponseModel> UpdateEndTime(int sessionId, DateTime endTime)
         {
             var result = await _sessionService.UpdateEndTime(sessionId, endTime);

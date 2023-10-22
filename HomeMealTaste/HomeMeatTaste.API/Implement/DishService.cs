@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using HomeMealTaste.Data.Helper;
 using HomeMealTaste.Data.Repositories;
 using HomeMealTaste.Data.Models;
 using HomeMealTaste.Services.Interface;
@@ -61,7 +62,7 @@ namespace HomeMealTaste.Services.Implement
 
         public async Task<PagedList<Dish>> GetAllDish(PagingParams pagingParams)
         {
-            var result = _dishRepository.GetWithPaging(pagingParams);
+            var result = await _dishRepository.GetWithPaging(pagingParams);
             
             return result;
         }
