@@ -9,7 +9,7 @@ namespace HomeMealTaste.Services.Interface
     {
         Task<UserResponseModel> LoginAsync(UserRequestModel user);
         Task<UserRegisterCustomerResponseModel> RegisterForCustomer(UserRegisterCustomerRequestModel user);
-        Task<User> RegisterForChef(User user);
+        Task<UserRegisterChefResponseModel> RegisterForChef(UserRegisterChefRequestModel userRegisterChefRequest);
         Task<User> DeleteUserById(int id);
         List<User> GetAllUser();
         Task<UserResponseForgetPasswordModel> ForgetPassword(string username);

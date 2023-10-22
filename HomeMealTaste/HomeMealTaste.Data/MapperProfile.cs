@@ -13,6 +13,7 @@ namespace HomeMealTaste.Data.RequestModel
             CreateMap<UserRequestForgetPasswordModel, User>().ReverseMap();
             CreateMap<UserRequestUpdatePasswordAccountModel, User>().ReverseMap();
             CreateMap<UserRegisterCustomerRequestModel, User>().ReverseMap();
+            CreateMap<UserRegisterChefRequestModel, User>().ReverseMap();
             CreateMap<SessionRequestModel, Session>().ReverseMap();
             CreateMap<MealSessionRequestModel, MealSession>().ReverseMap();
 
@@ -21,6 +22,7 @@ namespace HomeMealTaste.Data.RequestModel
             CreateMap<UserResponseModel, User>().ReverseMap();
             CreateMap<UserResponseUpdatePasswordAccountModel, User>().ReverseMap();
             CreateMap<UserRegisterCustomerResponseModel, User>().ReverseMap();
+            CreateMap<UserRegisterChefResponseModel, User>().ReverseMap();
             CreateMap<SessionResponseModel, Session>().ReverseMap();
             CreateMap<MealSessionResponseModel, MealSession>().ReverseMap();
 
