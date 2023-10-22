@@ -39,7 +39,6 @@ namespace HomeMealTaste.Data.Implement
             {
                 return new User
                 {
-                    UserId = userRequest.UserId,
                     Name = result.Name,
                     Username = result.Username,
                     Phone = result.Phone,

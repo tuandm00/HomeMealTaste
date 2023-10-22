@@ -315,6 +315,8 @@ namespace HomeMealTaste.Data.Models
 
                 entity.Property(e => e.Address).HasMaxLength(50);
 
+                entity.Property(e => e.District).HasMaxLength(50);
+
                 entity.Property(e => e.Email).HasMaxLength(50);
 
                 entity.Property(e => e.Name).HasMaxLength(50);
@@ -323,7 +325,11 @@ namespace HomeMealTaste.Data.Models
 
                 entity.Property(e => e.Phone).HasMaxLength(50);
 
+                entity.Property(e => e.Street).HasMaxLength(50);
+
                 entity.Property(e => e.Username).HasMaxLength(50);
+
+                entity.Property(e => e.Ward).HasMaxLength(50);
             });
 
             modelBuilder.Entity<Wallet>(entity =>
