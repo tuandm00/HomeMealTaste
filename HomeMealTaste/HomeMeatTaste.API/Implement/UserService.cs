@@ -11,6 +11,7 @@ using Microsoft.EntityFrameworkCore;
 using System.Net.Mail;
 using System.Net;
 using AutoMapper;
+using HomeMealTaste.Data.ResponseModel;
 
 namespace HomeMealTaste.Services.Implement
 {
@@ -61,14 +62,31 @@ namespace HomeMealTaste.Services.Implement
             return null;
         }
 
-        public async Task<User> RegisterForCustomer(User user)
+        public async Task<UserRegisterCustomerResponseModel> RegisterForCustomer(UserRegisterCustomerRequestModel userRegisterCustomerRequest)
         {
-            var existedUser = await _userRepository.GetByCondition(x => x.Username == user.Username);
+            var entity = _mapper.Map<User>(userRegisterCustomerRequest);
+            var existedUser = await _userRepository.GetByCondition(x => x.Username == entity.Username);
             if (existedUser.Count() != 0) throw new Exception("existed Username");
-            user.Password = BCrypt.Net.BCrypt.HashPassword(user.Password);
-            user.Role = 2;
-            var result = await _userRepository.Create(user, true);
-            return result;
+            entity.Password = BCrypt.Net.BCrypt.HashPassword(entity.Password);
+            entity.Role = 2;
+            var result = await _userRepository.Create(entity, true);
+            if(result != null)
+            {
+                var customer = new Customer
+                {
+                    UserId = result.UserId,
+                    Name = result.Name,
+                    Phone = result.Phone,
+                    Address = result.Address,
+                    Street = result.Street,
+                    Ward = result.Ward,
+                    District = result.District,
+                    AccountStatus = true
+                };
+                await _context.AddAsync(customer);
+                await _context.SaveChangesAsync();
+            }
+            return _mapper.Map<UserRegisterCustomerResponseModel>(result);
         }
 
         public async Task<User> RegisterForChef(User user)

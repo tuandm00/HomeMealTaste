@@ -1,10 +1,9 @@
 ﻿using AutoMapper;
 using HomeMealTaste.Data.Models;
-using HomeMealTaste.Data.RequestModel;
 using HomeMealTaste.Data.ResponseModel;
 using HomeMealTaste.Services.ResponseModel;
 
-namespace HomeMealTaste.Data
+namespace HomeMealTaste.Data.RequestModel
 {
     public class MapperProfile : Profile
     {
@@ -22,9 +21,6 @@ namespace HomeMealTaste.Data
             CreateMap<UserResponseUpdatePasswordAccountModel, User>().ReverseMap();
             CreateMap<SessionResponseModel, Session>().ReverseMap();
             CreateMap<MealSessionResponseModel, MealSession>().ReverseMap();
-            
-            CreateMap<DishResponseModel, Dish>().ReverseMap();
-            CreateMap<DishRequestModel, Dish>().ReverseMap();
         }
     }
 }

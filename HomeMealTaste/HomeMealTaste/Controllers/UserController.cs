@@ -1,15 +1,13 @@
 ﻿using HomeMealTaste.Data.Models;
-using HomeMealTaste.Services.ResponseModel;
 using HomeMealTaste.Services.Interface;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using HomeMealTaste.Data.RequestModel;
-using Microsoft.AspNetCore.Authentication;
-using Microsoft.AspNetCore.Authentication.Google;
+
 
 namespace HomeMealTaste.Controllers
 {
-    [Authorize()]
+    
     [Route("api/[controller]")]
     [ApiController]
     public class UserController : ControllerBase
@@ -32,9 +30,9 @@ namespace HomeMealTaste.Controllers
 
         [HttpPost]
         [Route("registerforcustomer")]
-        public async Task<IActionResult> RegisterForCustomer(User user)
+        public async Task<IActionResult> RegisterForCustomer(UserRegisterCustomerRequestModel userRegisterCustomerRequest)
         {
-            var result = await _userService.RegisterForCustomer(user);
+            var result = await _userService.RegisterForCustomer(userRegisterCustomerRequest);
             return Ok(result);
         }
 
