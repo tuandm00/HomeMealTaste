@@ -1,5 +1,7 @@
 ﻿using HomeMealTaste.Data.Models;
 using HomeMealTaste.Data.RequestModel;
+using HomeMealTaste.Response;
+using HomeMealTaste.Services.Helper;
 using HomeMealTaste.Services.Interface;
 using HomeMealTaste.Services.ResponseModel;
 using Microsoft.AspNetCore.Authorization;
@@ -27,11 +29,24 @@ namespace HomeMealTaste.Controllers
         {
             var result = await _dishService.CreateDish(dishRequest);
             return result;
-        } 
+        }
 
         [HttpGet]
         [Route("getalldish")]
-        public  List<DishRequestModel> GetAllDish() => _dishService.GetAllDish();
+        public async Task<ApiResponse<PagedList<Dish>>> GetAllDish([FromQuery] PagingParams pagingParams)
+        {
+            var result = await _dishService.GetAllDish(pagingParams);
+            var metadata = new
+            {
+                result.TotalCount,
+                result.TotalPages,
+                result.PageSize,
+                result.CurrentPage,
+                result.HasNext,
+                result.HasPrevious
+            };
+            return ApiResponse<List<Dish>>.Success(result, metadata);
+        } 
 
         [HttpDelete]
         [Route("deletedishid")]

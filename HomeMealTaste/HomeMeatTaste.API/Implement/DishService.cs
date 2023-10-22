@@ -1,8 +1,10 @@
-﻿using HomeMealTaste.Data.Repositories;
+﻿using AutoMapper;
+using HomeMealTaste.Data.Repositories;
 using HomeMealTaste.Data.Models;
 using HomeMealTaste.Services.Interface;
 using HomeMealTaste.Services.ResponseModel;
 using HomeMealTaste.Data.RequestModel;
+using HomeMealTaste.Services.Helper;
 
 namespace HomeMealTaste.Services.Implement
 {
@@ -10,11 +12,13 @@ namespace HomeMealTaste.Services.Implement
     {
         private readonly IDishRepository _dishRepository;
         private readonly HomeMealTasteContext _context;
+        private readonly IMapper _mapper;
 
-        public DishService(IDishRepository dishRepository, HomeMealTasteContext context)
+        public DishService(IDishRepository dishRepository, HomeMealTasteContext context, IMapper mapper)
         {
             _dishRepository = dishRepository;
             _context = context;
+            _mapper = mapper;
         }
 
         public async Task<DishResponseModel> CreateDish(DishRequestModel dishRequest)
@@ -55,9 +59,10 @@ namespace HomeMealTaste.Services.Implement
             return null;
         }
 
-        public  List<DishRequestModel> GetAllDish()
+        public async Task<PagedList<Dish>> GetAllDish(PagingParams pagingParams)
         {
-            var result = _dishRepository.GetAllDish();
+            var result = _dishRepository.GetWithPaging(pagingParams);
+            
             return result;
         }
     }
