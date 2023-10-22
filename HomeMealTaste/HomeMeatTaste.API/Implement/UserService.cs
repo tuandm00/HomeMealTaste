@@ -11,7 +11,9 @@ using Microsoft.EntityFrameworkCore;
 using System.Net.Mail;
 using System.Net;
 using AutoMapper;
+using HomeMealTaste.Data.Helper;
 using HomeMealTaste.Data.ResponseModel;
+using HomeMealTaste.Services.Helper;
 
 namespace HomeMealTaste.Services.Implement
 {
@@ -126,10 +128,11 @@ namespace HomeMealTaste.Services.Implement
             
         }
 
-        public List<User> GetAllUser()
+        public async Task<PagedList<User>> GetAllUser(PagingParams pagingParams)
         {
-            var getall = _userRepository.GetAllUser();
-            return getall;
+            var result = await _userRepository.GetWithPaging(pagingParams);
+            
+            return result;
         }
 
         private async Task SendResetPasswordToEmail(string userEmail, string resetPassword)

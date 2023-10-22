@@ -1,6 +1,8 @@
-﻿using HomeMealTaste.Data.Models;
+﻿using HomeMealTaste.Data.Helper;
+using HomeMealTaste.Data.Models;
 using HomeMealTaste.Data.Repositories;
 using HomeMealTaste.Data.RequestModel;
+using HomeMealTaste.Services.Helper;
 using HomeMealTaste.Services.Interface;
 using HomeMealTaste.Services.ResponseModel;
 
@@ -38,6 +40,11 @@ namespace HomeMealTaste.Services.Implement
             return response;
         }
 
+        public async Task<PagedList<DishType>> GetAllDishType(PagingParams pagingParams)
+        {
+            return await _dishTypeRepository.GetWithPaging(pagingParams);
+        }
+
         public Task DeleteDishTypeById(int id)
         {
             if(id >= 0)
@@ -46,12 +53,6 @@ namespace HomeMealTaste.Services.Implement
                 return result;
             }
             return null;
-        }
-
-        public List<DishTypeRequestModel> GetAllDishType()
-        {
-            var result = _dishTypeRepository.GetAllDishType();
-            return result;
         }
     }
 }

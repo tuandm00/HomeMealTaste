@@ -9,6 +9,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using HomeMealTaste.Data.Helper;
+using HomeMealTaste.Services.Helper;
 
 namespace HomeMealTaste.Services.Implement
 {
@@ -29,6 +31,13 @@ namespace HomeMealTaste.Services.Implement
             var result = await _mealSessionRepository.Create(entity,true);
 
             return _mapper.Map<MealSessionResponseModel>(result);
+        }
+
+        public async Task<PagedList<MealSession>> GetAllMealSession(PagingParams pagingParams)
+        {
+            var result = await _mealSessionRepository.GetWithPaging(pagingParams);
+
+            return result;
         }
     }
 }

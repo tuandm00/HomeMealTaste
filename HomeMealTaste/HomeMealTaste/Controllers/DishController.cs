@@ -1,5 +1,8 @@
-﻿using HomeMealTaste.Data.Models;
+﻿using HomeMealTaste.Data.Helper;
+using HomeMealTaste.Data.Models;
 using HomeMealTaste.Data.RequestModel;
+using HomeMealTaste.Response;
+using HomeMealTaste.Services.Helper;
 using HomeMealTaste.Services.Interface;
 using HomeMealTaste.Services.ResponseModel;
 using Microsoft.AspNetCore.Authorization;
@@ -21,20 +24,29 @@ namespace HomeMealTaste.Controllers
 
         [Authorize]
         [HttpPost]
-        [Route("adddish")]
-
         public async Task<DishResponseModel> CreateDish(DishRequestModel dishRequest)
         {
             var result = await _dishService.CreateDish(dishRequest);
             return result;
+        }
+
+        [HttpGet("get-all-dish")]
+        public async Task<ApiResponse<PagedList<Dish>>> GetAllDish([FromQuery] PagingParams pagingParams)
+        {
+            var result = await _dishService.GetAllDish(pagingParams);
+            var metadata = new
+            {
+                result.TotalCount,
+                result.TotalPages,
+                result.PageSize,
+                result.CurrentPage,
+                result.HasNext,
+                result.HasPrevious
+            };
+            return ApiResponse<List<Dish>>.Success(result, metadata);
         } 
 
-        [HttpGet]
-        [Route("getalldish")]
-        public  List<DishRequestModel> GetAllDish() => _dishService.GetAllDish();
-
         [HttpDelete]
-        [Route("deletedishid")]
         public async Task<IActionResult> DeleteDishId(int id)
         {
             var result = await _dishService.DeleteDishId(id);
