@@ -1,0 +1,26 @@
+{
+  "Version": 1,
+  "ProjectMap": {
+    "e82b143b-8f00-4c7e-aab1-8e7e126c5134": {
+      "ProjectGuid": "e82b143b-8f00-4c7e-aab1-8e7e126c5134",
+      "DisplayName": "HomeMealTaste.Services",
+      "ColorIndex": 0
+    },
+    "780047be-27d5-496f-ac93-b10177a7a863": {
+      "ProjectGuid": "780047be-27d5-496f-ac93-b10177a7a863",
+      "DisplayName": "HomeMealTaste",
+      "ColorIndex": 1
+    },
+    "d93ce416-42a8-47c0-a1b1-2a00657c6397": {
+      "ProjectGuid": "d93ce416-42a8-47c0-a1b1-2a00657c6397",
+      "DisplayName": "HomeMealTaste.Data",
+      "ColorIndex": 2
+    },
+    "a2fe74e1-b743-11d0-ae1a-00a0c90fffc3": {
+      "ProjectGuid": "a2fe74e1-b743-11d0-ae1a-00a0c90fffc3",
+      "DisplayName": "Miscellaneous Files",
+      "ColorIndex": -1
+    }
+  },
+  "NextColorIndex": 3
+}
