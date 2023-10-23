@@ -1,0 +1,16 @@
+{
+  "Version": 1,
+  "ProjectMap": {
+    "e82b143b-8f00-4c7e-aab1-8e7e126c5134": {
+      "ProjectGuid": "e82b143b-8f00-4c7e-aab1-8e7e126c5134",
+      "DisplayName": "HomeMealTaste.Services",
+      "ColorIndex": 0
+    },
+    "780047be-27d5-496f-ac93-b10177a7a863": {
+      "ProjectGuid": "780047be-27d5-496f-ac93-b10177a7a863",
+      "DisplayName": "HomeMealTaste",
+      "ColorIndex": 1
+    }
+  },
+  "NextColorIndex": 2
+}

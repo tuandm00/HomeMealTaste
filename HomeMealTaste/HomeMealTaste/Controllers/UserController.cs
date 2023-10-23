@@ -37,14 +37,9 @@ namespace HomeMealTaste.Controllers
             return Ok(result);
         }
 
-<<<<<<< HEAD
-        [HttpPost]
-        [Route("registerforchef")]
-        public async Task<IActionResult> RegisterForChef(UserRegisterChefRequestModel userRegisterChefRequest)
-=======
+
         [HttpPost("register-for-chef")]
-        public async Task<IActionResult> RegisterForChef(User user)
->>>>>>> b5d3d86b2421729cebc7bbf139da2dcfe1b40eff
+        public async Task<IActionResult> RegisterForChef(UserRegisterChefRequestModel userRegisterChefRequest)
         {
             var result = await _userService.RegisterForChef(userRegisterChefRequest);
             return Ok(result);
