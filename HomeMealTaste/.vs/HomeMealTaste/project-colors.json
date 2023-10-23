@@ -10,7 +10,12 @@
       "ProjectGuid": "780047be-27d5-496f-ac93-b10177a7a863",
       "DisplayName": "HomeMealTaste",
       "ColorIndex": 1
+    },
+    "d93ce416-42a8-47c0-a1b1-2a00657c6397": {
+      "ProjectGuid": "d93ce416-42a8-47c0-a1b1-2a00657c6397",
+      "DisplayName": "HomeMealTaste.Data",
+      "ColorIndex": 2
     }
   },
-  "NextColorIndex": 2
+  "NextColorIndex": 3
 }
