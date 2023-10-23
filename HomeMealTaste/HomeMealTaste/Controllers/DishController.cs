@@ -6,7 +6,6 @@ using HomeMealTaste.Services.Helper;
 using HomeMealTaste.Services.Interface;
 using HomeMealTaste.Services.ResponseModel;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace HomeMealTaste.Controllers
