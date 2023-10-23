@@ -26,6 +26,9 @@ namespace HomeMealTaste.Data.RequestModel
             CreateMap<SessionResponseModel, Session>().ReverseMap();
             CreateMap<MealSessionResponseModel, MealSession>().ReverseMap();
 
+
+            CreateMap<MealSessionResponseModel, Kitchen>().ReverseMap();
+
         }
     }
 }

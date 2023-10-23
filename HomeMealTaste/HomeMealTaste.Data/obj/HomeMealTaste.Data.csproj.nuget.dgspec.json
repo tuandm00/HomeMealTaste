@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "E:\\Capstone2\\Code_BE\\HomeMealTaste\\HomeMealTaste\\HomeMealTaste.Data\\HomeMealTaste.Data.csproj": {}
+    "E:\\Capstone2\\HomeMealTaste\\HomeMealTaste\\HomeMealTaste.Data\\HomeMealTaste.Data.csproj": {}
   },
   "projects": {
-    "E:\\Capstone2\\Code_BE\\HomeMealTaste\\HomeMealTaste\\HomeMealTaste.Data\\HomeMealTaste.Data.csproj": {
+    "E:\\Capstone2\\HomeMealTaste\\HomeMealTaste\\HomeMealTaste.Data\\HomeMealTaste.Data.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "E:\\Capstone2\\Code_BE\\HomeMealTaste\\HomeMealTaste\\HomeMealTaste.Data\\HomeMealTaste.Data.csproj",
+        "projectUniqueName": "E:\\Capstone2\\HomeMealTaste\\HomeMealTaste\\HomeMealTaste.Data\\HomeMealTaste.Data.csproj",
         "projectName": "HomeMealTaste.Data",
-        "projectPath": "E:\\Capstone2\\Code_BE\\HomeMealTaste\\HomeMealTaste\\HomeMealTaste.Data\\HomeMealTaste.Data.csproj",
+        "projectPath": "E:\\Capstone2\\HomeMealTaste\\HomeMealTaste\\HomeMealTaste.Data\\HomeMealTaste.Data.csproj",
         "packagesPath": "C:\\Users\\Asus\\.nuget\\packages\\",
-        "outputPath": "E:\\Capstone2\\Code_BE\\HomeMealTaste\\HomeMealTaste\\HomeMealTaste.Data\\obj\\",
+        "outputPath": "E:\\Capstone2\\HomeMealTaste\\HomeMealTaste\\HomeMealTaste.Data\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "C:\\Users\\Asus\\AppData\\Roaming\\NuGet\\NuGet.Config",
