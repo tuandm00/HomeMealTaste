@@ -21,18 +21,18 @@ namespace HomeMealTaste.Controllers
             _dishService = dishService;
         }
 
-        [Authorize]
+        //[Authorize]
         [HttpPost]
-        public async Task<DishResponseModel> CreateDish(DishRequestModel dishRequest)
+        public async Task<IActionResult> CreateDishAsync(DishRequestModel dishRequest)
         {
-            var result = await _dishService.CreateDish(dishRequest);
-            return result;
+            var result = await _dishService.CreateDishAsync(dishRequest);
+            return Ok(result);
         }
 
         [HttpGet("get-all-dish")]
-        public async Task<ApiResponse<PagedList<Dish>>> GetAllDish([FromQuery] PagingParams pagingParams)
+        public async Task<ApiResponse<PagedList<Dish>>> GetAllDishAsync([FromQuery] PagingParams pagingParams)
         {
-            var result = await _dishService.GetAllDish(pagingParams);
+            var result = await _dishService.GetAllDishAsync(pagingParams);
             var metadata = new
             {
                 result.TotalCount,
@@ -46,10 +46,18 @@ namespace HomeMealTaste.Controllers
         } 
 
         [HttpDelete]
-        public async Task<IActionResult> DeleteDishId(int id)
+        public async Task<IActionResult> DeleteDishAsync(int id)
         {
-            var result = await _dishService.DeleteDishId(id);
+            await _dishService.DeleteAsync(id);
+            return NoContent();
+        }
+
+        [HttpGet("{id:int}")]
+        public async Task<IActionResult> GetDetailAsync(int id)
+        {
+            var result = await _dishService.GetDetailAsync(id);
+
             return Ok(result);
-        }        
+        }
     }
 }
