@@ -22,7 +22,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\HomeMealTaste.Data\HomeMealTaste.Data.csproj" />
-    <ProjectReference Include="..\HomeMeatTaste.API\HomeMealTaste.Services.csproj" />
+    <ProjectReference Include="..\HomeMealTaste.Services\HomeMealTaste.Services.csproj" />
   </ItemGroup>
 
 </Project>
