@@ -1,4 +1,5 @@
-﻿using HomeMealTaste.Data.Helper;
+﻿using AutoMapper;
+using HomeMealTaste.Data.Helper;
 using HomeMealTaste.Data.Models;
 using HomeMealTaste.Data.Repositories;
 using HomeMealTaste.Data.RequestModel;
@@ -12,32 +13,19 @@ namespace HomeMealTaste.Services.Implement
     {
         private readonly IDishTypeRepository _dishTypeRepository;
         private readonly HomeMealTasteContext _context;
-        public DishTypeService(IDishTypeRepository dishTypeRepository, HomeMealTasteContext context)
+        private readonly IMapper _mapper;
+        public DishTypeService(IDishTypeRepository dishTypeRepository, HomeMealTasteContext context, IMapper mapper)
         {
             _dishTypeRepository = dishTypeRepository;
             _context = context;
+            _mapper = mapper;
         }
-        public async Task<DishTypeResponseModel> CreateDishType(DishTypeRequestModel requestModel)
+        public async Task<DishTypeResponseModel> CreateDishType(DishTypeRequestModel dishTypeRequest)
         {
+            var entity = _mapper.Map<DishType>(dishTypeRequest);
+            var result = await _dishTypeRepository.Create(entity, true);
+            return _mapper.Map<DishTypeResponseModel>(result);
 
-            var request = new DishType()
-            {
-                DishTypeId = requestModel.DishTypeId,
-                Name = requestModel.Name,
-                Description = requestModel.Description,
-            };
-
-            await _context.AddAsync(request);
-            await _context.SaveChangesAsync();
-
-            var response = new DishTypeResponseModel()
-            {
-                DishTypeId = request.DishTypeId,
-                Name = request.Name,
-                Description = request.Description,
-            };
-
-            return response;
         }
 
         public async Task<PagedList<DishType>> GetAllDishType(PagingParams pagingParams)

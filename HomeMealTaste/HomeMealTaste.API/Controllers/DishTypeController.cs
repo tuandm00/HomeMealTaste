@@ -23,10 +23,10 @@ namespace HomeMealTaste.Controllers
         }
 
         [HttpPost]
-        public async Task<DishTypeResponseModel> CreateDishType(DishTypeRequestModel dishTypeRequest)
+        public async Task<IActionResult> CreateDishType(DishTypeRequestModel dishTypeRequest)
         {
             var result = await _dishTypeServices.CreateDishType(dishTypeRequest);
-            return result;
+            return Ok(result);
         }
 
         [HttpGet("get-all-dish-type")]

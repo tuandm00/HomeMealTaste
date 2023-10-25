@@ -8,7 +8,6 @@ namespace HomeMealTaste.Data.RequestModel
 {
     public class DishTypeRequestModel
     {
-        public int DishTypeId { get; set; }
         public string? Name { get; set; }
         public string? Description { get; set; }
     }

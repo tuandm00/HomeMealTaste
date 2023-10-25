@@ -17,7 +17,6 @@ namespace HomeMealTaste.Data.Implement
         {
            var result = _context.DishTypes.Select(d => new DishTypeRequestModel
            {
-               DishTypeId = d.DishTypeId,
                Name = d.Name,
                Description = d.Description,
            }).ToList();
