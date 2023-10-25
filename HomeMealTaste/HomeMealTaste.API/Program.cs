@@ -23,11 +23,13 @@ builder.Services.AddScoped<IDishRepository, DishRepository>();
 builder.Services.AddScoped<IDishTypeRepository, DishTypeRepository>();
 builder.Services.AddScoped<ISessionRepository, SessionRepository>();
 builder.Services.AddScoped<IMealSessionRepository, MealSessionRepository>();
+builder.Services.AddScoped<IDistrictRepository, DistrictRepository>();
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IDishService, DishService>();
 builder.Services.AddScoped<IDishTypeService, DishTypeService>();
 builder.Services.AddScoped<ISessionService, SessionService>();
 builder.Services.AddScoped<IMealSessionService, MealSessionService>();
+builder.Services.AddScoped<IDistrictService, DistrictService>();
 builder.Services.AddDbContext<HomeMealTasteContext>(option => option.UseSqlServer
 (builder.Configuration.GetConnectionString("HomeMealTaste")));
 

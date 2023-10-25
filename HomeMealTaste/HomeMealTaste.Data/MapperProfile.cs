@@ -20,6 +20,8 @@ namespace HomeMealTaste.Data.RequestModel
 
             CreateMap<DishTypeRequestModel, DishType>().ReverseMap();
 
+            CreateMap<DistrictRequestModel, District>().ReverseMap();
+
             CreateMap<UserResponseForgetPasswordModel, User>().ReverseMap();
             CreateMap<UserResponseModel, User>().ReverseMap();
             CreateMap<UserResponseUpdatePasswordAccountModel, User>().ReverseMap();
@@ -30,6 +32,9 @@ namespace HomeMealTaste.Data.RequestModel
             CreateMap<MealSessionResponseModel, MealSession>().ReverseMap();
 
             CreateMap<DishTypeResponseModel, DishType>().ReverseMap();
+
+            CreateMap<DistrictResponseModel, District>().ReverseMap();
+
 
         }
     }

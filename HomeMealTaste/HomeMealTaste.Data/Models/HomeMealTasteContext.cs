@@ -18,9 +18,9 @@ namespace HomeMealTaste.Data.Models
 
         public virtual DbSet<Area> Areas { get; set; } = null!;
         public virtual DbSet<Customer> Customers { get; set; } = null!;
-        public virtual DbSet<Disctrict> Disctricts { get; set; } = null!;
         public virtual DbSet<Dish> Dishes { get; set; } = null!;
         public virtual DbSet<DishType> DishTypes { get; set; } = null!;
+        public virtual DbSet<District> Districts { get; set; } = null!;
         public virtual DbSet<Group> Groups { get; set; } = null!;
         public virtual DbSet<Kitchen> Kitchens { get; set; } = null!;
         public virtual DbSet<Meal> Meals { get; set; } = null!;
@@ -82,15 +82,6 @@ namespace HomeMealTaste.Data.Models
                     .HasConstraintName("FK_Customer_User");
             });
 
-            modelBuilder.Entity<Disctrict>(entity =>
-            {
-                entity.HasKey(e => e.DistrictId);
-
-                entity.ToTable("Disctrict");
-
-                entity.Property(e => e.DistrictName).HasMaxLength(50);
-            });
-
             modelBuilder.Entity<Dish>(entity =>
             {
                 entity.ToTable("Dish");
@@ -122,6 +113,13 @@ namespace HomeMealTaste.Data.Models
                 entity.Property(e => e.Description).HasMaxLength(50);
 
                 entity.Property(e => e.Name).HasMaxLength(50);
+            });
+
+            modelBuilder.Entity<District>(entity =>
+            {
+                entity.ToTable("District");
+
+                entity.Property(e => e.DistrictName).HasMaxLength(50);
             });
 
             modelBuilder.Entity<Group>(entity =>
