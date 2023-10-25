@@ -30,7 +30,6 @@ namespace HomeMealTaste.Data.RequestModel
             CreateMap<MealSessionResponseModel, MealSession>().ReverseMap();
 
             CreateMap<DishTypeResponseModel, DishType>().ReverseMap();
-
         }
     }
 }

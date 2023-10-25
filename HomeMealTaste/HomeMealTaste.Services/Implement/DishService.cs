@@ -22,7 +22,7 @@ namespace HomeMealTaste.Services.Implement
             _mapper = mapper;
         }
 
-        public async Task<DishResponseModel> CreateDish(DishRequestModel dishRequest)
+        public async Task<DishResponseModel> CreateDishAsync(DishRequestModel dishRequest)
         {
             var request = new Dish()
             {
@@ -51,16 +51,22 @@ namespace HomeMealTaste.Services.Implement
             
         }
 
-        public async Task<Dish> DeleteDishId(int id)
+        public async Task<DishResponseModel> GetDetailAsync(int id)
         {
-            if(id >= 0)
-            {
-                await _dishRepository.Delete(id, false);
-            }
-            return null;
+            var dish = await _dishRepository.GetFirstOrDefault(x => x.DishId == id) ?? throw new Exception($"No dish found with id {id}");
+
+            return _mapper.Map<DishResponseModel>(dish);
         }
 
-        public async Task<PagedList<Dish>> GetAllDish(PagingParams pagingParams)
+        public async Task DeleteAsync(int id)
+        {
+            _ = await _dishRepository.GetFirstOrDefault(x => x.DishId == id) ??
+                throw new Exception($"No dish found with id {id}");
+            
+            await _dishRepository.Delete(id);
+        }
+
+        public async Task<PagedList<Dish>> GetAllDishAsync(PagingParams pagingParams)
         {
             var result = await _dishRepository.GetWithPaging(pagingParams);
             

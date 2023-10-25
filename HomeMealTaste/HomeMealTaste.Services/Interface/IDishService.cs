@@ -13,8 +13,9 @@ namespace HomeMealTaste.Services.Interface
 {
     public interface IDishService
     {
-        Task<DishResponseModel> CreateDish(DishRequestModel dish);
-        Task<PagedList<Dish>> GetAllDish(PagingParams pagingParams);
-        Task<Dish> DeleteDishId(int id);
+        Task<DishResponseModel> CreateDishAsync(DishRequestModel dish);
+        Task<DishResponseModel> GetDetailAsync(int id);
+        Task<PagedList<Dish>> GetAllDishAsync(PagingParams pagingParams);
+        Task DeleteAsync(int id);
     }
 }
