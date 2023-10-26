@@ -10,6 +10,7 @@ namespace HomeMealTaste.Data.Models
             Areas = new HashSet<Area>();
             Groups = new HashSet<Group>();
             MealSessions = new HashSet<MealSession>();
+            Orders = new HashSet<Order>();
         }
 
         public int SessionId { get; set; }
@@ -26,5 +27,6 @@ namespace HomeMealTaste.Data.Models
         public virtual ICollection<Area> Areas { get; set; }
         public virtual ICollection<Group> Groups { get; set; }
         public virtual ICollection<MealSession> MealSessions { get; set; }
+        public virtual ICollection<Order> Orders { get; set; }
     }
 }

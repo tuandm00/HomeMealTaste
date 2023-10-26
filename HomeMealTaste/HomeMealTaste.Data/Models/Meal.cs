@@ -9,6 +9,7 @@ namespace HomeMealTaste.Data.Models
         {
             MealDishes = new HashSet<MealDish>();
             MealSessions = new HashSet<MealSession>();
+            Orders = new HashSet<Order>();
         }
 
         public int MealId { get; set; }
@@ -18,5 +19,6 @@ namespace HomeMealTaste.Data.Models
 
         public virtual ICollection<MealDish> MealDishes { get; set; }
         public virtual ICollection<MealSession> MealSessions { get; set; }
+        public virtual ICollection<Order> Orders { get; set; }
     }
 }

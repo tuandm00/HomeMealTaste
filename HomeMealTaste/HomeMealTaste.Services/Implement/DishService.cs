@@ -31,7 +31,6 @@ namespace HomeMealTaste.Services.Implement
                 Image = dishRequest.Image,
                 DishTypeId = dishRequest.DishTypeId,
                 KitchenId = dishRequest.KitchenId,
-                MealId = dishRequest.MealId,
             };
 
             await _context.AddAsync(request);
@@ -44,7 +43,6 @@ namespace HomeMealTaste.Services.Implement
                 Image = request.Image,
                 DishTypeId = request.DishTypeId,
                 KitchenId = request.KitchenId,
-                MealId = request.MealId,
             };
 
             return response;

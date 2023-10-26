@@ -15,11 +15,13 @@ namespace HomeMealTaste.Data.Models
         public DateTime? Date { get; set; }
         public int? CustomerId { get; set; }
         public string? Status { get; set; }
-        public int? MealSessionId { get; set; }
         public string? Feedback { get; set; }
+        public int? MealId { get; set; }
+        public int? SessionId { get; set; }
 
         public virtual Customer? Customer { get; set; }
-        public virtual MealSession? MealSession { get; set; }
+        public virtual Meal? Meal { get; set; }
+        public virtual Session? Session { get; set; }
         public virtual ICollection<Payment> Payments { get; set; }
         public virtual ICollection<Transaction> Transactions { get; set; }
     }
