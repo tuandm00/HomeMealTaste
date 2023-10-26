@@ -221,8 +221,6 @@ namespace HomeMealTaste.Data.Models
 
                 entity.Property(e => e.Feedback).HasMaxLength(50);
 
-                entity.Property(e => e.MealSessionId).HasColumnName("Meal_SessionId");
-
                 entity.Property(e => e.Status).HasMaxLength(50);
 
                 entity.HasOne(d => d.Customer)
@@ -230,10 +228,15 @@ namespace HomeMealTaste.Data.Models
                     .HasForeignKey(d => d.CustomerId)
                     .HasConstraintName("FK_Order_Customer");
 
-                entity.HasOne(d => d.MealSession)
+                entity.HasOne(d => d.Meal)
                     .WithMany(p => p.Orders)
-                    .HasForeignKey(d => d.MealSessionId)
-                    .HasConstraintName("FK_Order_Meal_Session");
+                    .HasForeignKey(d => d.MealId)
+                    .HasConstraintName("FK_Order_Meal");
+
+                entity.HasOne(d => d.Session)
+                    .WithMany(p => p.Orders)
+                    .HasForeignKey(d => d.SessionId)
+                    .HasConstraintName("FK_Order_Session");
             });
 
             modelBuilder.Entity<Payment>(entity =>

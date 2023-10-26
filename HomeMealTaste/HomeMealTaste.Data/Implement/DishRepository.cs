@@ -27,7 +27,6 @@ namespace HomeMealTaste.Data.Implement
                 Image = d.Image,
                 DishTypeId = d.DishTypeId,
                 KitchenId = d.KitchenId,
-                MealId = d.MealId,
             }).ToList();
 
             return result;

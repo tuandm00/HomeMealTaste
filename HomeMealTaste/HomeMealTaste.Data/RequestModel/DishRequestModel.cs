@@ -13,6 +13,5 @@ namespace HomeMealTaste.Data.RequestModel
         public string? Image { get; set; }
         public int? DishTypeId { get; set; }
         public int? KitchenId { get; set; }
-        public int? MealId { get; set; }
     }
 }
