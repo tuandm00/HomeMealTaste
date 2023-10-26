@@ -99,11 +99,6 @@ namespace HomeMealTaste.Data.Models
                     .WithMany(p => p.Dishes)
                     .HasForeignKey(d => d.KitchenId)
                     .HasConstraintName("FK_Dish_Kitchen");
-
-                entity.HasOne(d => d.Meal)
-                    .WithMany(p => p.Dishes)
-                    .HasForeignKey(d => d.MealId)
-                    .HasConstraintName("FK_Dish_FoodPackage");
             });
 
             modelBuilder.Entity<DishType>(entity =>
