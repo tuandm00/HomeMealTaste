@@ -7,7 +7,6 @@ namespace HomeMealTaste.Data.Models
     {
         public Meal()
         {
-            Dishes = new HashSet<Dish>();
             MealDishes = new HashSet<MealDish>();
             MealSessions = new HashSet<MealSession>();
         }
@@ -17,7 +16,6 @@ namespace HomeMealTaste.Data.Models
         public string? Image { get; set; }
         public decimal? DefaultPrice { get; set; }
 
-        public virtual ICollection<Dish> Dishes { get; set; }
         public virtual ICollection<MealDish> MealDishes { get; set; }
         public virtual ICollection<MealSession> MealSessions { get; set; }
     }
