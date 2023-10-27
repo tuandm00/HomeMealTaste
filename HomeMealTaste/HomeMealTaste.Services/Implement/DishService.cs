@@ -24,29 +24,10 @@ namespace HomeMealTaste.Services.Implement
 
         public async Task<DishResponseModel> CreateDishAsync(DishRequestModel dishRequest)
         {
-            var request = new Dish()
-            {
-                DishId = dishRequest.DishId,
-                Name = dishRequest.Name,
-                Image = dishRequest.Image,
-                DishTypeId = dishRequest.DishTypeId,
-                KitchenId = dishRequest.KitchenId,
-            };
+            var entity = _mapper.Map<Dish>(dishRequest);
+            var result = await _dishRepository.Create(entity, true);
 
-            await _context.AddAsync(request);
-            await _context.SaveChangesAsync();
-
-            var response = new DishResponseModel()
-            {
-                DishId = request.DishId,
-                Name = request.Name,
-                Image = request.Image,
-                DishTypeId = request.DishTypeId,
-                KitchenId = request.KitchenId,
-            };
-
-            return response;
-            
+            return _mapper.Map<DishResponseModel>(result);
         }
 
         public async Task<DishResponseModel> GetDetailAsync(int id)
