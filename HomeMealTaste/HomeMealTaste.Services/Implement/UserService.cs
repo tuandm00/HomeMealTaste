@@ -14,6 +14,7 @@ using AutoMapper;
 using HomeMealTaste.Data.Helper;
 using HomeMealTaste.Data.ResponseModel;
 using HomeMealTaste.Services.Helper;
+using System.Security.Cryptography;
 
 namespace HomeMealTaste.Services.Implement
 {
@@ -156,7 +157,13 @@ namespace HomeMealTaste.Services.Implement
         }
         private string GenerateRandomResetPassword()
         {
-            return Guid.NewGuid().ToString();
+            Guid newGuid = Guid.NewGuid();
+            using (SHA256 sha256 = SHA256.Create())
+            {
+                byte[] hashBytes = sha256.ComputeHash(newGuid.ToByteArray());
+                string shortGuid = BitConverter.ToString(hashBytes).Replace("-", "").Substring(0, 8);
+                return shortGuid;
+            }
         }
         public async  Task<UserResponseForgetPasswordModel> ForgetPassword(string username)
         {
