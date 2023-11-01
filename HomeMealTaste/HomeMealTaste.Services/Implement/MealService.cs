@@ -7,8 +7,12 @@ using HomeMealTaste.Services.Interface;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Text;
 using System.Threading.Tasks;
+using HomeMealTaste.Data.Helper;
+using HomeMealTaste.Services.Helper;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace HomeMealTaste.Services.Implement
 {
@@ -38,6 +42,21 @@ namespace HomeMealTaste.Services.Implement
                 await _context.SaveChangesAsync();
             }
             return _mapper.Map<MealResponseModel>(result);
+        }
+
+        public async Task<PagedList<GetAllMealResponseModel>> GetAllMeal(PagingParams pagingParams)
+        {
+            var selectExpression = GetAllMealResponseModel.FromEntity();
+            var includes = new Expression<Func<Meal, object>>[]
+            {
+                x => x.MealDishes,
+                x => x.MealSessions,
+            };
+            Expression<Func<Meal, bool>> conditionAddition = e => true;
+
+            var result = await _mealRepository.GetWithPaging(pagingParams, conditionAddition, selectExpression, includes);
+
+            return result;
         }
     }
 }
