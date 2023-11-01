@@ -57,22 +57,6 @@ public class GetAllMealInCurrentSessionResponseModel
 
         return selectExpression;
     }
-    
-    // remove
-    public static Expression<Func<Dish, GetAllMealInCurrentSessionResponseModel>> FromDish()
-    {
-        Expression<Func<Dish, GetAllMealInCurrentSessionResponseModel>> selectExpression = entity => new GetAllMealInCurrentSessionResponseModel()
-        {
-            Chef = new ChefInfo()
-            {
-                Address = entity.Kitchen.Address,
-                Phone = entity.Kitchen.Phone,
-                Name = entity.Kitchen.Name
-            },
-        };
-
-        return selectExpression;
-    }
 
     public class MealModel
     {
