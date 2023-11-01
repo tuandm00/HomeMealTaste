@@ -1,7 +1,10 @@
 ﻿
 
+using HomeMealTaste.Data.Helper;
 using HomeMealTaste.Data.Models;
 using HomeMealTaste.Data.RequestModel;
+using HomeMealTaste.Data.ResponseModel;
+using HomeMealTaste.Services.Helper;
 using HomeMealTaste.Services.ResponseModel;
 
 namespace HomeMealTaste.Services.Interface
@@ -10,5 +13,6 @@ namespace HomeMealTaste.Services.Interface
     {
         Task<SessionResponseModel> CreateSession(SessionRequestModel sessionRequest);
         Task<SessionResponseModel> UpdateEndTime(int sessionId, DateTime dateTime);
+        Task<PagedList<GetAllMealInCurrentSessionResponseModel>> GetAllMealInCurrentSession(GetAllMealRequest pagingParams);
     }
 }

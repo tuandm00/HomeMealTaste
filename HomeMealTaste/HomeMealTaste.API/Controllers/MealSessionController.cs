@@ -28,7 +28,7 @@ namespace HomeMealTaste.Controllers
         }
         
         [HttpGet("get-all-meal-sessions")]
-        public async Task<ApiResponse<PagedList<MealSession>>> GetAllUser([FromQuery] PagingParams pagingParams)
+        public async Task<IActionResult> GetAllUser([FromQuery] GetAllMealRequest pagingParams)
         {
             var result = await _mealSessionService.GetAllMealSession(pagingParams);
             var metadata = new
@@ -40,7 +40,8 @@ namespace HomeMealTaste.Controllers
                 result.HasNext,
                 result.HasPrevious
             };
-            return ApiResponse<List<User>>.Success(result, metadata);
+            var response = ApiResponse<object>.Success(result, metadata);
+            return Ok(response);
         }
     }
 }
