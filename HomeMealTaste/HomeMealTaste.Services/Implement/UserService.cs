@@ -111,7 +111,6 @@ namespace HomeMealTaste.Services.Implement
                     //Street = result.Street,
                     //Ward = result.Ward,
                     //District = result.District,
-                    AccountStatus = true
                 };
                 await _context.AddAsync(chef);
                 await _context.SaveChangesAsync();
