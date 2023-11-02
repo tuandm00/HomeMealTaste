@@ -80,5 +80,11 @@ namespace HomeMealTaste.Controllers
         {
             await _userService.UpdatePasswordAccount(username,newPassword);
         }
+
+        [HttpPatch("update-user-status")]
+        public async Task UpdateStatusUser(int userid)
+        {
+            await _userService.UpdateStatusUser(userid);
+        }
     }
 }
