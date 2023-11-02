@@ -199,5 +199,17 @@ namespace HomeMealTaste.Services.Implement
                     await _context.SaveChangesAsync();
                 }
         }
+
+        public async Task UpdateStatusUser(int userid)
+        {
+            var result = await _context.Users.FindAsync(userid);
+            if (result != null && result.Status == true)
+            {
+                result.Status = false;
+            }
+            else result.Status = true;
+
+            await _context.SaveChangesAsync();
+        }
     }
 }
