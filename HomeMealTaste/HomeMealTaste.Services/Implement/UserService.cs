@@ -81,9 +81,9 @@ namespace HomeMealTaste.Services.Implement
                     Name = result.Name,
                     Phone = result.Phone,
                     Address = result.Address,
-                    Street = result.Street,
-                    Ward = result.Ward,
-                    District = result.District,
+                    //Street = result.Street,
+                    //Ward = result.Ward,
+                    //District = result.District,
                     AccountStatus = true
                 };
                 await _context.AddAsync(customer);
@@ -111,7 +111,6 @@ namespace HomeMealTaste.Services.Implement
                     Street = result.Street,
                     Ward = result.Ward,
                     District = result.District,
-                    
                 };
                 await _context.AddAsync(chef);
                 await _context.SaveChangesAsync();

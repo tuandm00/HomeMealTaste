@@ -16,4 +16,8 @@
     <ProjectReference Include="..\HomeMealTaste.Data\HomeMealTaste.Data.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Reference Include="Microsoft.AspNetCore.Mvc.Core" />
+  </ItemGroup>
+
 </Project>

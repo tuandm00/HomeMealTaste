@@ -47,15 +47,32 @@ namespace HomeMealTaste.Data.Implement
             return await PagedList<T>.ToPagedList(dataSource, pagingParams.PageNumber, pagingParams.PageSize);
         }
 
+        public async Task<PagedList<TResponse>> GetWithPaging<TResponse>(PagingParams pagingParams, Expression<Func<T, bool>> conditionExpression, Expression<Func<T, TResponse>> selectExpression, params Expression<Func<T, object>>[] includes)
+        {
+            var queryable = _context.Set<T>().Where(conditionExpression).AsNoTracking();
+            
+            if (includes != null && includes.Any())
+            {
+                queryable = includes.Aggregate(queryable, (current, include) => current.Include(include));
+            }
+            
+            return await PagedList<TResponse>.ToPagedList(queryable.Select(selectExpression), pagingParams.PageNumber, pagingParams.PageSize);
+        }
+
         public async Task<IEnumerable<T>> GetByCondition(Expression<Func<T, bool>> expression, bool completeSingle = false)
         {
             var result =await _context.Set<T>().Where(expression).ToListAsync();
             return result;
         }
 
-        public  Task<T> GetFirstOrDefault(Expression<Func<T, bool>> expression, bool completeSingle = false)
+        public Task<T> GetFirstOrDefault(Expression<Func<T, bool>> expression, Expression<Func<T, object>> include = null, bool completeSingle = false)
         {
-            return  Task.FromResult((_context.Set<T>().FirstOrDefault(expression)));
+            var query = _context.Set<T>().AsQueryable();
+            if (include != null)
+            {
+                query = query.Include(include);
+            }
+            return Task.FromResult(query.FirstOrDefault(expression));
         }
 
         public async Task<T> Update(T entity, bool completeSingle = false)

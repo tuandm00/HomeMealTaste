@@ -9,8 +9,12 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Globalization;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Text;
 using System.Threading.Tasks;
+using HomeMealTaste.Data.Helper;
+using HomeMealTaste.Data.ResponseModel;
+using HomeMealTaste.Services.Helper;
 
 namespace HomeMealTaste.Services.Implement
 {
@@ -90,6 +94,21 @@ namespace HomeMealTaste.Services.Implement
 
             return _mapper.Map<SessionResponseModel>(response);
 
+        }
+
+        public async Task<PagedList<GetAllMealInCurrentSessionResponseModel>> GetAllMealInCurrentSession(GetAllMealRequest pagingParams)
+        {
+            var selectExpression = GetAllMealInCurrentSessionResponseModel.FromSession();
+            var includes = new Expression<Func<Session, object>>[]
+            {
+                x => x.MealSessions,
+                x => x.User.Kitchens
+            };
+            Expression<Func<Session, bool>> conditionAddition = e => e.StartTime < (pagingParams.SessionStartTime ?? DateTime.Now);
+            
+            var result = await _sessionRepository.GetWithPaging(pagingParams, conditionAddition, selectExpression, includes);
+            
+            return result;
         }
     }
 }
