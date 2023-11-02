@@ -19,7 +19,6 @@ namespace HomeMealTaste.Data.Models
         public string? Street { get; set; }
         public string? Ward { get; set; }
         public string? District { get; set; }
-        public bool? AccountStatus { get; set; }
 
         public virtual User? User { get; set; }
         public virtual ICollection<Dish> Dishes { get; set; }
