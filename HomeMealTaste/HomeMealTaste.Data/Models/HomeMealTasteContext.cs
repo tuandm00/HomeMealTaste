@@ -27,6 +27,7 @@ namespace HomeMealTaste.Data.Models
         public virtual DbSet<MealDish> MealDishes { get; set; } = null!;
         public virtual DbSet<MealSession> MealSessions { get; set; } = null!;
         public virtual DbSet<Order> Orders { get; set; } = null!;
+        public virtual DbSet<OrderDetail> OrderDetails { get; set; } = null!;
         public virtual DbSet<Payment> Payments { get; set; } = null!;
         public virtual DbSet<Session> Sessions { get; set; } = null!;
         public virtual DbSet<Transaction> Transactions { get; set; } = null!;
@@ -237,6 +238,15 @@ namespace HomeMealTaste.Data.Models
                     .WithMany(p => p.Orders)
                     .HasForeignKey(d => d.SessionId)
                     .HasConstraintName("FK_Order_Session");
+            });
+
+            modelBuilder.Entity<OrderDetail>(entity =>
+            {
+                entity.ToTable("OrderDetail");
+
+                entity.Property(e => e.TotalPrice).HasColumnType("money");
+
+                entity.Property(e => e.UnitPrice).HasColumnType("money");
             });
 
             modelBuilder.Entity<Payment>(entity =>
