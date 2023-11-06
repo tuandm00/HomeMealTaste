@@ -5,7 +5,7 @@ namespace HomeMealTaste.Controllers
 {
     [ApiController]
     [Route("[controller]")]
-    [Authorize]
+    
     public class WeatherForecastController : ControllerBase
     {
         private static readonly string[] Summaries = new[]
