@@ -8,7 +8,9 @@ namespace HomeMealTaste.Data.Models
         public Kitchen()
         {
             Dishes = new HashSet<Dish>();
+            Feedbacks = new HashSet<Feedback>();
             Groups = new HashSet<Group>();
+            Meals = new HashSet<Meal>();
         }
 
         public int KitchenId { get; set; }
@@ -16,12 +18,12 @@ namespace HomeMealTaste.Data.Models
         public string? Name { get; set; }
         public string? Phone { get; set; }
         public string? Address { get; set; }
-        public string? Street { get; set; }
-        public string? Ward { get; set; }
         public string? District { get; set; }
 
         public virtual User? User { get; set; }
         public virtual ICollection<Dish> Dishes { get; set; }
+        public virtual ICollection<Feedback> Feedbacks { get; set; }
         public virtual ICollection<Group> Groups { get; set; }
+        public virtual ICollection<Meal> Meals { get; set; }
     }
 }
