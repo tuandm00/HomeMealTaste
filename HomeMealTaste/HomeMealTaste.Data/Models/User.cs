@@ -19,12 +19,11 @@ namespace HomeMealTaste.Data.Models
         public string? Email { get; set; }
         public string? Phone { get; set; }
         public string? Address { get; set; }
-        public string? Street { get; set; }
-        public string? Ward { get; set; }
         public string? District { get; set; }
-        public int? Role { get; set; }
+        public int? RoleId { get; set; }
         public bool? Status { get; set; }
 
+        public virtual Role? Role { get; set; }
         public virtual ICollection<Customer> Customers { get; set; }
         public virtual ICollection<Kitchen> Kitchens { get; set; }
         public virtual ICollection<Session> Sessions { get; set; }
