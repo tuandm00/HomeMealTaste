@@ -5,11 +5,6 @@ namespace HomeMealTaste.Data.Models
 {
     public partial class Transaction
     {
-        public Transaction()
-        {
-            Payments = new HashSet<Payment>();
-        }
-
         public int TransactionId { get; set; }
         public int? OrderId { get; set; }
         public int? WalletId { get; set; }
@@ -17,9 +12,5 @@ namespace HomeMealTaste.Data.Models
         public decimal? Amount { get; set; }
         public string? Description { get; set; }
         public string? Status { get; set; }
-
-        public virtual Order? Order { get; set; }
-        public virtual Wallet? Wallet { get; set; }
-        public virtual ICollection<Payment> Payments { get; set; }
     }
 }

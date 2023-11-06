@@ -9,7 +9,5 @@ namespace HomeMealTaste.Data.Models
         public int? CustomerId { get; set; }
         public string? AccountRank { get; set; }
         public int? OrderId { get; set; }
-
-        public virtual Customer? Customer { get; set; }
     }
 }
