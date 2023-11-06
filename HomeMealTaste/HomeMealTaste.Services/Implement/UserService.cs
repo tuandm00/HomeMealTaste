@@ -57,7 +57,7 @@ namespace HomeMealTaste.Services.Implement
                 {
                     Name = result.Name,
                     UserId = result.UserId,
-                    Role = result.Role,
+                    RoleId = result.RoleId,
                     Token = GenerateToken(result),
                 };
             }
@@ -71,7 +71,7 @@ namespace HomeMealTaste.Services.Implement
             var existedUser = await _userRepository.GetByCondition(x => x.Username == entity.Username);
             if (existedUser.Count() != 0) throw new Exception("existed Username");
             entity.Password = BCrypt.Net.BCrypt.HashPassword(entity.Password);
-            entity.Role = 2;
+            entity.RoleId = 2;
             var result = await _userRepository.Create(entity, true);
             if(result != null)
             {
@@ -98,7 +98,7 @@ namespace HomeMealTaste.Services.Implement
             var existedUser = await _userRepository.GetByCondition(x => x.Username == entity.Username);
             if (existedUser.Count() != 0) throw new Exception("existed Username");
             entity.Password = BCrypt.Net.BCrypt.HashPassword(entity.Password);
-            entity.Role = 3;
+            entity.RoleId = 3;
             var result = await _userRepository.Create(entity, true);
             if (result != null)
             {
@@ -108,8 +108,6 @@ namespace HomeMealTaste.Services.Implement
                     Name = result.Name,
                     Phone = result.Phone,
                     Address = result.Address,
-                    Street = result.Street,
-                    Ward = result.Ward,
                     District = result.District,
                 };
                 await _context.AddAsync(chef);
