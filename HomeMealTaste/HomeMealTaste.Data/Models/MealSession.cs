@@ -13,5 +13,8 @@ namespace HomeMealTaste.Data.Models
         public int? RemainQuantity { get; set; }
         public bool? Status { get; set; }
         public DateTime? CreateDate { get; set; }
+
+        public virtual Meal? Meal { get; set; }
+        public virtual Session? Session { get; set; }
     }
 }
