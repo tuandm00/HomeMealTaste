@@ -213,5 +213,11 @@ namespace HomeMealTaste.Services.Implement
 
             await _context.SaveChangesAsync();
         }
+
+        public async Task<User> GetUserById(int id)
+        {
+            var result = await _context.Users.Where(x => x.UserId == id).FirstOrDefaultAsync();
+            return result;
+        }
     }
 }

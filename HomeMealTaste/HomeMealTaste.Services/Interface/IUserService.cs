@@ -17,5 +17,6 @@ namespace HomeMealTaste.Services.Interface
         Task<UserResponseForgetPasswordModel> ForgetPassword(string username);
         Task UpdatePasswordAccount(string username, string newPassword);
         Task UpdateStatusUser(int userid);
+        Task<User> GetUserById(int id);
     }
 }

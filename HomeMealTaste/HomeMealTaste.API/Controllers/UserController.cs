@@ -86,5 +86,12 @@ namespace HomeMealTaste.Controllers
         {
             await _userService.UpdateStatusUser(userid);
         }
+
+        [HttpGet("get-user-by-id")]
+        public async Task<User> GetUserById(int id)
+        {
+            var result = await _userService.GetUserById(id);
+            return result;
+        }
     }
 }
