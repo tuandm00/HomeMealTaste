@@ -386,6 +386,7 @@ namespace HomeMealTaste.Data.Models
 
             modelBuilder.Entity<Sysdiagram>(entity =>
             {
+                entity.HasNoKey();
 
                 entity.ToTable("sysdiagrams");
 
