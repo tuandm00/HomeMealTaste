@@ -172,11 +172,15 @@ namespace HomeMealTaste.Data.Models
                 entity.Property(e => e.Name).HasMaxLength(50);
 
                 entity.Property(e => e.Phone).HasMaxLength(50);
+
+                entity.HasOne(d => d.User)
+                    .WithMany(p => p.Kitchens)
+                    .HasForeignKey(d => d.UserId)
+                    .HasConstraintName("FK_Kitchen_User");
             });
 
             modelBuilder.Entity<Meal>(entity =>
             {
-                entity.HasNoKey();
 
                 entity.ToTable("Meal");
 
@@ -189,7 +193,6 @@ namespace HomeMealTaste.Data.Models
 
             modelBuilder.Entity<MealDish>(entity =>
             {
-                entity.HasNoKey();
 
                 entity.ToTable("Meal_Dish");
 
@@ -198,7 +201,6 @@ namespace HomeMealTaste.Data.Models
 
             modelBuilder.Entity<MealSession>(entity =>
             {
-                entity.HasNoKey();
 
                 entity.ToTable("Meal_Session");
 
@@ -211,7 +213,6 @@ namespace HomeMealTaste.Data.Models
 
             modelBuilder.Entity<Membership>(entity =>
             {
-                entity.HasNoKey();
 
                 entity.ToTable("Membership");
 
@@ -220,7 +221,6 @@ namespace HomeMealTaste.Data.Models
 
             modelBuilder.Entity<Order>(entity =>
             {
-                entity.HasNoKey();
 
                 entity.ToTable("Order");
 
@@ -231,7 +231,6 @@ namespace HomeMealTaste.Data.Models
 
             modelBuilder.Entity<Payment>(entity =>
             {
-                entity.HasNoKey();
 
                 entity.ToTable("Payment");
 
@@ -244,7 +243,6 @@ namespace HomeMealTaste.Data.Models
 
             modelBuilder.Entity<Role>(entity =>
             {
-                entity.HasNoKey();
 
                 entity.ToTable("Role");
 
@@ -253,7 +251,6 @@ namespace HomeMealTaste.Data.Models
 
             modelBuilder.Entity<Session>(entity =>
             {
-                entity.HasNoKey();
 
                 entity.ToTable("Session");
 
@@ -277,7 +274,6 @@ namespace HomeMealTaste.Data.Models
 
             modelBuilder.Entity<Sysdiagram>(entity =>
             {
-                entity.HasNoKey();
 
                 entity.ToTable("sysdiagrams");
 
@@ -296,7 +292,6 @@ namespace HomeMealTaste.Data.Models
 
             modelBuilder.Entity<Transaction>(entity =>
             {
-                entity.HasNoKey();
 
                 entity.ToTable("Transaction");
 
@@ -311,7 +306,6 @@ namespace HomeMealTaste.Data.Models
 
             modelBuilder.Entity<User>(entity =>
             {
-                entity.HasNoKey();
 
                 entity.ToTable("User");
 
@@ -332,7 +326,6 @@ namespace HomeMealTaste.Data.Models
 
             modelBuilder.Entity<Wallet>(entity =>
             {
-                entity.HasNoKey();
 
                 entity.ToTable("Wallet");
             });
