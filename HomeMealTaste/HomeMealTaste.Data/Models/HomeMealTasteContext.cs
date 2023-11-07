@@ -189,6 +189,11 @@ namespace HomeMealTaste.Data.Models
                 entity.Property(e => e.Image).HasMaxLength(50);
 
                 entity.Property(e => e.Name).HasMaxLength(50);
+
+                entity.HasOne(d => d.Kitchen)
+                    .WithMany(p => p.Meals)
+                    .HasForeignKey(d => d.KitchenId)
+                    .HasConstraintName("FK_Meal_Kitchen");
             });
 
             modelBuilder.Entity<MealDish>(entity =>
