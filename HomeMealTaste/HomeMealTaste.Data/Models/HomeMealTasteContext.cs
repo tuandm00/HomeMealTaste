@@ -73,6 +73,11 @@ namespace HomeMealTaste.Data.Models
                 entity.Property(e => e.Name).HasMaxLength(50);
 
                 entity.Property(e => e.Phone).HasMaxLength(50);
+
+                entity.HasOne(d => d.User)
+                    .WithMany(p => p.Customers)
+                    .HasForeignKey(d => d.UserId)
+                    .HasConstraintName("FK_Customer_User");
             });
 
             modelBuilder.Entity<Dish>(entity =>
