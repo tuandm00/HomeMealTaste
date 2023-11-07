@@ -53,6 +53,11 @@ namespace HomeMealTaste.Data.Models
                 entity.Property(e => e.Address).HasMaxLength(50);
 
                 entity.Property(e => e.District).HasMaxLength(50);
+
+                entity.HasOne(d => d.Session)
+                    .WithMany(p => p.Areas)
+                    .HasForeignKey(d => d.SessionId)
+                    .HasConstraintName("FK_Area_Session");
             });
 
             modelBuilder.Entity<Customer>(entity =>
