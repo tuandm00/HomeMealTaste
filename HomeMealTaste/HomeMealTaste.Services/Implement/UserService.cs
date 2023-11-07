@@ -15,6 +15,7 @@ using HomeMealTaste.Data.Helper;
 using HomeMealTaste.Data.ResponseModel;
 using HomeMealTaste.Services.Helper;
 using System.Security.Cryptography;
+using System.Security.Claims;
 
 namespace HomeMealTaste.Services.Implement
 {
@@ -39,9 +40,20 @@ namespace HomeMealTaste.Services.Implement
             var securitykey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_config["Jwt:Key"]));
             var credentials = new SigningCredentials(securitykey, SecurityAlgorithms.HmacSha256);
 
-            var token = new JwtSecurityToken(_config["Jwt:Issuer"], _config["Jwt:Audience"], null, expires: DateTime.Now.AddMinutes(1),
-                signingCredentials: credentials);
-
+            var claims = new List<Claim>
+            {
+                new Claim(ClaimTypes.NameIdentifier, users.UserId.ToString()),
+                new Claim(ClaimTypes.Name, users.Email),
+                new Claim("RoleId", users.RoleId.ToString()),
+                new Claim("Username", users.Username.ToString()),
+            };
+            var token = new JwtSecurityToken(
+                _config["Jwt:Issuer"],
+                _config["Jwt:Audience"],
+                claims,
+                expires: DateTime.Now.AddMinutes(1),
+                signingCredentials: credentials
+            );
             return new JwtSecurityTokenHandler().WriteToken(token);
         }
 
@@ -51,7 +63,7 @@ namespace HomeMealTaste.Services.Implement
             var chekhash = BCrypt.Net.BCrypt.Verify(userRequest.Password, existedUser?.Password);
             if (!chekhash) throw new Exception("Username or Password not match!");
             var result = await _userRepository.GetUsernamePassword(userRequest);
-            if(result != null)
+            if (result != null)
             {
                 return new UserResponseModel
                 {
@@ -78,7 +90,7 @@ namespace HomeMealTaste.Services.Implement
             entity.Password = BCrypt.Net.BCrypt.HashPassword(entity.Password);
             entity.RoleId = 2;
             var result = await _userRepository.Create(entity, true);
-            if(result != null)
+            if (result != null)
             {
                 var customer = new Customer
                 {
@@ -110,7 +122,7 @@ namespace HomeMealTaste.Services.Implement
                 var chef = new Kitchen
                 {
                     UserId = result.UserId,
-                    Name = result.Name, 
+                    Name = result.Name,
                     Phone = result.Phone,
                     Address = result.Address,
                     District = result.District,
@@ -123,18 +135,18 @@ namespace HomeMealTaste.Services.Implement
 
         public async Task<User> DeleteUserById(int id)
         {
-            if(id >= 0)
+            if (id >= 0)
             {
                 await _userRepository.Delete(id, false);
             }
             return null;
-            
+
         }
 
         public async Task<PagedList<User>> GetAllUser(PagingParams pagingParams)
         {
             var result = await _userRepository.GetWithPaging(pagingParams);
-            
+
             return result;
         }
 
@@ -150,7 +162,7 @@ namespace HomeMealTaste.Services.Implement
                 {
                     From = new MailAddress("dominhtuan23102000@gmail.com"),
                     Subject = resetPassword,
-                    Body = "Your new password is: " +resetPassword,
+                    Body = "Your new password is: " + resetPassword,
                     IsBodyHtml = false
                 };
                 mailMessage.To.Add(userEmail);
@@ -167,7 +179,7 @@ namespace HomeMealTaste.Services.Implement
                 return shortGuid;
             }
         }
-        public async  Task<UserResponseForgetPasswordModel> ForgetPassword(string username)
+        public async Task<UserResponseForgetPasswordModel> ForgetPassword(string username)
         {
             var users = await _context.Users.Where(u => u.Username == username).FirstOrDefaultAsync();
             if (users != null)
@@ -196,10 +208,10 @@ namespace HomeMealTaste.Services.Implement
         {
             var result = await _context.Users.Where(u => u.Username == username).FirstOrDefaultAsync();
             if (result != null)
-                {
-                    result.Password = BCrypt.Net.BCrypt.HashPassword(newPassword); ;
-                    await _context.SaveChangesAsync();
-                }
+            {
+                result.Password = BCrypt.Net.BCrypt.HashPassword(newPassword); ;
+                await _context.SaveChangesAsync();
+            }
         }
 
         public async Task UpdateStatusUser(int userid)
