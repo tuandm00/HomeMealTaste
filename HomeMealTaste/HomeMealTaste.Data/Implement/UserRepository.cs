@@ -41,9 +41,12 @@ namespace HomeMealTaste.Data.Implement
                 {
                     Name = result.Name,
                     Username = result.Username,
+                    Email = result.Email,
                     Phone = result.Phone,
                     Address = result.Address,
-                    Role = result.Role
+                    District = result.District,
+                    Status = result.Status,
+                    RoleId = result.RoleId
                 };
             }
             return null;

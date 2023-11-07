@@ -57,6 +57,11 @@ namespace HomeMealTaste.Services.Implement
                 {
                     Name = result.Name,
                     UserId = result.UserId,
+                    Address = result.Address,
+                    District = result.District,
+                    Email = result.Email,
+                    Phone = result.Phone,
+                    Status = result.Status,
                     RoleId = result.RoleId,
                     Token = GenerateToken(result),
                 };
