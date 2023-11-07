@@ -75,6 +75,11 @@ builder.Services.AddSwaggerGen(c =>
 
 builder.Services.AddAutoMapper(typeof(MapperProfile).Assembly);
 
+builder.Services.AddCors(p => p.AddPolicy("MyCors", build =>
+{
+    build.WithOrigins("*").AllowAnyMethod().AllowAnyHeader();
+}));
+
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>
     {
@@ -107,6 +112,8 @@ app.UseHttpsRedirection();
 app.UseRouting();
 
 app.UseAuthentication();
+
+app.UseCors("MyCors");
 
 app.UseAuthorization();
 
