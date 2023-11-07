@@ -145,6 +145,26 @@ namespace HomeMealTaste.Data.Models
                 entity.HasNoKey();
 
                 entity.ToTable("Group");
+
+                entity.HasOne(d => d.Area)
+                    .WithMany(p => p.Groups)
+                    .HasForeignKey(d => d.AreaId)
+                    .HasConstraintName("FK_Group_Area");
+
+                entity.HasOne(d => d.Customer)
+                    .WithMany(p => p.Groups)
+                    .HasForeignKey(d => d.CustomerId)
+                    .HasConstraintName("FK_Group_Customer");
+
+                entity.HasOne(d => d.Kitchen)
+                    .WithMany(p => p.Groups)
+                    .HasForeignKey(d => d.KitchenId)
+                    .HasConstraintName("FK_Group_Kitchen");
+
+                entity.HasOne(d => d.Session)
+                    .WithMany(p => p.Groups)
+                    .HasForeignKey(d => d.SessionId)
+                    .HasConstraintName("FK_Group_Session");
             });
 
             modelBuilder.Entity<Kitchen>(entity =>
