@@ -5,6 +5,13 @@ namespace HomeMealTaste.Data.Models
 {
     public partial class User
     {
+        public User()
+        {
+            Customers = new HashSet<Customer>();
+            Kitchens = new HashSet<Kitchen>();
+            Sessions = new HashSet<Session>();
+        }
+
         public int UserId { get; set; }
         public string? Name { get; set; }
         public string? Username { get; set; }
@@ -15,5 +22,10 @@ namespace HomeMealTaste.Data.Models
         public string? District { get; set; }
         public int? RoleId { get; set; }
         public bool? Status { get; set; }
+
+        public virtual Role? Role { get; set; }
+        public virtual ICollection<Customer> Customers { get; set; }
+        public virtual ICollection<Kitchen> Kitchens { get; set; }
+        public virtual ICollection<Session> Sessions { get; set; }
     }
 }
