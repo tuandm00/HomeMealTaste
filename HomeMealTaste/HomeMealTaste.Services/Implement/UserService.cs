@@ -47,7 +47,7 @@ namespace HomeMealTaste.Services.Implement
 
         public async Task<UserResponseModel> LoginAsync(UserRequestModel userRequest)
         {
-            var existedUser = await _userRepository.GetFirstOrDefault(x => x.Username == userRequest.Username);
+            var existedUser = await _userRepository.GetFirstOrDefault(x => x.Email == userRequest.Email);
             var chekhash = BCrypt.Net.BCrypt.Verify(userRequest.Password, existedUser?.Password);
             if (!chekhash) throw new Exception("Username or Password not match!");
             var result = await _userRepository.GetUsernamePassword(userRequest);
@@ -110,7 +110,7 @@ namespace HomeMealTaste.Services.Implement
                 var chef = new Kitchen
                 {
                     UserId = result.UserId,
-                    Name = result.Name,
+                    Name = result.Name, 
                     Phone = result.Phone,
                     Address = result.Address,
                     District = result.District,
