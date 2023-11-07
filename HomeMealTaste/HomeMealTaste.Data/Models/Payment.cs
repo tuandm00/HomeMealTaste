@@ -13,5 +13,10 @@ namespace HomeMealTaste.Data.Models
         public int? WalletId { get; set; }
         public int? TransactionId { get; set; }
         public int? OrderId { get; set; }
+
+        public virtual Customer? Customer { get; set; }
+        public virtual Order? Order { get; set; }
+        public virtual Transaction? Transaction { get; set; }
+        public virtual Wallet? Wallet { get; set; }
     }
 }
