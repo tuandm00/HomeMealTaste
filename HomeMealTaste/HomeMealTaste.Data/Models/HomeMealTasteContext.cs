@@ -46,7 +46,6 @@ namespace HomeMealTaste.Data.Models
         {
             modelBuilder.Entity<Area>(entity =>
             {
-                entity.HasNoKey();
 
                 entity.ToTable("Area");
 
@@ -62,7 +61,6 @@ namespace HomeMealTaste.Data.Models
 
             modelBuilder.Entity<Customer>(entity =>
             {
-                entity.HasNoKey();
 
                 entity.ToTable("Customer");
 
@@ -82,7 +80,6 @@ namespace HomeMealTaste.Data.Models
 
             modelBuilder.Entity<Dish>(entity =>
             {
-                entity.HasNoKey();
 
                 entity.ToTable("Dish");
 
@@ -103,7 +100,6 @@ namespace HomeMealTaste.Data.Models
 
             modelBuilder.Entity<DishType>(entity =>
             {
-                entity.HasNoKey();
 
                 entity.ToTable("DishType");
 
@@ -114,7 +110,6 @@ namespace HomeMealTaste.Data.Models
 
             modelBuilder.Entity<District>(entity =>
             {
-                entity.HasNoKey();
 
                 entity.ToTable("District");
 
@@ -123,7 +118,6 @@ namespace HomeMealTaste.Data.Models
 
             modelBuilder.Entity<Feedback>(entity =>
             {
-                entity.HasNoKey();
 
                 entity.ToTable("Feedback");
 
@@ -142,7 +136,6 @@ namespace HomeMealTaste.Data.Models
 
             modelBuilder.Entity<Group>(entity =>
             {
-                entity.HasNoKey();
 
                 entity.ToTable("Group");
 
@@ -169,7 +162,6 @@ namespace HomeMealTaste.Data.Models
 
             modelBuilder.Entity<Kitchen>(entity =>
             {
-                entity.HasNoKey();
 
                 entity.ToTable("Kitchen");
 
