@@ -257,6 +257,21 @@ namespace HomeMealTaste.Data.Models
                 entity.Property(e => e.Date).HasColumnType("date");
 
                 entity.Property(e => e.Status).HasMaxLength(50);
+
+                entity.HasOne(d => d.Customer)
+                    .WithMany(p => p.Orders)
+                    .HasForeignKey(d => d.CustomerId)
+                    .HasConstraintName("FK_Order_Customer");
+
+                entity.HasOne(d => d.Meal)
+                    .WithMany(p => p.Orders)
+                    .HasForeignKey(d => d.MealId)
+                    .HasConstraintName("FK_Order_Meal");
+
+                entity.HasOne(d => d.Session)
+                    .WithMany(p => p.Orders)
+                    .HasForeignKey(d => d.SessionId)
+                    .HasConstraintName("FK_Order_Session");
             });
 
             modelBuilder.Entity<Payment>(entity =>
