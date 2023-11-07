@@ -297,23 +297,7 @@ namespace HomeMealTaste.Data.Models
                    .HasConstraintName("FK_Session_User");
             });
 
-            modelBuilder.Entity<Sysdiagram>(entity =>
-            {
-
-                entity.ToTable("sysdiagrams");
-
-                entity.Property(e => e.Definition).HasColumnName("definition");
-
-                entity.Property(e => e.DiagramId).HasColumnName("diagram_id");
-
-                entity.Property(e => e.Name)
-                    .HasMaxLength(128)
-                    .HasColumnName("name");
-
-                entity.Property(e => e.PrincipalId).HasColumnName("principal_id");
-
-                entity.Property(e => e.Version).HasColumnName("version");
-            });
+            
 
             modelBuilder.Entity<Transaction>(entity =>
             {
@@ -353,6 +337,24 @@ namespace HomeMealTaste.Data.Models
             {
 
                 entity.ToTable("Wallet");
+            });
+
+            modelBuilder.Entity<Sysdiagram>(entity =>
+            {
+
+                entity.ToTable("sysdiagrams");
+
+                entity.Property(e => e.Definition).HasColumnName("definition");
+
+                entity.Property(e => e.DiagramId).HasColumnName("diagram_id");
+
+                entity.Property(e => e.Name)
+                    .HasMaxLength(128)
+                    .HasColumnName("name");
+
+                entity.Property(e => e.PrincipalId).HasColumnName("principal_id");
+
+                entity.Property(e => e.Version).HasColumnName("version");
             });
 
             OnModelCreatingPartial(modelBuilder);
