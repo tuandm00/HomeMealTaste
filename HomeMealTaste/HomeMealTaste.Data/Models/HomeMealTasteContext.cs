@@ -202,6 +202,16 @@ namespace HomeMealTaste.Data.Models
                 entity.ToTable("Meal_Dish");
 
                 entity.Property(e => e.MealDishId).HasColumnName("Meal_DishId");
+
+                entity.HasOne(d => d.Dish)
+                    .WithMany(p => p.MealDishes)
+                    .HasForeignKey(d => d.DishId)
+                    .HasConstraintName("FK_FoodPackage_Dish_Dish");
+
+                entity.HasOne(d => d.Meal)
+                    .WithMany(p => p.MealDishes)
+                    .HasForeignKey(d => d.MealId)
+                    .HasConstraintName("FK_FoodPackage_Dish_FoodPackage");
             });
 
             modelBuilder.Entity<MealSession>(entity =>
