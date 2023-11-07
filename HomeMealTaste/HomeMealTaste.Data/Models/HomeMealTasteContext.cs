@@ -5,13 +5,13 @@ using Microsoft.EntityFrameworkCore.Metadata;
 
 namespace HomeMealTaste.Data.Models
 {
-    public partial class homemealtasteContext : DbContext
+    public partial class HomeMealTasteContext : DbContext
     {
-        public homemealtasteContext()
+        public HomeMealTasteContext()
         {
         }
 
-        public homemealtasteContext(DbContextOptions<homemealtasteContext> options)
+        public HomeMealTasteContext(DbContextOptions<HomeMealTasteContext> options)
             : base(options)
         {
         }
