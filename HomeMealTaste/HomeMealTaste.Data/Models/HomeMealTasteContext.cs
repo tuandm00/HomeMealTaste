@@ -242,6 +242,11 @@ namespace HomeMealTaste.Data.Models
                 entity.ToTable("Membership");
 
                 entity.Property(e => e.AccountRank).HasMaxLength(50);
+
+                entity.HasOne(d => d.Customer)
+                    .WithMany(p => p.Memberships)
+                    .HasForeignKey(d => d.CustomerId)
+                    .HasConstraintName("FK_Membership_Customer");
             });
 
             modelBuilder.Entity<Order>(entity =>
