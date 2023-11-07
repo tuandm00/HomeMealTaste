@@ -224,6 +224,16 @@ namespace HomeMealTaste.Data.Models
                 entity.Property(e => e.MealSessionId).HasColumnName("Meal_SessionId");
 
                 entity.Property(e => e.Price).HasColumnType("money");
+
+                entity.HasOne(d => d.Meal)
+                    .WithMany(p => p.MealSessions)
+                    .HasForeignKey(d => d.MealId)
+                    .HasConstraintName("FK_FoodPackage_Session_FoodPackage");
+
+                entity.HasOne(d => d.Session)
+                    .WithMany(p => p.MealSessions)
+                    .HasForeignKey(d => d.SessionId)
+                    .HasConstraintName("FK_FoodPackage_Session_Session");
             });
 
             modelBuilder.Entity<Membership>(entity =>
