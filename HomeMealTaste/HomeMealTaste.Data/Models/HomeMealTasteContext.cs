@@ -128,6 +128,16 @@ namespace HomeMealTaste.Data.Models
                 entity.ToTable("Feedback");
 
                 entity.Property(e => e.Description).HasMaxLength(50);
+
+                entity.HasOne(d => d.Customer)
+                    .WithMany(p => p.Feedbacks)
+                    .HasForeignKey(d => d.CustomerId)
+                    .HasConstraintName("FK_Feedback_Customer");
+
+                entity.HasOne(d => d.Kitchen)
+                    .WithMany(p => p.Feedbacks)
+                    .HasForeignKey(d => d.KitchenId)
+                    .HasConstraintName("FK_Feedback_Kitchen");
             });
 
             modelBuilder.Entity<Group>(entity =>
