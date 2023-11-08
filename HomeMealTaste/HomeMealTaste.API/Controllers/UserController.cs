@@ -75,7 +75,7 @@ namespace HomeMealTaste.Controllers
             return Ok(result);
         }
 
-        [HttpPut("update-account-for-user")]
+        [HttpPut("update-new-password-for-user")]
         public async Task UpdatePasswordAccount(string username, string newPassword)
         {
             await _userService.UpdatePasswordAccount(username,newPassword);
