@@ -30,4 +30,3 @@ namespace HomeMealTaste.Data.Models
         public virtual ICollection<Order> Orders { get; set; }
     }
 }
-
