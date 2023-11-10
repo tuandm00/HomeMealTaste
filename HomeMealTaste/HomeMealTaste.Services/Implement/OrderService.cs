@@ -49,7 +49,6 @@ namespace HomeMealTaste.Services.Implement
                     {
                         KitchenId = x.Meal.Kitchen.KitchenId,
                         Name = x.Meal.Kitchen.Name,
-                        Phone = x.Meal.Kitchen.Phone,
                         Address = x.Meal.Kitchen.Address,
                         District = x.Meal.Kitchen.District
                     }
@@ -93,7 +92,6 @@ namespace HomeMealTaste.Services.Implement
                     {
                         KitchenId = x.Meal.Kitchen.KitchenId,
                         Name = x.Meal.Kitchen.Name,
-                        Phone = x.Meal.Kitchen.Phone,
                         Address = x.Meal.Kitchen.Address,
                         District = x.Meal.Kitchen.District
                     }

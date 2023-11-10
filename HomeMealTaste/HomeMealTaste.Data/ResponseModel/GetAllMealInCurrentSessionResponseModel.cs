@@ -26,7 +26,6 @@ public class GetAllMealInCurrentSessionResponseModel
             Chef = entity.User!.Kitchens.Select(x => new ChefInfo()
             {
                 Address = x.Address,
-                Phone = x.Phone,
                 Name = x.Name,
             }).FirstOrDefault(),
         };

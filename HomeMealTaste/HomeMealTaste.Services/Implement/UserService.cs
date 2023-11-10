@@ -121,7 +121,6 @@ namespace HomeMealTaste.Services.Implement
                 {
                     UserId = result.UserId,
                     Name = result.Name,
-                    Phone = result.Phone,
                     Address = result.Address,
                     District = result.District,
                 };

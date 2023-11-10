@@ -162,8 +162,6 @@ namespace HomeMealTaste.Data.Models
 
                 entity.Property(e => e.Name).HasMaxLength(50);
 
-                entity.Property(e => e.Phone).HasMaxLength(50);
-
                 entity.HasOne(d => d.User)
                     .WithMany(p => p.Kitchens)
                     .HasForeignKey(d => d.UserId)
