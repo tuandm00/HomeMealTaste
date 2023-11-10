@@ -1,4 +1,5 @@
-﻿using System;
+﻿using HomeMealTaste.Data.Models;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -10,10 +11,10 @@ namespace HomeMealTaste.Data.ResponseModel
     {
         public int OrderId { get; set; }
         public DateTime? Date { get; set; }
-        public int? CustomerId { get; set; }
+        public Customer? Customer { get; set; }
+        public Meal? Meal { get; set; }
+        public Session? Session { get; set; }
         public string? Status { get; set; }
-        public int? MealId { get; set; }
-        public int? SessionId { get; set; }
         public int? PromotionPrice { get; set; }
     }
 

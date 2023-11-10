@@ -27,7 +27,44 @@ namespace HomeMealTaste.Services.Implement
 
         public async Task<List<OrderResponseModel>> GetAllOrder()
         {
-            var result = _context.Orders.ToList();
+            var result = _context.Orders.Select(x => new OrderResponseModel
+            {
+                OrderId = x.OrderId,
+                Date = x.Date,
+                Customer = new Customer
+                {
+                    CustomerId = x.Customer.CustomerId,
+                    Name = x.Customer.Name,
+                    Phone = x.Customer.Phone,
+                    Address = x.Customer.Address,
+                    District = x.Customer.District,
+                },
+                Meal = new Meal
+                {
+                    MealId = x.Meal.MealId,
+                    Name = x.Meal.Name,
+                    Image = x.Meal.Image,
+                    DefaultPrice = x.Meal.DefaultPrice,
+                    Kitchen = new Kitchen
+                    {
+                        KitchenId = x.Meal.Kitchen.KitchenId,
+                        Name = x.Meal.Kitchen.Name,
+                        Phone = x.Meal.Kitchen.Phone,
+                        Address = x.Meal.Kitchen.Address,
+                        District = x.Meal.Kitchen.District
+                    }
+                },
+                Session = new Session
+                {
+                    SessionId = x.Session.SessionId,
+                    CreateDate = x.Session.CreateDate,
+                    StartTime = x.Session.StartTime,
+                    EndTime = x.Session.EndTime,
+                    EndDate = x.Session.EndDate,
+                    SessionName = x.Session.SessionName,
+                    SessionType = x.Session.SessionType,
+                },
+            });
             var mappedResult = result.Select(x => _mapper.Map<OrderResponseModel>(x)).ToList();
             return mappedResult;
         }
