@@ -4,6 +4,7 @@ using HomeMealTaste.Data.Repositories;
 using HomeMealTaste.Data.ResponseModel;
 using HomeMealTaste.Services.Helper;
 using HomeMealTaste.Services.Interface;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -31,12 +32,40 @@ namespace HomeMealTaste.Services.Implement
             return mappedResult;
         }
 
-        public async Task<List<OrderResponseModel>> GetAllOrderByUserId(int id)
+        public async Task<List<GetAllOrderByUserIdResponseModel>> GetAllOrderByUserId(int id)
         {
-            var results = _context.Orders.Where(x => x.CustomerId == id).ToList();
+            var results = _context.Orders.Where(x => x.CustomerId == id).Select(x => new GetAllOrderByUserIdResponseModel
+            {
+                OrderId = x.OrderId,
+                Date = DateTime.Now,
+                Customer = new Customer
+                {
+                    CustomerId = id,
+                    Name = x.Customer.Name,
+                    Phone = x.Customer.Phone,
+                    Address = x.Customer.Address,
+                    District = x.Customer.District,
+                },
+                Meal = new Meal
+                {
+                    MealId = x.Meal.MealId,
+                    Name = x.Meal.Name,
+                    Image = x.Meal.Image,
+                    DefaultPrice = x.Meal.DefaultPrice,
+                },
+                Session = new Session
+                {
+                    SessionId = x.Session.SessionId,
+                    CreateDate = x.Session.CreateDate,
+                    StartTime = x.Session.StartTime,
+                    EndTime = x.Session.EndTime,
+                    EndDate = x.Session.EndDate,
+                    SessionName = x.Session.SessionName,
+                    SessionType = x.Session.SessionType,
+                },
+            }).ToList();
 
-            var mappedResults = results.Select(order => _mapper.Map<OrderResponseModel>(order)).ToList();
-
+            var mappedResults = results.Select(order => _mapper.Map<GetAllOrderByUserIdResponseModel>(order)).ToList();
             return mappedResults;
         }
     }

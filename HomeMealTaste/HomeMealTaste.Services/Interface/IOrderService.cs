@@ -10,7 +10,7 @@ namespace HomeMealTaste.Services.Interface
 {
     public interface IOrderService
     {
-        Task<List<OrderResponseModel>> GetAllOrderByUserId(int id);
+        Task<List<GetAllOrderByUserIdResponseModel>> GetAllOrderByUserId(int id);
         Task<List<OrderResponseModel>> GetAllOrder();
     }
 }
