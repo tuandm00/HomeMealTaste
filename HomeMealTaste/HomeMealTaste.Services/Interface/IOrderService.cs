@@ -1,4 +1,5 @@
 ﻿using HomeMealTaste.Data.ResponseModel;
+using HomeMealTaste.Services.Helper;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,5 +11,6 @@ namespace HomeMealTaste.Services.Interface
     public interface IOrderService
     {
         Task<List<OrderResponseModel>> GetAllOrderByUserId(int id);
+        Task<List<OrderResponseModel>> GetAllOrder();
     }
 }

@@ -2,6 +2,7 @@
 using HomeMealTaste.Data.Models;
 using HomeMealTaste.Data.Repositories;
 using HomeMealTaste.Data.ResponseModel;
+using HomeMealTaste.Services.Helper;
 using HomeMealTaste.Services.Interface;
 using System;
 using System.Collections.Generic;
@@ -21,6 +22,13 @@ namespace HomeMealTaste.Services.Implement
             _orderRepository = orderRepository;
             _mapper = mapper;
             _context = context;
+        }
+
+        public async Task<List<OrderResponseModel>> GetAllOrder()
+        {
+            var result = _context.Orders.ToList();
+            var mappedResult = result.Select(x => _mapper.Map<OrderResponseModel>(x)).ToList();
+            return mappedResult;
         }
 
         public async Task<List<OrderResponseModel>> GetAllOrderByUserId(int id)

@@ -1,4 +1,5 @@
 ﻿using HomeMealTaste.Data.ResponseModel;
+using HomeMealTaste.Services.Helper;
 using HomeMealTaste.Services.Interface;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -20,6 +21,13 @@ namespace HomeMealTaste.API.Controllers
         public async Task<IActionResult> GetAllOrderByUserId(int id)
         {
             var result = await _orderService.GetAllOrderByUserId(id);
+            return Ok(result);
+        }
+
+        [HttpGet("get-all-order")]
+        public async Task<IActionResult> GetAllOrder()
+        {
+            var result = await _orderService.GetAllOrder();
             return Ok(result);
         }
 
