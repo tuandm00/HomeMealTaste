@@ -42,5 +42,12 @@ namespace HomeMealTaste.API.Controllers
             var response = ApiResponse<object>.Success(result, metadata);
             return Ok(response);
         }
+
+        [HttpGet("get-all-meal-by-kitchen-id")]
+        public async Task<IActionResult> GetAllMealByKitchenId(int id)
+        {
+            var result = await _mealService.GetAllMealByKitchenId(id);
+            return Ok(result);
+        }
     }
 }
