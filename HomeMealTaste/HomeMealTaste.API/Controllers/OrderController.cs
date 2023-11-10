@@ -31,6 +31,12 @@ namespace HomeMealTaste.API.Controllers
             return Ok(result);
         }
 
+        [HttpGet("get-order-by-order-id")]
+        public async Task<IActionResult> GetAllOrderById(int id)
+        {
+            var result = await _orderService.GetAllOrderById(id);
+            return Ok(result);
+        }
 
     }
 }

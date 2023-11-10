@@ -68,6 +68,50 @@ namespace HomeMealTaste.Services.Implement
             return mappedResult;
         }
 
+        public Task<List<GetAllOrderByUserIdResponseModel>> GetAllOrderById(int id)
+        {
+            var results = _context.Orders.Where(x => x.OrderId == id).Select(x => new GetAllOrderByUserIdResponseModel
+            {
+                OrderId = id,
+                Date = DateTime.Now,
+                Customer = new Customer
+                {
+                    CustomerId = id,
+                    Name = x.Customer.Name,
+                    Phone = x.Customer.Phone,
+                    Address = x.Customer.Address,
+                    District = x.Customer.District,
+                },
+                Meal = new Meal
+                {
+                    MealId = x.Meal.MealId,
+                    Name = x.Meal.Name,
+                    Image = x.Meal.Image,
+                    DefaultPrice = x.Meal.DefaultPrice,
+                    Kitchen = new Kitchen
+                    {
+                        KitchenId = x.Meal.Kitchen.KitchenId,
+                        Name = x.Meal.Kitchen.Name,
+                        Address = x.Meal.Kitchen.Address,
+                        District = x.Meal.Kitchen.District
+                    }
+                },
+                Session = new Session
+                {
+                    SessionId = x.Session.SessionId,
+                    CreateDate = x.Session.CreateDate,
+                    StartTime = x.Session.StartTime,
+                    EndTime = x.Session.EndTime,
+                    EndDate = x.Session.EndDate,
+                    SessionName = x.Session.SessionName,
+                    SessionType = x.Session.SessionType,
+                },
+            }).ToList();
+
+            var mappedResults = results.Select(order => _mapper.Map<GetAllOrderByUserIdResponseModel>(order)).ToList();
+            return Task.FromResult(mappedResults);
+        }
+
         public async Task<List<GetAllOrderByUserIdResponseModel>> GetAllOrderByUserId(int id)
         {
             var results = _context.Orders.Where(x => x.CustomerId == id).Select(x => new GetAllOrderByUserIdResponseModel
