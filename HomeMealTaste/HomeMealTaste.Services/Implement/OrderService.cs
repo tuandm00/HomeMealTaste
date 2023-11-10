@@ -52,6 +52,14 @@ namespace HomeMealTaste.Services.Implement
                     Name = x.Meal.Name,
                     Image = x.Meal.Image,
                     DefaultPrice = x.Meal.DefaultPrice,
+                    Kitchen = new Kitchen
+                    {
+                        KitchenId = x.Meal.Kitchen.KitchenId,
+                        Name = x.Meal.Kitchen.Name,
+                        Phone = x.Meal.Kitchen.Phone,
+                        Address = x.Meal.Kitchen.Address,
+                        District = x.Meal.Kitchen.District
+                    }
                 },
                 Session = new Session
                 {
