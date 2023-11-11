@@ -59,5 +59,12 @@ namespace HomeMealTaste.Controllers
 
             return Ok(result);
         }
+
+        [HttpGet("get-dish-id-by-meal-id")]
+        public async Task<IActionResult> GetDishIdByMealId(int mealid)
+        {
+            var result = await _dishService.GetDishIdByMealId(mealid);
+            return Ok(result);
+        }
     }
 }

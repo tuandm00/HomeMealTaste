@@ -53,5 +53,24 @@ namespace HomeMealTaste.Services.Implement
             
             return result;
         }
+
+        public Task<List<GetDishIdByMealIdResponseModel>> GetDishIdByMealId(int mealid)
+        {
+            var result = _context.MealDishes.Where(x => x.MealId == mealid).Select(x => new GetDishIdByMealIdResponseModel
+            {
+                MealId = x.MealId,
+                Dish = new Dish
+                {
+                    DishId = x.Dish.DishId,
+                    Name = x.Dish.Name,
+                    Image = x.Dish.Image,
+                    DishTypeId = x.Dish.DishTypeId,
+                    KitchenId = x.Dish.KitchenId
+                }
+            });
+
+            var mapped =  result.Select(r => _mapper.Map<GetDishIdByMealIdResponseModel>(r)).ToList();
+            return Task.FromResult(mapped);
+        }
     }
 }
