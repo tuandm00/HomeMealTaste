@@ -38,7 +38,7 @@ namespace HomeMealTaste.Data.Models
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-
+=
         }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -79,7 +79,7 @@ namespace HomeMealTaste.Data.Models
             {
                 entity.ToTable("Dish");
 
-                entity.Property(e => e.Image).HasMaxLength(50);
+                entity.Property(e => e.Image).HasMaxLength(1000);
 
                 entity.Property(e => e.Name).HasMaxLength(50);
 
