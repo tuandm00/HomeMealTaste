@@ -174,7 +174,7 @@ namespace HomeMealTaste.Data.Models
 
                 entity.Property(e => e.DefaultPrice).HasColumnType("money");
 
-                entity.Property(e => e.Image).HasMaxLength(50);
+                entity.Property(e => e.Image).HasMaxLength(1000);
 
                 entity.Property(e => e.Name).HasMaxLength(50);
 
