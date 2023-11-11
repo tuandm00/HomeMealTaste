@@ -73,6 +73,7 @@ namespace HomeMealTaste.Services.Implement
                     Name = x.Kitchen.Name,
                     Address = x.Kitchen.Address,
                     District = x.Kitchen.District,
+                    Dishes = x.Kitchen.Dishes,
                 },
             });
 
