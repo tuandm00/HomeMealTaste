@@ -12,6 +12,6 @@ namespace HomeMealTaste.Services.Interface
     public interface IKitchenService
     {
         Task<List<KitchenResponseModel>> GetAllKitchen();
-        Task<List<KitchenResponseModel>> GetAllKitchenByKitchenId(int id);
+        Task<KitchenResponseModel> GetAllKitchenByKitchenId(int id);
     }
 }

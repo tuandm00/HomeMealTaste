@@ -50,7 +50,7 @@ namespace HomeMealTaste.Services.Implement
             return result;
         }
 
-        public Task<List<KitchenResponseModel>> GetAllKitchenByKitchenId(int id)
+        public async Task<KitchenResponseModel> GetAllKitchenByKitchenId(int id)
         {
             var result = _context.Kitchens.Where(x => x.KitchenId == id).Select(x => new KitchenResponseModel
             {
@@ -68,10 +68,9 @@ namespace HomeMealTaste.Services.Implement
                 Name = x.Name,
                 Address = x.Address,
                 District = x.District,
-            }).ToList();
+            }).FirstOrDefault();
 
-            var mappedResults = result.Select(kitchen => _mapper.Map<KitchenResponseModel>(kitchen)).ToList();
-            return Task.FromResult(mappedResults);
+            return _mapper.Map<KitchenResponseModel>(result);
         }
     }
 }
