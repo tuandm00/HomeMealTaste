@@ -4,8 +4,6 @@ using HomeMealTaste.Data.RequestModel;
 using HomeMealTaste.Response;
 using HomeMealTaste.Services.Helper;
 using HomeMealTaste.Services.Interface;
-using HomeMealTaste.Services.ResponseModel;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace HomeMealTaste.Controllers
@@ -23,7 +21,7 @@ namespace HomeMealTaste.Controllers
 
         //[Authorize]
         [HttpPost]
-        public async Task<IActionResult> CreateDishAsync(DishRequestModel dishRequest)
+        public async Task<IActionResult> CreateDishAsync([FromForm]DishRequestModel dishRequest)
         {
             var result = await _dishService.CreateDishAsync(dishRequest);
             return Ok(result);

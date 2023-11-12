@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.AspNetCore.Http;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -9,7 +10,7 @@ namespace HomeMealTaste.Data.RequestModel
     public class DishRequestModel
     {
         public string? Name { get; set; }
-        public string? Image { get; set; }
+        public IFormFile? Image { get; set; }
         public int? DishTypeId { get; set; }
         public int? KitchenId { get; set; }
     }

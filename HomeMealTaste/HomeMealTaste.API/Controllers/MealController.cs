@@ -20,7 +20,7 @@ namespace HomeMealTaste.API.Controllers
 
         [HttpPost]
         [Route("create-meal")]
-        public async Task<IActionResult> CreateMeal(MealRequestModel mealRequest)
+        public async Task<IActionResult> CreateMeal([FromForm]MealRequestModel mealRequest)
         {
             var result = await _mealService.CreateMeal(mealRequest);
             return Ok(result);

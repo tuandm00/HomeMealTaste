@@ -10,6 +10,7 @@ using Microsoft.OpenApi.Models;
 using System.Text;
 using HomeMealTaste.Data;
 using HomeMealTaste.Data.RequestModel;
+using Azure.Storage.Blobs;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -43,6 +44,7 @@ builder.Services.AddScoped<IMealService, MealService>();
 builder.Services.AddScoped<IOrderService, OrderService>();
 builder.Services.AddScoped<IKitchenService, KitchenService>();
 builder.Services.AddScoped<IAreaService, AreaService>();
+builder.Services.AddScoped<IBlobService, BlobService>();
 builder.Services.AddDbContext<HomeMealTasteContext>(option => option.UseSqlServer
 (builder.Configuration.GetConnectionString("HomeMealTaste")));
 
@@ -77,6 +79,9 @@ builder.Services.AddSwaggerGen(c =>
         }
     });
 });
+
+builder.Services.AddSingleton(_ =>
+            new BlobServiceClient(builder.Configuration.GetSection("AzureStorage:ConnectionString").Value));
 
 
 builder.Services.AddAutoMapper(typeof(MapperProfile).Assembly);

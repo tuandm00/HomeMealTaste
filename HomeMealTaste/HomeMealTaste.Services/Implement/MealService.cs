@@ -13,6 +13,8 @@ using System.Threading.Tasks;
 using HomeMealTaste.Data.Helper;
 using HomeMealTaste.Services.Helper;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.AspNetCore.Http;
+using Azure.Storage.Blobs;
 
 namespace HomeMealTaste.Services.Implement
 {
@@ -21,16 +23,24 @@ namespace HomeMealTaste.Services.Implement
         private readonly IMealRepository _mealRepository;
         private readonly IMapper _mapper;
         private readonly HomeMealTasteContext _context;
-        public MealService(IMealRepository mealRepository, IMapper mapper, HomeMealTasteContext context)
+        private readonly IBlobService _blobService;
+
+        public MealService(IMealRepository mealRepository, IMapper mapper, HomeMealTasteContext context, IBlobService blobService)
         {
-            _mealRepository = mealRepository;   
+            _mealRepository = mealRepository;
             _mapper = mapper;
             _context = context;
+            _blobService = blobService;
         }
         public async Task<MealResponseModel> CreateMeal(MealRequestModel mealRequest)
         {
             var entity = _mapper.Map<Meal>(mealRequest);
+            
+            var imagePath = await _blobService.UploadQuestImgAndReturnImgPathAsync(mealRequest.Image, "meal-image");
+            entity.Image = imagePath;
+            
             var result = await _mealRepository.Create(entity, true);
+
             if(result != null)
             {
                 var mealdish = new MealDish
