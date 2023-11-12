@@ -1,4 +1,5 @@
-﻿using HomeMealTaste.Data.ResponseModel;
+﻿using HomeMealTaste.Data.Helper;
+using HomeMealTaste.Data.ResponseModel;
 using HomeMealTaste.Services.Helper;
 using System;
 using System.Collections.Generic;
@@ -13,5 +14,6 @@ namespace HomeMealTaste.Services.Interface
         Task<List<GetAllOrderByUserIdResponseModel>> GetAllOrderByUserId(int id);
         Task<List<GetAllOrderByUserIdResponseModel>> GetAllOrderById(int id);
         Task<List<OrderResponseModel>> GetAllOrder();
+        Task<List<GetOrderByKitchenIdResponseModel>> GetOrderByKitchenId(int kitchenid);
     }
 }

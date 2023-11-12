@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using HomeMealTaste.Data.Helper;
 using HomeMealTaste.Data.Models;
 using HomeMealTaste.Data.Repositories;
 using HomeMealTaste.Data.ResponseModel;
@@ -154,6 +155,28 @@ namespace HomeMealTaste.Services.Implement
 
             var mappedResults = results.Select(order => _mapper.Map<GetAllOrderByUserIdResponseModel>(order)).ToList();
             return mappedResults;
+        }
+
+        public Task<List<GetOrderByKitchenIdResponseModel>> GetOrderByKitchenId(int kitchenid)
+        {
+            var result = _context.Orders.Include(x => x.Meal)
+                .ThenInclude(x => x.Kitchen)
+                .Where(x => x.Meal.Kitchen.KitchenId == kitchenid)
+                .Select(x => new GetOrderByKitchenIdResponseModel
+            {
+                OrderId = x.OrderId,
+                Date = x.Date,
+                CustomerId = x.CustomerId,
+                Status = x.Status,
+                MealId = x.MealId,
+                SessionId = x.SessionId,
+                PromotionPrice = x.PromotionPrice,
+            });
+
+            var mapped = result.Select(x => _mapper.Map<GetOrderByKitchenIdResponseModel>(x)).ToList();
+            return Task.FromResult(mapped);
+
+
         }
     }
 }

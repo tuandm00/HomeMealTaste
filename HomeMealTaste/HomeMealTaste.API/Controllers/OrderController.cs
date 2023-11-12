@@ -38,5 +38,12 @@ namespace HomeMealTaste.API.Controllers
             return Ok(result);
         }
 
+        [HttpGet("get-order-by-kitchen-id")]
+        public async Task<IActionResult> GetOrderByKitchenId(int kitchenid)
+        {
+            var result = await _orderService.GetOrderByKitchenId(kitchenid);
+            return Ok(result);
+        }
+
     }
 }
