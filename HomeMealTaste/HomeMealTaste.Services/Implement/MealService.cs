@@ -15,6 +15,7 @@ using HomeMealTaste.Services.Helper;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.AspNetCore.Http;
 using Azure.Storage.Blobs;
+using Microsoft.EntityFrameworkCore;
 
 namespace HomeMealTaste.Services.Implement
 {
@@ -69,26 +70,38 @@ namespace HomeMealTaste.Services.Implement
             return result;
         }
 
-        public Task<List<GetAllMealByKitchenIdResponseModel>> GetAllMealByKitchenId(int id)
+        public async Task<List<GetAllMealByKitchenIdResponseModel>> GetAllMealByKitchenId(int id)
         {
-            var result = _context.Meals.Where(x => x.KitchenId == id).Select(x => new GetAllMealByKitchenIdResponseModel
+            var result = await _context.MealDishes
+        .Include(x => x.Dish)
+        .ThenInclude(x => x.Kitchen)
+        .Where(x => x.Dish.Kitchen.KitchenId == id)
+        .GroupBy(x => x.Meal.MealId) 
+        .Select(group => new GetAllMealByKitchenIdResponseModel
+        {
+            MealId = group.Key,
+            Name = group.First().Meal.Name, 
+            Image = group.First().Meal.Image, 
+            DefaultPrice = group.First().Meal.DefaultPrice, 
+            Kitchen = new Kitchen
             {
-                MealId = x.MealId,
-                Name = x.Name,
-                Image = x.Image,
-                DefaultPrice = x.DefaultPrice,
-                Kitchen = new Kitchen
-                {
-                    KitchenId = x.Kitchen.KitchenId,
-                    Name = x.Kitchen.Name,
-                    Address = x.Kitchen.Address,
-                    District = x.Kitchen.District,
-                    Dishes = x.Kitchen.Dishes,
-                },
-            });
+                KitchenId = group.First().Meal.Kitchen.KitchenId,
+                Name = group.First().Meal.Kitchen.Name,
+                Address = group.First().Meal.Kitchen.Address,
+                District = group.First().Meal.Kitchen.District
+            },
+            Dish = group.Select(md => new DishModel
+            {
+                DishId = md.Dish.DishId,
+                Name = md.Dish.Name,
+                Image = md.Dish.Image,
+                DishTypeId = md.Dish.DishTypeId,
+                KitchenId = md.Dish.KitchenId
+            }).ToList()
 
-            var mapped = result.Select(meal => _mapper.Map<GetAllMealByKitchenIdResponseModel>(meal)).ToList();
-            return Task.FromResult(mapped);
+        }).ToListAsync();
+
+            return result;
         }
     }
 }

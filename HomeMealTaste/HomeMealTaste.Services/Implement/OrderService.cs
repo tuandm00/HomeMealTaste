@@ -159,7 +159,8 @@ namespace HomeMealTaste.Services.Implement
 
         public Task<List<GetOrderByKitchenIdResponseModel>> GetOrderByKitchenId(int kitchenid)
         {
-            var result = _context.Orders.Include(x => x.Meal)
+            var result = _context.Orders
+                .Include(x => x.Meal)
                 .ThenInclude(x => x.Kitchen)
                 .Where(x => x.Meal.Kitchen.KitchenId == kitchenid)
                 .Select(x => new GetOrderByKitchenIdResponseModel
