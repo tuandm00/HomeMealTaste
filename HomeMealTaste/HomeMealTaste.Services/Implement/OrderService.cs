@@ -164,13 +164,40 @@ namespace HomeMealTaste.Services.Implement
                 .ThenInclude(x => x.Kitchen)
                 .Where(x => x.Meal.Kitchen.KitchenId == kitchenid)
                 .Select(x => new GetOrderByKitchenIdResponseModel
-            {
+                {
                 OrderId = x.OrderId,
                 Date = x.Date,
-                CustomerId = x.CustomerId,
+                Customer = new CustomerDto
+                {
+                    CustomerId = x.Customer.CustomerId,
+                    UserId = x.Customer.UserId,
+                    Name = x.Customer.Name,
+                    Address = x.Customer.Address,
+                    Phone = x.Customer.Phone,
+                    District = x.Customer.District,
+                    AccountStatus = x.Customer.AccountStatus,
+                },
                 Status = x.Status,
-                MealId = x.MealId,
-                SessionId = x.SessionId,
+                Meal = new MealDto
+                {
+                    MealId = x.Meal.MealId,
+                    Name = x.Meal.Name,
+                    Image = x.Meal.Image,
+                    DefaultPrice = x.Meal.DefaultPrice,
+                    KitchenId = x.Meal.KitchenId
+                },
+                Session = new SessionDto
+                {
+                    SessionId = x.Session.SessionId,
+                    CreateDate = x.Session.CreateDate,
+                    StartTime = x.Session.StartTime,
+                    EndTime = x.Session.EndTime,
+                    EndDate = x.Session.EndDate,
+                    SessionName = x.Session.SessionName,
+                    UserId = x.Session.UserId,
+                    SessionType = x.Session.SessionType,
+                    Status = x.Session.Status,
+                },
                 PromotionPrice = x.PromotionPrice,
             });
 
