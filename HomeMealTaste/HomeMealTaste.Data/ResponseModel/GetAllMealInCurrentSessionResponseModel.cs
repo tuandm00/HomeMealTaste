@@ -16,6 +16,7 @@ public class GetAllMealInCurrentSessionResponseModel
         {
             Session = new SessionModel
             {
+                Id = entity.SessionId,
                 Type = entity.SessionType,
                 CreatedDate = entity.CreateDate,
                 EndDate = entity.EndDate,
