@@ -65,17 +65,17 @@ namespace HomeMealTaste.Services.Implement
             var entity = _mapper.Map<Session>(sessionRequest);
             if(entity.SessionType == "Lunch")
             {
-                entity.StartTime = DateTime.Now.Date.AddHours(10);
+                entity.StartTime = GetDateTimeTimeZoneVietNam().Date.AddHours(10);
                 entity.EndTime = entity.StartTime.Value.AddHours(2);
             }
             else if(entity.SessionType == "Evening")
             {
-                entity.StartTime = DateTime.Now.Date.AddHours(16);
+                entity.StartTime = GetDateTimeTimeZoneVietNam().Date.AddHours(16);
                 entity.EndTime = entity.StartTime.Value.AddHours(4);
             }
             else
             {
-                entity.StartTime = DateTime.Now.Date.AddHours(17);
+                entity.StartTime = GetDateTimeTimeZoneVietNam().Date.AddHours(17);
                 entity.EndTime = entity.StartTime.Value.AddHours(2);
             }
             
