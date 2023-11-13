@@ -83,8 +83,8 @@ namespace HomeMealTaste.Services.Implement
 
             var responseModel = _mapper.Map<SessionResponseModel>(result);
 
-            responseModel.StartTime = result.StartTime?.ToString("HH:mm");
-            responseModel.EndTime = result.EndTime?.ToString("HH:mm");
+            responseModel.StartTime = GetDateTimeTimeZoneVietNam().ToString("HH:mm");
+            responseModel.EndTime = GetDateTimeTimeZoneVietNam().ToString("HH:mm");
 
             return responseModel;
         }
