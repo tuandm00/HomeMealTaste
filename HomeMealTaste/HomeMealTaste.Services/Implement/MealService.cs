@@ -16,6 +16,8 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.AspNetCore.Http;
 using Azure.Storage.Blobs;
 using Microsoft.EntityFrameworkCore;
+using System.Collections.ObjectModel;
+using System.Globalization;
 
 namespace HomeMealTaste.Services.Implement
 {
@@ -33,12 +35,43 @@ namespace HomeMealTaste.Services.Implement
             _context = context;
             _blobService = blobService;
         }
+        public static DateTime TranferDateTimeByTimeZone(DateTime dateTime, string timezoneArea)
+        {
+
+            ReadOnlyCollection<TimeZoneInfo> collection = TimeZoneInfo.GetSystemTimeZones();
+            var timeZone = collection.ToList().Where(x => x.DisplayName.ToLower().Contains(timezoneArea)).First();
+
+            var timeZoneLocal = TimeZoneInfo.Local;
+
+            var utcDateTime = TimeZoneInfo.ConvertTime(dateTime, timeZoneLocal, timeZone);
+
+            return utcDateTime;
+        }
+
+        public static DateTime GetDateTimeTimeZoneVietNam()
+        {
+
+            return TranferDateTimeByTimeZone(DateTime.Now, "hanoi");
+        }
+        public static DateTime? StringToDateTimeVN(string dateStr)
+        {
+
+            var isValid = System.DateTime.TryParseExact(
+                                dateStr,
+                                "d'/'M'/'yyyy",
+                                CultureInfo.InvariantCulture,
+                                DateTimeStyles.None,
+                                out var date
+                            );
+            return isValid ? date : null;
+        }
         public async Task<MealResponseModel> CreateMeal(MealRequestModel mealRequest)
         {
             var entity = _mapper.Map<Meal>(mealRequest);
             
             var imagePath = await _blobService.UploadQuestImgAndReturnImgPathAsync(mealRequest.Image, "meal-image");
             entity.Image = imagePath;
+            entity.CreateDate = GetDateTimeTimeZoneVietNam();
             
             var result = await _mealRepository.Create(entity, true);
 
@@ -52,7 +85,10 @@ namespace HomeMealTaste.Services.Implement
                 await _context.AddAsync(mealdish);
                 await _context.SaveChangesAsync();
             }
-            return _mapper.Map<MealResponseModel>(result);
+             var response = _mapper.Map<MealResponseModel>(result);
+            //response.CreateDate = result.CreateDate?.ToString("yyyy-MM-dd HH:mm:ss");
+            response.CreateDate = result.CreateDate?.ToString("dd-MM-yyyy");
+            return response;
         }
 
         public async Task<PagedList<GetAllMealResponseModel>> GetAllMeal(PagingParams pagingParams)

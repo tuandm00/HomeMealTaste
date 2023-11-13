@@ -15,5 +15,6 @@ namespace HomeMealTaste.Services.Interface
         Task<List<GetAllOrderByUserIdResponseModel>> GetAllOrderById(int id);
         Task<List<OrderResponseModel>> GetAllOrder();
         Task<List<GetOrderByKitchenIdResponseModel>> GetOrderByKitchenId(int kitchenid);
+
     }
 }

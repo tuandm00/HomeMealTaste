@@ -15,7 +15,7 @@ namespace HomeMealTaste.Data.RequestModel
         public IFormFile? Image { get; set; }
         public decimal? DefaultPrice { get; set; }
         public int? KitchenId { get; set; }
-
+        public String? CreateDate { get; set; }
 
     }
 }
