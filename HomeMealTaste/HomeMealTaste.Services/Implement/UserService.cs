@@ -45,6 +45,7 @@ namespace HomeMealTaste.Services.Implement
                 new Claim(ClaimTypes.NameIdentifier, users.UserId.ToString()),
                 new Claim(ClaimTypes.Name, users.Email),
                 new Claim("RoleId", users.RoleId.ToString()),
+                new Claim("Phone", users.Phone.ToString()),
                 new Claim("Username", users.Username.ToString()),
             };
             var token = new JwtSecurityToken(
@@ -59,7 +60,7 @@ namespace HomeMealTaste.Services.Implement
 
         public async Task<UserResponseModel> LoginAsync(UserRequestModel userRequest)
         {
-            var existedUser = await _userRepository.GetFirstOrDefault(x => x.Email == userRequest.Email);
+            var existedUser = await _userRepository.GetFirstOrDefault(x => x.Phone == userRequest.Phone);
             var chekhash = BCrypt.Net.BCrypt.Verify(userRequest.Password, existedUser?.Password);
             if (!chekhash) throw new Exception("Username or Password not match!");
             var result = await _userRepository.GetUsernamePassword(userRequest);
