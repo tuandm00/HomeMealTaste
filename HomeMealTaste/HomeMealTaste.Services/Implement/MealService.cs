@@ -103,5 +103,26 @@ namespace HomeMealTaste.Services.Implement
 
             return result;
         }
+
+        public  Task<GetMealByMealIdResponseModel> GetMealByMealId(int mealid)
+        {
+            var result =  _context.Meals.Where(x => x.MealId == mealid).Select(x => new GetMealByMealIdResponseModel
+            {
+                MealId = x.MealId,
+                Name = x.Name,
+                Image = x.Image,
+                DefaultPrice = x.DefaultPrice,
+                KithenDto = new KitchenDto
+                {
+                    KitchenId = x.Kitchen.KitchenId,
+                    UserId = x.Kitchen.UserId,
+                    Name = x.Kitchen.Name,
+                    Address = x.Kitchen.Address,
+                    District = x.Kitchen.District
+                }
+            });
+            var mapped = result.Select(x => _mapper.Map<GetMealByMealIdResponseModel>(x)).FirstOrDefault();
+            return Task.FromResult(mapped);
+        }
     }
 }

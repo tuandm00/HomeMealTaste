@@ -17,6 +17,7 @@ namespace HomeMealTaste.Services.Interface
         Task<PagedList<GetAllMealResponseModel>> GetAllMeal(PagingParams pagingParams);
         Task<List<GetAllMealByKitchenIdResponseModel>> GetAllMealByKitchenId(int id);
 
+        Task<GetMealByMealIdResponseModel> GetMealByMealId(int mealid);
 
     }
 }
