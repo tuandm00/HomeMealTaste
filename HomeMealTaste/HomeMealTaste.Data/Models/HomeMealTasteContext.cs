@@ -209,8 +209,6 @@ namespace HomeMealTaste.Data.Models
 
                 entity.Property(e => e.CreateDate).HasColumnType("date");
 
-                entity.Property(e => e.Price).HasColumnType("money");
-
                 entity.HasOne(d => d.Meal)
                     .WithMany(p => p.MealSessions)
                     .HasForeignKey(d => d.MealId)
