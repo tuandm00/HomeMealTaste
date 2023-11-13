@@ -147,6 +147,8 @@ namespace HomeMealTaste.Services.Implement
             {
                 var responseModel = _mapper.Map<SessionResponseModel>(session);
 
+                responseModel.CreateDate = session.CreateDate?.ToString("dd-MM-yyyy");
+                responseModel.EndDate = session.EndDate?.ToString("dd-MM-yyyy");
                 responseModel.StartTime = session.StartTime?.ToString("HH:mm");
                 responseModel.EndTime = session.EndTime?.ToString("HH:mm");
 
