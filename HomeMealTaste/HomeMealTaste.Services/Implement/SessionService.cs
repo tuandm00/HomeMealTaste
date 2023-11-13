@@ -127,11 +127,20 @@ namespace HomeMealTaste.Services.Implement
             await _context.SaveChangesAsync();
         }
 
-        public Task<List<SessionResponseModel>> GetAllSession()
+        public async Task<List<SessionResponseModel>> GetAllSession()
         {
-            var result = _context.Sessions.ToList();
-            var mapped = result.Select(x => _mapper.Map<SessionResponseModel>(x)).ToList();
-            return Task.FromResult(mapped);
+            var result =  _context.Sessions.ToList();
+            var mapped = result.Select(session =>
+            {
+                var responseModel = _mapper.Map<SessionResponseModel>(session);
+
+                responseModel.StartTime = session.StartTime?.ToString("HH:mm");
+                responseModel.EndTime = session.EndTime?.ToString("HH:mm");
+
+                return responseModel;
+            }).ToList();
+
+            return mapped;
         }
     }
 }
