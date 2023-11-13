@@ -1,4 +1,5 @@
-﻿using System;
+﻿using HomeMealTaste.Data.Models;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -13,6 +14,7 @@ namespace HomeMealTaste.Data.ResponseModel
         public string? Image { get; set; }
         public decimal? DefaultPrice { get; set; }
         public KitchenDto? KithenDto { get; set; }
+        public List<DishDto?> DishDto { get; set; }
     }
 
     public class KitchenDto
@@ -22,5 +24,13 @@ namespace HomeMealTaste.Data.ResponseModel
         public string? Name { get; set; }
         public string? Address { get; set; }
         public string? District { get; set; }
+    }
+
+    public class DishDto
+    {
+        public int DishId { get; set; }
+        public string? Name { get; set; }
+        public string? Image { get; set; }
+        public DishType? DishType { get; set; }
     }
 }

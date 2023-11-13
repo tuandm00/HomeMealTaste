@@ -106,22 +106,34 @@ namespace HomeMealTaste.Services.Implement
 
         public  Task<GetMealByMealIdResponseModel> GetMealByMealId(int mealid)
         {
-            var result =  _context.Meals.Where(x => x.MealId == mealid).Select(x => new GetMealByMealIdResponseModel
-            {
-                MealId = x.MealId,
-                Name = x.Name,
-                Image = x.Image,
-                DefaultPrice = x.DefaultPrice,
-                KithenDto = new KitchenDto
+            var result = _context.Meals
+                .Include(x => x.MealDishes)
+                .ThenInclude(x => x.Dish)
+                .Where(x => x.MealId == mealid)
+                .Select(group => new GetMealByMealIdResponseModel
                 {
-                    KitchenId = x.Kitchen.KitchenId,
-                    UserId = x.Kitchen.UserId,
-                    Name = x.Kitchen.Name,
-                    Address = x.Kitchen.Address,
-                    District = x.Kitchen.District
-                }
-            });
-            var mapped = result.Select(x => _mapper.Map<GetMealByMealIdResponseModel>(x)).FirstOrDefault();
+                    MealId = group.MealId,
+                    Name = group.Name,
+                    Image = group.Image,
+                    DefaultPrice = group.DefaultPrice,
+                    KithenDto = new KitchenDto
+                    {
+                        KitchenId = group.Kitchen.KitchenId,
+                        UserId = group.Kitchen.UserId,
+                        Name = group.Kitchen.Name,
+                        Address = group.Kitchen.Address,
+                        District = group.Kitchen.District
+                    },
+                    DishDto = group.MealDishes.Select(md => new DishDto
+                    {
+                        DishId = md.Dish.DishId,
+                        Name = md.Dish.Name,
+                        Image = md.Dish.Image,
+                        DishType = md.Dish.DishType,
+                    }).ToList()
+                }).FirstOrDefault();
+
+            var mapped = _mapper.Map<GetMealByMealIdResponseModel>(result);
             return Task.FromResult(mapped);
         }
     }
