@@ -17,6 +17,7 @@ namespace HomeMealTaste.Data.Models
         public string? Image { get; set; }
         public decimal? DefaultPrice { get; set; }
         public int? KitchenId { get; set; }
+        public DateTime? CreateDate { get; set; }
 
         public virtual Kitchen? Kitchen { get; set; }
         public virtual ICollection<MealDish> MealDishes { get; set; }

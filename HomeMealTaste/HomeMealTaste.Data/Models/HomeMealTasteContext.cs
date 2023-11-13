@@ -114,6 +114,8 @@ namespace HomeMealTaste.Data.Models
             {
                 entity.ToTable("Feedback");
 
+                entity.Property(e => e.CreateDate).HasColumnType("date");
+
                 entity.Property(e => e.Description).HasMaxLength(50);
 
                 entity.HasOne(d => d.Customer)
@@ -171,6 +173,8 @@ namespace HomeMealTaste.Data.Models
             modelBuilder.Entity<Meal>(entity =>
             {
                 entity.ToTable("Meal");
+
+                entity.Property(e => e.CreateDate).HasColumnType("date");
 
                 entity.Property(e => e.DefaultPrice).HasColumnType("money");
 
