@@ -110,5 +110,17 @@ namespace HomeMealTaste.Services.Implement
             
             return result;
         }
+
+        public async Task ChangeStatusSession(int sessionid)
+        {
+            var result = await _context.Sessions.FindAsync(sessionid);
+            if (result != null && result.Status == true)
+            {
+                result.Status = false;
+            }
+            else result.Status = true;
+
+            await _context.SaveChangesAsync();
+        }
     }
 }

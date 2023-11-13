@@ -50,5 +50,13 @@ namespace HomeMealTaste.Controllers
             var response = ApiResponse<object>.Success(result, metadata);
             return Ok(response);
         }
+
+        [HttpPatch("change-status-session")]
+        public async Task ChangeStatusSession(int sessionid)
+        {
+             await _sessionService.ChangeStatusSession(sessionid);
+        }
+
+
     }
 }
