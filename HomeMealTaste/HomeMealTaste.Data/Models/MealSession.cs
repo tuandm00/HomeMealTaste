@@ -5,6 +5,11 @@ namespace HomeMealTaste.Data.Models
 {
     public partial class MealSession
     {
+        public MealSession()
+        {
+            Orders = new HashSet<Order>();
+        }
+
         public int MealSessionId { get; set; }
         public int? MealId { get; set; }
         public int? SessionId { get; set; }
@@ -16,5 +21,6 @@ namespace HomeMealTaste.Data.Models
 
         public virtual Meal? Meal { get; set; }
         public virtual Session? Session { get; set; }
+        public virtual ICollection<Order> Orders { get; set; }
     }
 }

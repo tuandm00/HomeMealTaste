@@ -65,26 +65,36 @@ namespace HomeMealTaste.Services.Implement
             var entity = _mapper.Map<Session>(sessionRequest);
             if(entity.SessionType == "Lunch")
             {
+                entity.CreateDate = GetDateTimeTimeZoneVietNam();
                 entity.StartTime = GetDateTimeTimeZoneVietNam().Date.AddHours(10);
                 entity.EndTime = entity.StartTime.Value.AddHours(2);
+                entity.EndDate = GetDateTimeTimeZoneVietNam();
             }
             else if(entity.SessionType == "Evening")
             {
+                entity.CreateDate = GetDateTimeTimeZoneVietNam();
                 entity.StartTime = GetDateTimeTimeZoneVietNam().Date.AddHours(16);
                 entity.EndTime = entity.StartTime.Value.AddHours(4);
+                entity.EndDate = GetDateTimeTimeZoneVietNam();
+
             }
             else
             {
+                entity.CreateDate = GetDateTimeTimeZoneVietNam();
                 entity.StartTime = GetDateTimeTimeZoneVietNam().Date.AddHours(17);
                 entity.EndTime = entity.StartTime.Value.AddHours(2);
+                entity.EndDate = GetDateTimeTimeZoneVietNam();
+
             }
-            
+
             var result = await _sessionRepository.Create(entity,true);
 
             var responseModel = _mapper.Map<SessionResponseModel>(result);
 
             responseModel.StartTime = result.StartTime?.ToString("HH:mm");
             responseModel.EndTime = result.EndTime?.ToString("HH:mm");
+            responseModel.CreateDate = result.CreateDate?.ToString("dd-MM-yyyy");
+            responseModel.EndDate = result.EndDate?.ToString("dd-MM-yyyy");
 
             return responseModel;
         }

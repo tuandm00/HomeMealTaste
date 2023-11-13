@@ -9,7 +9,6 @@ namespace HomeMealTaste.Data.Models
         {
             Feedbacks = new HashSet<Feedback>();
             Groups = new HashSet<Group>();
-            Memberships = new HashSet<Membership>();
             Orders = new HashSet<Order>();
             Payments = new HashSet<Payment>();
         }
@@ -21,11 +20,12 @@ namespace HomeMealTaste.Data.Models
         public string? Phone { get; set; }
         public bool? AccountStatus { get; set; }
         public string? District { get; set; }
+        public int? MembershipId { get; set; }
 
+        public virtual Membership? Membership { get; set; }
         public virtual User? User { get; set; }
         public virtual ICollection<Feedback> Feedbacks { get; set; }
         public virtual ICollection<Group> Groups { get; set; }
-        public virtual ICollection<Membership> Memberships { get; set; }
         public virtual ICollection<Order> Orders { get; set; }
         public virtual ICollection<Payment> Payments { get; set; }
     }

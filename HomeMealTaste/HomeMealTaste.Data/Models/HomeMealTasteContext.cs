@@ -69,6 +69,11 @@ namespace HomeMealTaste.Data.Models
 
                 entity.Property(e => e.Phone).HasMaxLength(50);
 
+                entity.HasOne(d => d.Membership)
+                    .WithMany(p => p.Customers)
+                    .HasForeignKey(d => d.MembershipId)
+                    .HasConstraintName("FK_Customer_Membership");
+
                 entity.HasOne(d => d.User)
                     .WithMany(p => p.Customers)
                     .HasForeignKey(d => d.UserId)
@@ -229,11 +234,6 @@ namespace HomeMealTaste.Data.Models
                 entity.ToTable("Membership");
 
                 entity.Property(e => e.AccountRank).HasMaxLength(50);
-
-                entity.HasOne(d => d.Customer)
-                    .WithMany(p => p.Memberships)
-                    .HasForeignKey(d => d.CustomerId)
-                    .HasConstraintName("FK_Membership_Customer");
             });
 
             modelBuilder.Entity<Order>(entity =>
@@ -242,6 +242,8 @@ namespace HomeMealTaste.Data.Models
 
                 entity.Property(e => e.Date).HasColumnType("date");
 
+                entity.Property(e => e.MealSessionId).HasColumnName("Meal_SessionId");
+
                 entity.Property(e => e.Status).HasMaxLength(50);
 
                 entity.HasOne(d => d.Customer)
@@ -249,10 +251,10 @@ namespace HomeMealTaste.Data.Models
                     .HasForeignKey(d => d.CustomerId)
                     .HasConstraintName("FK_Order_Customer");
 
-                entity.HasOne(d => d.Meal)
+                entity.HasOne(d => d.MealSession)
                     .WithMany(p => p.Orders)
-                    .HasForeignKey(d => d.MealId)
-                    .HasConstraintName("FK_Order_Meal");
+                    .HasForeignKey(d => d.MealSessionId)
+                    .HasConstraintName("FK_Order_Meal_Session");
 
                 entity.HasOne(d => d.Session)
                     .WithMany(p => p.Orders)

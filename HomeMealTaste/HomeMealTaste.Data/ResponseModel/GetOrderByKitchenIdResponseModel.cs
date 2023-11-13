@@ -14,7 +14,7 @@ namespace HomeMealTaste.Data.ResponseModel
         public DateTime? Date { get; set; }
         public CustomerDto? Customer { get; set; }
         public string? Status { get; set; }
-        public MealDto? Meal { get; set; }
+        public MealSessionDto? MealSession { get; set; }
         public SessionDto? Session { get; set; }
         public int? PromotionPrice { get; set; }
 
@@ -31,13 +31,16 @@ namespace HomeMealTaste.Data.ResponseModel
         public string? District { get; set; }
     }
 
-    public class MealDto
+    public class MealSessionDto
     {
-        public int MealId { get; set; }
-        public string? Name { get; set; }
-        public string? Image { get; set; }
-        public decimal? DefaultPrice { get; set; }
-        public int? KitchenId { get; set; }
+        public int MealSessionId { get; set; }
+        public int? MealId { get; set; }
+        public int? SessionId { get; set; }
+        public double? Points { get; set; }
+        public int? Quantity { get; set; }
+        public int? RemainQuantity { get; set; }
+        public bool? Status { get; set; }
+        public DateTime? CreateDate { get; set; }
     }
 
     public class SessionDto

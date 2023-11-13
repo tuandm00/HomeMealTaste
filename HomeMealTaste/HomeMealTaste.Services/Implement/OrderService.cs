@@ -40,19 +40,15 @@ namespace HomeMealTaste.Services.Implement
                     Address = x.Customer.Address,
                     District = x.Customer.District,
                 },
-                Meal = new Meal
+                MealSession = new MealSession
                 {
-                    MealId = x.Meal.MealId,
-                    Name = x.Meal.Name,
-                    Image = x.Meal.Image,
-                    DefaultPrice = x.Meal.DefaultPrice,
-                    Kitchen = new Kitchen
-                    {
-                        KitchenId = x.Meal.Kitchen.KitchenId,
-                        Name = x.Meal.Kitchen.Name,
-                        Address = x.Meal.Kitchen.Address,
-                        District = x.Meal.Kitchen.District
-                    }
+                    MealSessionId = x.MealSession.MealSessionId,
+                    MealId = x.MealSession.MealId,
+                    Points = x.MealSession.Points,
+                    Quantity = x.MealSession.Quantity,
+                    RemainQuantity = x.MealSession.RemainQuantity,
+                    Status = x.MealSession.Status,
+                    CreateDate = x.MealSession.CreateDate,
                 },
                 Session = new Session
                 {
@@ -83,19 +79,15 @@ namespace HomeMealTaste.Services.Implement
                     Address = x.Customer.Address,
                     District = x.Customer.District,
                 },
-                Meal = new Meal
+                MealSession = new MealSession
                 {
-                    MealId = x.Meal.MealId,
-                    Name = x.Meal.Name,
-                    Image = x.Meal.Image,
-                    DefaultPrice = x.Meal.DefaultPrice,
-                    Kitchen = new Kitchen
-                    {
-                        KitchenId = x.Meal.Kitchen.KitchenId,
-                        Name = x.Meal.Kitchen.Name,
-                        Address = x.Meal.Kitchen.Address,
-                        District = x.Meal.Kitchen.District
-                    }
+                    MealSessionId = x.MealSession.MealSessionId,
+                    MealId = x.MealSession.MealId,
+                    Points = x.MealSession.Points,
+                    Quantity = x.MealSession.Quantity,
+                    RemainQuantity = x.MealSession.RemainQuantity,
+                    Status = x.MealSession.Status,
+                    CreateDate = x.MealSession.CreateDate,
                 },
                 Session = new Session
                 {
@@ -127,19 +119,15 @@ namespace HomeMealTaste.Services.Implement
                     Address = x.Customer.Address,
                     District = x.Customer.District,
                 },
-                Meal = new Meal
+                MealSession = new MealSession
                 {
-                    MealId = x.Meal.MealId,
-                    Name = x.Meal.Name,
-                    Image = x.Meal.Image,
-                    DefaultPrice = x.Meal.DefaultPrice,
-                    Kitchen = new Kitchen
-                    {
-                        KitchenId = x.Meal.Kitchen.KitchenId,
-                        Name = x.Meal.Kitchen.Name,
-                        Address = x.Meal.Kitchen.Address,
-                        District = x.Meal.Kitchen.District
-                    }
+                    MealSessionId = x.MealSession.MealSessionId,
+                    MealId = x.MealSession.MealId,
+                    Points = x.MealSession.Points,
+                    Quantity = x.MealSession.Quantity,
+                    RemainQuantity = x.MealSession.RemainQuantity,
+                    Status = x.MealSession.Status,
+                    CreateDate = x.MealSession.CreateDate,
                 },
                 Session = new Session
                 {
@@ -160,9 +148,10 @@ namespace HomeMealTaste.Services.Implement
         public Task<List<GetOrderByKitchenIdResponseModel>> GetOrderByKitchenId(int kitchenid)
         {
             var result = _context.Orders
-                .Include(x => x.Meal)
+                .Include(x => x.MealSession)
+                .ThenInclude(x => x.Meal)
                 .ThenInclude(x => x.Kitchen)
-                .Where(x => x.Meal.Kitchen.KitchenId == kitchenid)
+                .Where(x => x.MealSession.Meal.Kitchen.KitchenId == kitchenid)
                 .Select(x => new GetOrderByKitchenIdResponseModel
                 {
                 OrderId = x.OrderId,
@@ -178,13 +167,15 @@ namespace HomeMealTaste.Services.Implement
                     AccountStatus = x.Customer.AccountStatus,
                 },
                 Status = x.Status,
-                Meal = new MealDto
+                MealSession = new MealSessionDto
                 {
-                    MealId = x.Meal.MealId,
-                    Name = x.Meal.Name,
-                    Image = x.Meal.Image,
-                    DefaultPrice = x.Meal.DefaultPrice,
-                    KitchenId = x.Meal.KitchenId
+                    MealSessionId = x.MealSession.MealSessionId,
+                    MealId = x.MealSession.MealId,
+                    Points = x.MealSession.Points,
+                    Quantity = x.MealSession.Quantity,
+                    RemainQuantity = x.MealSession.RemainQuantity,
+                    Status = x.MealSession.Status,
+                    CreateDate = x.MealSession.CreateDate
                 },
                 Session = new SessionDto
                 {
@@ -198,7 +189,6 @@ namespace HomeMealTaste.Services.Implement
                     SessionType = x.Session.SessionType,
                     Status = x.Session.Status,
                 },
-                PromotionPrice = x.PromotionPrice,
             });
 
             var mapped = result.Select(x => _mapper.Map<GetOrderByKitchenIdResponseModel>(x)).ToList();
