@@ -116,7 +116,7 @@ namespace HomeMealTaste.Services.Implement
                     Name = group.Name,
                     Image = group.Image,
                     DefaultPrice = group.DefaultPrice,
-                    KithenDto = new KitchenDto
+                    KitchenDto = new KitchenDto
                     {
                         KitchenId = group.Kitchen.KitchenId,
                         UserId = group.Kitchen.UserId,
