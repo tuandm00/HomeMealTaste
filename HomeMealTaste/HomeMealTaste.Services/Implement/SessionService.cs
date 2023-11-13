@@ -81,8 +81,12 @@ namespace HomeMealTaste.Services.Implement
             
             var result = await _sessionRepository.Create(entity,true);
 
-            return _mapper.Map<SessionResponseModel>(result);
+            var responseModel = _mapper.Map<SessionResponseModel>(result);
 
+            responseModel.StartTime = result.StartTime?.ToString("HH:mm");
+            responseModel.EndTime = result.EndTime?.ToString("HH:mm");
+
+            return responseModel;
         }
 
         public async Task<SessionResponseModel> UpdateEndTime(int sessionId, DateTime endTime)
