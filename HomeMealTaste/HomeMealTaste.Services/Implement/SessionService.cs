@@ -126,5 +126,12 @@ namespace HomeMealTaste.Services.Implement
 
             await _context.SaveChangesAsync();
         }
+
+        public Task<List<SessionResponseModel>> GetAllSession()
+        {
+            var result = _context.Sessions.ToList();
+            var mapped = result.Select(x => _mapper.Map<SessionResponseModel>(x)).ToList();
+            return Task.FromResult(mapped);
+        }
     }
 }

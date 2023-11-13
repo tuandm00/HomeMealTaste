@@ -57,6 +57,12 @@ namespace HomeMealTaste.Controllers
              await _sessionService.ChangeStatusSession(sessionid);
         }
 
+        [HttpGet("get-all-session")]
+        public async Task<IActionResult> GetAllSession()
+        {
+            var result = await _sessionService.GetAllSession();
+            return Ok(result);
+        }
 
     }
 }
