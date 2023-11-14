@@ -79,7 +79,15 @@ namespace HomeMealTaste.Services.Implement
                         MealId = x.MealSession.Meal.MealId,
                         Name = x.MealSession.Meal.Name,
                         Image = x.MealSession.Meal.Image,
-                        KitchenId = x.MealSession.Meal.KitchenId,
+                        KitchenDto1 = new KitchenDto1
+                        {
+                            KitchenId = x.MealSession.Meal.Kitchen.KitchenId,
+                            UserId = x.MealSession.Meal.Kitchen.UserId,
+                            Name = x.MealSession.Meal.Kitchen.Name,
+                            Address = x.MealSession.Meal.Kitchen.Address,
+                            District =  x.MealSession.Meal.Kitchen.District,
+                            AreaId = x.MealSession.Meal.Kitchen.AreaId
+                        },
                         CreateDate = GetDateTimeTimeZoneVietNam().ToString("dd-MM-yyyy"),
                     },
                     SessionDto1 = new SessionDto1
@@ -100,6 +108,8 @@ namespace HomeMealTaste.Services.Implement
                     Status = x.MealSession.Status,
                     CreateDate = GetDateTimeTimeZoneVietNam().ToString("dd-MM-yyyy"),
                 },
+                Status = x.Status,
+                Price = x.Price,
             });
             var mappedResult = result.Select(x => _mapper.Map<OrderResponseModel>(x)).ToList();
             return mappedResult;

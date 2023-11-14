@@ -37,7 +37,7 @@ namespace HomeMealTaste.Data.ResponseModel
         public int? RemainQuantity { get; set; }
         public bool? Status { get; set; }
         public string? CreateDate { get; set; }
-        public int? KitchenId { get; set; }
+        public KitchenDto1? KitchenDto1 { get; set; }
     }
 
     public class MealDto1
@@ -45,7 +45,7 @@ namespace HomeMealTaste.Data.ResponseModel
         public int MealId { get; set; }
         public string? Name { get; set; }
         public string? Image { get; set; }
-        public int? KitchenId { get; set; }
+        public KitchenDto1? KitchenDto1 { get; set; }
         public string? CreateDate { get; set; }
     }
      public class SessionDto1
@@ -58,6 +58,16 @@ namespace HomeMealTaste.Data.ResponseModel
         public int? UserId { get; set; }
         public bool? Status { get; set; }
         public string? SessionType { get; set; }
+        public int? AreaId { get; set; }
+    }
+
+    public class KitchenDto1
+    {
+        public int KitchenId { get; set; }
+        public int? UserId { get; set; }
+        public string? Name { get; set; }
+        public string? Address { get; set; }
+        public string? District { get; set; }
         public int? AreaId { get; set; }
     }
 }
