@@ -181,5 +181,11 @@ namespace HomeMealTaste.Services.Implement
             var mappedResults = result.Select(session => _mapper.Map<GetAllSessionByAreaIdResponseModel>(session)).ToList();
             return Task.FromResult(mappedResults);
         }
+
+        public Task DeleteSession(int sessionId)
+        {
+            var result =  _sessionRepository.Delete(sessionId);
+            return result;
+        }
     }
 }
