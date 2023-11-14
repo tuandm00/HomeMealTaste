@@ -8,6 +8,8 @@ using HomeMealTaste.Services.Interface;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -25,40 +27,77 @@ namespace HomeMealTaste.Services.Implement
             _mapper = mapper;
             _context = context;
         }
+        public static DateTime TranferDateTimeByTimeZone(DateTime dateTime, string timezoneArea)
+        {
 
+            ReadOnlyCollection<TimeZoneInfo> collection = TimeZoneInfo.GetSystemTimeZones();
+            var timeZone = collection.ToList().Where(x => x.DisplayName.ToLower().Contains(timezoneArea)).First();
+
+            var timeZoneLocal = TimeZoneInfo.Local;
+
+            var utcDateTime = TimeZoneInfo.ConvertTime(dateTime, timeZoneLocal, timeZone);
+
+            return utcDateTime;
+        }
+
+        public static DateTime GetDateTimeTimeZoneVietNam()
+        {
+
+            return TranferDateTimeByTimeZone(DateTime.Now, "hanoi");
+        }
+        public static DateTime? StringToDateTimeVN(string dateStr)
+        {
+
+            var isValid = System.DateTime.TryParseExact(
+                                dateStr,
+                                "d'/'M'/'yyyy",
+                                CultureInfo.InvariantCulture,
+                                DateTimeStyles.None,
+                                out var date
+                            );
+            return isValid ? date : null;
+        }
         public async Task<List<OrderResponseModel>> GetAllOrder()
         {
             var result = _context.Orders.Select(x => new OrderResponseModel
             {
                 OrderId = x.OrderId,
-                Date = x.Date,
-                Customer = new Customer
+                Date = GetDateTimeTimeZoneVietNam().ToString(),
+                CustomerDto1 = new CustomerDto1
                 {
                     CustomerId = x.Customer.CustomerId,
                     Name = x.Customer.Name,
                     Phone = x.Customer.Phone,
-                    Address = x.Customer.Address,
                     District = x.Customer.District,
                 },
-                MealSession = new MealSession
+                MealSessionDto1 = new MealSessionDto1
                 {
                     MealSessionId = x.MealSession.MealSessionId,
-                    MealId = x.MealSession.MealId,
-                    Points = x.MealSession.Points,
+                    MealDto1 = new MealDto1
+                    {
+                        MealId = x.MealSession.Meal.MealId,
+                        Name = x.MealSession.Meal.Name,
+                        Image = x.MealSession.Meal.Image,
+                        KitchenId = x.MealSession.Meal.KitchenId,
+                        CreateDate = x.MealSession.Meal.CreateDate.ToString(),
+                    },
+                    SessionDto1 = new SessionDto1
+                    {
+                        SessionId = x.MealSession.Session.SessionId,
+                        CreateDate = x.MealSession.Session.CreateDate.ToString(),
+                        StartTime = x.MealSession.Session.StartTime.ToString(),
+                        EndTime = x.MealSession.Session.EndTime.ToString(),
+                        EndDate = x.MealSession.Session.EndDate.ToString(),
+                        UserId = x.MealSession.Session.UserId,
+                        Status = x.MealSession.Session.Status,
+                        SessionType = x.MealSession.Session.SessionType,
+                        AreaId = x.MealSession.Session.AreaId,
+                    },
+                    Price = x.MealSession.Price,
                     Quantity = x.MealSession.Quantity,
                     RemainQuantity = x.MealSession.RemainQuantity,
                     Status = x.MealSession.Status,
-                    CreateDate = x.MealSession.CreateDate,
-                },
-                Session = new Session
-                {
-                    SessionId = x.Session.SessionId,
-                    CreateDate = x.Session.CreateDate,
-                    StartTime = x.Session.StartTime,
-                    EndTime = x.Session.EndTime,
-                    EndDate = x.Session.EndDate,
-                    SessionName = x.Session.SessionName,
-                    SessionType = x.Session.SessionType,
+                    CreateDate = x.MealSession.CreateDate.ToString(),
                 },
             });
             var mappedResult = result.Select(x => _mapper.Map<OrderResponseModel>(x)).ToList();
@@ -76,29 +115,19 @@ namespace HomeMealTaste.Services.Implement
                     CustomerId = id,
                     Name = x.Customer.Name,
                     Phone = x.Customer.Phone,
-                    Address = x.Customer.Address,
                     District = x.Customer.District,
                 },
                 MealSession = new MealSession
                 {
                     MealSessionId = x.MealSession.MealSessionId,
                     MealId = x.MealSession.MealId,
-                    Points = x.MealSession.Points,
+                    Price = x.MealSession.Price,
                     Quantity = x.MealSession.Quantity,
                     RemainQuantity = x.MealSession.RemainQuantity,
                     Status = x.MealSession.Status,
                     CreateDate = x.MealSession.CreateDate,
                 },
-                Session = new Session
-                {
-                    SessionId = x.Session.SessionId,
-                    CreateDate = x.Session.CreateDate,
-                    StartTime = x.Session.StartTime,
-                    EndTime = x.Session.EndTime,
-                    EndDate = x.Session.EndDate,
-                    SessionName = x.Session.SessionName,
-                    SessionType = x.Session.SessionType,
-                },
+                
             }).ToList();
 
             var mappedResults = results.Select(order => _mapper.Map<GetAllOrderByUserIdResponseModel>(order)).ToList();
@@ -116,29 +145,19 @@ namespace HomeMealTaste.Services.Implement
                     CustomerId = id,
                     Name = x.Customer.Name,
                     Phone = x.Customer.Phone,
-                    Address = x.Customer.Address,
                     District = x.Customer.District,
                 },
                 MealSession = new MealSession
                 {
                     MealSessionId = x.MealSession.MealSessionId,
                     MealId = x.MealSession.MealId,
-                    Points = x.MealSession.Points,
+                    Price = x.MealSession.Price,
                     Quantity = x.MealSession.Quantity,
                     RemainQuantity = x.MealSession.RemainQuantity,
                     Status = x.MealSession.Status,
                     CreateDate = x.MealSession.CreateDate,
                 },
-                Session = new Session
-                {
-                    SessionId = x.Session.SessionId,
-                    CreateDate = x.Session.CreateDate,
-                    StartTime = x.Session.StartTime,
-                    EndTime = x.Session.EndTime,
-                    EndDate = x.Session.EndDate,
-                    SessionName = x.Session.SessionName,
-                    SessionType = x.Session.SessionType,
-                },
+                
             }).ToList();
 
             var mappedResults = results.Select(order => _mapper.Map<GetAllOrderByUserIdResponseModel>(order)).ToList();
@@ -161,33 +180,18 @@ namespace HomeMealTaste.Services.Implement
                     CustomerId = x.Customer.CustomerId,
                     UserId = x.Customer.UserId,
                     Name = x.Customer.Name,
-                    Address = x.Customer.Address,
                     Phone = x.Customer.Phone,
                     District = x.Customer.District,
-                    AccountStatus = x.Customer.AccountStatus,
                 },
                 Status = x.Status,
                 MealSession = new MealSessionDto
                 {
                     MealSessionId = x.MealSession.MealSessionId,
                     MealId = x.MealSession.MealId,
-                    Points = x.MealSession.Points,
                     Quantity = x.MealSession.Quantity,
                     RemainQuantity = x.MealSession.RemainQuantity,
                     Status = x.MealSession.Status,
                     CreateDate = x.MealSession.CreateDate
-                },
-                Session = new SessionDto
-                {
-                    SessionId = x.Session.SessionId,
-                    CreateDate = x.Session.CreateDate,
-                    StartTime = x.Session.StartTime,
-                    EndTime = x.Session.EndTime,
-                    EndDate = x.Session.EndDate,
-                    SessionName = x.Session.SessionName,
-                    UserId = x.Session.UserId,
-                    SessionType = x.Session.SessionType,
-                    Status = x.Session.Status,
                 },
             });
 

@@ -7,7 +7,6 @@ namespace HomeMealTaste.Data.Models
     {
         public Order()
         {
-            Payments = new HashSet<Payment>();
             Transactions = new HashSet<Transaction>();
         }
 
@@ -16,13 +15,10 @@ namespace HomeMealTaste.Data.Models
         public int? CustomerId { get; set; }
         public string? Status { get; set; }
         public int? MealSessionId { get; set; }
-        public int? SessionId { get; set; }
-        public int? Points { get; set; }
+        public int? Price { get; set; }
 
         public virtual Customer? Customer { get; set; }
         public virtual MealSession? MealSession { get; set; }
-        public virtual Session? Session { get; set; }
-        public virtual ICollection<Payment> Payments { get; set; }
         public virtual ICollection<Transaction> Transactions { get; set; }
     }
 }
