@@ -96,10 +96,10 @@ namespace HomeMealTaste.Services.Implement
                     SessionDto1 = new SessionDto1
                     {
                         SessionId = x.MealSession.Session.SessionId,
-                        CreateDate = GetDateTimeTimeZoneVietNam().ToString("dd-MM-yyyy"),
-                        StartTime = GetDateTimeTimeZoneVietNam().ToString("HH:mm"),
-                        EndTime = GetDateTimeTimeZoneVietNam().ToString("HH:mm"),
-                        EndDate = GetDateTimeTimeZoneVietNam().ToString("dd-MM-yyyy"),
+                        CreateDate = x.MealSession.Session.CreateDate.ToString(),
+                        StartTime = x.MealSession.Session.StartTime.ToString(),
+                        EndTime = x.MealSession.Session.EndTime.ToString(),
+                        EndDate = x.MealSession.Session.EndDate.ToString(),
                         UserId = x.MealSession.Session.UserId,
                         Status = x.MealSession.Session.Status,
                         SessionType = x.MealSession.Session.SessionType,
