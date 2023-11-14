@@ -207,8 +207,6 @@ namespace HomeMealTaste.Data.Models
             {
                 entity.ToTable("Order");
 
-                entity.Property(e => e.Date).HasColumnType("date");
-
                 entity.Property(e => e.MealSessionId).HasColumnName("Meal_SessionId");
 
                 entity.Property(e => e.Status).HasMaxLength(50);

@@ -57,6 +57,7 @@ namespace HomeMealTaste.Services.Implement
                             );
             return isValid ? date : null;
         }
+        
         public async Task<List<OrderResponseModel>> GetAllOrder()
         {
             var result = _context.Orders
@@ -65,8 +66,7 @@ namespace HomeMealTaste.Services.Implement
                 .Select(x => new OrderResponseModel
             {
                 OrderId = x.OrderId,
-                Date = x.Date,
-                Time = x.Time,
+                Time = x.Time.ToString(),
                 CustomerDto1 = new CustomerDto1
                 {
                     CustomerId = x.Customer.CustomerId,
@@ -116,6 +116,7 @@ namespace HomeMealTaste.Services.Implement
                 Price = x.Price,
             });
             var mappedResult = result.Select(x => _mapper.Map<OrderResponseModel>(x)).ToList();
+            
             return mappedResult;
         }
 
@@ -250,7 +251,6 @@ namespace HomeMealTaste.Services.Implement
                 .Select(x => new GetOrderByKitchenIdResponseModel
                 {
                 OrderId = x.OrderId,
-                Date = x.Date,
                 Customer = new CustomerDto
                 {
                     CustomerId = x.Customer.CustomerId,
