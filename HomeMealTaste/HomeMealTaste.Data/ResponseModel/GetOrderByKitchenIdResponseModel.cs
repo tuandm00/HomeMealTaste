@@ -16,7 +16,8 @@ namespace HomeMealTaste.Data.ResponseModel
         public string? Status { get; set; }
         public MealSessionDto? MealSession { get; set; }
         public SessionDto? Session { get; set; }
-        public int? PromotionPrice { get; set; }
+        public int? Price { get; set; }
+        public string? Time { get; set; }
 
     }
 

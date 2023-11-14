@@ -10,11 +10,12 @@ namespace HomeMealTaste.Data.ResponseModel
     public class GetAllOrderByUserIdResponseModel
     {
         public int OrderId { get; set; }
-        public string? Date { get; set; }
         public CustomerDto2? CustomerDto2 { get; set; }
         public string? Status { get; set; }
         public MealSessionDto2? MealSessionDto2 { get; set; }
         public int? Price { get; set; }
+        public string? Time { get; set; }
+
     }
     public class CustomerDto2
     {

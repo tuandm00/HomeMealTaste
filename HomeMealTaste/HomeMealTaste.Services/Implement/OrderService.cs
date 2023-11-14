@@ -128,8 +128,8 @@ namespace HomeMealTaste.Services.Implement
                 .Where(x => x.OrderId == id).Select(x => new GetAllOrderByUserIdResponseModel
             {
                 OrderId = x.OrderId,
-                Date = GetDateTimeTimeZoneVietNam().ToString(),
-                CustomerDto2 = new CustomerDto2
+                    Time = x.Time.ToString(),
+                    CustomerDto2 = new CustomerDto2
                 {
                     CustomerId = x.Customer.CustomerId,
                     Name = x.Customer.Name,
@@ -186,7 +186,8 @@ namespace HomeMealTaste.Services.Implement
             var results = _context.Orders.Where(x => x.CustomerId == id).Select(x => new GetAllOrderByUserIdResponseModel
             {
                 OrderId = x.OrderId,
-                Date = GetDateTimeTimeZoneVietNam().ToString(),
+                Time = x.Time.ToString(),
+
                 CustomerDto2 = new CustomerDto2
                 {
                     CustomerId = x.Customer.CustomerId,
@@ -251,7 +252,9 @@ namespace HomeMealTaste.Services.Implement
                 .Select(x => new GetOrderByKitchenIdResponseModel
                 {
                 OrderId = x.OrderId,
-                Customer = new CustomerDto
+                    Time = x.Time.ToString(),
+
+                    Customer = new CustomerDto
                 {
                     CustomerId = x.Customer.CustomerId,
                     UserId = x.Customer.UserId,
@@ -269,7 +272,8 @@ namespace HomeMealTaste.Services.Implement
                     Status = x.MealSession.Status,
                     CreateDate = x.MealSession.CreateDate
                 },
-            });
+                Price = x.Price,
+                });
 
             var mapped = result.Select(x => _mapper.Map<GetOrderByKitchenIdResponseModel>(x)).ToList();
             return Task.FromResult(mapped);
