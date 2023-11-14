@@ -64,7 +64,7 @@ namespace HomeMealTaste.Services.Implement
                 .Include(x => x.MealSession.Meal.Kitchen)
                 .Include(x => x.MealSession)
                 .Select(x => new OrderResponseModel
-            {
+                {
                 OrderId = x.OrderId,
                 Time = x.Time.ToString(),
                 CustomerDto1 = new CustomerDto1
@@ -93,6 +93,7 @@ namespace HomeMealTaste.Services.Implement
                             AreaId = x.MealSession.Meal.Kitchen.AreaId,
                         },
                         CreateDate = GetDateTimeTimeZoneVietNam().ToString("dd-MM-yyyy"),
+                        Description = x.MealSession.Meal.Description,
                     },
                     SessionDto1 = new SessionDto1
                     {
@@ -155,6 +156,8 @@ namespace HomeMealTaste.Services.Implement
                             AreaId = x.MealSession.Meal.Kitchen.AreaId,
                         },
                         CreateDate = GetDateTimeTimeZoneVietNam().ToString("dd-MM-yyyy"),
+                        Description = x.MealSession.Meal.Description,
+
                     },
                     SessionDto2 = new SessionDto2
                     {
@@ -214,6 +217,8 @@ namespace HomeMealTaste.Services.Implement
                             AreaId = x.MealSession.Meal.Kitchen.AreaId,
                         },
                         CreateDate = GetDateTimeTimeZoneVietNam().ToString("dd-MM-yyyy"),
+                        Description = x.MealSession.Meal.Description,
+
                     },
                     SessionDto2 = new SessionDto2
                     {
@@ -262,7 +267,6 @@ namespace HomeMealTaste.Services.Implement
                     Phone = x.Customer.Phone,
                     District = x.Customer.District,
                 },
-                Status = x.Status,
                 MealSession = new MealSessionDto
                 {
                     MealSessionId = x.MealSession.MealSessionId,
@@ -272,7 +276,8 @@ namespace HomeMealTaste.Services.Implement
                     Status = x.MealSession.Status,
                     CreateDate = x.MealSession.CreateDate
                 },
-                Price = x.Price,
+                    Status = x.Status,
+                    Price = x.Price,
                 });
 
             var mapped = result.Select(x => _mapper.Map<GetOrderByKitchenIdResponseModel>(x)).ToList();

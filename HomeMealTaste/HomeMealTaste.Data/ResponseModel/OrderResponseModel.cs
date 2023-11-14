@@ -48,8 +48,10 @@ namespace HomeMealTaste.Data.ResponseModel
         public string? Image { get; set; }
         public KitchenDto1? KitchenDto1 { get; set; }
         public string? CreateDate { get; set; }
+        public string? Description { get; set; }
+
     }
-     public class SessionDto1
+    public class SessionDto1
     {
         public int SessionId { get; set; }
         public string? CreateDate { get; set; }

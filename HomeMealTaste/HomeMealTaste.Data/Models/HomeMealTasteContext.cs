@@ -152,6 +152,8 @@ namespace HomeMealTaste.Data.Models
 
                 entity.Property(e => e.CreateDate).HasColumnType("date");
 
+                entity.Property(e => e.Description).HasMaxLength(1000);
+
                 entity.Property(e => e.Image).HasMaxLength(1000);
 
                 entity.Property(e => e.Name).HasMaxLength(50);
