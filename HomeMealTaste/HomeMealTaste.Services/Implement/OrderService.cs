@@ -120,7 +120,10 @@ namespace HomeMealTaste.Services.Implement
 
         public Task<List<GetAllOrderByUserIdResponseModel>> GetAllOrderById(int id)
         {
-            var results = _context.Orders.Where(x => x.OrderId == id).Select(x => new GetAllOrderByUserIdResponseModel
+            var results = _context.Orders
+                .Include(x => x.MealSession.Meal.Kitchen)
+                .Include(x => x.MealSession)
+                .Where(x => x.OrderId == id).Select(x => new GetAllOrderByUserIdResponseModel
             {
                 OrderId = x.OrderId,
                 Date = GetDateTimeTimeZoneVietNam().ToString(),
@@ -167,11 +170,10 @@ namespace HomeMealTaste.Services.Implement
                     Quantity = x.MealSession.Quantity,
                     RemainQuantity = x.MealSession.RemainQuantity,
                     Status = x.MealSession.Status,
-                    CreateDate = x.MealSession.CreateDate.ToString(),
+                    CreateDate = GetDateTimeTimeZoneVietNam().ToString("dd-MM-yyyy"),
                 },
                 Status = x.Status,
                 Price = x.Price,
-
             }).ToList();
 
             var mappedResults = results.Select(order => _mapper.Map<GetAllOrderByUserIdResponseModel>(order)).ToList();
