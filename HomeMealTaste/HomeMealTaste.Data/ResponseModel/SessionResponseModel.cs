@@ -9,10 +9,10 @@ namespace HomeMealTaste.Services.ResponseModel
     public class SessionResponseModel
     {
         public int SessionId { get; set; }
-        public String? CreateDate { get; set; }
-        public String? StartTime { get; set; }
-        public String? EndTime { get; set; }
-        public String? EndDate { get; set; }
+        public string? CreateDate { get; set; }
+        public string? StartTime { get; set; }
+        public string? EndTime { get; set; }
+        public string? EndDate { get; set; }
         public int? UserId { get; set; }
         public bool? Status { get; set; }
     }
