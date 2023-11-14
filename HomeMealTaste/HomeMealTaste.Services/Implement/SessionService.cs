@@ -65,24 +65,41 @@ namespace HomeMealTaste.Services.Implement
             var entity = _mapper.Map<Session>(sessionRequest);
             if(entity.SessionType == "Lunch")
             {
-                entity.StartTime = DateTime.Now.Date.AddHours(10);
+                entity.CreateDate = GetDateTimeTimeZoneVietNam();
+                entity.StartTime = GetDateTimeTimeZoneVietNam().Date.AddHours(10);
                 entity.EndTime = entity.StartTime.Value.AddHours(2);
+                entity.EndDate = GetDateTimeTimeZoneVietNam();
+                entity.Status = true;
             }
             else if(entity.SessionType == "Evening")
             {
-                entity.StartTime = DateTime.Now.Date.AddHours(16);
+                entity.CreateDate = GetDateTimeTimeZoneVietNam();
+                entity.StartTime = GetDateTimeTimeZoneVietNam().Date.AddHours(16);
                 entity.EndTime = entity.StartTime.Value.AddHours(4);
+                entity.EndDate = GetDateTimeTimeZoneVietNam();
+                entity.Status = true;
+
             }
             else
             {
-                entity.StartTime = DateTime.Now.Date.AddHours(17);
+                entity.CreateDate = GetDateTimeTimeZoneVietNam();
+                entity.StartTime = GetDateTimeTimeZoneVietNam().Date.AddHours(17);
                 entity.EndTime = entity.StartTime.Value.AddHours(2);
+                entity.EndDate = GetDateTimeTimeZoneVietNam();
+                entity.Status = true;
+
             }
-            
+
             var result = await _sessionRepository.Create(entity,true);
 
-            return _mapper.Map<SessionResponseModel>(result);
+            var responseModel = _mapper.Map<SessionResponseModel>(result);
 
+            responseModel.StartTime = result.StartTime?.ToString("HH:mm");
+            responseModel.EndTime = result.EndTime?.ToString("HH:mm");
+            responseModel.CreateDate = result.CreateDate?.ToString("dd-MM-yyyy");
+            responseModel.EndDate = result.EndDate?.ToString("dd-MM-yyyy");
+
+            return responseModel;
         }
 
         public async Task<SessionResponseModel> UpdateEndTime(int sessionId, DateTime endTime)
@@ -109,6 +126,36 @@ namespace HomeMealTaste.Services.Implement
             var result = await _sessionRepository.GetWithPaging(pagingParams, conditionAddition, selectExpression, includes);
             
             return result;
+        }
+
+        public async Task ChangeStatusSession(int sessionid)
+        {
+            var result = await _context.Sessions.FindAsync(sessionid);
+            if (result != null && result.Status == true)
+            {
+                result.Status = false;
+            }
+            else result.Status = true;
+
+            await _context.SaveChangesAsync();
+        }
+
+        public async Task<List<SessionResponseModel>> GetAllSession()
+        {
+            var result =  _context.Sessions.ToList();
+            var mapped = result.Select(session =>
+            {
+                var responseModel = _mapper.Map<SessionResponseModel>(session);
+
+                responseModel.CreateDate = session.CreateDate?.ToString("dd-MM-yyyy");
+                responseModel.EndDate = session.EndDate?.ToString("dd-MM-yyyy");
+                responseModel.StartTime = session.StartTime?.ToString("HH:mm");
+                responseModel.EndTime = session.EndTime?.ToString("HH:mm");
+
+                return responseModel;
+            }).ToList();
+
+            return mapped;
         }
     }
 }

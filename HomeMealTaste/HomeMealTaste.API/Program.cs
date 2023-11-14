@@ -10,6 +10,7 @@ using Microsoft.OpenApi.Models;
 using System.Text;
 using HomeMealTaste.Data;
 using HomeMealTaste.Data.RequestModel;
+using Azure.Storage.Blobs;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -29,6 +30,9 @@ builder.Services.AddScoped<IMealSessionRepository, MealSessionRepository>();
 builder.Services.AddScoped<IDistrictRepository, DistrictRepository>();
 builder.Services.AddScoped<IMealRepository, MealRepository>();
 builder.Services.AddScoped<IMealDishRepository, MealDishRepository>();
+builder.Services.AddScoped<IOrderRepository, OrderRepository>();
+builder.Services.AddScoped<IKitchenRepository, KitchenRepository>();
+builder.Services.AddScoped<IAreaRepository, AreaRepository>();
 
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IDishService, DishService>();
@@ -37,10 +41,16 @@ builder.Services.AddScoped<ISessionService, SessionService>();
 builder.Services.AddScoped<IMealSessionService, MealSessionService>();
 builder.Services.AddScoped<IDistrictService, DistrictService>();
 builder.Services.AddScoped<IMealService, MealService>();
+builder.Services.AddScoped<IOrderService, OrderService>();
+builder.Services.AddScoped<IKitchenService, KitchenService>();
+builder.Services.AddScoped<IAreaService, AreaService>();
+builder.Services.AddScoped<IBlobService, BlobService>();
 builder.Services.AddDbContext<HomeMealTasteContext>(option => option.UseSqlServer
 (builder.Configuration.GetConnectionString("HomeMealTaste")));
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
+builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddHttpContextAccessor();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(c =>
 {
@@ -70,8 +80,16 @@ builder.Services.AddSwaggerGen(c =>
     });
 });
 
+builder.Services.AddSingleton(_ =>
+            new BlobServiceClient(builder.Configuration.GetSection("AzureStorage:ConnectionString").Value));
+
 
 builder.Services.AddAutoMapper(typeof(MapperProfile).Assembly);
+
+builder.Services.AddCors(p => p.AddPolicy("MyCors", build =>
+{
+    build.WithOrigins("*").AllowAnyMethod().AllowAnyHeader();
+}));
 
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>
@@ -94,14 +112,22 @@ var app = builder.Build();
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
-    app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "HomeMealTatse v1"));
+    app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "HomeMealTaste v1"));
 }
-app.UseAuthentication();
+
+app.UseSwagger();
+app.UseSwaggerUI(c => { c.SwaggerEndpoint("/swagger/v1/swagger.json", "HomeMealTaste v1"); c.RoutePrefix = String.Empty;  });
 
 app.UseHttpsRedirection();
 
+app.UseRouting();
+
+app.UseAuthentication();
+
+app.UseCors("MyCors");
+
 app.UseAuthorization();
 
-app.MapControllers();
+app.UseEndpoints(endpoints => endpoints.MapControllers());
 
 app.Run();

@@ -7,6 +7,7 @@ using System.Text;
 using System.Threading.Tasks;
 using HomeMealTaste.Data.Helper;
 using HomeMealTaste.Services.Helper;
+using Microsoft.AspNetCore.Http;
 
 namespace HomeMealTaste.Services.Interface
 {
@@ -14,5 +15,9 @@ namespace HomeMealTaste.Services.Interface
     {
         Task<MealResponseModel> CreateMeal(MealRequestModel mealRequest);
         Task<PagedList<GetAllMealResponseModel>> GetAllMeal(PagingParams pagingParams);
+        Task<List<GetAllMealByKitchenIdResponseModel>> GetAllMealByKitchenId(int id);
+
+        Task<GetMealByMealIdResponseModel> GetMealByMealId(int mealid);
+
     }
 }

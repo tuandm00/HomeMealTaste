@@ -23,7 +23,7 @@ namespace HomeMealTaste.Data.Implement
             var result = _context.Dishes.Select(d => new DishRequestModel
             { 
                 Name = d.Name,  
-                Image = d.Image,
+                //Image = d.Image,
                 DishTypeId = d.DishTypeId,
                 KitchenId = d.KitchenId,
             }).ToList();

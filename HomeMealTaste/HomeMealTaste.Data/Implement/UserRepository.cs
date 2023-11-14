@@ -31,7 +31,7 @@ namespace HomeMealTaste.Data.Implement
         public async Task<User> GetUsernamePassword(UserRequestModel userRequest)
         {
 
-            var result = _context.Users.FirstOrDefault(x => x.Username == userRequest.Username);
+            var result = _context.Users.FirstOrDefault(x => x.Phone == userRequest.Phone);
             if (result == null) return null;
 
             bool isPasswordValid = BCrypt.Net.BCrypt.Verify(userRequest.Password, result.Password);
@@ -41,9 +41,12 @@ namespace HomeMealTaste.Data.Implement
                 {
                     Name = result.Name,
                     Username = result.Username,
+                    Email = result.Email,
                     Phone = result.Phone,
                     Address = result.Address,
-                    Role = result.Role
+                    District = result.District,
+                    Status = result.Status,
+                    RoleId = result.RoleId
                 };
             }
             return null;

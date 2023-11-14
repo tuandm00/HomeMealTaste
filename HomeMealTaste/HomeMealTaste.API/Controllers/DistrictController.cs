@@ -23,5 +23,12 @@ namespace HomeMealTaste.API.Controllers
             var result = await _districtService.CreateDistrict(districtRequest);
             return Ok(result);
         }
+
+        [HttpGet("get-all-district")]
+        public async Task<IActionResult> GetAlllDistrict()
+        {
+            var result =  _districtService.GetAllDistrict();
+            return Ok(result);
+        }     
     }
 }

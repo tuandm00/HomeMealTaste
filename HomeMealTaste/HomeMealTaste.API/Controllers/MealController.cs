@@ -20,7 +20,7 @@ namespace HomeMealTaste.API.Controllers
 
         [HttpPost]
         [Route("create-meal")]
-        public async Task<IActionResult> CreateMeal(MealRequestModel mealRequest)
+        public async Task<IActionResult> CreateMeal([FromForm]MealRequestModel mealRequest)
         {
             var result = await _mealService.CreateMeal(mealRequest);
             return Ok(result);
@@ -42,5 +42,20 @@ namespace HomeMealTaste.API.Controllers
             var response = ApiResponse<object>.Success(result, metadata);
             return Ok(response);
         }
+
+        [HttpGet("get-all-meal-by-kitchen-id")]
+        public async Task<IActionResult> GetAllMealByKitchenId(int id)
+        {
+            var result = await _mealService.GetAllMealByKitchenId(id);
+            return Ok(result);
+        }
+
+        [HttpGet("get-single-meal-by-meal-id")]
+        public async Task<IActionResult> GetMealByMealId(int mealid)
+        {
+            var result = await _mealService.GetMealByMealId(mealid);
+            return Ok(result);
+        }
+
     }
 }

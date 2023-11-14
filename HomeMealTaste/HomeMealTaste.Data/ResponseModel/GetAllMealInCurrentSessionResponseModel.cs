@@ -16,17 +16,18 @@ public class GetAllMealInCurrentSessionResponseModel
         {
             Session = new SessionModel
             {
+                Id = entity.SessionId,
                 Type = entity.SessionType,
                 CreatedDate = entity.CreateDate,
                 EndDate = entity.EndDate,
                 EndTime = entity.EndTime,
                 SessionName = entity.SessionName,
                 StartTime = entity.StartTime,
+                Status = entity.Status,
             },
             Chef = entity.User!.Kitchens.Select(x => new ChefInfo()
             {
                 Address = x.Address,
-                Phone = x.Phone,
                 Name = x.Name,
             }).FirstOrDefault(),
         };
@@ -45,6 +46,7 @@ public class GetAllMealInCurrentSessionResponseModel
                 EndTime = entity.Session.EndTime,
                 SessionName = entity.Session.SessionName,
                 StartTime = entity.Session.StartTime,
+                Status= entity.Session.Status,
             },
             Meal = new MealModel
             {
@@ -74,6 +76,7 @@ public class GetAllMealInCurrentSessionResponseModel
         public DateTime? StartTime { get; set; }
         public DateTime? EndTime { get; set; }
         public string? SessionName { get; set; }
+        public bool? Status { get; set; }
         public string? Type { get; set; }
     }
     

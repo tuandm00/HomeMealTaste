@@ -75,7 +75,7 @@ namespace HomeMealTaste.Controllers
             return Ok(result);
         }
 
-        [HttpPut("update-account-for-user")]
+        [HttpPut("update-new-password-for-user")]
         public async Task UpdatePasswordAccount(string username, string newPassword)
         {
             await _userService.UpdatePasswordAccount(username,newPassword);
@@ -85,6 +85,13 @@ namespace HomeMealTaste.Controllers
         public async Task UpdateStatusUser(int userid)
         {
             await _userService.UpdateStatusUser(userid);
+        }
+
+        [HttpGet("get-user-by-id")]
+        public async Task<User> GetUserById(int id)
+        {
+            var result = await _userService.GetUserById(id);
+            return result;
         }
     }
 }

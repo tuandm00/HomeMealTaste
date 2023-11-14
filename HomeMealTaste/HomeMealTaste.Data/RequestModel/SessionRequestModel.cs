@@ -8,11 +8,8 @@ namespace HomeMealTaste.Data.RequestModel
 {
     public class SessionRequestModel
     {
-        public int SessionId { get; set; }
-        public DateTime? CreateDate { get; set; }
-        public DateTime? EndDate { get; set; }
+        
         public int? UserId { get; set; }
-        public bool? Status { get; set; }
         public string? SessionType { get; set; }
     }
 }

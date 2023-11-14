@@ -12,5 +12,6 @@ namespace HomeMealTaste.Services.Interface
     public interface IDistrictService
     {
         Task<DistrictResponseModel> CreateDistrict(DistrictRequestModel districtRequest);
+        List<DistrictResponseModel> GetAllDistrict();
     }
 }

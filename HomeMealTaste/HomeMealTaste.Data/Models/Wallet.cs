@@ -15,6 +15,7 @@ namespace HomeMealTaste.Data.Models
         public int? UserId { get; set; }
         public int? Balance { get; set; }
 
+        public virtual User? User { get; set; }
         public virtual ICollection<Payment> Payments { get; set; }
         public virtual ICollection<Transaction> Transactions { get; set; }
     }

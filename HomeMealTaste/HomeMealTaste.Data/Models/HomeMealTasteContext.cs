@@ -21,14 +21,16 @@ namespace HomeMealTaste.Data.Models
         public virtual DbSet<Dish> Dishes { get; set; } = null!;
         public virtual DbSet<DishType> DishTypes { get; set; } = null!;
         public virtual DbSet<District> Districts { get; set; } = null!;
+        public virtual DbSet<Feedback> Feedbacks { get; set; } = null!;
         public virtual DbSet<Group> Groups { get; set; } = null!;
         public virtual DbSet<Kitchen> Kitchens { get; set; } = null!;
         public virtual DbSet<Meal> Meals { get; set; } = null!;
         public virtual DbSet<MealDish> MealDishes { get; set; } = null!;
         public virtual DbSet<MealSession> MealSessions { get; set; } = null!;
+        public virtual DbSet<Membership> Memberships { get; set; } = null!;
         public virtual DbSet<Order> Orders { get; set; } = null!;
-        public virtual DbSet<OrderDetail> OrderDetails { get; set; } = null!;
         public virtual DbSet<Payment> Payments { get; set; } = null!;
+        public virtual DbSet<Role> Roles { get; set; } = null!;
         public virtual DbSet<Session> Sessions { get; set; } = null!;
         public virtual DbSet<Transaction> Transactions { get; set; } = null!;
         public virtual DbSet<User> Users { get; set; } = null!;
@@ -45,15 +47,9 @@ namespace HomeMealTaste.Data.Models
             {
                 entity.ToTable("Area");
 
-                entity.Property(e => e.AreaId).ValueGeneratedNever();
-
                 entity.Property(e => e.Address).HasMaxLength(50);
 
                 entity.Property(e => e.District).HasMaxLength(50);
-
-                entity.Property(e => e.Street).HasMaxLength(50);
-
-                entity.Property(e => e.Ward).HasMaxLength(50);
 
                 entity.HasOne(d => d.Session)
                     .WithMany(p => p.Areas)
@@ -73,9 +69,10 @@ namespace HomeMealTaste.Data.Models
 
                 entity.Property(e => e.Phone).HasMaxLength(50);
 
-                entity.Property(e => e.Street).HasMaxLength(50);
-
-                entity.Property(e => e.Ward).HasMaxLength(50);
+                entity.HasOne(d => d.Membership)
+                    .WithMany(p => p.Customers)
+                    .HasForeignKey(d => d.MembershipId)
+                    .HasConstraintName("FK_Customer_Membership");
 
                 entity.HasOne(d => d.User)
                     .WithMany(p => p.Customers)
@@ -87,7 +84,7 @@ namespace HomeMealTaste.Data.Models
             {
                 entity.ToTable("Dish");
 
-                entity.Property(e => e.Image).HasMaxLength(50);
+                entity.Property(e => e.Image).HasMaxLength(1000);
 
                 entity.Property(e => e.Name).HasMaxLength(50);
 
@@ -116,6 +113,25 @@ namespace HomeMealTaste.Data.Models
                 entity.ToTable("District");
 
                 entity.Property(e => e.DistrictName).HasMaxLength(50);
+            });
+
+            modelBuilder.Entity<Feedback>(entity =>
+            {
+                entity.ToTable("Feedback");
+
+                entity.Property(e => e.CreateDate).HasColumnType("date");
+
+                entity.Property(e => e.Description).HasMaxLength(50);
+
+                entity.HasOne(d => d.Customer)
+                    .WithMany(p => p.Feedbacks)
+                    .HasForeignKey(d => d.CustomerId)
+                    .HasConstraintName("FK_Feedback_Customer");
+
+                entity.HasOne(d => d.Kitchen)
+                    .WithMany(p => p.Feedbacks)
+                    .HasForeignKey(d => d.KitchenId)
+                    .HasConstraintName("FK_Feedback_Kitchen");
             });
 
             modelBuilder.Entity<Group>(entity =>
@@ -153,12 +169,6 @@ namespace HomeMealTaste.Data.Models
 
                 entity.Property(e => e.Name).HasMaxLength(50);
 
-                entity.Property(e => e.Phone).HasMaxLength(50);
-
-                entity.Property(e => e.Street).HasMaxLength(50);
-
-                entity.Property(e => e.Ward).HasMaxLength(50);
-
                 entity.HasOne(d => d.User)
                     .WithMany(p => p.Kitchens)
                     .HasForeignKey(d => d.UserId)
@@ -169,11 +179,18 @@ namespace HomeMealTaste.Data.Models
             {
                 entity.ToTable("Meal");
 
+                entity.Property(e => e.CreateDate).HasColumnType("date");
+
                 entity.Property(e => e.DefaultPrice).HasColumnType("money");
 
-                entity.Property(e => e.Image).HasMaxLength(50);
+                entity.Property(e => e.Image).HasMaxLength(1000);
 
                 entity.Property(e => e.Name).HasMaxLength(50);
+
+                entity.HasOne(d => d.Kitchen)
+                    .WithMany(p => p.Meals)
+                    .HasForeignKey(d => d.KitchenId)
+                    .HasConstraintName("FK_Meal_Kitchen");
             });
 
             modelBuilder.Entity<MealDish>(entity =>
@@ -185,12 +202,12 @@ namespace HomeMealTaste.Data.Models
                 entity.HasOne(d => d.Dish)
                     .WithMany(p => p.MealDishes)
                     .HasForeignKey(d => d.DishId)
-                    .HasConstraintName("FK_FoodPackage_Dish_Dish");
+                    .HasConstraintName("FK_Meal_Dish_Dish");
 
                 entity.HasOne(d => d.Meal)
                     .WithMany(p => p.MealDishes)
                     .HasForeignKey(d => d.MealId)
-                    .HasConstraintName("FK_FoodPackage_Dish_FoodPackage");
+                    .HasConstraintName("FK_Meal_Dish_Meal");
             });
 
             modelBuilder.Entity<MealSession>(entity =>
@@ -201,17 +218,22 @@ namespace HomeMealTaste.Data.Models
 
                 entity.Property(e => e.CreateDate).HasColumnType("date");
 
-                entity.Property(e => e.Price).HasColumnType("money");
-
                 entity.HasOne(d => d.Meal)
                     .WithMany(p => p.MealSessions)
                     .HasForeignKey(d => d.MealId)
-                    .HasConstraintName("FK_FoodPackage_Session_FoodPackage");
+                    .HasConstraintName("FK_Meal_Session_Meal");
 
                 entity.HasOne(d => d.Session)
                     .WithMany(p => p.MealSessions)
                     .HasForeignKey(d => d.SessionId)
-                    .HasConstraintName("FK_FoodPackage_Session_Session");
+                    .HasConstraintName("FK_Meal_Session_Session");
+            });
+
+            modelBuilder.Entity<Membership>(entity =>
+            {
+                entity.ToTable("Membership");
+
+                entity.Property(e => e.AccountRank).HasMaxLength(50);
             });
 
             modelBuilder.Entity<Order>(entity =>
@@ -220,7 +242,7 @@ namespace HomeMealTaste.Data.Models
 
                 entity.Property(e => e.Date).HasColumnType("date");
 
-                entity.Property(e => e.Feedback).HasMaxLength(50);
+                entity.Property(e => e.MealSessionId).HasColumnName("Meal_SessionId");
 
                 entity.Property(e => e.Status).HasMaxLength(50);
 
@@ -229,24 +251,15 @@ namespace HomeMealTaste.Data.Models
                     .HasForeignKey(d => d.CustomerId)
                     .HasConstraintName("FK_Order_Customer");
 
-                entity.HasOne(d => d.Meal)
+                entity.HasOne(d => d.MealSession)
                     .WithMany(p => p.Orders)
-                    .HasForeignKey(d => d.MealId)
-                    .HasConstraintName("FK_Order_Meal");
+                    .HasForeignKey(d => d.MealSessionId)
+                    .HasConstraintName("FK_Order_Meal_Session");
 
                 entity.HasOne(d => d.Session)
                     .WithMany(p => p.Orders)
                     .HasForeignKey(d => d.SessionId)
                     .HasConstraintName("FK_Order_Session");
-            });
-
-            modelBuilder.Entity<OrderDetail>(entity =>
-            {
-                entity.ToTable("OrderDetail");
-
-                entity.Property(e => e.TotalPrice).HasColumnType("money");
-
-                entity.Property(e => e.UnitPrice).HasColumnType("money");
             });
 
             modelBuilder.Entity<Payment>(entity =>
@@ -280,6 +293,13 @@ namespace HomeMealTaste.Data.Models
                     .HasConstraintName("FK_Payment_Wallet");
             });
 
+            modelBuilder.Entity<Role>(entity =>
+            {
+                entity.ToTable("Role");
+
+                entity.Property(e => e.RoleName).HasMaxLength(50);
+            });
+
             modelBuilder.Entity<Session>(entity =>
             {
                 entity.ToTable("Session");
@@ -288,9 +308,13 @@ namespace HomeMealTaste.Data.Models
 
                 entity.Property(e => e.EndDate).HasColumnType("date");
 
+                entity.Property(e => e.EndTime).HasColumnType("smalldatetime");
+
                 entity.Property(e => e.SessionName).HasMaxLength(50);
 
                 entity.Property(e => e.SessionType).HasMaxLength(50);
+
+                entity.Property(e => e.StartTime).HasColumnType("smalldatetime");
 
                 entity.HasOne(d => d.User)
                     .WithMany(p => p.Sessions)
@@ -337,16 +361,22 @@ namespace HomeMealTaste.Data.Models
 
                 entity.Property(e => e.Phone).HasMaxLength(50);
 
-                entity.Property(e => e.Street).HasMaxLength(50);
-
                 entity.Property(e => e.Username).HasMaxLength(50);
 
-                entity.Property(e => e.Ward).HasMaxLength(50);
+                entity.HasOne(d => d.Role)
+                    .WithMany(p => p.Users)
+                    .HasForeignKey(d => d.RoleId)
+                    .HasConstraintName("FK_User_Role");
             });
 
             modelBuilder.Entity<Wallet>(entity =>
             {
                 entity.ToTable("Wallet");
+
+                entity.HasOne(d => d.User)
+                    .WithMany(p => p.Wallets)
+                    .HasForeignKey(d => d.UserId)
+                    .HasConstraintName("FK_Wallet_User");
             });
 
             OnModelCreatingPartial(modelBuilder);

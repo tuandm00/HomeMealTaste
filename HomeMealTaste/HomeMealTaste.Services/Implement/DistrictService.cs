@@ -4,11 +4,7 @@ using HomeMealTaste.Data.Repositories;
 using HomeMealTaste.Data.RequestModel;
 using HomeMealTaste.Data.ResponseModel;
 using HomeMealTaste.Services.Interface;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+
 
 namespace HomeMealTaste.Services.Implement
 {
@@ -29,5 +25,12 @@ namespace HomeMealTaste.Services.Implement
 
             return _mapper.Map<DistrictResponseModel>(result);
         }
+
+        public List<DistrictResponseModel> GetAllDistrict()
+        {
+            var result = _districtRepository.GetAll();
+            return _mapper.Map<List<DistrictResponseModel>>(result);
+        }
     }
 }
+    
