@@ -59,7 +59,10 @@ namespace HomeMealTaste.Services.Implement
         }
         public async Task<List<OrderResponseModel>> GetAllOrder()
         {
-            var result = _context.Orders.Select(x => new OrderResponseModel
+            var result = _context.Orders
+                .Include(x => x.MealSession.Meal.Kitchen)
+                .Include(x => x.MealSession)
+                .Select(x => new OrderResponseModel
             {
                 OrderId = x.OrderId,
                 Date = GetDateTimeTimeZoneVietNam().ToString(),
