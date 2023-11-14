@@ -98,9 +98,7 @@ namespace HomeMealTaste.Services.Implement
                     UserId = result.UserId,
                     Name = result.Name,
                     Phone = result.Phone,
-                    Address = result.Address,
                     District = result.District,
-                    AccountStatus = true
                 };
                 await _context.AddAsync(customer);
                 await _context.SaveChangesAsync();

@@ -12,7 +12,6 @@ namespace HomeMealTaste.Data.ResponseModel
         public int MealId { get; set; }
         public string? Name { get; set; }
         public string? Image { get; set; }
-        public decimal? DefaultPrice { get; set; }
         public KitchenDto? KitchenDto { get; set; }
         public List<DishDto?> DishDto { get; set; }
     }

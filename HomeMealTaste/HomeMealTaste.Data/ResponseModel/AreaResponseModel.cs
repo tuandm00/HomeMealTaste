@@ -10,7 +10,6 @@ namespace HomeMealTaste.Data.ResponseModel
     public class AreaResponseModel
     {
         public int AreaId { get; set; }
-        public Session? Session { get; set; }
         public string? Address { get; set; }
         public string? District { get; set; }
     }

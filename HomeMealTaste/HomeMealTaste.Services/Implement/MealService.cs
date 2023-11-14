@@ -118,7 +118,6 @@ namespace HomeMealTaste.Services.Implement
             MealId = group.Key,
             Name = group.First().Meal.Name, 
             Image = group.First().Meal.Image, 
-            DefaultPrice = group.First().Meal.DefaultPrice, 
             Kitchen = new Kitchen
             {
                 KitchenId = group.First().Meal.Kitchen.KitchenId,
@@ -151,7 +150,6 @@ namespace HomeMealTaste.Services.Implement
                     MealId = group.MealId,
                     Name = group.Name,
                     Image = group.Image,
-                    DefaultPrice = group.DefaultPrice,
                     KitchenDto = new KitchenDto
                     {
                         KitchenId = group.Kitchen.KitchenId,

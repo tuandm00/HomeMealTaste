@@ -19,7 +19,6 @@ public class GetAllMealResponseModel
             Id = entity.MealId,
             Image = entity.Image,
             Name = entity.Name,
-            DefaultPrice = entity.DefaultPrice,
             MealDishes = entity.MealDishes.ToList(),
             MealSessions = entity.MealSessions.ToList()
         };

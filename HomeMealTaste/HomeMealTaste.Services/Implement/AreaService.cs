@@ -31,25 +31,6 @@ namespace HomeMealTaste.Services.Implement
             var result = _context.Areas.Select(x => new AreaResponseModel
             {
                 AreaId = x.AreaId,
-                Session = new Session
-                {
-                    SessionId = x.Session.SessionId,
-                    CreateDate = x.Session.CreateDate,
-                    StartTime = x.Session.StartTime,
-                    EndTime = x.Session.EndTime,
-                    EndDate = x.Session.EndDate,
-                    SessionName = x.Session.SessionName,
-                    User = new User
-                    {
-                        UserId = x.Session.User.UserId,
-                        Name = x.Session.User.Name,
-                        Username = x.Session.User.Username,
-                        Email = x.Session.User.Email,
-                        Phone = x.Session.User.Phone,
-                    },
-                    Status = x.Session.Status,
-                    SessionType = x.Session.SessionType,
-                },
                 Address = x.Address,
                 District = x.District,
 
