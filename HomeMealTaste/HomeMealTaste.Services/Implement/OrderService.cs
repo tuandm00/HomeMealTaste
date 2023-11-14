@@ -80,15 +80,15 @@ namespace HomeMealTaste.Services.Implement
                         Name = x.MealSession.Meal.Name,
                         Image = x.MealSession.Meal.Image,
                         KitchenId = x.MealSession.Meal.KitchenId,
-                        CreateDate = x.MealSession.Meal.CreateDate.ToString(),
+                        CreateDate = GetDateTimeTimeZoneVietNam().ToString("dd-MM-yyyy"),
                     },
                     SessionDto1 = new SessionDto1
                     {
                         SessionId = x.MealSession.Session.SessionId,
-                        CreateDate = x.MealSession.Session.CreateDate.ToString(),
-                        StartTime = x.MealSession.Session.StartTime.ToString(),
-                        EndTime = x.MealSession.Session.EndTime.ToString(),
-                        EndDate = x.MealSession.Session.EndDate.ToString(),
+                        CreateDate = GetDateTimeTimeZoneVietNam().ToString("dd-MM-yyyy"),
+                        StartTime = GetDateTimeTimeZoneVietNam().ToString("HH:mm"),
+                        EndTime = GetDateTimeTimeZoneVietNam().ToString("HH:mm"),
+                        EndDate = GetDateTimeTimeZoneVietNam().ToString("dd-MM-yyyy"),
                         UserId = x.MealSession.Session.UserId,
                         Status = x.MealSession.Session.Status,
                         SessionType = x.MealSession.Session.SessionType,
@@ -98,7 +98,7 @@ namespace HomeMealTaste.Services.Implement
                     Quantity = x.MealSession.Quantity,
                     RemainQuantity = x.MealSession.RemainQuantity,
                     Status = x.MealSession.Status,
-                    CreateDate = x.MealSession.CreateDate.ToString(),
+                    CreateDate = GetDateTimeTimeZoneVietNam().ToString("dd-MM-yyyy"),
                 },
             });
             var mappedResult = result.Select(x => _mapper.Map<OrderResponseModel>(x)).ToList();
