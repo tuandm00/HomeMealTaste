@@ -69,6 +69,7 @@ namespace HomeMealTaste.Services.Implement
                     Name = x.Customer.Name,
                     Phone = x.Customer.Phone,
                     District = x.Customer.District,
+                    AreaId = x.Customer.AreaId,
                 },
                 MealSessionDto1 = new MealSessionDto1
                 {
