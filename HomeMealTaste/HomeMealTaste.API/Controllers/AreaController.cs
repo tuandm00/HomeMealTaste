@@ -25,5 +25,8 @@ namespace HomeMealTaste.API.Controllers
             var result = await _areaService.GetAllArea();
             return Ok(result);
         }
+
+        
+
     }
 }
