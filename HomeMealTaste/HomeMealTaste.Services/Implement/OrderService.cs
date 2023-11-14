@@ -118,7 +118,7 @@ namespace HomeMealTaste.Services.Implement
             return mappedResult;
         }
 
-        public Task<List<GetAllOrderByUserIdResponseModel>> GetAllOrderById(int id)
+        public Task<GetAllOrderByUserIdResponseModel> GetSingleOrderById(int id)
         {
             var results = _context.Orders
                 .Include(x => x.MealSession.Meal.Kitchen)
@@ -174,10 +174,9 @@ namespace HomeMealTaste.Services.Implement
                 },
                 Status = x.Status,
                 Price = x.Price,
-            }).ToList();
+            }).FirstOrDefault();
 
-            var mappedResults = results.Select(order => _mapper.Map<GetAllOrderByUserIdResponseModel>(order)).ToList();
-            return Task.FromResult(mappedResults);
+            return Task.FromResult(results);
         }
 
         public async Task<List<GetAllOrderByUserIdResponseModel>> GetAllOrderByUserId(int id)
