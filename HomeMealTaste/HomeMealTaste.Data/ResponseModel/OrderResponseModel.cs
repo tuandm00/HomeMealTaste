@@ -10,7 +10,7 @@ namespace HomeMealTaste.Data.ResponseModel
     public class OrderResponseModel
     {
         public int OrderId { get; set; }
-        public string? Date { get; set; }
+        public DateTime? Date { get; set; }
         public CustomerDto1? CustomerDto1 { get; set; }
         public string? Status { get; set; }
         public MealSessionDto1? MealSessionDto1 { get; set; }

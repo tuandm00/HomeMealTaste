@@ -65,7 +65,7 @@ namespace HomeMealTaste.Services.Implement
                 .Select(x => new OrderResponseModel
             {
                 OrderId = x.OrderId,
-                Date = GetDateTimeTimeZoneVietNam().ToString(),
+                Date = x.Date,
                 CustomerDto1 = new CustomerDto1
                 {
                     CustomerId = x.Customer.CustomerId,
