@@ -66,6 +66,7 @@ namespace HomeMealTaste.Services.Implement
             {
                 OrderId = x.OrderId,
                 Date = x.Date,
+                Time = x.Time,
                 CustomerDto1 = new CustomerDto1
                 {
                     CustomerId = x.Customer.CustomerId,
