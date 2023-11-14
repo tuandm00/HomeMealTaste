@@ -179,7 +179,7 @@ namespace HomeMealTaste.Services.Implement
             return Task.FromResult(results);
         }
 
-        public async Task<List<GetAllOrderByUserIdResponseModel>> GetAllOrderByUserId(int id)
+        public async Task<List<GetAllOrderByUserIdResponseModel>> GetAllOrderByCustomerId(int id)
         {
             var results = _context.Orders.Where(x => x.CustomerId == id).Select(x => new GetAllOrderByUserIdResponseModel
             {

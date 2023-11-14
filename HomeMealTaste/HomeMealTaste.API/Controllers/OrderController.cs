@@ -17,10 +17,10 @@ namespace HomeMealTaste.API.Controllers
             _orderService = orderService;
         }
 
-        [HttpGet("get-order-by-user-id")]
-        public async Task<IActionResult> GetAllOrderByUserId(int id)
+        [HttpGet("get-order-by-customer-id")]
+        public async Task<IActionResult> GetAllOrderByCustomerId(int id)
         {
-            var result = await _orderService.GetAllOrderByUserId(id);
+            var result = await _orderService.GetAllOrderByCustomerId(id);
             return Ok(result);
         }
 
