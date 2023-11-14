@@ -86,7 +86,7 @@ namespace HomeMealTaste.Services.Implement
                             Name = x.MealSession.Meal.Kitchen.Name,
                             Address = x.MealSession.Meal.Kitchen.Address,
                             District =  x.MealSession.Meal.Kitchen.District,
-                            AreaId = x.MealSession.Meal.Kitchen.AreaId
+                            AreaId = x.MealSession.Meal.Kitchen.AreaId,
                         },
                         CreateDate = GetDateTimeTimeZoneVietNam().ToString("dd-MM-yyyy"),
                     },
@@ -119,26 +119,56 @@ namespace HomeMealTaste.Services.Implement
         {
             var results = _context.Orders.Where(x => x.OrderId == id).Select(x => new GetAllOrderByUserIdResponseModel
             {
-                OrderId = id,
-                Date = DateTime.Now,
-                Customer = new Customer
+                OrderId = x.OrderId,
+                Date = GetDateTimeTimeZoneVietNam().ToString(),
+                CustomerDto2 = new CustomerDto2
                 {
-                    CustomerId = id,
+                    CustomerId = x.Customer.CustomerId,
                     Name = x.Customer.Name,
                     Phone = x.Customer.Phone,
                     District = x.Customer.District,
+                    AreaId = x.Customer.AreaId,
                 },
-                MealSession = new MealSession
+                MealSessionDto2 = new MealSessionDto2
                 {
                     MealSessionId = x.MealSession.MealSessionId,
-                    MealId = x.MealSession.MealId,
+                    MealDto2 = new MealDto2
+                    {
+                        MealId = x.MealSession.Meal.MealId,
+                        Name = x.MealSession.Meal.Name,
+                        Image = x.MealSession.Meal.Image,
+                        KitchenDto2 = new KitchenDto2
+                        {
+                            KitchenId = x.MealSession.Meal.Kitchen.KitchenId,
+                            UserId = x.MealSession.Meal.Kitchen.UserId,
+                            Name = x.MealSession.Meal.Kitchen.Name,
+                            Address = x.MealSession.Meal.Kitchen.Address,
+                            District = x.MealSession.Meal.Kitchen.District,
+                            AreaId = x.MealSession.Meal.Kitchen.AreaId,
+                        },
+                        CreateDate = GetDateTimeTimeZoneVietNam().ToString("dd-MM-yyyy"),
+                    },
+                    SessionDto2 = new SessionDto2
+                    {
+                        SessionId = x.MealSession.Session.SessionId,
+                        CreateDate = x.MealSession.Session.CreateDate.ToString(),
+                        StartTime = x.MealSession.Session.StartTime.ToString(),
+                        EndTime = x.MealSession.Session.EndTime.ToString(),
+                        EndDate = x.MealSession.Session.EndDate.ToString(),
+                        UserId = x.MealSession.Session.UserId,
+                        Status = x.MealSession.Session.Status,
+                        SessionType = x.MealSession.Session.SessionType,
+                        AreaId = x.MealSession.Session.AreaId,
+                    },
                     Price = x.MealSession.Price,
                     Quantity = x.MealSession.Quantity,
                     RemainQuantity = x.MealSession.RemainQuantity,
                     Status = x.MealSession.Status,
-                    CreateDate = x.MealSession.CreateDate,
+                    CreateDate = x.MealSession.CreateDate.ToString(),
                 },
-                
+                Status = x.Status,
+                Price = x.Price,
+
             }).ToList();
 
             var mappedResults = results.Select(order => _mapper.Map<GetAllOrderByUserIdResponseModel>(order)).ToList();
@@ -150,25 +180,55 @@ namespace HomeMealTaste.Services.Implement
             var results = _context.Orders.Where(x => x.CustomerId == id).Select(x => new GetAllOrderByUserIdResponseModel
             {
                 OrderId = x.OrderId,
-                Date = DateTime.Now,
-                Customer = new Customer
+                Date = GetDateTimeTimeZoneVietNam().ToString(),
+                CustomerDto2 = new CustomerDto2
                 {
-                    CustomerId = id,
+                    CustomerId = x.Customer.CustomerId,
                     Name = x.Customer.Name,
                     Phone = x.Customer.Phone,
                     District = x.Customer.District,
+                    AreaId = x.Customer.AreaId,
                 },
-                MealSession = new MealSession
+                MealSessionDto2 = new MealSessionDto2
                 {
                     MealSessionId = x.MealSession.MealSessionId,
-                    MealId = x.MealSession.MealId,
+                    MealDto2 = new MealDto2
+                    {
+                        MealId = x.MealSession.Meal.MealId,
+                        Name = x.MealSession.Meal.Name,
+                        Image = x.MealSession.Meal.Image,
+                        KitchenDto2 = new KitchenDto2
+                        {
+                            KitchenId = x.MealSession.Meal.Kitchen.KitchenId,
+                            UserId = x.MealSession.Meal.Kitchen.UserId,
+                            Name = x.MealSession.Meal.Kitchen.Name,
+                            Address = x.MealSession.Meal.Kitchen.Address,
+                            District = x.MealSession.Meal.Kitchen.District,
+                            AreaId = x.MealSession.Meal.Kitchen.AreaId,
+                        },
+                        CreateDate = GetDateTimeTimeZoneVietNam().ToString("dd-MM-yyyy"),
+                    },
+                    SessionDto2 = new SessionDto2
+                    {
+                        SessionId = x.MealSession.Session.SessionId,
+                        CreateDate = GetDateTimeTimeZoneVietNam().ToString("dd-MM-yyyy"),
+                        StartTime = GetDateTimeTimeZoneVietNam().ToString("HH:mm"),
+                        EndTime = GetDateTimeTimeZoneVietNam().ToString("HH:mm"),
+                        EndDate = GetDateTimeTimeZoneVietNam().ToString("dd-MM-yyyy"),
+                        UserId = x.MealSession.Session.UserId,
+                        Status = x.MealSession.Session.Status,
+                        SessionType = x.MealSession.Session.SessionType,
+                        AreaId = x.MealSession.Session.AreaId,
+                    },
                     Price = x.MealSession.Price,
                     Quantity = x.MealSession.Quantity,
                     RemainQuantity = x.MealSession.RemainQuantity,
                     Status = x.MealSession.Status,
-                    CreateDate = x.MealSession.CreateDate,
+                    CreateDate = GetDateTimeTimeZoneVietNam().ToString("dd-MM-yyyy"),
                 },
-                
+                Status = x.Status,
+                Price = x.Price,
+
             }).ToList();
 
             var mappedResults = results.Select(order => _mapper.Map<GetAllOrderByUserIdResponseModel>(order)).ToList();
