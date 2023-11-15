@@ -1,4 +1,5 @@
-﻿using HomeMealTaste.Data.ResponseModel;
+﻿using HomeMealTaste.Data.RequestModel;
+using HomeMealTaste.Data.ResponseModel;
 using HomeMealTaste.Services.Helper;
 using HomeMealTaste.Services.Interface;
 using Microsoft.AspNetCore.Http;
@@ -43,6 +44,12 @@ namespace HomeMealTaste.API.Controllers
         {
             var result = await _orderService.GetOrderByKitchenId(kitchenid);
             return Ok(result);
+        }
+        [HttpPost("create-order")]
+        public Task CreateOrder(CreateOrderRequestModel createOrderRequest)
+        {
+            var result =  _orderService.CreateOrder(createOrderRequest);
+            return result;
         }
 
     }
