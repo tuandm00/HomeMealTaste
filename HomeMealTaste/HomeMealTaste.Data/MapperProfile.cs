@@ -41,6 +41,8 @@ namespace HomeMealTaste.Data.RequestModel
             CreateMap<GetAllUserWithRoleCustomerAndChefResponseModel, User>().ReverseMap();
             CreateMap<UpdateAreaRequestModel, Area>().ReverseMap();
             CreateMap<UpdateAreaResponseModel, Area>().ReverseMap();
+            CreateMap<CreateOrderResponseModel, Order>().ReverseMap();
+            CreateMap<CreateOrderRequestModel, Order>().ReverseMap();
 
             
 

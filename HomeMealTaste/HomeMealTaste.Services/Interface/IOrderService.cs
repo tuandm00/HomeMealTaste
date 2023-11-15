@@ -1,11 +1,6 @@
-﻿using HomeMealTaste.Data.Helper;
+﻿using HomeMealTaste.Data.RequestModel;
 using HomeMealTaste.Data.ResponseModel;
-using HomeMealTaste.Services.Helper;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+
 
 namespace HomeMealTaste.Services.Interface
 {
@@ -15,6 +10,6 @@ namespace HomeMealTaste.Services.Interface
         Task<GetAllOrderByUserIdResponseModel> GetSingleOrderById(int id);
         Task<List<OrderResponseModel>> GetAllOrder();
         Task<List<GetOrderByKitchenIdResponseModel>> GetOrderByKitchenId(int kitchenid);
-
+        Task CreateOrder(CreateOrderRequestModel createOrderRequest);
     }
 }
