@@ -33,6 +33,12 @@ namespace HomeMealTaste.API.Controllers
             return Ok(result);
         }
 
+        [HttpDelete]
+        public Task DeleteArea(int areaid)
+        {
+            var result = _areaService.DeleteArea(areaid);
+            return result;
+        }
 
 
     }

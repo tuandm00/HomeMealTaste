@@ -35,6 +35,12 @@ namespace HomeMealTaste.Services.Implement
             return mapped;
         }
 
+        public Task DeleteArea(int areaid)
+        {
+            var result =  _areaRepository.Delete(areaid);
+            return result;
+        }
+
         public async Task<List<AreaResponseModel>> GetAllArea()
         {
             var result = _context.Areas.Select(x => new AreaResponseModel
