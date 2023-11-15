@@ -12,6 +12,7 @@ using System.Text;
 using System.Threading.Tasks;
 using HomeMealTaste.Data.Helper;
 using HomeMealTaste.Services.Helper;
+using Microsoft.EntityFrameworkCore;
 
 namespace HomeMealTaste.Services.Implement
 {
@@ -45,19 +46,23 @@ namespace HomeMealTaste.Services.Implement
 
         public async Task<List<MealSessionResponseModel>> GetAllMealSession()
         {
-            var result = _context.MealSessions.ToList();
+            var result = _context.MealSessions
+                .Include(x => x.Meal)
+                .Include(x => x.Session)
+                .Include(x => x.Kitchen)
+                .ToList();
             var mapped = result.Select(mealsession =>
             {
                 var response = _mapper.Map<MealSessionResponseModel>(mealsession);
-                response.MealSessionId = mealsession.SessionId;
+                response.MealSessionId = mealsession.MealSessionId;
                 response.MealDtoForMealSession = new MealDtoForMealSession
                 {
                     MealId = mealsession.Meal.MealId,
                     Name = mealsession.Meal.Name,
                     Image = mealsession.Meal.Image,
-                    KitchenId = mealsession?.KitchenId,
+                    KitchenId = mealsession.KitchenId,
                     CreateDate = mealsession.CreateDate.ToString(),
-                    Description = mealsession.Meal.Description,
+                    Description = mealsession.Meal?.Description,
                 };
                 response.SessionDtoForMealSession = new SessionDtoForMealSession
                 {
@@ -66,24 +71,30 @@ namespace HomeMealTaste.Services.Implement
                     StartTime = mealsession.Session.StartTime.ToString(),
                     EndTime = mealsession.Session.EndTime.ToString(),
                     EndDate = mealsession.Session.EndDate.ToString(),
+                    UserId = mealsession.Session?.UserId,
+                    Status = mealsession.Session.Status,
+                    SessionType = mealsession.Session.SessionType,
+                    AreaId = mealsession.Session.AreaId
+                };
+                response.KitchenDtoForMealSession = new KitchenDtoForMealSession
+                {
+                    KitchenId = mealsession.Meal.Kitchen.KitchenId,
+                    UserId = mealsession.Meal.Kitchen.KitchenId,
+                    Name = mealsession.Meal.Kitchen?.Name,
+                    Address = mealsession.Meal.Kitchen.Address,
+                    District = mealsession.Meal.Kitchen.District,
+                    AreaId = mealsession.Meal.Kitchen.AreaId,
                 };
                 response.Price = (decimal?)mealsession.Price;
                 response.Quantity = mealsession.Quantity;
                 response.RemainQuantity = mealsession.RemainQuantity;
                 response.Status = mealsession.Status;
                 response.CreateDate = mealsession.CreateDate.ToString();
-                response.KitchenDtoForMealSession = new KitchenDtoForMealSession
-                {
-                    KitchenId = mealsession.Meal.Kitchen.KitchenId,
-                    UserId = mealsession.Meal.Kitchen.KitchenId,
-                    Name = mealsession.Meal.Kitchen.Name,
-                    Address = mealsession.Meal.Kitchen.Address,
-                    District = mealsession.Meal.Kitchen.District,
-                    AreaId = mealsession.Meal.Kitchen.AreaId,
-                };
+                
                 return response;
             }).ToList();
-            return mapped;
+
+            return mapped; 
         }
 
         //public async Task<PagedList<GetAllMealInCurrentSessionResponseModel>> GetAllMealSession(
