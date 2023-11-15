@@ -50,10 +50,16 @@ namespace HomeMealTaste.Controllers
             var result = await _mealSessionService.GetAllMealSession();
             return Ok(result);
         }
-        [HttpGet("get-single-meal-by-meal-id")]
+        [HttpGet("get-single-meal-session-by-meal-session-id")]
         public async Task<IActionResult> GetSingleMealSessionById(int mealsessionid)
         {
             var result = await _mealSessionService.GetSingleMealSessionById(mealsessionid);
+            return Ok(result);
+        }
+        [HttpGet("get-all-meal-session-by-status")]
+        public async Task<IActionResult> GetAllMealSessionByStatus(string status)
+        {
+            var result = await _mealSessionService.GetAllMealSessionByStatus(status);
             return Ok(result);
         }
     }

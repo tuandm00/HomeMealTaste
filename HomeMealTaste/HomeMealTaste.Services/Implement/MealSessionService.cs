@@ -97,6 +97,61 @@ namespace HomeMealTaste.Services.Implement
             return mapped; 
         }
 
+        public async Task<List<MealSessionResponseModel>> GetAllMealSessionByStatus(string status)
+        {
+            var lowerStatus = status.ToLower();
+            var result = _context.MealSessions
+                .Include(x => x.Meal)
+                .Include(x => x.Session)
+                .Include(x => x.Kitchen)
+                .Where(x => x.Status.ToLower() == lowerStatus)
+                .ToList();
+            var mapped = result.Select(mealsession =>
+            {
+                var response = _mapper.Map<MealSessionResponseModel>(mealsession);
+                response.MealSessionId = mealsession.MealSessionId;
+                response.MealDtoForMealSession = new MealDtoForMealSession
+                {
+                    MealId = mealsession.Meal.MealId,
+                    Name = mealsession.Meal.Name,
+                    Image = mealsession.Meal.Image,
+                    KitchenId = mealsession.KitchenId,
+                    CreateDate = mealsession.CreateDate.ToString(),
+                    Description = mealsession.Meal?.Description,
+                };
+                response.SessionDtoForMealSession = new SessionDtoForMealSession
+                {
+                    SessionId = mealsession.Session.SessionId,
+                    CreateDate = mealsession.Session.CreateDate.ToString(),
+                    StartTime = mealsession.Session.StartTime.ToString(),
+                    EndTime = mealsession.Session.EndTime.ToString(),
+                    EndDate = mealsession.Session.EndDate.ToString(),
+                    UserId = mealsession.Session?.UserId,
+                    Status = mealsession.Session.Status,
+                    SessionType = mealsession.Session.SessionType,
+                    AreaId = mealsession.Session.AreaId
+                };
+                response.KitchenDtoForMealSession = new KitchenDtoForMealSession
+                {
+                    KitchenId = mealsession.Meal.Kitchen.KitchenId,
+                    UserId = mealsession.Meal.Kitchen.KitchenId,
+                    Name = mealsession.Meal.Kitchen?.Name,
+                    Address = mealsession.Meal.Kitchen.Address,
+                    District = mealsession.Meal.Kitchen.District,
+                    AreaId = mealsession.Meal.Kitchen.AreaId,
+                };
+                response.Price = (decimal?)mealsession.Price;
+                response.Quantity = mealsession.Quantity;
+                response.RemainQuantity = mealsession.RemainQuantity;
+                response.Status = mealsession.Status;
+                response.CreateDate = mealsession.CreateDate.ToString();
+
+                return response;
+            }).ToList();
+
+            return mapped;
+        }
+
         public async Task<MealSessionResponseModel> GetSingleMealSessionById(int mealsessionid)
         {
             var result = _context.MealSessions

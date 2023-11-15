@@ -35,7 +35,7 @@ namespace HomeMealTaste.Data.ResponseModel
         public double? Price { get; set; }
         public int? Quantity { get; set; }
         public int? RemainQuantity { get; set; }
-        public bool? Status { get; set; }
+        public string? Status { get; set; }
         public string? CreateDate { get; set; }
         public KitchenDto2? KitchenDto2 { get; set; }
     }

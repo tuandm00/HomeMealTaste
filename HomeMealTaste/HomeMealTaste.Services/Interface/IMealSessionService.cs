@@ -14,5 +14,7 @@ namespace HomeMealTaste.Services.Interface
         //Task<PagedList<GetAllMealInCurrentSessionResponseModel>> GetAllMealSession(GetAllMealRequest pagingParams);
         Task<List<MealSessionResponseModel>> GetAllMealSession();
         Task<MealSessionResponseModel> GetSingleMealSessionById(int mealsessionid);
+
+        Task<List<MealSessionResponseModel>> GetAllMealSessionByStatus(string status);
     }
 }
