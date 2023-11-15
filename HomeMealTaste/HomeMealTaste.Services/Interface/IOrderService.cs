@@ -10,6 +10,6 @@ namespace HomeMealTaste.Services.Interface
         Task<GetAllOrderByUserIdResponseModel> GetSingleOrderById(int id);
         Task<List<OrderResponseModel>> GetAllOrder();
         Task<List<GetOrderByKitchenIdResponseModel>> GetOrderByKitchenId(int kitchenid);
-        Task CreateOrder(CreateOrderRequestModel createOrderRequest);
+        Task<CreateOrderResponseModel> CreateOrder(CreateOrderRequestModel createOrderRequest);
     }
 }

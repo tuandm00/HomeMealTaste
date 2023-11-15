@@ -9,10 +9,9 @@ namespace HomeMealTaste.Data.RequestModel
     public class CreateOrderRequestModel
     {
         public int? CustomerId { get; set; }
-        public CustomerDtoRequest? CustomerDtoRequest { get; set; }
         public string? Status { get; set; }
         public int? MealSessionId { get; set; }
-        public MealSessionDtoRequest? MealSessionDtoRequest { get; set; }
+        public int? SessionId { get; set; }
         public int? Price { get; set; }
         public DateTime? Time { get; set; }
 
