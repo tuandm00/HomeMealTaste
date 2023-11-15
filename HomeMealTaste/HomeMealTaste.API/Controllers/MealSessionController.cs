@@ -50,5 +50,11 @@ namespace HomeMealTaste.Controllers
             var result = await _mealSessionService.GetAllMealSession();
             return Ok(result);
         }
+        [HttpGet("get-single-meal-by-meal-id")]
+        public async Task<IActionResult> GetSingleMealSessionById(int mealsessionid)
+        {
+            var result = await _mealSessionService.GetSingleMealSessionById(mealsessionid);
+            return Ok(result);
+        }
     }
 }

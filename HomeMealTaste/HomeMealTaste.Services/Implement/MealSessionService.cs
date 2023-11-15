@@ -97,6 +97,56 @@ namespace HomeMealTaste.Services.Implement
             return mapped; 
         }
 
+        public async Task<MealSessionResponseModel> GetSingleMealSessionById(int mealsessionid)
+        {
+            var result = _context.MealSessions
+                .Include(x => x.Meal)
+                .Include(x => x.Session)
+                .Include(x => x.Kitchen)
+                .Where(x => x.MealSessionId == mealsessionid)
+                .FirstOrDefault();
+            var mapped = _mapper.Map<MealSessionResponseModel>(result);
+            mapped.MealSessionId = result.MealSessionId;
+            mapped.MealDtoForMealSession = new MealDtoForMealSession
+            {
+                MealId = result.Meal.MealId,
+                Name = result.Meal.Name,
+                Image = result.Meal.Image,
+                KitchenId = result.KitchenId,
+                CreateDate = result.CreateDate.ToString(),
+                Description = result.Meal?.Description,
+            };
+            mapped.SessionDtoForMealSession = new SessionDtoForMealSession
+            {
+                SessionId = result.Session.SessionId,
+                CreateDate = result.Session.CreateDate.ToString(),
+                StartTime = result.Session.StartTime.ToString(),
+                EndTime = result.Session.EndTime.ToString(),
+                EndDate = result.Session.EndDate.ToString(),
+                UserId = result.Session?.UserId,
+                Status = result.Session.Status,
+                SessionType = result.Session.SessionType,
+                AreaId = result.Session.AreaId
+            };
+            mapped.KitchenDtoForMealSession = new KitchenDtoForMealSession
+            {
+                KitchenId = result.Meal.Kitchen.KitchenId,
+                UserId = result.Meal.Kitchen.KitchenId,
+                Name = result.Meal.Kitchen?.Name,
+                Address = result.Meal.Kitchen.Address,
+                District = result.Meal.Kitchen.District,
+                AreaId = result.Meal.Kitchen.AreaId,
+            };
+            mapped.Price = (decimal?)result.Price;
+            mapped.Quantity = result.Quantity;
+            mapped.RemainQuantity = result.RemainQuantity;
+            mapped.Status = result.Status;
+            mapped.CreateDate = result.CreateDate.ToString();
+
+            return mapped;
+
+        }
+
         //public async Task<PagedList<GetAllMealInCurrentSessionResponseModel>> GetAllMealSession(
         //    GetAllMealRequest pagingParams)
         //{
