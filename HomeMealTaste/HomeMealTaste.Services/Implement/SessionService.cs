@@ -157,5 +157,35 @@ namespace HomeMealTaste.Services.Implement
 
             return mapped;
         }
+
+        public Task<List<GetAllSessionByAreaIdResponseModel>> GetAllSessionByAreaId(int areaid)
+        {
+            var result = _context.Sessions.Where(x => x.AreaId == areaid).Select(x => new GetAllSessionByAreaIdResponseModel
+            {
+                SessionId = x.SessionId,
+                CreateDate = x.CreateDate.ToString(),
+                StartTime = x.StartTime.ToString(),
+                EndTime = x.EndTime.ToString(),
+                EndDate = x.EndDate.ToString(),
+                UserId = x.UserId,
+                SessionType = x.SessionType,
+                AreaDto = new AreaDto
+                {
+                    AreaId = areaid,
+                    Address = x.Area.Address,
+                    District = x.Area.District,
+                },
+                Status = x.Status,
+            });
+
+            var mappedResults = result.Select(session => _mapper.Map<GetAllSessionByAreaIdResponseModel>(session)).ToList();
+            return Task.FromResult(mappedResults);
+        }
+
+        public Task DeleteSession(int sessionId)
+        {
+            var result =  _sessionRepository.Delete(sessionId);
+            return result;
+        }
     }
 }

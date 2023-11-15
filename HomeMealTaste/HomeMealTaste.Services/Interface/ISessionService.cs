@@ -16,5 +16,8 @@ namespace HomeMealTaste.Services.Interface
         Task<PagedList<GetAllMealInCurrentSessionResponseModel>> GetAllMealInCurrentSession(GetAllMealRequest pagingParams);
         Task ChangeStatusSession(int sessionid);
         Task<List<SessionResponseModel>> GetAllSession();
+        Task<List<GetAllSessionByAreaIdResponseModel>> GetAllSessionByAreaId(int areaid);
+
+        Task DeleteSession (int sessionId);
     }
 }

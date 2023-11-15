@@ -2,6 +2,7 @@
 using HomeMealTaste.Data.Helper;
 using HomeMealTaste.Data.Models;
 using HomeMealTaste.Data.Repositories;
+using HomeMealTaste.Data.RequestModel;
 using HomeMealTaste.Data.ResponseModel;
 using HomeMealTaste.Services.Helper;
 using HomeMealTaste.Services.Interface;
@@ -26,37 +27,49 @@ namespace HomeMealTaste.Services.Implement
             _context = context;
         }
 
+        public async Task<AreaResponseModel> CreateArea(AreaRequestModel areaRequest)
+        {
+            var entity = _mapper.Map<Area>(areaRequest);
+            var result = await _areaRepository.Create(entity, true);
+            var mapped = _mapper.Map<AreaResponseModel>(result);
+            return mapped;
+        }
+
+        public Task DeleteArea(int areaid)
+        {
+            var result =  _areaRepository.Delete(areaid);
+            return result;
+        }
+
         public async Task<List<AreaResponseModel>> GetAllArea()
         {
             var result = _context.Areas.Select(x => new AreaResponseModel
             {
                 AreaId = x.AreaId,
-                Session = new Session
-                {
-                    SessionId = x.Session.SessionId,
-                    CreateDate = x.Session.CreateDate,
-                    StartTime = x.Session.StartTime,
-                    EndTime = x.Session.EndTime,
-                    EndDate = x.Session.EndDate,
-                    SessionName = x.Session.SessionName,
-                    User = new User
-                    {
-                        UserId = x.Session.User.UserId,
-                        Name = x.Session.User.Name,
-                        Username = x.Session.User.Username,
-                        Email = x.Session.User.Email,
-                        Phone = x.Session.User.Phone,
-                    },
-                    Status = x.Session.Status,
-                    SessionType = x.Session.SessionType,
-                },
                 Address = x.Address,
                 District = x.District,
-
+                AreaName = x.AreaName,
             }).ToList();
 
             var mapped = result.Select(x => _mapper.Map<AreaResponseModel>(x)).ToList();
             return mapped;
+        }
+
+        public Task<UpdateAreaResponseModel> UpdateArea(UpdateAreaRequestModel areaRequestModel)
+        {
+            var result = _context.Areas.Where(x => x.AreaId == areaRequestModel.AreaId).FirstOrDefault();
+            if(result != null)
+            {
+                result.AreaId = areaRequestModel.AreaId;
+                result.Address = areaRequestModel.Address;
+                result.District = areaRequestModel.District;
+                result.AreaName = areaRequestModel.AreaName;
+
+                _context.SaveChanges();
+            }
+
+            var mapped = _mapper.Map<UpdateAreaResponseModel>(result);
+            return Task.FromResult(mapped);
         }
     }
 }

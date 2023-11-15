@@ -1,4 +1,5 @@
-﻿using HomeMealTaste.Data.ResponseModel;
+﻿using HomeMealTaste.Data.RequestModel;
+using HomeMealTaste.Data.ResponseModel;
 using HomeMealTaste.Services.Helper;
 using HomeMealTaste.Services.Interface;
 using Microsoft.AspNetCore.Http;
@@ -17,10 +18,10 @@ namespace HomeMealTaste.API.Controllers
             _orderService = orderService;
         }
 
-        [HttpGet("get-order-by-user-id")]
-        public async Task<IActionResult> GetAllOrderByUserId(int id)
+        [HttpGet("get-order-by-customer-id")]
+        public async Task<IActionResult> GetAllOrderByCustomerId(int id)
         {
-            var result = await _orderService.GetAllOrderByUserId(id);
+            var result = await _orderService.GetAllOrderByCustomerId(id);
             return Ok(result);
         }
 
@@ -32,9 +33,9 @@ namespace HomeMealTaste.API.Controllers
         }
 
         [HttpGet("get-order-by-order-id")]
-        public async Task<IActionResult> GetAllOrderById(int id)
+        public async Task<IActionResult> GetSingleOrderById(int id)
         {
-            var result = await _orderService.GetAllOrderById(id);
+            var result = await _orderService.GetSingleOrderById(id);
             return Ok(result);
         }
 
@@ -43,6 +44,12 @@ namespace HomeMealTaste.API.Controllers
         {
             var result = await _orderService.GetOrderByKitchenId(kitchenid);
             return Ok(result);
+        }
+        [HttpPost("create-order")]
+        public Task CreateOrder(CreateOrderRequestModel createOrderRequest)
+        {
+            var result =  _orderService.CreateOrder(createOrderRequest);
+            return result;
         }
 
     }

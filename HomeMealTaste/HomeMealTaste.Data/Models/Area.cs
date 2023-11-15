@@ -7,15 +7,18 @@ namespace HomeMealTaste.Data.Models
     {
         public Area()
         {
-            Groups = new HashSet<Group>();
+            Customers = new HashSet<Customer>();
+            Kitchens = new HashSet<Kitchen>();
+            Sessions = new HashSet<Session>();
         }
 
         public int AreaId { get; set; }
-        public int? SessionId { get; set; }
         public string? Address { get; set; }
         public string? District { get; set; }
+        public string? AreaName { get; set; }
 
-        public virtual Session? Session { get; set; }
-        public virtual ICollection<Group> Groups { get; set; }
+        public virtual ICollection<Customer> Customers { get; set; }
+        public virtual ICollection<Kitchen> Kitchens { get; set; }
+        public virtual ICollection<Session> Sessions { get; set; }
     }
 }

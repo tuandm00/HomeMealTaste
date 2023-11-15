@@ -23,6 +23,7 @@ namespace HomeMealTaste.Data.Models
         public string? District { get; set; }
         public int? RoleId { get; set; }
         public bool? Status { get; set; }
+        public int? AreaId { get; set; }
 
         public virtual Role? Role { get; set; }
         public virtual ICollection<Customer> Customers { get; set; }

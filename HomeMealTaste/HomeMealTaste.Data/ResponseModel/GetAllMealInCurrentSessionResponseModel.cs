@@ -21,7 +21,6 @@ public class GetAllMealInCurrentSessionResponseModel
                 CreatedDate = entity.CreateDate,
                 EndDate = entity.EndDate,
                 EndTime = entity.EndTime,
-                SessionName = entity.SessionName,
                 StartTime = entity.StartTime,
                 Status = entity.Status,
             },
@@ -44,7 +43,6 @@ public class GetAllMealInCurrentSessionResponseModel
                 CreatedDate = entity.Session.CreateDate,
                 EndDate = entity.Session.EndDate,
                 EndTime = entity.Session.EndTime,
-                SessionName = entity.Session.SessionName,
                 StartTime = entity.Session.StartTime,
                 Status= entity.Session.Status,
             },
@@ -52,7 +50,6 @@ public class GetAllMealInCurrentSessionResponseModel
             {
                 Id = entity.Meal.MealId,
                 Image = entity.Meal.Image,
-                Price = entity.Meal.DefaultPrice,
                 MealName = entity.Meal.Name,
             },
         };

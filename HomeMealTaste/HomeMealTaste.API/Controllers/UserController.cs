@@ -93,5 +93,12 @@ namespace HomeMealTaste.Controllers
             var result = await _userService.GetUserById(id);
             return result;
         }
+
+        [HttpGet("get-all-user-with-role-customer-chef")]
+        public async Task<IActionResult> GetAllUserWithRoleCustomerAndChef()
+        {
+             var result = await _userService.GetAllUserWithRoleCustomerAndChef();
+            return Ok(result);
+        }
     }
 }

@@ -98,9 +98,7 @@ namespace HomeMealTaste.Services.Implement
                     UserId = result.UserId,
                     Name = result.Name,
                     Phone = result.Phone,
-                    Address = result.Address,
                     District = result.District,
-                    AccountStatus = true
                 };
                 await _context.AddAsync(customer);
                 await _context.SaveChangesAsync();
@@ -228,6 +226,26 @@ namespace HomeMealTaste.Services.Implement
         {
             var result = await _context.Users.Where(x => x.UserId == id).FirstOrDefaultAsync();
             return result;
+        }
+
+        public Task<List<GetAllUserWithRoleCustomerAndChefResponseModel>> GetAllUserWithRoleCustomerAndChef()
+        {
+            var result = _context.Users.Where(x => x.RoleId == 2 || x.RoleId == 3).Select(x => new GetAllUserWithRoleCustomerAndChefResponseModel
+            {
+                UserId = x.UserId,
+                Name = x.Name,
+                Username = x.Username,
+                Email = x.Email,
+                Phone = x.Phone,
+                Address = x.Address,
+                District = x.District,
+                RoleId = x.RoleId,
+                Status = x.Status,
+                AreaId = x.AreaId,
+            });
+
+            var mapped = result.Select(x => _mapper.Map<GetAllUserWithRoleCustomerAndChefResponseModel>(x)).ToList();
+            return Task.FromResult(mapped);
         }
     }
 }

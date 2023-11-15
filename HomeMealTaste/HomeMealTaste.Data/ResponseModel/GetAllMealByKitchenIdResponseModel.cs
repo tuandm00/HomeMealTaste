@@ -12,7 +12,7 @@ namespace HomeMealTaste.Data.ResponseModel
         public int MealId { get; set; }
         public string? Name { get; set; }
         public string? Image { get; set; }
-        public decimal? DefaultPrice { get; set; }
+        public double? Price { get; set; }
         public Kitchen? Kitchen { get; set; }
         public List<DishModel?> Dish { get; set; }
     }
