@@ -46,10 +46,10 @@ namespace HomeMealTaste.API.Controllers
             return Ok(result);
         }
         [HttpPost("create-order")]
-        public Task CreateOrder(CreateOrderRequestModel createOrderRequest)
+        public async Task<IActionResult> CreateOrder(CreateOrderRequestModel createOrderRequest)
         {
-            var result =  _orderService.CreateOrder(createOrderRequest);
-            return result;
+            var result = _orderService.CreateOrder(createOrderRequest);
+            return Ok(result);
         }
 
     }

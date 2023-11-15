@@ -4,16 +4,11 @@ using HomeMealTaste.Data.Models;
 using HomeMealTaste.Data.Repositories;
 using HomeMealTaste.Data.RequestModel;
 using HomeMealTaste.Data.ResponseModel;
-using HomeMealTaste.Services.Helper;
 using HomeMealTaste.Services.Interface;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Globalization;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+
 
 namespace HomeMealTaste.Services.Implement
 {
@@ -287,9 +282,98 @@ namespace HomeMealTaste.Services.Implement
 
         }
 
-        public async Task CreateOrder(CreateOrderRequestModel createOrderRequest)
+        public async Task<CreateOrderResponseModel> CreateOrder(CreateOrderRequestModel createOrderRequest)
         {
             using Microsoft.EntityFrameworkCore.Storage.IDbContextTransaction? transaction = _context.Database.BeginTransaction();
+            //var entity = _mapper.Map<Order>(createOrderRequest);
+            //var customerid = _context.Customers.Where(customer => customer.CustomerId == entity.CustomerId).AsNoTracking().FirstOrDefault();
+            //var mealsessionid = _context.MealSessions
+            //    .Where(mealsession => mealsession.MealSessionId == entity.MealSessionId)
+            //    .Include(mealsession => mealsession.Meal)
+            //        .ThenInclude(meal => meal.MealDishes)
+            //        .ThenInclude(mealDish => mealDish.Dish)
+            //             .AsNoTracking().FirstOrDefault();
+
+            //var mealdish = _context.MealDishes.Where(x => x.MealId == mealsessionid.MealId).AsNoTracking().FirstOrDefault();
+            //var kitchenid = mealsessionid.KitchenId;
+            //var price = mealsessionid.Price;
+            //var createOrder = new CreateOrderRequestModel
+            //{
+            //    CustomerId = entity.CustomerId,
+            //    CustomerDtoRequest = new CustomerDtoRequest
+            //    {
+            //        CustomerId = customerid.CustomerId,
+            //        UserId = customerid.UserId,
+            //        Name = customerid.Name,
+            //        Phone = customerid.Phone,
+            //        District = customerid.District,
+            //        AreaId = customerid.AreaId,
+            //    },
+            //    MealSessionId = mealsessionid.MealSessionId,
+            //    MealSessionDtoRequest = new MealSessionDtoRequest
+            //    {
+            //        MealSessionId = mealsessionid.MealSessionId,
+            //        MealDtoRequest = new MealDtoRequest
+            //        {
+            //            MealId = mealsessionid.Meal.MealId,
+            //            Name = mealsessionid.Meal.Name,
+            //            Image = mealsessionid.Meal.Image,
+            //            KitchenDtoRequest = new KitchenDtoRequest
+            //            {
+            //                KitchenId = mealsessionid.Meal.Kitchen.KitchenId,
+            //                UserId = mealsessionid.Meal.Kitchen.KitchenId,
+            //                Name = mealsessionid.Meal.Kitchen.Name,
+            //                Address = mealsessionid.Meal.Kitchen.Address,
+            //                District = mealsessionid.Meal.Kitchen.District,
+            //                AreaId = mealsessionid.Meal.Kitchen.AreaId,
+            //            },
+            //            MealDishDtoRequest = new MealDishDtoRequest
+            //            {
+            //                MealDishId = mealdish.MealDishId,
+            //                MealId = mealdish.MealId,
+            //                DishId = mealdish.DishId,
+            //                DishDtoRequest = new List<DishDtoRequest?>
+            //                {
+            //                    new DishDtoRequest
+            //                    {
+            //                        DishId = mealdish.Dish.DishId,
+            //                        Name = mealdish.Dish.Name,
+            //                        Image = mealdish.Dish.Image,
+            //                        DishTypeId = mealdish.Dish.DishTypeId,
+            //                        KitchenDtoRequest = new KitchenDtoRequest
+            //                        {
+            //                            KitchenId = kitchenid.KitchenId,
+            //                            UserId = kitchenid.UserId,
+            //                            Name = kitchenid.Name,
+            //                            Address = kitchenid.Address,
+            //                            District = kitchenid.District,
+            //                            AreaId = kitchenid.AreaId
+            //                        },
+            //                    }
+            //                }
+            //            },
+            //            Description = mealsessionid.Meal.Description,
+            //            CreateDate = mealsessionid.Meal.CreateDate,
+            //        },
+            //        Price = mealsessionid.Price,
+            //        Quantity = mealsessionid.Quantity,
+            //        RemainQuantity = mealsessionid.RemainQuantity,
+            //        Status = mealsessionid.Status,
+            //        CreateDate = mealsessionid.CreateDate,
+            //        KitchenDtoRequest = new KitchenDtoRequest
+            //        {
+            //            KitchenId = kitchenid.KitchenId,
+            //            UserId = kitchenid.UserId,
+            //            Name = kitchenid.Name,
+            //            Address = kitchenid.Address,
+            //            District = kitchenid.District,
+            //            AreaId = kitchenid.AreaId
+            //        },
+            //    },
+            //    Price = (int?)price,
+            //    Time = GetDateTimeTimeZoneVietNam(),
+            //    Status = "PAID",
+            //};
             var entity = _mapper.Map<Order>(createOrderRequest);
             var customerid = _context.Customers.Where(customer => customer.CustomerId == entity.CustomerId).AsNoTracking().FirstOrDefault();
             var mealsessionid = _context.MealSessions
@@ -298,90 +382,26 @@ namespace HomeMealTaste.Services.Implement
                     .ThenInclude(meal => meal.MealDishes)
                     .ThenInclude(mealDish => mealDish.Dish)
                 .AsNoTracking().FirstOrDefault();
+
             var mealdish = _context.MealDishes.Where(x => x.MealId == mealsessionid.MealId).AsNoTracking().FirstOrDefault();
-            var kitchenid = _context.Kitchens.Where(x => x.KitchenId == mealdish.Meal.Kitchen.KitchenId).AsNoTracking().FirstOrDefault();
-            var price = _context.MealSessions.Where(x => x.Price == mealsessionid.Price).AsNoTracking().FirstOrDefault();  
+            var kitchenid = mealsessionid.KitchenId;
+            var price = mealsessionid.Price;
             var createOrder = new CreateOrderRequestModel
             {
-                CustomerId = customerid.CustomerId,
-                //CustomerDtoRequest = new CustomerDtoRequest
-                //{
-                //    CustomerId = customerid.CustomerId,
-                //    UserId = customerid.UserId,
-                //    Name = customerid.Name,
-                //    Phone = customerid.Phone,
-                //    District = customerid.District,
-                //    AreaId = customerid.AreaId,
-                //},
-                MealSessionId = mealsessionid.MealSessionId,
-                //MealSessionDtoRequest = new MealSessionDtoRequest
-                //{
-                //    MealSessionId = mealsessionid.MealSessionId,
-                //    MealDtoRequest = new MealDtoRequest
-                //    {
-                //        MealId = mealsessionid.Meal.MealId,
-                //        Name = mealsessionid.Meal.Name,
-                //        Image = mealsessionid.Meal.Image,
-                //        KitchenDtoRequest = new KitchenDtoRequest
-                //        {
-                //            KitchenId = mealsessionid.Meal.Kitchen.KitchenId,
-                //            UserId = mealsessionid.Meal.Kitchen.KitchenId,
-                //            Name = mealsessionid.Meal.Kitchen.Name,
-                //            Address = mealsessionid.Meal.Kitchen.Address,
-                //            District = mealsessionid.Meal.Kitchen.District,
-                //            AreaId = mealsessionid.Meal.Kitchen.AreaId,
-                //        },
-                //        MealDishDtoRequest = new MealDishDtoRequest
-                //        {
-                //            MealDishId = mealdish.MealDishId,
-                //            MealId = mealdish.MealId,
-                //            DishId = mealdish.DishId,
-                //            DishDtoRequest = new List<DishDtoRequest?>
-                //            {
-                //                new DishDtoRequest
-                //                {
-                //                    DishId = mealdish.Dish.DishId,
-                //                    Name = mealdish.Dish.Name,
-                //                    Image = mealdish.Dish.Image,
-                //                    DishTypeId = mealdish.Dish.DishTypeId,
-                //                    KitchenDtoRequest = new KitchenDtoRequest
-                //                    {
-                //                        KitchenId = kitchenid.KitchenId,
-                //                        UserId = kitchenid.UserId,
-                //                        Name = kitchenid.Name,
-                //                        Address = kitchenid.Address,
-                //                        District = kitchenid.District,
-                //                        AreaId = kitchenid.AreaId
-                //                    },
-                //                }
-                //            }
-                //        },
-                //        Description = mealsessionid.Meal.Description,
-                //        CreateDate = mealsessionid.Meal.CreateDate,
-                //    },
-                //    Price = mealsessionid.Price,
-                //    Quantity = mealsessionid.Quantity,
-                //    RemainQuantity = mealsessionid.RemainQuantity,
-                //    Status = mealsessionid.Status,
-                //    CreateDate = mealsessionid.CreateDate,
-                //    KitchenDtoRequest = new KitchenDtoRequest
-                //    {
-                //        KitchenId = kitchenid.KitchenId,
-                //        UserId = kitchenid.UserId,
-                //        Name = kitchenid.Name,
-                //        Address = kitchenid.Address,
-                //        District = kitchenid.District,
-                //        AreaId = kitchenid.AreaId
-                //    },
-                //},
-                Price = (int?)price.Price,
+                CustomerId = entity.CustomerId,
+                Price = (int?)price,
                 Time = GetDateTimeTimeZoneVietNam(),
                 Status = "PAID",
+                MealSessionId = mealsessionid.MealSessionId,
             };
-            await _context.AddAsync(createOrder);
-            await _context.SaveChangesAsync();
 
+            var orderEntity = _mapper.Map<Order>(createOrder);
+            await _context.AddAsync(orderEntity);
+            await _context.SaveChangesAsync();
             transaction.Commit();
+
+            var mapped = _mapper.Map<CreateOrderResponseModel>(orderEntity);
+            return mapped;
         }
 
         
