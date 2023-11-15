@@ -22,15 +22,17 @@ namespace HomeMealTaste.Services.Implement
         private readonly IDishRepository _dishRepository;
         private readonly IMealRepository _mealRepository;
         private readonly IMealDishRepository _mealDishRepository;
+        private readonly HomeMealTasteContext _context;
 
         public MealSessionService(IMealSessionRepository mealSessionRepository, IMapper mapper,
-            IDishRepository dishRepository, IMealRepository mealRepository, IMealDishRepository mealDishRepository)
+            IDishRepository dishRepository, IMealRepository mealRepository, IMealDishRepository mealDishRepository, HomeMealTasteContext context)
         {
             _mealSessionRepository = mealSessionRepository;
             _mapper = mapper;
             _dishRepository = dishRepository;
             _mealRepository = mealRepository;
             _mealDishRepository = mealDishRepository;
+            _context = context; 
         }
 
         public async Task<MealSessionResponseModel> CreateMealSession(MealSessionRequestModel mealSessionRequest)
@@ -41,42 +43,87 @@ namespace HomeMealTaste.Services.Implement
             return _mapper.Map<MealSessionResponseModel>(result);
         }
 
-        public async Task<PagedList<GetAllMealInCurrentSessionResponseModel>> GetAllMealSession(
-            GetAllMealRequest pagingParams)
+        public async Task<List<MealSessionResponseModel>> GetAllMealSession()
         {
-            var selectExpression = GetAllMealInCurrentSessionResponseModel.FromEntity();
-            var includes = new Expression<Func<MealSession, object>>[]
+            var result = _context.MealSessions.ToList();
+            var mapped = result.Select(mealsession =>
             {
-                x => x.Meal!,
-                x => x.Session!,
-                x => x.Meal.MealDishes,
-            };
-            Expression<Func<MealSession, bool>> conditionAddition = e => e.Session.StartTime < (pagingParams.SessionStartTime ?? DateTime.Now);
-
-            var result =
-                await _mealSessionRepository.GetWithPaging(pagingParams, conditionAddition, selectExpression, includes);
-            foreach (var response in result.Data)
-            {
-                var mealId = response.Meal?.Id;
-                if (mealId == null) continue;
-                var meal = await _mealRepository.GetFirstOrDefault(x => x.MealId == mealId);
-
-                var mealDishes = await _mealDishRepository.GetByCondition(x => x.MealId == meal.MealId);
-                    
-                var dishes = new List<Dish>();
-                foreach (var dishId in mealDishes)
+                var response = _mapper.Map<MealSessionResponseModel>(mealsession);
+                response.MealSessionId = mealsession.SessionId;
+                response.MealDtoForMealSession = new MealDtoForMealSession
                 {
-                    var dish = await _dishRepository.GetFirstOrDefault(x => x.DishId == dishId.DishId, x => x.Kitchen);
-                    var kitchen =_mapper.Map<GetAllMealInCurrentSessionResponseModel.ChefInfo>(dish.Kitchen);
-                    response.Chef = kitchen;
-
-                    dishes.Add(dish);
-                }
-                response.Dish = _mapper.Map<List<GetAllMealInCurrentSessionResponseModel.DishModel?>>(dishes);
-            }
-
-            return result;
+                    MealId = mealsession.Meal.MealId,
+                    Name = mealsession.Meal.Name,
+                    Image = mealsession.Meal.Image,
+                    KitchenId = mealsession?.KitchenId,
+                    CreateDate = mealsession.CreateDate.ToString(),
+                    Description = mealsession.Meal.Description,
+                };
+                response.SessionDtoForMealSession = new SessionDtoForMealSession
+                {
+                    SessionId = mealsession.Session.SessionId,
+                    CreateDate = mealsession.Session.CreateDate.ToString(),
+                    StartTime = mealsession.Session.StartTime.ToString(),
+                    EndTime = mealsession.Session.EndTime.ToString(),
+                    EndDate = mealsession.Session.EndDate.ToString(),
+                };
+                response.Price = (decimal?)mealsession.Price;
+                response.Quantity = mealsession.Quantity;
+                response.RemainQuantity = mealsession.RemainQuantity;
+                response.Status = mealsession.Status;
+                response.CreateDate = mealsession.CreateDate.ToString();
+                response.KitchenDtoForMealSession = new KitchenDtoForMealSession
+                {
+                    KitchenId = mealsession.Meal.Kitchen.KitchenId,
+                    UserId = mealsession.Meal.Kitchen.KitchenId,
+                    Name = mealsession.Meal.Kitchen.Name,
+                    Address = mealsession.Meal.Kitchen.Address,
+                    District = mealsession.Meal.Kitchen.District,
+                    AreaId = mealsession.Meal.Kitchen.AreaId,
+                };
+                return response;
+            }).ToList();
+            return mapped;
         }
+
+        //public async Task<PagedList<GetAllMealInCurrentSessionResponseModel>> GetAllMealSession(
+        //    GetAllMealRequest pagingParams)
+        //{
+        //    var selectExpression = GetAllMealInCurrentSessionResponseModel.FromEntity();
+        //    var includes = new Expression<Func<MealSession, object>>[]
+        //    {
+        //        x => x.Meal!,
+        //        x => x.Session!,
+        //        x => x.Meal.MealDishes,
+        //    };
+        //    Expression<Func<MealSession, bool>> conditionAddition = e => e.Session.StartTime < (pagingParams.SessionStartTime ?? DateTime.Now);
+
+        //    var result =
+        //        await _mealSessionRepository.GetWithPaging(pagingParams, conditionAddition, selectExpression, includes);
+        //    foreach (var response in result.Data)
+        //    {
+        //        var mealId = response.Meal?.Id;
+        //        if (mealId == null) continue;
+        //        var meal = await _mealRepository.GetFirstOrDefault(x => x.MealId == mealId);
+
+        //        var mealDishes = await _mealDishRepository.GetByCondition(x => x.MealId == meal.MealId);
+
+        //        var dishes = new List<Dish>();
+        //        foreach (var dishId in mealDishes)
+        //        {
+        //            var dish = await _dishRepository.GetFirstOrDefault(x => x.DishId == dishId.DishId, x => x.Kitchen);
+        //            var kitchen =_mapper.Map<GetAllMealInCurrentSessionResponseModel.ChefInfo>(dish.Kitchen);
+        //            response.Chef = kitchen;
+
+        //            dishes.Add(dish);
+        //        }
+        //        response.Dish = _mapper.Map<List<GetAllMealInCurrentSessionResponseModel.DishModel?>>(dishes);
+        //    }
+
+        //    return result;
+        //}
+
+
     }
 }
 
