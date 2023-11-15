@@ -12,5 +12,7 @@ namespace HomeMealTaste.Data.ResponseModel
         public int AreaId { get; set; }
         public string? Address { get; set; }
         public string? District { get; set; }
+        public string? AreaName { get; set; }
+
     }
 }

@@ -39,7 +39,12 @@ namespace HomeMealTaste.API.Controllers
             var result = _areaService.DeleteArea(areaid);
             return result;
         }
-
+        [HttpPut("update-area")]
+        public async Task<IActionResult> UpdateArea(UpdateAreaRequestModel areaRequestModel)
+        {
+            var result = await _areaService.UpdateArea(areaRequestModel);
+            return Ok(result);
+        }
 
     }
 }

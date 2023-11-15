@@ -15,6 +15,7 @@ namespace HomeMealTaste.Data.Models
         public int AreaId { get; set; }
         public string? Address { get; set; }
         public string? District { get; set; }
+        public string? AreaName { get; set; }
 
         public virtual ICollection<Customer> Customers { get; set; }
         public virtual ICollection<Kitchen> Kitchens { get; set; }

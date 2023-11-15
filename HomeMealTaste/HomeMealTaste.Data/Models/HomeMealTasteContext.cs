@@ -47,6 +47,8 @@ namespace HomeMealTaste.Data.Models
 
                 entity.Property(e => e.Address).HasMaxLength(50);
 
+                entity.Property(e => e.AreaName).HasMaxLength(50);
+
                 entity.Property(e => e.District).HasMaxLength(50);
             });
 

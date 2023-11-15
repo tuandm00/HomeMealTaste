@@ -48,11 +48,28 @@ namespace HomeMealTaste.Services.Implement
                 AreaId = x.AreaId,
                 Address = x.Address,
                 District = x.District,
-
+                AreaName = x.AreaName,
             }).ToList();
 
             var mapped = result.Select(x => _mapper.Map<AreaResponseModel>(x)).ToList();
             return mapped;
+        }
+
+        public Task<UpdateAreaResponseModel> UpdateArea(UpdateAreaRequestModel areaRequestModel)
+        {
+            var result = _context.Areas.Where(x => x.AreaId == areaRequestModel.AreaId).FirstOrDefault();
+            if(result != null)
+            {
+                result.AreaId = areaRequestModel.AreaId;
+                result.Address = areaRequestModel.Address;
+                result.District = areaRequestModel.District;
+                result.AreaName = areaRequestModel.AreaName;
+
+                _context.SaveChanges();
+            }
+
+            var mapped = _mapper.Map<UpdateAreaResponseModel>(result);
+            return Task.FromResult(mapped);
         }
     }
 }
