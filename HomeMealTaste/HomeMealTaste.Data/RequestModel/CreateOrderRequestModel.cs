@@ -11,7 +11,6 @@ namespace HomeMealTaste.Data.RequestModel
         public int? CustomerId { get; set; }
         public string? Status { get; set; }
         public int? MealSessionId { get; set; }
-        public int? SessionId { get; set; }
         public int? Price { get; set; }
         public DateTime? Time { get; set; }
 

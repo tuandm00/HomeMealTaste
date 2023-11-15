@@ -397,12 +397,11 @@ namespace HomeMealTaste.Services.Implement
                 Price = (int?)price,
                 Time = GetDateTimeTimeZoneVietNam(),
                 Status = "PAID",
-                SessionId = mealsessionid.SessionId,
                 MealSessionId = mealsessionid.MealSessionId,
             };
 
             var orderEntity = _mapper.Map<Order>(createOrder);
-            await _context.AddAsync(createOrder);
+            await _context.AddAsync(orderEntity);
             await _context.SaveChangesAsync();
             transaction.Commit();
 
