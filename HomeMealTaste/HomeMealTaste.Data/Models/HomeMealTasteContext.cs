@@ -191,6 +191,8 @@ namespace HomeMealTaste.Data.Models
 
                 entity.Property(e => e.CreateDate).HasColumnType("date");
 
+                entity.Property(e => e.Status).HasMaxLength(50);
+
                 entity.HasOne(d => d.Kitchen)
                     .WithMany(p => p.MealSessions)
                     .HasForeignKey(d => d.KitchenId)
