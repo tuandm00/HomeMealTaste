@@ -2,6 +2,7 @@
 using HomeMealTaste.Data.Helper;
 using HomeMealTaste.Data.Models;
 using HomeMealTaste.Data.Repositories;
+using HomeMealTaste.Data.RequestModel;
 using HomeMealTaste.Data.ResponseModel;
 using HomeMealTaste.Services.Helper;
 using HomeMealTaste.Services.Interface;
@@ -24,6 +25,14 @@ namespace HomeMealTaste.Services.Implement
             _areaRepository = areaRepository;
             _mapper = mapper;
             _context = context;
+        }
+
+        public async Task<AreaResponseModel> CreateArea(AreaRequestModel areaRequest)
+        {
+            var entity = _mapper.Map<Area>(areaRequest);
+            var result = await _areaRepository.Create(entity, true);
+            var mapped = _mapper.Map<AreaResponseModel>(result);
+            return mapped;
         }
 
         public async Task<List<AreaResponseModel>> GetAllArea()

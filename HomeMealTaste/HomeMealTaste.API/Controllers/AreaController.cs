@@ -1,4 +1,5 @@
 ﻿using HomeMealTaste.Data.Helper;
+using HomeMealTaste.Data.RequestModel;
 using HomeMealTaste.Data.ResponseModel;
 using HomeMealTaste.Response;
 using HomeMealTaste.Services.Helper;
@@ -25,8 +26,14 @@ namespace HomeMealTaste.API.Controllers
             var result = await _areaService.GetAllArea();
             return Ok(result);
         }
+        [HttpPost("create-area")]
+        public async Task<IActionResult> CreateArea(AreaRequestModel areaRequest)
+        {
+            var result = await _areaService.CreateArea(areaRequest);
+            return Ok(result);
+        }
 
-        
+
 
     }
 }

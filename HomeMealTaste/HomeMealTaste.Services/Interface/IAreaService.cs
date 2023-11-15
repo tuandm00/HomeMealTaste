@@ -1,4 +1,5 @@
 ﻿using HomeMealTaste.Data.Helper;
+using HomeMealTaste.Data.RequestModel;
 using HomeMealTaste.Data.ResponseModel;
 using HomeMealTaste.Services.Helper;
 using System;
@@ -12,5 +13,6 @@ namespace HomeMealTaste.Services.Interface
     public interface IAreaService
     {
         Task<List<AreaResponseModel>> GetAllArea();
+        Task<AreaResponseModel> CreateArea(AreaRequestModel areaRequest);
     }
 }
