@@ -6,6 +6,7 @@ using HomeMealTaste.Data.RequestModel;
 using HomeMealTaste.Data.ResponseModel;
 using HomeMealTaste.Services.Helper;
 using HomeMealTaste.Services.Interface;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -29,9 +30,28 @@ namespace HomeMealTaste.Services.Implement
 
         public async Task<AreaResponseModel> CreateArea(AreaRequestModel areaRequest)
         {
-            var entity = _mapper.Map<Area>(areaRequest);
-            var result = await _areaRepository.Create(entity, true);
-            var mapped = _mapper.Map<AreaResponseModel>(result);
+            //var entity = _mapper.Map<Area>(areaRequest);
+            //var result = await _areaRepository.Create(entity, true);
+            //var mapped = _mapper.Map<AreaResponseModel>(result);
+            //mapped.DistrictDtoAreaResponseModel = new DistrictDtoAreaResponseModel
+            //{
+            //    DistrictId = result.District.DistrictId,
+            //    DistrictName = result.District.DistrictName
+            //};
+
+            //return mapped;
+
+            var areaEntity = _mapper.Map<Area>(areaRequest);
+
+            areaEntity.DistrictId = areaRequest.DistrictId;
+
+            var createdArea = await _areaRepository.Create(areaEntity, true);
+
+            var areaWithDistrict = await _context.Areas
+                .Include(x => x.District)
+                .FirstOrDefaultAsync(x => x.AreaId == createdArea.AreaId);
+
+            var mapped = _mapper.Map<AreaResponseModel>(areaWithDistrict);
             return mapped;
         }
 
