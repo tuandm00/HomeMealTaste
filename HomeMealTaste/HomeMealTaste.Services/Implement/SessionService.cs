@@ -70,6 +70,7 @@ namespace HomeMealTaste.Services.Implement
                 entity.EndTime = entity.StartTime.Value.AddHours(2);
                 entity.EndDate = GetDateTimeTimeZoneVietNam();
                 entity.Status = true;
+                entity.UserId = 1;
                 
             }
             else if(entity.SessionType == "Evening")
@@ -79,6 +80,7 @@ namespace HomeMealTaste.Services.Implement
                 entity.EndTime = entity.StartTime.Value.AddHours(4);
                 entity.EndDate = GetDateTimeTimeZoneVietNam();
                 entity.Status = true;
+                entity.UserId = 1;
 
             }
             else
@@ -88,6 +90,7 @@ namespace HomeMealTaste.Services.Implement
                 entity.EndTime = entity.StartTime.Value.AddHours(2);
                 entity.EndDate = GetDateTimeTimeZoneVietNam();
                 entity.Status = true;
+                entity.UserId = 1;
 
             }
 
