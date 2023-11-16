@@ -13,11 +13,10 @@ namespace HomeMealTaste.Data.Models
 
         public int AreaId { get; set; }
         public string? Address { get; set; }
-        public string? District { get; set; }
         public string? AreaName { get; set; }
         public int? DistrictId { get; set; }
 
-        public virtual District? DistrictNavigation { get; set; }
+        public virtual District? District { get; set; }
         public virtual ICollection<Kitchen> Kitchens { get; set; }
         public virtual ICollection<Session> Sessions { get; set; }
     }

@@ -47,7 +47,6 @@ namespace HomeMealTaste.Services.Implement
             {
                 AreaId = x.AreaId,
                 Address = x.Address,
-                District = x.District,
                 AreaName = x.AreaName,
             }).ToList();
 
@@ -62,7 +61,7 @@ namespace HomeMealTaste.Services.Implement
             {
                 result.AreaId = areaRequestModel.AreaId;
                 result.Address = areaRequestModel.Address;
-                result.District = areaRequestModel.District;
+                result.DistrictId = areaRequestModel.DistrictId;
                 result.AreaName = areaRequestModel.AreaName;
 
                 _context.SaveChanges();

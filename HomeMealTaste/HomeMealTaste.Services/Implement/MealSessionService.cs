@@ -66,7 +66,6 @@ namespace HomeMealTaste.Services.Implement
                     UserId = mealsession.Session?.UserId,
                     Status = mealsession.Session.Status,
                     SessionType = mealsession.Session.SessionType,
-                    AreaId = mealsession.Session.AreaId
                 };
                 response.KitchenDtoForMealSession = new KitchenDtoForMealSession
                 {
@@ -74,7 +73,6 @@ namespace HomeMealTaste.Services.Implement
                     UserId = mealsession.Meal.Kitchen.KitchenId,
                     Name = mealsession.Meal.Kitchen?.Name,
                     Address = mealsession.Meal.Kitchen.Address,
-                    AreaId = mealsession.Meal.Kitchen.AreaId,
                 };
                 response.Price = (decimal?)mealsession.Price;
                 response.Quantity = mealsession.Quantity;
@@ -120,7 +118,8 @@ namespace HomeMealTaste.Services.Implement
                     UserId = mealsession.Session?.UserId,
                     Status = mealsession.Session.Status,
                     SessionType = mealsession.Session.SessionType,
-                    AreaId = mealsession.Session.AreaId
+
+
                 };
                 response.KitchenDtoForMealSession = new KitchenDtoForMealSession
                 {
@@ -128,7 +127,6 @@ namespace HomeMealTaste.Services.Implement
                     UserId = mealsession.Meal.Kitchen.KitchenId,
                     Name = mealsession.Meal.Kitchen?.Name,
                     Address = mealsession.Meal.Kitchen.Address,
-                    AreaId = mealsession.Meal.Kitchen.AreaId,
                 };
                 response.Price = (decimal?)mealsession.Price;
                 response.Quantity = mealsession.Quantity;
@@ -146,7 +144,7 @@ namespace HomeMealTaste.Services.Implement
         {
             var result = _context.MealSessions
                 .Include(x => x.Meal)
-                .Include(x => x.Session)
+                .Include(x => x.Session).ThenInclude(x => x.Area).ThenInclude(x => x.District)
                 .Include(x => x.Kitchen)
                 .Where(x => x.MealSessionId == mealsessionid)
                 .FirstOrDefault();
@@ -171,7 +169,17 @@ namespace HomeMealTaste.Services.Implement
                 UserId = result.Session?.UserId,
                 Status = result.Session.Status,
                 SessionType = result.Session.SessionType,
-                AreaId = result.Session.AreaId
+                AreaDtoForMealSession = new AreaDtoForMealSession
+                {
+                    AreaId = result.Session.Area.AreaId,
+                    Address = result.Session.Area.Address,
+                    AreaName = result.Session.Area.AreaName,
+                    DistrictDtoForMealSession = new DistrictDtoForMealSession
+                    {
+                        DistrictId = (int)result.Session.Area.District.DistrictId,
+                        DistrictName = result.Session.Area.District.DistrictName,
+                    }
+                },
             };
             mapped.KitchenDtoForMealSession = new KitchenDtoForMealSession
             {
@@ -179,7 +187,6 @@ namespace HomeMealTaste.Services.Implement
                 UserId = result.Meal.Kitchen.KitchenId,
                 Name = result.Meal.Kitchen?.Name,
                 Address = result.Meal.Kitchen.Address,
-                AreaId = result.Meal.Kitchen.AreaId,
             };
             mapped.Price = (decimal?)result.Price;
             mapped.Quantity = result.Quantity;

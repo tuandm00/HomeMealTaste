@@ -173,7 +173,7 @@ namespace HomeMealTaste.Services.Implement
                 {
                     AreaId = areaid,
                     Address = x.Area.Address,
-                    District = x.Area.District,
+                    DistrictId = x.Area.DistrictId,
                 },
                 Status = x.Status,
             });

@@ -49,9 +49,7 @@ namespace HomeMealTaste.Data.Models
 
                 entity.Property(e => e.AreaName).HasMaxLength(50);
 
-                entity.Property(e => e.District).HasMaxLength(50);
-
-                entity.HasOne(d => d.DistrictNavigation)
+                entity.HasOne(d => d.District)
                     .WithMany(p => p.Areas)
                     .HasForeignKey(d => d.DistrictId)
                     .HasConstraintName("FK_Area_District");
