@@ -23,7 +23,7 @@ namespace HomeMealTaste.Data.ResponseModel
         public int? UserId { get; set; }
         public string? Name { get; set; }
         public string? Phone { get; set; }
-        public string? District { get; set; }
+        public int? DistrictId { get; set; }
         public int? AreaId { get; set; }
     }
 
@@ -35,7 +35,7 @@ namespace HomeMealTaste.Data.ResponseModel
         public double? Price { get; set; }
         public int? Quantity { get; set; }
         public int? RemainQuantity { get; set; }
-        public bool? Status { get; set; }
+        public string? Status { get; set; }
         public string? CreateDate { get; set; }
         public KitchenDto2? KitchenDto2 { get; set; }
     }
@@ -69,7 +69,6 @@ namespace HomeMealTaste.Data.ResponseModel
         public int? UserId { get; set; }
         public string? Name { get; set; }
         public string? Address { get; set; }
-        public string? District { get; set; }
         public int? AreaId { get; set; }
     }
 }

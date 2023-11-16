@@ -123,7 +123,6 @@ namespace HomeMealTaste.Services.Implement
                 KitchenId = group.First().Meal.Kitchen.KitchenId,
                 Name = group.First().Meal.Kitchen.Name,
                 Address = group.First().Meal.Kitchen.Address,
-                District = group.First().Meal.Kitchen.District
             },
             Dish = group.Select(md => new DishModel
             {
@@ -156,7 +155,6 @@ namespace HomeMealTaste.Services.Implement
                         UserId = group.Kitchen.UserId,
                         Name = group.Kitchen.Name,
                         Address = group.Kitchen.Address,
-                        District = group.Kitchen.District
                     },
                     DishDto = group.MealDishes.Select(md => new DishDto
                     {
@@ -169,6 +167,35 @@ namespace HomeMealTaste.Services.Implement
 
             var mapped = _mapper.Map<GetMealByMealIdResponseModel>(result);
             return Task.FromResult(mapped);
+        }
+
+        public async Task<List<GetAllMealResponseModelNew>> GetAllMeal()
+        {
+            var result = _context.Meals
+                .Include(x => x.Kitchen)
+                .ToList();
+
+            var mapped = result.Select(meal =>
+            {
+                var response = _mapper.Map<GetAllMealResponseModelNew>(meal);
+                response.MealId = meal.MealId;
+                response.Name = meal.Name;
+                response.Image = meal.Image;
+                response.KitchenDtoGetAllMealResponseModelNew = new KitchenDtoGetAllMealResponseModelNew
+                {
+                    KitchenId = meal.Kitchen.KitchenId,
+                    UserId = meal.Kitchen.UserId,
+                    Name = meal.Kitchen.Name,
+                    Address = meal.Kitchen.Address,
+                    AreaId = meal.Kitchen.AreaId,
+                };
+                response.CreateDate = meal.CreateDate.ToString();
+                response.Description = meal.Description;
+
+                return response;
+            }).ToList();
+
+             return mapped;
         }
     }
 }

@@ -34,22 +34,22 @@ namespace HomeMealTaste.Controllers
             return result;
         }
         
-        [HttpGet("get-all")]
-        public async Task<IActionResult> GetAllMealInSession([FromQuery] GetAllMealRequest pagingParams)
-        {
-            var result = await _sessionService.GetAllMealInCurrentSession(pagingParams);
-            var metadata = new
-            {
-                result.TotalCount,
-                result.TotalPages,
-                result.PageSize,
-                result.CurrentPage,
-                result.HasNext,
-                result.HasPrevious
-            };
-            var response = ApiResponse<object>.Success(result, metadata);
-            return Ok(response);
-        }
+        //[HttpGet("get-all")]
+        //public async Task<IActionResult> GetAllMealInSession([FromQuery] GetAllMealRequest pagingParams)
+        //{
+        //    var result = await _sessionService.GetAllMealInCurrentSession(pagingParams);
+        //    var metadata = new
+        //    {
+        //        result.TotalCount,
+        //        result.TotalPages,
+        //        result.PageSize,
+        //        result.CurrentPage,
+        //        result.HasNext,
+        //        result.HasPrevious
+        //    };
+        //    var response = ApiResponse<object>.Success(result, metadata);
+        //    return Ok(response);
+        //}
 
         [HttpPatch("change-status-session")]
         public async Task ChangeStatusSession(int sessionid)

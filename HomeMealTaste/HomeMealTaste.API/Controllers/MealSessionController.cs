@@ -28,21 +28,46 @@ namespace HomeMealTaste.Controllers
             return result;
         }
         
-        [HttpGet("get-all-meal-sessions")]
-        public async Task<IActionResult> GetAllUser([FromQuery] GetAllMealRequest pagingParams)
+        //[HttpGet("get-all-meal-sessions")]
+        //public async Task<IActionResult> GetAllUser([FromQuery] GetAllMealRequest pagingParams)
+        //{
+        //    var result = await _mealSessionService.GetAllMealSession(pagingParams);
+        //    var metadata = new
+        //    {
+        //        result.TotalCount,
+        //        result.TotalPages,
+        //        result.PageSize,
+        //        result.CurrentPage,
+        //        result.HasNext,
+        //        result.HasPrevious
+        //    };
+        //    var response = ApiResponse<object>.Success(result, metadata);
+        //    return Ok(response);
+        //}
+
+        [HttpGet("get-all-meal-session")]
+        public async Task<IActionResult> GetAllMealSession()
         {
-            var result = await _mealSessionService.GetAllMealSession(pagingParams);
-            var metadata = new
-            {
-                result.TotalCount,
-                result.TotalPages,
-                result.PageSize,
-                result.CurrentPage,
-                result.HasNext,
-                result.HasPrevious
-            };
-            var response = ApiResponse<object>.Success(result, metadata);
-            return Ok(response);
+            var result = await _mealSessionService.GetAllMealSession();
+            return Ok(result);
+        }
+        [HttpGet("get-single-meal-session-by-meal-session-id")]
+        public async Task<IActionResult> GetSingleMealSessionById(int mealsessionid)
+        {
+            var result = await _mealSessionService.GetSingleMealSessionById(mealsessionid);
+            return Ok(result);
+        }
+        [HttpGet("get-all-meal-session-by-status")]
+        public async Task<IActionResult> GetAllMealSessionByStatus(string status)
+        {
+            var result = await _mealSessionService.GetAllMealSessionByStatus(status);
+            return Ok(result);
+        }
+        [HttpPatch("update-status-meal-session")]
+        public Task UpdateStatusMeallSession(int mealSessionid, string status)
+        {
+            var result =  _mealSessionService.UpdateStatusMeallSession(mealSessionid, status); 
+            return result;
         }
         [HttpPost("sendNotification")]
         //title = push status for mealsession, body =status

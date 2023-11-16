@@ -11,6 +11,12 @@ namespace HomeMealTaste.Services.Interface
     public interface IMealSessionService
     {
         Task<MealSessionResponseModel> CreateMealSession(MealSessionRequestModel mealSessionRequest);
-        Task<PagedList<GetAllMealInCurrentSessionResponseModel>> GetAllMealSession(GetAllMealRequest pagingParams);
+        //Task<PagedList<GetAllMealInCurrentSessionResponseModel>> GetAllMealSession(GetAllMealRequest pagingParams);
+        Task<List<MealSessionResponseModel>> GetAllMealSession();
+        Task<MealSessionResponseModel> GetSingleMealSessionById(int mealsessionid);
+
+        Task<List<MealSessionResponseModel>> GetAllMealSessionByStatus(string status);
+
+        Task UpdateStatusMeallSession (int mealsessionid, string status);
     }
 }

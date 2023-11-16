@@ -11,7 +11,7 @@ public class GetAllMealResponseModel
     public decimal? DefaultPrice { get; set; }
     public List<MealSession> MealSessions { get; set; }
     public List<MealDish> MealDishes { get; set; }
-    
+
     public static Expression<Func<Meal, GetAllMealResponseModel>> FromEntity()
     {
         return (Meal entity) => new GetAllMealResponseModel()
@@ -20,7 +20,6 @@ public class GetAllMealResponseModel
             Image = entity.Image,
             Name = entity.Name,
             MealDishes = entity.MealDishes.ToList(),
-            MealSessions = entity.MealSessions.ToList()
         };
     }
 }
