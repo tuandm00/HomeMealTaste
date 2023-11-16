@@ -232,13 +232,13 @@ namespace HomeMealTaste.Data.Models
 
                 entity.Property(e => e.PostId).ValueGeneratedNever();
 
-                entity.Property(e => e.MealSessionId).HasColumnName("Meal_SessionId");
+                entity.Property(e => e.OrderId).HasColumnName("OrderId");
 
                 entity.Property(e => e.Status).HasMaxLength(1000);
 
-                entity.HasOne(d => d.MealSession)
+                entity.HasOne(d => d.Order)
                     .WithMany(p => p.Posts)
-                    .HasForeignKey(d => d.MealSessionId)
+                    .HasForeignKey(d => d.OrderId)
                     .HasConstraintName("FK_Post_Meal_Session");
             });
 

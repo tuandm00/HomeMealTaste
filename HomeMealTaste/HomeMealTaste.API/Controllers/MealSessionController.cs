@@ -69,21 +69,6 @@ namespace HomeMealTaste.Controllers
             var result =  _mealSessionService.UpdateStatusMeallSession(mealSessionid, status); 
             return result;
         }
-        [HttpPost("sendNotification")]
-        //title = push status for mealsession, body =status
-        public async Task SendNotificationAsync(string DeviceToken, string title, string body)
-        {
-            var message = new Message()
-            {
-                Notification = new FirebaseAdmin.Messaging.Notification
-                {
-                    Title = title,
-                    Body = body
-                },
-                Token = DeviceToken,
-            };
-            var messaging = FirebaseMessaging.DefaultInstance;
-            var result = await messaging.SendAsync(message);
-        }
+   
     }
 }
