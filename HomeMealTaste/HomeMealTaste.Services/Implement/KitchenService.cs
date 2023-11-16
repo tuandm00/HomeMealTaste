@@ -40,6 +40,9 @@ namespace HomeMealTaste.Services.Implement
                 response.UserDtoKitchenResponseModel = new UserDtoKitchenResponseModel
                 {
                     UserId = kitchen.User.UserId,
+                    Username = kitchen.User.Username,
+                    Email = kitchen.User.Email,
+                    Phone = kitchen.User.Phone,
                 };
                 response.Name = kitchen.Name;
                 response.Address = kitchen.Address;
