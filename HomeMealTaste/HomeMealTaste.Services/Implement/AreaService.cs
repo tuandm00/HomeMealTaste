@@ -48,6 +48,11 @@ namespace HomeMealTaste.Services.Implement
                 AreaId = x.AreaId,
                 Address = x.Address,
                 AreaName = x.AreaName,
+                DistrictDtoAreaResponseModel = new DistrictDtoAreaResponseModel
+                {
+                    DistrictId = x.District.DistrictId,
+                    DistrictName = x.District.DistrictName,
+                }
             }).ToList();
 
             var mapped = result.Select(x => _mapper.Map<AreaResponseModel>(x)).ToList();
