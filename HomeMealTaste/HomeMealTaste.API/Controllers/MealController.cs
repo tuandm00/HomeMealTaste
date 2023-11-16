@@ -26,7 +26,12 @@ namespace HomeMealTaste.API.Controllers
             return Ok(result);
         }
         
-        [HttpGet("get-all")]
+        [HttpGet("get-all-meal")]
+        public async Task<IActionResult> GetAllMeal()
+        {
+            var result = await _mealService.GetAllMeal();
+            return Ok(result);
+        }
         //public async Task<IActionResult> GetAllMeal([FromQuery] PagingParams pagingParams)
         //{
         //    var result = await _mealService.GetAllMeal(pagingParams);

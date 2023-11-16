@@ -91,20 +91,20 @@ namespace HomeMealTaste.Services.Implement
             return response;
         }
 
-        //public async Task<PagedList<GetAllMealResponseModel>> GetAllMeal(PagingParams pagingParams)
-        //{
-        //    var selectExpression = GetAllMealResponseModel.FromEntity();
-        //    var includes = new Expression<Func<Meal, object>>[]
-        //    {
-        //        x => x.MealDishes,
-        //        x => x.MealSessions,
-        //    };
-        //    Expression<Func<Meal, bool>> conditionAddition = e => true;
+        public async Task<PagedList<GetAllMealResponseModel>> GetAllMeal(PagingParams pagingParams)
+        {
+            var selectExpression = GetAllMealResponseModel.FromEntity();
+            var includes = new Expression<Func<Meal, object>>[]
+            {
+                x => x.MealDishes,
+                x => x.MealSessions,
+            };
+            Expression<Func<Meal, bool>> conditionAddition = e => true;
 
-        //    var result = await _mealRepository.GetWithPaging(pagingParams, conditionAddition, selectExpression, includes);
+            var result = await _mealRepository.GetWithPaging(pagingParams, conditionAddition, selectExpression, includes);
 
-        //    return result;
-        //}
+            return result;
+        }
 
         public async Task<List<GetAllMealByKitchenIdResponseModel>> GetAllMealByKitchenId(int id)
         {
@@ -167,6 +167,35 @@ namespace HomeMealTaste.Services.Implement
 
             var mapped = _mapper.Map<GetMealByMealIdResponseModel>(result);
             return Task.FromResult(mapped);
+        }
+
+        public async Task<List<GetAllMealResponseModelNew>> GetAllMeal()
+        {
+            var result = _context.Meals
+                .Include(x => x.Kitchen)
+                .ToList();
+
+            var mapped = result.Select(meal =>
+            {
+                var response = _mapper.Map<GetAllMealResponseModelNew>(meal);
+                response.MealId = meal.MealId;
+                response.Name = meal.Name;
+                response.Image = meal.Image;
+                response.KitchenDtoGetAllMealResponseModelNew = new KitchenDtoGetAllMealResponseModelNew
+                {
+                    KitchenId = meal.Kitchen.KitchenId,
+                    UserId = meal.Kitchen.UserId,
+                    Name = meal.Kitchen.Name,
+                    Address = meal.Kitchen.Address,
+                    AreaId = meal.Kitchen.AreaId,
+                };
+                response.CreateDate = meal.CreateDate.ToString();
+                response.Description = meal.Description;
+
+                return response;
+            }).ToList();
+
+             return mapped;
         }
     }
 }
