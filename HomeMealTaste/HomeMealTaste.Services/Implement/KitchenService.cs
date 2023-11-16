@@ -5,6 +5,7 @@ using HomeMealTaste.Data.Repositories;
 using HomeMealTaste.Data.ResponseModel;
 using HomeMealTaste.Services.Helper;
 using HomeMealTaste.Services.Interface;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -29,24 +30,24 @@ namespace HomeMealTaste.Services.Implement
 
         public async Task<List<KitchenResponseModel>> GetAllKitchen()
         {
-            var result = _context.Kitchens.Select(x => new KitchenResponseModel
+            var result = _context.Kitchens
+                .Include(x => x.User)
+                .ToList();
+            var mapped = result.Select(kitchen =>
             {
-                KitchenId = x.KitchenId,
-                User = new User
+                var response = _mapper.Map<KitchenResponseModel>(kitchen);
+                response.KitchenId = kitchen.KitchenId;
+                response.UserDtoKitchenResponseModel = new UserDtoKitchenResponseModel
                 {
-                    Username = x.User.Username,
-                    Email = x.User.Email,
-                    RoleId = x.User.RoleId,
-                    Phone = x.User.Phone,
-                    Address = x.User.Address,
-                    District = x.User.District,
-                    Status = x.User.Status,
+                    UserId = kitchen.User.UserId,
+                };
+                response.Name = kitchen.Name;
+                response.Address = kitchen.Address;
 
-                },
-                Name = x.Name,
-                Address = x.Address,
+                return response;
             }).ToList();
-            return result;
+
+            return mapped;
         }
 
         public async Task<KitchenResponseModel> GetAllKitchenByKitchenId(int id)
@@ -54,15 +55,9 @@ namespace HomeMealTaste.Services.Implement
             var result = _context.Kitchens.Where(x => x.KitchenId == id).Select(x => new KitchenResponseModel
             {
                 KitchenId = x.KitchenId,
-                User = new User
+                UserDtoKitchenResponseModel = new UserDtoKitchenResponseModel
                 {
-                    Username = x.User.Username,
-                    Email = x.User.Email,
-                    RoleId = x.User.RoleId,
-                    Phone = x.User.Phone,
-                    Address = x.User.Address,
-                    District = x.User.District,
-                    Status = x.User.Status,
+                   UserId= x.User.UserId,
                 },
                 Name = x.Name,
                 Address = x.Address,
