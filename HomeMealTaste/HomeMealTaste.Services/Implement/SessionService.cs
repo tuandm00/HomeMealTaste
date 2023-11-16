@@ -63,7 +63,8 @@ namespace HomeMealTaste.Services.Implement
         public async Task<SessionResponseModel> CreateSession(SessionRequestModel sessionRequest)
         {
             var entity = _mapper.Map<Session>(sessionRequest);
-            if(entity.SessionType == "Lunch")
+            var sessionTypeLower = entity.SessionType.ToLower();
+            if(string.Equals(sessionTypeLower, "lunch", StringComparison.OrdinalIgnoreCase))
             {
                 entity.CreateDate = GetDateTimeTimeZoneVietNam();
                 entity.StartTime = GetDateTimeTimeZoneVietNam().Date.AddHours(10);
@@ -71,9 +72,10 @@ namespace HomeMealTaste.Services.Implement
                 entity.EndDate = GetDateTimeTimeZoneVietNam();
                 entity.Status = true;
                 entity.UserId = 1;
+                entity.SessionType = "Lunch";
                 
             }
-            else if(entity.SessionType == "Evening")
+            else if(string.Equals(sessionTypeLower, "evening", StringComparison.OrdinalIgnoreCase))
             {
                 entity.CreateDate = GetDateTimeTimeZoneVietNam();
                 entity.StartTime = GetDateTimeTimeZoneVietNam().Date.AddHours(16);
@@ -81,9 +83,11 @@ namespace HomeMealTaste.Services.Implement
                 entity.EndDate = GetDateTimeTimeZoneVietNam();
                 entity.Status = true;
                 entity.UserId = 1;
+                entity.SessionType = "Evening";
+
 
             }
-            else
+            else if(string.Equals(sessionTypeLower, "dinner", StringComparison.OrdinalIgnoreCase))
             {
                 entity.CreateDate = GetDateTimeTimeZoneVietNam();
                 entity.StartTime = GetDateTimeTimeZoneVietNam().Date.AddHours(17);
@@ -91,6 +95,7 @@ namespace HomeMealTaste.Services.Implement
                 entity.EndDate = GetDateTimeTimeZoneVietNam();
                 entity.Status = true;
                 entity.UserId = 1;
+                entity.SessionType = "Dinner";
 
             }
 
