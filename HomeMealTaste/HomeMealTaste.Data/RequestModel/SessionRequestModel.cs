@@ -11,5 +11,7 @@ namespace HomeMealTaste.Data.RequestModel
         
         public int? UserId { get; set; }
         public string? SessionType { get; set; }
+        public int? AreaId { get; set; }
+
     }
 }

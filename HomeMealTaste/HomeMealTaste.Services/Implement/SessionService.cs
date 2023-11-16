@@ -70,6 +70,7 @@ namespace HomeMealTaste.Services.Implement
                 entity.EndTime = entity.StartTime.Value.AddHours(2);
                 entity.EndDate = GetDateTimeTimeZoneVietNam();
                 entity.Status = true;
+                
             }
             else if(entity.SessionType == "Evening")
             {
