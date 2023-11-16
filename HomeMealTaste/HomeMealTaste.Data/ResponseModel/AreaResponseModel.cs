@@ -11,13 +11,9 @@ namespace HomeMealTaste.Data.ResponseModel
     {
         public int AreaId { get; set; }
         public string? Address { get; set; }
-        public DistrictDtoAreaResponseModel? DistrictDtoAreaResponseModel { get; set; }
+        public int DistrictId { get; set; }
+
         public string? AreaName { get; set; }
 
-    }
-    public class DistrictDtoAreaResponseModel
-    {
-        public int DistrictId { get; set; }
-        public string? DistrictName { get; set; }
     }
 }
