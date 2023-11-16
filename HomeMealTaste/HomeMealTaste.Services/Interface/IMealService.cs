@@ -14,7 +14,7 @@ namespace HomeMealTaste.Services.Interface
     public interface IMealService
     {
         Task<MealResponseModel> CreateMeal(MealRequestModel mealRequest);
-        Task<PagedList<GetAllMealResponseModel>> GetAllMeal(PagingParams pagingParams);
+        //Task<PagedList<GetAllMealResponseModel>> GetAllMeal(PagingParams pagingParams);
         Task<List<GetAllMealByKitchenIdResponseModel>> GetAllMealByKitchenId(int id);
 
         Task<GetMealByMealIdResponseModel> GetMealByMealId(int mealid);

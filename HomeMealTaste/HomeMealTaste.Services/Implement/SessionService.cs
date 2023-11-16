@@ -113,20 +113,20 @@ namespace HomeMealTaste.Services.Implement
 
         }
 
-        public async Task<PagedList<GetAllMealInCurrentSessionResponseModel>> GetAllMealInCurrentSession(GetAllMealRequest pagingParams)
-        {
-            var selectExpression = GetAllMealInCurrentSessionResponseModel.FromSession();
-            var includes = new Expression<Func<Session, object>>[]
-            {
-                x => x.MealSessions,
-                x => x.User.Kitchens
-            };
-            Expression<Func<Session, bool>> conditionAddition = e => e.StartTime < (pagingParams.SessionStartTime ?? DateTime.Now);
+        //public async Task<PagedList<GetAllMealInCurrentSessionResponseModel>> GetAllMealInCurrentSession(GetAllMealRequest pagingParams)
+        //{
+        //    var selectExpression = GetAllMealInCurrentSessionResponseModel.FromSession();
+        //    var includes = new Expression<Func<Session, object>>[]
+        //    {
+        //        x => x.MealSessions,
+        //        x => x.User.Kitchens
+        //    };
+        //    Expression<Func<Session, bool>> conditionAddition = e => e.StartTime < (pagingParams.SessionStartTime ?? DateTime.Now);
             
-            var result = await _sessionRepository.GetWithPaging(pagingParams, conditionAddition, selectExpression, includes);
+        //    var result = await _sessionRepository.GetWithPaging(pagingParams, conditionAddition, selectExpression, includes);
             
-            return result;
-        }
+        //    return result;
+        //}
 
         public async Task ChangeStatusSession(int sessionid)
         {

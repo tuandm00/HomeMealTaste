@@ -13,7 +13,7 @@ namespace HomeMealTaste.Services.Interface
     {
         Task<SessionResponseModel> CreateSession(SessionRequestModel sessionRequest);
         Task<SessionResponseModel> UpdateEndTime(int sessionId, DateTime dateTime);
-        Task<PagedList<GetAllMealInCurrentSessionResponseModel>> GetAllMealInCurrentSession(GetAllMealRequest pagingParams);
+        //Task<PagedList<GetAllMealInCurrentSessionResponseModel>> GetAllMealInCurrentSession(GetAllMealRequest pagingParams);
         Task ChangeStatusSession(int sessionid);
         Task<List<SessionResponseModel>> GetAllSession();
         Task<List<GetAllSessionByAreaIdResponseModel>> GetAllSessionByAreaId(int areaid);

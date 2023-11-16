@@ -27,21 +27,21 @@ namespace HomeMealTaste.API.Controllers
         }
         
         [HttpGet("get-all")]
-        public async Task<IActionResult> GetAllMeal([FromQuery] PagingParams pagingParams)
-        {
-            var result = await _mealService.GetAllMeal(pagingParams);
-            var metadata = new
-            {
-                result.TotalCount,
-                result.TotalPages,
-                result.PageSize,
-                result.CurrentPage,
-                result.HasNext,
-                result.HasPrevious
-            };
-            var response = ApiResponse<object>.Success(result, metadata);
-            return Ok(response);
-        }
+        //public async Task<IActionResult> GetAllMeal([FromQuery] PagingParams pagingParams)
+        //{
+        //    var result = await _mealService.GetAllMeal(pagingParams);
+        //    var metadata = new
+        //    {
+        //        result.TotalCount,
+        //        result.TotalPages,
+        //        result.PageSize,
+        //        result.CurrentPage,
+        //        result.HasNext,
+        //        result.HasPrevious
+        //    };
+        //    var response = ApiResponse<object>.Success(result, metadata);
+        //    return Ok(response);
+        //}
 
         [HttpGet("get-all-meal-by-kitchen-id")]
         public async Task<IActionResult> GetAllMealByKitchenId(int id)

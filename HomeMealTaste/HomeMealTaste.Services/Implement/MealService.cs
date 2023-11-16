@@ -91,20 +91,20 @@ namespace HomeMealTaste.Services.Implement
             return response;
         }
 
-        public async Task<PagedList<GetAllMealResponseModel>> GetAllMeal(PagingParams pagingParams)
-        {
-            var selectExpression = GetAllMealResponseModel.FromEntity();
-            var includes = new Expression<Func<Meal, object>>[]
-            {
-                x => x.MealDishes,
-                x => x.MealSessions,
-            };
-            Expression<Func<Meal, bool>> conditionAddition = e => true;
+        //public async Task<PagedList<GetAllMealResponseModel>> GetAllMeal(PagingParams pagingParams)
+        //{
+        //    var selectExpression = GetAllMealResponseModel.FromEntity();
+        //    var includes = new Expression<Func<Meal, object>>[]
+        //    {
+        //        x => x.MealDishes,
+        //        x => x.MealSessions,
+        //    };
+        //    Expression<Func<Meal, bool>> conditionAddition = e => true;
 
-            var result = await _mealRepository.GetWithPaging(pagingParams, conditionAddition, selectExpression, includes);
+        //    var result = await _mealRepository.GetWithPaging(pagingParams, conditionAddition, selectExpression, includes);
 
-            return result;
-        }
+        //    return result;
+        //}
 
         public async Task<List<GetAllMealByKitchenIdResponseModel>> GetAllMealByKitchenId(int id)
         {
@@ -123,7 +123,6 @@ namespace HomeMealTaste.Services.Implement
                 KitchenId = group.First().Meal.Kitchen.KitchenId,
                 Name = group.First().Meal.Kitchen.Name,
                 Address = group.First().Meal.Kitchen.Address,
-                District = group.First().Meal.Kitchen.District
             },
             Dish = group.Select(md => new DishModel
             {
@@ -156,7 +155,6 @@ namespace HomeMealTaste.Services.Implement
                         UserId = group.Kitchen.UserId,
                         Name = group.Kitchen.Name,
                         Address = group.Kitchen.Address,
-                        District = group.Kitchen.District
                     },
                     DishDto = group.MealDishes.Select(md => new DishDto
                     {

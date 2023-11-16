@@ -71,7 +71,7 @@ namespace HomeMealTaste.Services.Implement
                     Name = result.Name,
                     UserId = result.UserId,
                     Address = result.Address,
-                    District = result.District,
+                    DistrictId = result.DistrictId,
                     Email = result.Email,
                     Phone = result.Phone,
                     Status = result.Status,
@@ -121,7 +121,6 @@ namespace HomeMealTaste.Services.Implement
                     UserId = result.UserId,
                     Name = result.Name,
                     Address = result.Address,
-                    District = result.District,
                 };
                 await _context.AddAsync(chef);
                 await _context.SaveChangesAsync();
@@ -238,7 +237,7 @@ namespace HomeMealTaste.Services.Implement
                 Email = x.Email,
                 Phone = x.Phone,
                 Address = x.Address,
-                District = x.District,
+                DistrictId = x.DistrictId,
                 RoleId = x.RoleId,
                 Status = x.Status,
                 AreaId = x.AreaId,

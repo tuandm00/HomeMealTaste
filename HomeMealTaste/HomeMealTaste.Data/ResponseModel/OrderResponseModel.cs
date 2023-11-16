@@ -24,7 +24,7 @@ namespace HomeMealTaste.Data.ResponseModel
         public int? UserId { get; set; }
         public string? Name { get; set; }
         public string? Phone { get; set; }
-        public string? District { get; set; }
+        public int? DistrictId { get; set; }
         public int? AreaId { get; set; }
     }
 
@@ -70,7 +70,6 @@ namespace HomeMealTaste.Data.ResponseModel
         public int? UserId { get; set; }
         public string? Name { get; set; }
         public string? Address { get; set; }
-        public string? District { get; set; }
         public int? AreaId { get; set; }
     }
 }

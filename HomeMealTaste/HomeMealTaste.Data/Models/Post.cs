@@ -7,7 +7,7 @@ namespace HomeMealTaste.Data.Models
     {
         public int PostId { get; set; }
         public int? MealSessionId { get; set; }
-        public string? Description { get; set; }
+        public string? Status { get; set; }
 
         public virtual MealSession? MealSession { get; set; }
     }

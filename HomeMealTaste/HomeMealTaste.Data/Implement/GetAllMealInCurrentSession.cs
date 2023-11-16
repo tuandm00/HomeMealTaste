@@ -7,5 +7,5 @@ public class GetAllMealInCurrentSession
     public string? Name { get; set; }
     public string? Image { get; set; }
     public decimal? DefaultPrice { get; set; }
-    public ICollection<GetAllMealInCurrentSessionResponseModel.MealModel> MealSessions { get; set; }
+    //public ICollection<GetAllMealInCurrentSessionResponseModel.MealModel> MealSessions { get; set; }
 }

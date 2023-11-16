@@ -45,7 +45,6 @@ namespace HomeMealTaste.Services.Implement
                 },
                 Name = x.Name,
                 Address = x.Address,
-                District = x.District,
             }).ToList();
             return result;
         }
@@ -67,7 +66,6 @@ namespace HomeMealTaste.Services.Implement
                 },
                 Name = x.Name,
                 Address = x.Address,
-                District = x.District,
             }).FirstOrDefault();
 
             return _mapper.Map<KitchenResponseModel>(result);

@@ -68,7 +68,7 @@ namespace HomeMealTaste.Services.Implement
                     CustomerId = x.Customer.CustomerId,
                     Name = x.Customer.Name,
                     Phone = x.Customer.Phone,
-                    District = x.Customer.District,
+                    DistrictId = x.Customer.DistrictId,
                     AreaId = x.Customer.AreaId,
                 },
                 MealSessionDto1 = new MealSessionDto1
@@ -85,7 +85,6 @@ namespace HomeMealTaste.Services.Implement
                             UserId = x.MealSession.Meal.Kitchen.UserId,
                             Name = x.MealSession.Meal.Kitchen.Name,
                             Address = x.MealSession.Meal.Kitchen.Address,
-                            District =  x.MealSession.Meal.Kitchen.District,
                             AreaId = x.MealSession.Meal.Kitchen.AreaId,
                         },
                         CreateDate = GetDateTimeTimeZoneVietNam().ToString("dd-MM-yyyy"),
@@ -131,7 +130,7 @@ namespace HomeMealTaste.Services.Implement
                     CustomerId = x.Customer.CustomerId,
                     Name = x.Customer.Name,
                     Phone = x.Customer.Phone,
-                    District = x.Customer.District,
+                    DistrictId = x.Customer.DistrictId,
                     AreaId = x.Customer.AreaId,
                 },
                 MealSessionDto2 = new MealSessionDto2
@@ -148,7 +147,6 @@ namespace HomeMealTaste.Services.Implement
                             UserId = x.MealSession.Meal.Kitchen.UserId,
                             Name = x.MealSession.Meal.Kitchen.Name,
                             Address = x.MealSession.Meal.Kitchen.Address,
-                            District = x.MealSession.Meal.Kitchen.District,
                             AreaId = x.MealSession.Meal.Kitchen.AreaId,
                         },
                         CreateDate = GetDateTimeTimeZoneVietNam().ToString("dd-MM-yyyy"),
@@ -192,7 +190,7 @@ namespace HomeMealTaste.Services.Implement
                     CustomerId = x.Customer.CustomerId,
                     Name = x.Customer.Name,
                     Phone = x.Customer.Phone,
-                    District = x.Customer.District,
+                    DistrictId = x.Customer.DistrictId,
                     AreaId = x.Customer.AreaId,
                 },
                 MealSessionDto2 = new MealSessionDto2
@@ -209,7 +207,6 @@ namespace HomeMealTaste.Services.Implement
                             UserId = x.MealSession.Meal.Kitchen.UserId,
                             Name = x.MealSession.Meal.Kitchen.Name,
                             Address = x.MealSession.Meal.Kitchen.Address,
-                            District = x.MealSession.Meal.Kitchen.District,
                             AreaId = x.MealSession.Meal.Kitchen.AreaId,
                         },
                         CreateDate = GetDateTimeTimeZoneVietNam().ToString("dd-MM-yyyy"),
@@ -261,7 +258,7 @@ namespace HomeMealTaste.Services.Implement
                     UserId = x.Customer.UserId,
                     Name = x.Customer.Name,
                     Phone = x.Customer.Phone,
-                    District = x.Customer.District,
+                    DistrictId = x.Customer.DistrictId,
                 },
                 MealSession = new MealSessionDto
                 {

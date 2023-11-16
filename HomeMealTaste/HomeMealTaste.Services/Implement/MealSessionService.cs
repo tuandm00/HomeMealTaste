@@ -4,14 +4,6 @@ using HomeMealTaste.Data.Repositories;
 using HomeMealTaste.Data.RequestModel;
 using HomeMealTaste.Data.ResponseModel;
 using HomeMealTaste.Services.Interface;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Linq.Expressions;
-using System.Text;
-using System.Threading.Tasks;
-using HomeMealTaste.Data.Helper;
-using HomeMealTaste.Services.Helper;
 using Microsoft.EntityFrameworkCore;
 
 namespace HomeMealTaste.Services.Implement
@@ -82,7 +74,6 @@ namespace HomeMealTaste.Services.Implement
                     UserId = mealsession.Meal.Kitchen.KitchenId,
                     Name = mealsession.Meal.Kitchen?.Name,
                     Address = mealsession.Meal.Kitchen.Address,
-                    District = mealsession.Meal.Kitchen.District,
                     AreaId = mealsession.Meal.Kitchen.AreaId,
                 };
                 response.Price = (decimal?)mealsession.Price;
@@ -137,7 +128,6 @@ namespace HomeMealTaste.Services.Implement
                     UserId = mealsession.Meal.Kitchen.KitchenId,
                     Name = mealsession.Meal.Kitchen?.Name,
                     Address = mealsession.Meal.Kitchen.Address,
-                    District = mealsession.Meal.Kitchen.District,
                     AreaId = mealsession.Meal.Kitchen.AreaId,
                 };
                 response.Price = (decimal?)mealsession.Price;
@@ -189,7 +179,6 @@ namespace HomeMealTaste.Services.Implement
                 UserId = result.Meal.Kitchen.KitchenId,
                 Name = result.Meal.Kitchen?.Name,
                 Address = result.Meal.Kitchen.Address,
-                District = result.Meal.Kitchen.District,
                 AreaId = result.Meal.Kitchen.AreaId,
             };
             mapped.Price = (decimal?)result.Price;

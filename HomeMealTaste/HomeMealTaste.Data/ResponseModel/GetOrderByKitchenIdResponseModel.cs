@@ -29,7 +29,7 @@ namespace HomeMealTaste.Data.ResponseModel
         public string? Address { get; set; }
         public string? Phone { get; set; }
         public bool? AccountStatus { get; set; }
-        public string? District { get; set; }
+        public int? DistrictId { get; set; }
     }
 
     public class MealSessionDto
