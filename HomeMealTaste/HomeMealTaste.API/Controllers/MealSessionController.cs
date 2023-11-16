@@ -1,4 +1,5 @@
-﻿using HomeMealTaste.Data.Helper;
+﻿using FirebaseAdmin.Messaging;
+using HomeMealTaste.Data.Helper;
 using HomeMealTaste.Data.Models;
 using HomeMealTaste.Data.RequestModel;
 using HomeMealTaste.Data.ResponseModel;
@@ -42,6 +43,22 @@ namespace HomeMealTaste.Controllers
             };
             var response = ApiResponse<object>.Success(result, metadata);
             return Ok(response);
+        }
+        [HttpPost("sendNotification")]
+        //title = push status for mealsession, body =status
+        public async Task SendNotificationAsync(string DeviceToken, string title, string body)
+        {
+            var message = new Message()
+            {
+                Notification = new FirebaseAdmin.Messaging.Notification
+                {
+                    Title = title,
+                    Body = body
+                },
+                Token = DeviceToken,
+            };
+            var messaging = FirebaseMessaging.DefaultInstance;
+            var result = await messaging.SendAsync(message);
         }
     }
 }

@@ -8,6 +8,7 @@ namespace HomeMealTaste.Data.Models
         public Order()
         {
             Transactions = new HashSet<Transaction>();
+            Posts = new HashSet<Post>();
         }
 
         public int OrderId { get; set; }
@@ -18,7 +19,8 @@ namespace HomeMealTaste.Data.Models
         public DateTime? Time { get; set; }
 
         public virtual Customer? Customer { get; set; }
-        public virtual MealSession? MealSession { get; set; }
+        public virtual MealSession? MealSession { get; set; }           
         public virtual ICollection<Transaction> Transactions { get; set; }
+        public virtual ICollection<Post> Posts { get; set; }     
     }
 }
