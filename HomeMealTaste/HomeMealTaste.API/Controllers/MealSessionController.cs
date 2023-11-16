@@ -62,5 +62,11 @@ namespace HomeMealTaste.Controllers
             var result = await _mealSessionService.GetAllMealSessionByStatus(status);
             return Ok(result);
         }
+        [HttpPatch("update-status-meal-session")]
+        public Task UpdateStatusMeallSession(int mealSessionid, string status)
+        {
+            var result =  _mealSessionService.UpdateStatusMeallSession(mealSessionid, status); 
+            return result;
+        }
     }
 }

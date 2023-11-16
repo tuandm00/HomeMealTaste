@@ -191,6 +191,26 @@ namespace HomeMealTaste.Services.Implement
 
         }
 
+        public Task UpdateStatusMeallSession(int mealsessionid, string status)
+        {
+            var result = _context.MealSessions.FirstOrDefault(x => x.MealSessionId == mealsessionid && x.Status == "PROCESSING");
+
+            if (result != null)
+            {
+                if (status.Equals("APPROVED", StringComparison.OrdinalIgnoreCase))
+                {
+                    result.Status = "APPROVED";
+                }
+                else if (status.Equals("REJECTED", StringComparison.OrdinalIgnoreCase))
+                {
+                    result.Status = "REJECTED";
+                }
+
+                 _context.SaveChangesAsync();
+            }
+            return Task.FromResult(result);
+        }
+
         //public async Task<PagedList<GetAllMealInCurrentSessionResponseModel>> GetAllMealSession(
         //    GetAllMealRequest pagingParams)
         //{
