@@ -398,11 +398,12 @@ namespace HomeMealTaste.Services.Implement
             };
 
             _context.MealSessions.Update(mealsessionid);
-            await _context.SaveChangesAsync();
-            transaction.Commit();
+            
 
             var orderEntity = _mapper.Map<Order>(createOrder);
             await _context.AddAsync(orderEntity);
+            await _context.SaveChangesAsync();
+            transaction.Commit();
             var mapped = _mapper.Map<CreateOrderResponseModel>(orderEntity);
             return mapped;
         }
