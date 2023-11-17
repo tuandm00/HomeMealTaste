@@ -63,30 +63,39 @@ namespace HomeMealTaste.Services.Implement
         public async Task<SessionResponseModel> CreateSession(SessionRequestModel sessionRequest)
         {
             var entity = _mapper.Map<Session>(sessionRequest);
-            if(entity.SessionType == "Lunch")
+            var sessionTypeLower = entity.SessionType.ToLower();
+            if(string.Equals(sessionTypeLower, "lunch", StringComparison.OrdinalIgnoreCase))
             {
                 entity.CreateDate = GetDateTimeTimeZoneVietNam();
                 entity.StartTime = GetDateTimeTimeZoneVietNam().Date.AddHours(10);
                 entity.EndTime = entity.StartTime.Value.AddHours(2);
                 entity.EndDate = GetDateTimeTimeZoneVietNam();
                 entity.Status = true;
+                entity.UserId = 1;
+                entity.SessionType = "Lunch";
+                
             }
-            else if(entity.SessionType == "Evening")
+            else if(string.Equals(sessionTypeLower, "evening", StringComparison.OrdinalIgnoreCase))
             {
                 entity.CreateDate = GetDateTimeTimeZoneVietNam();
                 entity.StartTime = GetDateTimeTimeZoneVietNam().Date.AddHours(16);
                 entity.EndTime = entity.StartTime.Value.AddHours(4);
                 entity.EndDate = GetDateTimeTimeZoneVietNam();
                 entity.Status = true;
+                entity.UserId = 1;
+                entity.SessionType = "Evening";
+
 
             }
-            else
+            else if(string.Equals(sessionTypeLower, "dinner", StringComparison.OrdinalIgnoreCase))
             {
                 entity.CreateDate = GetDateTimeTimeZoneVietNam();
                 entity.StartTime = GetDateTimeTimeZoneVietNam().Date.AddHours(17);
                 entity.EndTime = entity.StartTime.Value.AddHours(2);
                 entity.EndDate = GetDateTimeTimeZoneVietNam();
                 entity.Status = true;
+                entity.UserId = 1;
+                entity.SessionType = "Dinner";
 
             }
 
@@ -173,7 +182,7 @@ namespace HomeMealTaste.Services.Implement
                 {
                     AreaId = areaid,
                     Address = x.Area.Address,
-                    District = x.Area.District,
+                    DistrictId = x.Area.DistrictId,
                 },
                 Status = x.Status,
             });
