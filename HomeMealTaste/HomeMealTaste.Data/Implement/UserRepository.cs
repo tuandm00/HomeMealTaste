@@ -41,6 +41,7 @@ namespace HomeMealTaste.Data.Implement
                 {
                     Name = result.Name,
                     Username = result.Username,
+                    UserId = result.UserId,
                     Email = result.Email,
                     Phone = result.Phone,
                     Address = result.Address,
