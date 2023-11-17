@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace HomeMealTaste.Data.Models
+namespace HomeMealTaste.API.Models
 {
     public partial class Feedback
     {

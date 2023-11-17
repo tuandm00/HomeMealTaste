@@ -9,16 +9,17 @@ namespace HomeMealTaste.Data.Models
         {
             Kitchens = new HashSet<Kitchen>();
             Sessions = new HashSet<Session>();
+            Users = new HashSet<User>();
         }
 
         public int AreaId { get; set; }
         public string? Address { get; set; }
-        public string? District { get; set; }
         public string? AreaName { get; set; }
         public int? DistrictId { get; set; }
 
-        public virtual District? DistrictNavigation { get; set; }
+        public virtual District? District { get; set; }
         public virtual ICollection<Kitchen> Kitchens { get; set; }
         public virtual ICollection<Session> Sessions { get; set; }
+        public virtual ICollection<User> Users { get; set; }
     }
 }

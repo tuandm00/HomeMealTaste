@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace HomeMealTaste.Data.Models
+namespace HomeMealTaste.API.Models
 {
     public partial class Customer
     {
@@ -17,10 +17,11 @@ namespace HomeMealTaste.Data.Models
         public string? Address { get; set; }
         public string? Phone { get; set; }
         public bool? AccountStatus { get; set; }
-        public int? DistrictId { get; set; }
-        public int? AreaId { get; set; }
+        public string? Street { get; set; }
+        public string? Ward { get; set; }
+        public string? District { get; set; }
+        public int? OrderDetailId { get; set; }
 
-        public virtual District? District { get; set; }
         public virtual User? User { get; set; }
         public virtual ICollection<Feedback> Feedbacks { get; set; }
         public virtual ICollection<Order> Orders { get; set; }
