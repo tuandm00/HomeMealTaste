@@ -27,7 +27,7 @@ namespace HomeMealTaste.Services.Implement
             _dishRepository = dishRepository;
             _mealRepository = mealRepository;
             _mealDishRepository = mealDishRepository;
-            _context = context; 
+            _context = context;
         }
         public static DateTime TranferDateTimeByTimeZone(DateTime dateTime, string timezoneArea)
         {
@@ -67,7 +67,7 @@ namespace HomeMealTaste.Services.Implement
             entity.Quantity = mealSessionRequest.Quantity;
             var result = await _mealSessionRepository.Create(entity, true);
 
-          
+
             await _context.Entry(result).Reference(m => m.Meal).LoadAsync();
             await _context.Entry(result).Reference(m => m.Session).LoadAsync();
             await _context.Entry(result.Meal).Reference(s => s.Kitchen).LoadAsync();
@@ -159,11 +159,11 @@ namespace HomeMealTaste.Services.Implement
                 response.RemainQuantity = mealsession.RemainQuantity;
                 response.Status = mealsession.Status;
                 response.CreateDate = mealsession.CreateDate.ToString();
-                
+
                 return response;
             }).ToList();
 
-            return mapped; 
+            return mapped;
         }
 
         public async Task<List<MealSessionResponseModel>> GetAllMealSessionByStatus(string status)
@@ -278,24 +278,35 @@ namespace HomeMealTaste.Services.Implement
 
         }
 
-        public Task UpdateStatusMeallSession(int mealsessionid, string status)
+        public async Task UpdateStatusMeallSession(int mealsessionid, string status)
         {
-            var result = _context.MealSessions.FirstOrDefault(x => x.MealSessionId == mealsessionid && x.Status == "PROCESSING");
+            var result = await _context.MealSessions.FirstOrDefaultAsync(x => x.MealSessionId == mealsessionid && x.Status == "PROCESSING" || x.Status == "APPROVED" || x.Status == "REJECTED");
 
             if (result != null)
             {
                 if (status.Equals("APPROVED", StringComparison.OrdinalIgnoreCase))
                 {
                     result.Status = "APPROVED";
+                    
                 }
+
+                else if(status.Equals("APPROVED", StringComparison.OrdinalIgnoreCase))
+                {
+                    result.Status = "REJECTED";
+                }
+
                 else if (status.Equals("REJECTED", StringComparison.OrdinalIgnoreCase))
                 {
                     result.Status = "REJECTED";
                 }
 
-                 _context.SaveChangesAsync();
+                else if(status.Equals("REJECTED", StringComparison.OrdinalIgnoreCase))
+                {
+                    result.Status = "APPROVED";
+                }
+
+                await _context.SaveChangesAsync();
             }
-            return Task.FromResult(result);
         }
 
         //public async Task<PagedList<GetAllMealInCurrentSessionResponseModel>> GetAllMealSession(
