@@ -280,73 +280,79 @@ namespace HomeMealTaste.Services.Implement
 
         public async Task UpdateStatusMeallSession(int mealsessionid, string status)
         {
-            var result = await _context.MealSessions.FirstOrDefaultAsync(x => x.MealSessionId == mealsessionid && x.Status == "PROCESSING" || x.Status == "APPROVED" || x.Status == "REJECTED");
+            var result = await _context.MealSessions.SingleOrDefaultAsync(x => x.MealSessionId == mealsessionid);
 
-            if (result != null)
+            if (result != null && result.Status.Equals("PROCESSING", StringComparison.OrdinalIgnoreCase))
             {
-                if (status.Equals("APPROVED", StringComparison.OrdinalIgnoreCase))
-                {
-                    result.Status = "APPROVED";
-                    
-                }
-
-                else if(status.Equals("APPROVED", StringComparison.OrdinalIgnoreCase))
-                {
-                    result.Status = "REJECTED";
-                }
-
-                else if (status.Equals("REJECTED", StringComparison.OrdinalIgnoreCase))
-                {
-                    result.Status = "REJECTED";
-                }
-
-                else if(status.Equals("REJECTED", StringComparison.OrdinalIgnoreCase))
+                if (string.Equals("APPROVED", status, StringComparison.OrdinalIgnoreCase))
                 {
                     result.Status = "APPROVED";
                 }
-
-                await _context.SaveChangesAsync();
+                else if (string.Equals("REJECTED", status, StringComparison.OrdinalIgnoreCase))
+                {
+                    result.Status = "REJECTED";
+                }
             }
+            await _context.SaveChangesAsync();
+            if(result != null && result.Status.Equals("APPROVED" , StringComparison.OrdinalIgnoreCase))
+            {
+                if (string.Equals("APPROVED", status, StringComparison.OrdinalIgnoreCase))
+                {
+                    result.Status = "APPROVED";
+                }
+                else result.Status = "REJECTED";
+            }
+            await _context.SaveChangesAsync();
+            
+            if(result != null && result.Status.Equals("REJECTED", StringComparison.OrdinalIgnoreCase))
+            {
+                if (string.Equals("REJECTED", status, StringComparison.OrdinalIgnoreCase))
+                {
+                    result.Status = "REJECTED";
+                }
+                else result.Status = "APPROVED";
+            }
+
+            await _context.SaveChangesAsync();
+            //public async Task<PagedList<GetAllMealInCurrentSessionResponseModel>> GetAllMealSession(
+            //    GetAllMealRequest pagingParams)
+            //{
+            //    var selectExpression = GetAllMealInCurrentSessionResponseModel.FromEntity();
+            //    var includes = new Expression<Func<MealSession, object>>[]
+            //    {
+            //        x => x.Meal!,
+            //        x => x.Session!,
+            //        x => x.Meal.MealDishes,
+            //    };
+            //    Expression<Func<MealSession, bool>> conditionAddition = e => e.Session.StartTime < (pagingParams.SessionStartTime ?? DateTime.Now);
+
+            //    var result =
+            //        await _mealSessionRepository.GetWithPaging(pagingParams, conditionAddition, selectExpression, includes);
+            //    foreach (var response in result.Data)
+            //    {
+            //        var mealId = response.Meal?.Id;
+            //        if (mealId == null) continue;
+            //        var meal = await _mealRepository.GetFirstOrDefault(x => x.MealId == mealId);
+
+            //        var mealDishes = await _mealDishRepository.GetByCondition(x => x.MealId == meal.MealId);
+
+            //        var dishes = new List<Dish>();
+            //        foreach (var dishId in mealDishes)
+            //        {
+            //            var dish = await _dishRepository.GetFirstOrDefault(x => x.DishId == dishId.DishId, x => x.Kitchen);
+            //            var kitchen =_mapper.Map<GetAllMealInCurrentSessionResponseModel.ChefInfo>(dish.Kitchen);
+            //            response.Chef = kitchen;
+
+            //            dishes.Add(dish);
+            //        }
+            //        response.Dish = _mapper.Map<List<GetAllMealInCurrentSessionResponseModel.DishModel?>>(dishes);
+            //    }
+
+            //    return result;
+            //}
+
+
         }
-
-        //public async Task<PagedList<GetAllMealInCurrentSessionResponseModel>> GetAllMealSession(
-        //    GetAllMealRequest pagingParams)
-        //{
-        //    var selectExpression = GetAllMealInCurrentSessionResponseModel.FromEntity();
-        //    var includes = new Expression<Func<MealSession, object>>[]
-        //    {
-        //        x => x.Meal!,
-        //        x => x.Session!,
-        //        x => x.Meal.MealDishes,
-        //    };
-        //    Expression<Func<MealSession, bool>> conditionAddition = e => e.Session.StartTime < (pagingParams.SessionStartTime ?? DateTime.Now);
-
-        //    var result =
-        //        await _mealSessionRepository.GetWithPaging(pagingParams, conditionAddition, selectExpression, includes);
-        //    foreach (var response in result.Data)
-        //    {
-        //        var mealId = response.Meal?.Id;
-        //        if (mealId == null) continue;
-        //        var meal = await _mealRepository.GetFirstOrDefault(x => x.MealId == mealId);
-
-        //        var mealDishes = await _mealDishRepository.GetByCondition(x => x.MealId == meal.MealId);
-
-        //        var dishes = new List<Dish>();
-        //        foreach (var dishId in mealDishes)
-        //        {
-        //            var dish = await _dishRepository.GetFirstOrDefault(x => x.DishId == dishId.DishId, x => x.Kitchen);
-        //            var kitchen =_mapper.Map<GetAllMealInCurrentSessionResponseModel.ChefInfo>(dish.Kitchen);
-        //            response.Chef = kitchen;
-
-        //            dishes.Add(dish);
-        //        }
-        //        response.Dish = _mapper.Map<List<GetAllMealInCurrentSessionResponseModel.DishModel?>>(dishes);
-        //    }
-
-        //    return result;
-        //}
-
-
     }
 }
 
