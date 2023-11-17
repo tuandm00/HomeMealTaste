@@ -14,7 +14,7 @@ namespace HomeMealTaste.Data.RequestModel
         public string? Email { get; set; }
         public string? Phone { get; set; }
         public string? Address { get; set; }
-        public string? District { get; set; }
+        public int? DistrictId { get; set; }
         public bool? Status { get; set; }
 
     }
