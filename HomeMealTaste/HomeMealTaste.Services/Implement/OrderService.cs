@@ -63,6 +63,7 @@ namespace HomeMealTaste.Services.Implement
                 {
                     OrderId = x.OrderId,
                     Time = x.Time.ToString(),
+                    Quantity = x.Quantity,
                     CustomerDto1 = new CustomerDto1
                     {
                         CustomerId = x.Customer.CustomerId,
@@ -282,7 +283,6 @@ namespace HomeMealTaste.Services.Implement
 
         public async Task<CreateOrderResponseModel> CreateOrder(CreateOrderRequestModel createOrderRequest)
         {
-            using Microsoft.EntityFrameworkCore.Storage.IDbContextTransaction? transaction = _context.Database.BeginTransaction();
             //var entity = _mapper.Map<Order>(createOrderRequest);
             //var customerid = _context.Customers.Where(customer => customer.CustomerId == entity.CustomerId).AsNoTracking().FirstOrDefault();
             //var mealsessionid = _context.MealSessions
@@ -372,8 +372,9 @@ namespace HomeMealTaste.Services.Implement
             //    Time = GetDateTimeTimeZoneVietNam(),
             //    Status = "PAID",
             //};
+            using Microsoft.EntityFrameworkCore.Storage.IDbContextTransaction? transaction = _context.Database.BeginTransaction();
             var entity = _mapper.Map<Order>(createOrderRequest);
-            var customerid = _context.Customers.Where(customer => customer.CustomerId == entity.CustomerId).AsNoTracking().FirstOrDefault();
+            var customerid = _context.Customers.Where(customer => customer.CustomerId == entity.CustomerId).FirstOrDefault();
             var mealsessionid = _context.MealSessions
                 .Where(mealsession => mealsession.MealSessionId == entity.MealSessionId)
                 .Include(mealsession => mealsession.Meal)
@@ -381,9 +382,11 @@ namespace HomeMealTaste.Services.Implement
                     .ThenInclude(mealDish => mealDish.Dish)
                 .AsNoTracking().FirstOrDefault();
 
-            var mealdish = _context.MealDishes.Where(x => x.MealId == mealsessionid.MealId).AsNoTracking().FirstOrDefault();
+            //var mealdish = _context.MealDishes.Where(x => x.MealId == mealsessionid.MealId).FirstOrDefault();
             var kitchenid = mealsessionid.KitchenId;
             var price = mealsessionid.Price;
+            var remainquantity = mealsessionid.RemainQuantity;
+            mealsessionid.RemainQuantity = remainquantity - createOrderRequest.Quantity;
             var createOrder = new CreateOrderRequestModel
             {
                 CustomerId = entity.CustomerId,
@@ -391,13 +394,15 @@ namespace HomeMealTaste.Services.Implement
                 Time = GetDateTimeTimeZoneVietNam(),
                 Status = "PAID",
                 MealSessionId = mealsessionid.MealSessionId,
+                Quantity = createOrderRequest.Quantity,
             };
 
-            var orderEntity = _mapper.Map<Order>(createOrder);
-            await _context.AddAsync(orderEntity);
+            _context.MealSessions.Update(mealsessionid);
             await _context.SaveChangesAsync();
             transaction.Commit();
 
+            var orderEntity = _mapper.Map<Order>(createOrder);
+            await _context.AddAsync(orderEntity);
             var mapped = _mapper.Map<CreateOrderResponseModel>(orderEntity);
             return mapped;
         }
