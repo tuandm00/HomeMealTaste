@@ -31,11 +31,11 @@ namespace HomeMealTaste.Services.Implement
         public async Task<PostResponseModel> CreatePostStatusAfterOrder(PostRequestModel createPostRequest)
         {
             var entity = _mapper.Map<Post>(createPostRequest);
-            var paidOrderID = await _context.Orders
-                .Where(x => x.Status == "Paid")
-                .Select(x => x.OrderId)
-                .FirstOrDefaultAsync();
-            entity.OrderId = paidOrderID;
+            //var paidOrderID = await _context.Orders
+            //    .Where(x => x.Status == "Paid")
+            //    .Select(x => x.OrderId)
+            //    .FirstOrDefaultAsync();
+            //entity.OrderId = paidOrderID;
             //var nameOfMeal = await _context.Orders
             //    .Where(x=> x.OrderId==paidOrderID)
             //    .Select(x=>x.MealSession.Meal.Name)
@@ -50,7 +50,7 @@ namespace HomeMealTaste.Services.Implement
                     entity.Status = "Processing";
                     break;
             }
-            var postStatus = _mapper.Map<Post>(entity);
+            entity.OrderId = createPostRequest.OrderId;
 
             await _context.Posts.AddAsync(entity);
             await _context.SaveChangesAsync();
