@@ -32,7 +32,7 @@ namespace HomeMealTaste.Data.ResponseModel
     public class SessionDtoForMealSession
     {
         public int SessionId { get; set; }
-        public string? CreateDate { get; set; }
+        public string? CreateDate { get; set; } 
         public string? StartTime { get; set; }
         public string? EndTime { get; set; }
         public string? EndDate { get; set; }

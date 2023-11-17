@@ -63,11 +63,51 @@ namespace HomeMealTaste.Services.Implement
         {
             var entity = _mapper.Map<MealSession>(mealSessionRequest);
             entity.Status = "PROCESSING";
-            //entity.CreateDate = GetDateTimeTimeZoneVietNam().ToString("dd-MM-yyyy");
-
+            entity.CreateDate = GetDateTimeTimeZoneVietNam();
+            entity.Quantity = mealSessionRequest.Quantity;
             var result = await _mealSessionRepository.Create(entity, true);
 
-            return _mapper.Map<MealSessionResponseModel>(result);
+          
+            await _context.Entry(result).Reference(m => m.Meal).LoadAsync();
+            await _context.Entry(result).Reference(m => m.Session).LoadAsync();
+            await _context.Entry(result.Meal).Reference(s => s.Kitchen).LoadAsync();
+
+            var mapped = _mapper.Map<MealSessionResponseModel>(result);
+            mapped.MealSessionId = result.MealSessionId;
+            mapped.Price = (decimal?)result.Price;
+            mapped.Quantity = entity.Quantity;
+            mapped.RemainQuantity = mapped.Quantity;
+            mapped.Status = entity.Status;
+            mapped.CreateDate = entity.CreateDate.ToString();
+            mapped.MealDtoForMealSession = new MealDtoForMealSession
+            {
+                MealId = result.Meal.MealId,
+                Name = result.Meal.Name,
+                Image = result.Meal.Image,
+                KitchenId = result.Meal.KitchenId,
+                CreateDate = result.Meal.CreateDate.ToString(),
+                Description = result.Meal.Description,
+            };
+            mapped.SessionDtoForMealSession = new SessionDtoForMealSession
+            {
+                SessionId = result.Session.SessionId,
+                CreateDate = result.Session.CreateDate.ToString(),
+                StartTime = result.Session.StartTime.ToString(),
+                EndTime = result.Session.EndTime.ToString(),
+                EndDate = result.Session.EndDate.ToString(),
+                UserId = result.Session.UserId,
+                Status = result.Session.Status,
+                SessionType = result.Session.SessionType,
+            };
+            mapped.KitchenDtoForMealSession = new KitchenDtoForMealSession
+            {
+                KitchenId = result.Meal.Kitchen.KitchenId,
+                UserId = result.Meal.Kitchen.UserId,
+                Name = result.Meal.Kitchen.Name,
+                Address = result.Meal.Kitchen.Address,
+            };
+
+            return mapped;
         }
 
         public async Task<List<MealSessionResponseModel>> GetAllMealSession()
