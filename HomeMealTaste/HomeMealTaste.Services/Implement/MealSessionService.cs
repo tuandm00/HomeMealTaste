@@ -5,6 +5,8 @@ using HomeMealTaste.Data.RequestModel;
 using HomeMealTaste.Data.ResponseModel;
 using HomeMealTaste.Services.Interface;
 using Microsoft.EntityFrameworkCore;
+using System.Collections.ObjectModel;
+using System.Globalization;
 
 namespace HomeMealTaste.Services.Implement
 {
@@ -27,10 +29,42 @@ namespace HomeMealTaste.Services.Implement
             _mealDishRepository = mealDishRepository;
             _context = context; 
         }
+        public static DateTime TranferDateTimeByTimeZone(DateTime dateTime, string timezoneArea)
+        {
 
+            ReadOnlyCollection<TimeZoneInfo> collection = TimeZoneInfo.GetSystemTimeZones();
+            var timeZone = collection.ToList().Where(x => x.DisplayName.ToLower().Contains(timezoneArea)).First();
+
+            var timeZoneLocal = TimeZoneInfo.Local;
+
+            var utcDateTime = TimeZoneInfo.ConvertTime(dateTime, timeZoneLocal, timeZone);
+
+            return utcDateTime;
+        }
+
+        public static DateTime GetDateTimeTimeZoneVietNam()
+        {
+
+            return TranferDateTimeByTimeZone(DateTime.Now, "hanoi");
+        }
+        public static DateTime? StringToDateTimeVN(string dateStr)
+        {
+
+            var isValid = System.DateTime.TryParseExact(
+                                dateStr,
+                                "d'/'M'/'yyyy",
+                                CultureInfo.InvariantCulture,
+                                DateTimeStyles.None,
+                                out var date
+                            );
+            return isValid ? date : null;
+        }
         public async Task<MealSessionResponseModel> CreateMealSession(MealSessionRequestModel mealSessionRequest)
         {
             var entity = _mapper.Map<MealSession>(mealSessionRequest);
+            entity.Status = "PROCESSING";
+            //entity.CreateDate = GetDateTimeTimeZoneVietNam().ToString("dd-MM-yyyy");
+
             var result = await _mealSessionRepository.Create(entity, true);
 
             return _mapper.Map<MealSessionResponseModel>(result);
@@ -40,7 +74,7 @@ namespace HomeMealTaste.Services.Implement
         {
             var result = _context.MealSessions
                 .Include(x => x.Meal)
-                .Include(x => x.Session)
+                .Include(x => x.Session).ThenInclude(x => x.Area)
                 .Include(x => x.Kitchen)
                 .ToList();
             var mapped = result.Select(mealsession =>
@@ -66,6 +100,12 @@ namespace HomeMealTaste.Services.Implement
                     UserId = mealsession.Session?.UserId,
                     Status = mealsession.Session.Status,
                     SessionType = mealsession.Session.SessionType,
+                    AreaDtoForMealSession = new AreaDtoForMealSession
+                    {
+                        AreaId = mealsession.Session.Area.AreaId,
+                        Address = mealsession.Session.Area.Address,
+                        AreaName = mealsession.Session.Area.AreaName,
+                    },
                 };
                 response.KitchenDtoForMealSession = new KitchenDtoForMealSession
                 {

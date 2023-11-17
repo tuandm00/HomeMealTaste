@@ -15,7 +15,7 @@ namespace HomeMealTaste.Data.RequestModel
         public int? Quantity { get; set; }
         public int? RemainQuantity { get; set; }
         public bool? Status { get; set; }
-        public DateTime? CreateDate { get; set; }
+        public string? CreateDate { get; set; }
         public int? KitchenId { get; set; }
     }
 }
