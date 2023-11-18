@@ -67,6 +67,11 @@ namespace HomeMealTaste.Data.Models
                     .WithMany(p => p.Customers)
                     .HasForeignKey(d => d.DistrictId)
                     .HasConstraintName("FK_Customer_District");
+
+                entity.HasOne(d => d.User)
+                    .WithMany(p => p.Customers)
+                    .HasForeignKey(d => d.UserId)
+                    .HasConstraintName("FK_Customer_User");
             });
 
             modelBuilder.Entity<Dish>(entity =>

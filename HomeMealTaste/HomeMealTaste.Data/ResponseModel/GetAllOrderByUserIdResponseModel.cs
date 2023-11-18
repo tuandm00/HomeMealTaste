@@ -13,7 +13,7 @@ namespace HomeMealTaste.Data.ResponseModel
         public CustomerDto2? CustomerDto2 { get; set; }
         public string? Status { get; set; }
         public MealSessionDto2? MealSessionDto2 { get; set; }
-        public int? Price { get; set; }
+        public int? TotalPrice { get; set; }
         public string? Time { get; set; }
 
     }

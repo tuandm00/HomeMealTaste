@@ -7,6 +7,7 @@ namespace HomeMealTaste.Data.Models
     {
         public User()
         {
+            Customers = new HashSet<Customer>();
             Kitchens = new HashSet<Kitchen>();
             Sessions = new HashSet<Session>();
             Wallets = new HashSet<Wallet>();
@@ -26,6 +27,7 @@ namespace HomeMealTaste.Data.Models
 
         public virtual District? District { get; set; }
         public virtual Role? Role { get; set; }
+        public virtual ICollection<Customer> Customers { get; set; }
         public virtual ICollection<Kitchen> Kitchens { get; set; }
         public virtual ICollection<Session> Sessions { get; set; }
         public virtual ICollection<Wallet> Wallets { get; set; }
