@@ -11,5 +11,6 @@ namespace HomeMealTaste.Services.Interface
     public interface IPostService
     {
         Task<PostResponseModel> CreatePostStatusAfterOrder(PostRequestModel createPostRequest);
+        Task<string> getMealNameByOrderId(int OrderId);
     }
 }

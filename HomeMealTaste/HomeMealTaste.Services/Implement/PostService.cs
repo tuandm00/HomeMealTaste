@@ -57,5 +57,17 @@ namespace HomeMealTaste.Services.Implement
             var mapper = _mapper.Map<PostResponseModel>(entity);
             return mapper;
         }
+        public async Task<string> getMealNameByOrderId(int orderId)
+        {
+            var order = await _context.Orders
+                .Include(o => o.MealSession)
+                .ThenInclude(x => x.Meal)
+                .FirstOrDefaultAsync(o => o.OrderId==orderId);
+            if (order != null && order.MealSession != null && order.MealSession.Meal != null)
+            {
+                return order.MealSession.Meal.Name;
+            }
+            return null;
+        }
     }
 }
