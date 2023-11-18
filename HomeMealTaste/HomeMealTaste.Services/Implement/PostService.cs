@@ -53,7 +53,7 @@ namespace HomeMealTaste.Services.Implement
             entity.OrderId = createPostRequest.OrderId;
 
             await _context.Posts.AddAsync(entity);
-            //await _context.SaveChangesAsync();
+            await _context.SaveChangesAsync();
             var mapper = _mapper.Map<PostResponseModel>(entity);
             return mapper;
         }
