@@ -16,6 +16,7 @@ namespace HomeMealTaste.Data.Models
         public string? Status { get; set; }
         public int? Price { get; set; }
         public DateTime? Time { get; set; }
+        public int? Quantity { get; set; }
         public int? MealSessionId { get; set; }
 
         public virtual Customer? Customer { get; set; }

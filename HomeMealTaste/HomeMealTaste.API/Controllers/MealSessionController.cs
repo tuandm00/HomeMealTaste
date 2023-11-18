@@ -27,7 +27,7 @@ namespace HomeMealTaste.Controllers
             var result = await _mealSessionService.CreateMealSession(mealSessionRequest);
             return result;
         }
-        
+
         //[HttpGet("get-all-meal-sessions")]
         //public async Task<IActionResult> GetAllUser([FromQuery] GetAllMealRequest pagingParams)
         //{
@@ -66,9 +66,22 @@ namespace HomeMealTaste.Controllers
         [HttpPatch("update-status-meal-session")]
         public Task UpdateStatusMeallSession(int mealSessionid, string status)
         {
-            var result =  _mealSessionService.UpdateStatusMeallSession(mealSessionid, status); 
+            var result = _mealSessionService.UpdateStatusMeallSession(mealSessionid, status);
             return result;
         }
-   
+        [HttpGet("get-all-meal-session-by-session-id")]
+        public async Task<IActionResult> GetAllMeallSessionBySessionId(int sessionid)
+        {
+            var result = await _mealSessionService.GetAllMeallSessionBySessionId(sessionid);
+            return Ok(result);
+        }
+
+        [HttpGet("get-all-meal-session-by-kitchen-id")]
+        public async Task<IActionResult> GetAllMeallSessionByKitchenId(int kitchenId)
+        {
+            var result = await _mealSessionService.GetAllMeallSessionByKitchenId(kitchenId);
+            return Ok(result);
+        }
     }
 }
+
