@@ -12,12 +12,12 @@ namespace HomeMealTaste.API.Models
         }
 
         public int OrderId { get; set; }
-        public DateTime? Date { get; set; }
         public int? CustomerId { get; set; }
         public string? Status { get; set; }
-        public int? MealId { get; set; }
+        public int? TotalPrice { get; set; }
+        public DateTime? Time { get; set; }
         public int? MealSessionId { get; set; }
-        public int? PromotionPrice { get; set; }
+        public int? Quantity { get; set; }
 
         public virtual Customer? Customer { get; set; }
         public virtual MealSession? MealSession { get; set; }

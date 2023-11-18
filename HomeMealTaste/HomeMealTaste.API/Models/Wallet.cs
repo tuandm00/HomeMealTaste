@@ -14,6 +14,7 @@ namespace HomeMealTaste.API.Models
         public int? UserId { get; set; }
         public int? Balance { get; set; }
 
+        public virtual User? User { get; set; }
         public virtual ICollection<Transaction> Transactions { get; set; }
     }
 }

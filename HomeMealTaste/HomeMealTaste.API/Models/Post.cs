@@ -7,8 +7,8 @@ namespace HomeMealTaste.API.Models
     {
         public int PostId { get; set; }
         public string? Status { get; set; }
-        public int OrderId { get; set; }
+        public int? OrderId { get; set; }
 
-        public virtual Order Order { get; set; } = null!;
+        public virtual Order? Order { get; set; }
     }
 }

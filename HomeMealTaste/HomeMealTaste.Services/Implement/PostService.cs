@@ -20,7 +20,7 @@ namespace HomeMealTaste.Services.Implement
         private readonly IMapper _mapper;
         private HomeMealTasteContext _context;
 
-        public PostService(PostRepository postRepository, IMapper mapper, HomeMealTasteContext context)
+        public PostService(IPostRepository postRepository, IMapper mapper, HomeMealTasteContext context)
         {
             _postRepository = postRepository;
             _mapper = mapper;
@@ -53,7 +53,7 @@ namespace HomeMealTaste.Services.Implement
             entity.OrderId = createPostRequest.OrderId;
 
             await _context.Posts.AddAsync(entity);
-            await _context.SaveChangesAsync();
+            //await _context.SaveChangesAsync();
             var mapper = _mapper.Map<PostResponseModel>(entity);
             return mapper;
         }

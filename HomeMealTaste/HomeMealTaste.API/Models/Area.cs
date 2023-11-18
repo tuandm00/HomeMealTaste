@@ -5,14 +5,21 @@ namespace HomeMealTaste.API.Models
 {
     public partial class Area
     {
-        public int AreaId { get; set; }
-        public int? SessionId { get; set; }
-        public int? GroupId { get; set; }
-        public string? Address { get; set; }
-        public string? Street { get; set; }
-        public string? District { get; set; }
-        public string? Ward { get; set; }
+        public Area()
+        {
+            Kitchens = new HashSet<Kitchen>();
+            Sessions = new HashSet<Session>();
+            Users = new HashSet<User>();
+        }
 
-        public virtual Session? Session { get; set; }
+        public int AreaId { get; set; }
+        public string? Address { get; set; }
+        public string? AreaName { get; set; }
+        public int? DistrictId { get; set; }
+
+        public virtual District? District { get; set; }
+        public virtual ICollection<Kitchen> Kitchens { get; set; }
+        public virtual ICollection<Session> Sessions { get; set; }
+        public virtual ICollection<User> Users { get; set; }
     }
 }

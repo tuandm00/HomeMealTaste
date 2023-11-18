@@ -7,7 +7,6 @@ namespace HomeMealTaste.API.Models
     {
         public Session()
         {
-            Areas = new HashSet<Area>();
             MealSessions = new HashSet<MealSession>();
         }
 
@@ -16,13 +15,13 @@ namespace HomeMealTaste.API.Models
         public DateTime? StartTime { get; set; }
         public DateTime? EndTime { get; set; }
         public DateTime? EndDate { get; set; }
-        public string? SessionName { get; set; }
         public int? UserId { get; set; }
         public bool? Status { get; set; }
         public string? SessionType { get; set; }
+        public int? AreaId { get; set; }
 
+        public virtual Area? Area { get; set; }
         public virtual User? User { get; set; }
-        public virtual ICollection<Area> Areas { get; set; }
         public virtual ICollection<MealSession> MealSessions { get; set; }
     }
 }
