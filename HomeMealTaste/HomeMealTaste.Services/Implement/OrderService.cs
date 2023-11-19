@@ -18,13 +18,11 @@ namespace HomeMealTaste.Services.Implement
         private readonly IOrderRepository _orderRepository;
         private readonly IMapper _mapper;
         private readonly HomeMealTasteContext _context;
-        private readonly IHttpContextAccessor _httpContext;
-        public OrderService(IOrderRepository orderRepository, IMapper mapper, HomeMealTasteContext context, IHttpContextAccessor httpContextAccessor)
+        public OrderService(IOrderRepository orderRepository, IMapper mapper, HomeMealTasteContext context)
         {
             _orderRepository = orderRepository;
             _mapper = mapper;
             _context = context;
-            _httpContext = httpContextAccessor;
         }
         public static DateTime TranferDateTimeByTimeZone(DateTime dateTime, string timezoneArea)
         {
