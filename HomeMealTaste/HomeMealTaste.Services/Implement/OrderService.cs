@@ -254,7 +254,7 @@ namespace HomeMealTaste.Services.Implement
                 {
                     OrderId = x.OrderId,
                     Time = x.Time.ToString(),
-
+                    Date = GetDateTimeTimeZoneVietNam().ToString(),
                     Customer = new CustomerDto
                     {
                         CustomerId = x.Customer.CustomerId,
@@ -267,10 +267,33 @@ namespace HomeMealTaste.Services.Implement
                     {
                         MealSessionId = x.MealSession.MealSessionId,
                         MealId = x.MealSession.MealId,
+                        SessionDto = new SessionDto
+                        {
+                            SessionId = x.MealSession.Session.SessionId,
+                            CreateDate = x.MealSession.Session.CreateDate,
+                            StartTime = x.MealSession.Session.StartTime,
+                            EndTime = x.MealSession.Session.EndTime,
+                            EndDate = x.MealSession.Session.EndDate,
+                            Status = x.MealSession.Session.Status,
+                            SessionType = x.MealSession.Session.SessionType,
+                            UserId = x.MealSession.Session.UserId,
+                            AreaDtoOrderResponse = new AreaDtoOrderResponse
+                            {
+                                AreaId = x.MealSession.Session.Area.AreaId,
+                                Address = x.MealSession.Session.Area.Address,
+                                AreaName = x.MealSession.Session.Area.AreaName,
+                                DistrictDtoOrderResponse = new DistrictDtoOrderResponse
+                                {
+                                    DistrictId = x.MealSession.Session.Area.District.DistrictId,
+                                    DistrictName = x.MealSession.Session.Area.District.DistrictName,
+                                }
+                            }
+                        },
                         Quantity = x.MealSession.Quantity,
                         RemainQuantity = x.MealSession.RemainQuantity,
                         Status = x.MealSession.Status,
-                        CreateDate = x.MealSession.CreateDate
+                        CreateDate = x.MealSession.CreateDate,
+                        Price = (int?)x.MealSession.Price,
                     },
                     Status = x.Status,
                     TotalPrice = x.TotalPrice,
