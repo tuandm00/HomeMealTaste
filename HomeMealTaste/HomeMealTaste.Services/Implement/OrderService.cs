@@ -183,7 +183,7 @@ namespace HomeMealTaste.Services.Implement
 
         public async Task<List<GetAllOrderByUserIdResponseModel>> GetAllOrderByCustomerId(int id)
         {
-            var results = _context.Orders.Where(x => x.CustomerId == id).Select(x => new GetAllOrderByUserIdResponseModel
+            var results = _context.Orders.Include(x => x.MealSession).Where(x => x.CustomerId == id).Select(x => new GetAllOrderByUserIdResponseModel
             {
                 OrderId = x.OrderId,
                 Time = x.Time.ToString(),
@@ -195,6 +195,7 @@ namespace HomeMealTaste.Services.Implement
                     Phone = x.Customer.Phone,
                     DistrictId = x.Customer.DistrictId,
                     AreaId = x.Customer.AreaId,
+                    UserId = x.Customer.UserId
                 },
                 MealSessionDto2 = new MealSessionDto2
                 {
