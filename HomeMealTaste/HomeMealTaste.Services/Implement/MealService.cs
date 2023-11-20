@@ -117,14 +117,16 @@ namespace HomeMealTaste.Services.Implement
         {
             MealId = group.Key,
             Name = group.First().Meal.Name, 
-            Image = group.First().Meal.Image, 
-            Kitchen = new Kitchen
+            Image = group.First().Meal.Image,
+            KitchenDtoReponseMeal = new KitchenDtoReponseMeal
             {
                 KitchenId = group.First().Meal.Kitchen.KitchenId,
                 Name = group.First().Meal.Kitchen.Name,
                 Address = group.First().Meal.Kitchen.Address,
+                AreaId = group.First().Meal.Kitchen.AreaId,
+                UserId = group.First().Meal.Kitchen.UserId,
             },
-            Dish = group.Select(md => new DishModel
+            DishModel = group.Select(md => new DishModel
             {
                 DishId = md.Dish.DishId,
                 Name = md.Dish.Name,
