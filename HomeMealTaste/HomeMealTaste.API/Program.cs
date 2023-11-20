@@ -83,7 +83,7 @@ builder.Services.AddSwaggerGen(c =>
 builder.Services.AddSingleton(_ =>
             new BlobServiceClient(builder.Configuration.GetSection("AzureStorage:ConnectionString").Value));
 
-
+builder.Services.AddSignalR();
 builder.Services.AddAutoMapper(typeof(MapperProfile).Assembly);
 
 builder.Services.AddCors(p => p.AddPolicy("MyCors", build =>
@@ -116,7 +116,7 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseSwagger();
-app.UseSwaggerUI(c => { c.SwaggerEndpoint("/swagger/v1/swagger.json", "HomeMealTaste v1"); c.RoutePrefix = String.Empty;  });
+app.UseSwaggerUI(c => { c.SwaggerEndpoint("/swagger/v1/swagger.json", "HomeMealTaste v1"); c.RoutePrefix = String.Empty; });
 
 app.UseHttpsRedirection();
 
@@ -128,6 +128,10 @@ app.UseCors("MyCors");
 
 app.UseAuthorization();
 
-app.UseEndpoints(endpoints => endpoints.MapControllers());
+app.UseEndpoints(endpoints =>
+{
+    endpoints.MapControllers();
+    endpoints.MapHub<OrderNotificationHub>("/orderNotificationHub");
+});
 
 app.Run();
