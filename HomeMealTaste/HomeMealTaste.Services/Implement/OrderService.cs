@@ -178,6 +178,7 @@ namespace HomeMealTaste.Services.Implement
                     },
                     Status = x.Status,
                     TotalPrice = x.TotalPrice,
+                    Quantity = x.Quantity,
                 }).FirstOrDefault();
 
             return Task.FromResult(results);
