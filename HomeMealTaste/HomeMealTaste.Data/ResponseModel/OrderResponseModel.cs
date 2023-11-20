@@ -39,7 +39,6 @@ namespace HomeMealTaste.Data.ResponseModel
         public int? RemainQuantity { get; set; }
         public string? Status { get; set; }
         public string? CreateDate { get; set; }
-        public KitchenDto1? KitchenDto1 { get; set; }
     }
 
     public class MealDto1

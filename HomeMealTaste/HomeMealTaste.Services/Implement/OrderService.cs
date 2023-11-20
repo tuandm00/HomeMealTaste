@@ -65,6 +65,7 @@ namespace HomeMealTaste.Services.Implement
                     OrderId = x.OrderId,
                     Time = x.Time.ToString(),
                     Quantity = x.Quantity,
+                    
                     CustomerDto1 = new CustomerDto1
                     {
                         CustomerId = x.Customer.CustomerId,
@@ -72,6 +73,7 @@ namespace HomeMealTaste.Services.Implement
                         Phone = x.Customer.Phone,
                         DistrictId = x.Customer.DistrictId,
                         AreaId = x.Customer.AreaId,
+                        UserId = x.Customer.UserId,
                     },
                     MealSessionDto1 = new MealSessionDto1
                     {
