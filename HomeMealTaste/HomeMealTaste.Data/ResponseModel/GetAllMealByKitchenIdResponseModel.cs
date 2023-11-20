@@ -12,9 +12,8 @@ namespace HomeMealTaste.Data.ResponseModel
         public int MealId { get; set; }
         public string? Name { get; set; }
         public string? Image { get; set; }
-        public double? Price { get; set; }
-        public Kitchen? Kitchen { get; set; }
-        public List<DishModel?> Dish { get; set; }
+        public KitchenDtoReponseMeal? KitchenDtoReponseMeal { get; set; }
+        public List<DishModel?> DishModel { get; set; }
     }
 
     public class DishModel
@@ -24,5 +23,15 @@ namespace HomeMealTaste.Data.ResponseModel
         public string? Image { get; set; }
         public int? DishTypeId { get; set; }
         public int? KitchenId { get; set; }
+    }
+
+    public class KitchenDtoReponseMeal
+    {
+        public int KitchenId { get; set; }
+        public int? UserId { get; set; }
+        public string? Name { get; set; }
+        public string? Address { get; set; }
+        public int? AreaId { get; set; }
+
     }
 }
