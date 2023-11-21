@@ -32,6 +32,7 @@ namespace HomeMealTaste.Services.Implement
         {
             var result = _context.Kitchens
                 .Include(x => x.User)
+                .ThenInclude(x => x.Wallets)
                 .ToList();
             var mapped = result.Select(kitchen =>
             {
@@ -43,7 +44,15 @@ namespace HomeMealTaste.Services.Implement
                     Username = kitchen.User.Username,
                     Email = kitchen.User.Email,
                     Phone = kitchen.User.Phone,
+                    WalletDtoKitchenResponseModel = kitchen.User.Wallets.Select(wallet => new WalletDtoKitchenResponseModel
+                    {
+                        WalletId = wallet.WalletId,
+                        UserId = wallet.UserId,
+                        Balance = wallet.Balance,
+
+                    }).ToList()
                 };
+                
                 response.Name = kitchen.Name;
                 response.Address = kitchen.Address;
 
