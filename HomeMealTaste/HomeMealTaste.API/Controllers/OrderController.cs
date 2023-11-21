@@ -58,40 +58,6 @@ namespace HomeMealTaste.API.Controllers
             var result = _orderService.CreateOrder(createOrderRequest);
             return Ok(result);
         }
-        [HttpPost("CompleteOrder/{orderId}")]
-        public async Task<IActionResult> CompleteOrder(int orderId)
-        {
-            try
-            {
-                // Retrieve the order from the database
-                var order = _context.Orders
-                    .Include(x => x.Customer)
-                    .FirstOrDefault(x => x.OrderId == orderId);
-
-                if (order == null)
-                {
-                    return NotFound($"Order with ID {orderId} not found.");
-                }
-
-                // Logic to mark the order as completed by the chef
-                order.Status = "PAID"; // Replace OrderStatus with your actual status enum
-
-                // Save changes to the database
-                _context.SaveChanges();
-
-                // Notify the customer using SignalR
-                var customerId = order.Customer.UserId; // Assuming Customer has a UserId property
-                var message = "Your order is ready!"; // You can customize the message
-
-                await _hubContext.Clients.User(customerId.ToString()).SendAsync("ReceiveOrderNotification", message);
-
-                return Ok($"Order with ID {orderId} completed successfully.");
-            }
-            catch (Exception ex)
-            {
-                // Log the exception or handle it according to your application's needs
-                return StatusCode(500, "An error occurred while completing the order.");
-            }
-        }
+       
     }
 }

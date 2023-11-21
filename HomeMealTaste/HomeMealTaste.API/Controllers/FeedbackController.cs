@@ -21,5 +21,11 @@ namespace HomeMealTaste.API.Controllers
             var result = await _feedbackService.CreateFeedback(feedbackRequestModel);
             return Ok(result);
         }
+        [HttpGet("get-all-feedback")]
+        public async Task<IActionResult> GetAllFeedback()
+        {
+            var result = await _feedbackService.GetAllFeedback();
+            return Ok(result);
+        }
     }
 }

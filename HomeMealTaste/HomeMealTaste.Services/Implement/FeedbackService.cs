@@ -77,5 +77,20 @@ namespace HomeMealTaste.Services.Implement
 
             return mapped;
         }
+
+        public async Task<List<FeedbackResponseModel>> GetAllFeedback()
+        {
+            var result = _context.Feedbacks.ToList();
+            var mapped = result.Select(feedback =>
+            {
+                var response = _mapper.Map<FeedbackResponseModel>(feedback);
+                response.CreateDate = feedback.CreateDate.ToString();
+                response.Description = feedback.Description;
+                response.CustomerId = feedback.CustomerId;
+                response.KitchenId=feedback.KitchenId;
+                return response;
+            }).ToList();
+            return mapped;
+        }
     }
 }

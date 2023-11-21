@@ -11,5 +11,6 @@ namespace HomeMealTaste.Services.Interface
     public interface IFeedbackService
     {
          Task<FeedbackResponseModel> CreateFeedback(FeedbackRequestModel feedbackRequest);
+         Task<List<FeedbackResponseModel>> GetAllFeedback();
     }
 }
