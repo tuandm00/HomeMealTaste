@@ -90,6 +90,7 @@ namespace HomeMealTaste.Services.Implement
             if (existedUser.Count() != 0) throw new Exception("existed Username");
             entity.Password = BCrypt.Net.BCrypt.HashPassword(entity.Password);
             entity.RoleId = 2;
+            entity.AreaId = userRegisterCustomerRequest.AreaId;
             var result = await _userRepository.Create(entity, true);
             if (result != null)
             {
@@ -100,6 +101,13 @@ namespace HomeMealTaste.Services.Implement
                     Phone = result.Phone,
                     DistrictId = result.DistrictId,
                 };
+
+                var wallet = new Wallet
+                {
+                    UserId = entity.UserId,
+                    Balance = 0,
+                };
+                await _context.AddAsync(wallet);
                 await _context.AddAsync(customer);
                 await _context.SaveChangesAsync();
             }
@@ -113,6 +121,7 @@ namespace HomeMealTaste.Services.Implement
             if (existedUser.Count() != 0) throw new Exception("existed Username");
             entity.Password = BCrypt.Net.BCrypt.HashPassword(entity.Password);
             entity.RoleId = 3;
+            entity.AreaId = userRegisterChefRequest.AreaId;
             var result = await _userRepository.Create(entity, true);
             if (result != null)
             {
@@ -122,7 +131,13 @@ namespace HomeMealTaste.Services.Implement
                     Name = result.Name,
                     Address = result.Address,
                     AreaId = result.AreaId,
+                }; 
+                var wallet = new Wallet
+                {
+                    UserId = entity.UserId,
+                    Balance = 0,
                 };
+                await _context.AddAsync(wallet);
                 await _context.AddAsync(chef);
                 await _context.SaveChangesAsync();
             }
