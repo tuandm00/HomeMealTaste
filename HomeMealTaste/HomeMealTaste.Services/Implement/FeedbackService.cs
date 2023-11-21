@@ -4,6 +4,7 @@ using HomeMealTaste.Data.Repositories;
 using HomeMealTaste.Data.RequestModel;
 using HomeMealTaste.Data.ResponseModel;
 using HomeMealTaste.Services.Interface;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -67,27 +68,65 @@ namespace HomeMealTaste.Services.Implement
             entity.CreateDate = GetDateTimeTimeZoneVietNam();
 
             var result = await _feedbackRepository.Create(entity, true);
+            _context.Entry(result).Reference(f => f.Customer).Load();
+            _context.Entry(result).Reference(f => f.Kitchen).Load();
+
             var mapped = _mapper.Map<FeedbackResponseModel>(result);
 
-            mapped.FeedbackId = result.FeedbackId;
-            mapped.CustomerId = result.CustomerId;
-            mapped.KitchenId = result.KitchenId;
-            mapped.Description = result.Description;
-            mapped.CreateDate = GetDateTimeTimeZoneVietNam().ToString("dd-MM-yyyy");
+            //mapped.FeedbackId = result.FeedbackId;
+            //mapped.CustomerDtoFeedbackReponseModel = new CustomerDtoFeedbackReponseModel
+            //{
+            //    CustomerId = result.Customer.CustomerId,
+            //    UserId = result.Customer.UserId,
+            //    Name = result.Customer.Name,
+            //    Phone = result.Customer.Phone,
+            //    DistrictDtoFeedbackResponseModel = new DistrictDtoFeedbackResponseModel
+            //    {
+            //        DistrictId = result.Customer.District.DistrictId,
+            //        DistrictName = result.Customer.District.DistrictName,
+            //    },
+            //};
+            //mapped.KitchenDtoFeedbackResponseModel = new KitchenDtoFeedbackResponseModel
+            //{
+            //    KitchenId = result.Kitchen.KitchenId,
+            //    UserId = result.Kitchen.UserId,
+            //    Name = result.Kitchen.Name,
+            //    Address = result.Kitchen.Address,
+            //};
+            //mapped.Description = result.Description;
+            //mapped.CreateDate = GetDateTimeTimeZoneVietNam().ToString("dd-MM-yyyy");
 
             return mapped;
         }
 
         public async Task<List<FeedbackResponseModel>> GetAllFeedback()
         {
-            var result = _context.Feedbacks.ToList();
+            var result = _context.Feedbacks.Include(x => x.Customer).ThenInclude(x => x.User).ThenInclude(x => x.District)
+                .Include(x => x.Kitchen).ToList();
             var mapped = result.Select(feedback =>
             {
                 var response = _mapper.Map<FeedbackResponseModel>(feedback);
                 response.CreateDate = feedback.CreateDate.ToString();
                 response.Description = feedback.Description;
-                response.CustomerId = feedback.CustomerId;
-                response.KitchenId=feedback.KitchenId;
+                response.CustomerDtoFeedbackReponseModel = new CustomerDtoFeedbackReponseModel
+                {
+                    CustomerId = feedback.Customer.CustomerId,
+                    UserId = feedback.Customer.UserId,
+                    Name = feedback.Customer.Name,
+                    Phone = feedback.Customer.Phone,
+                    DistrictDtoFeedbackResponseModel = new DistrictDtoFeedbackResponseModel
+                    {
+                        DistrictId = feedback.Customer.District.DistrictId,
+                        DistrictName = feedback.Customer.District.DistrictName,
+                    },
+                };
+                response.KitchenDtoFeedbackResponseModel = new KitchenDtoFeedbackResponseModel
+                {
+                    KitchenId = feedback.Kitchen.KitchenId,
+                    UserId = feedback.Kitchen.UserId,
+                    Name = feedback.Kitchen.Name,
+                    Address = feedback.Kitchen.Address,
+                };
                 return response;
             }).ToList();
             return mapped;
@@ -95,7 +134,10 @@ namespace HomeMealTaste.Services.Implement
 
         public async Task<List<FeedbackResponseModel>> GetFeedbackByKitchenId(int kitchenid)
         {
-            var result = _context.Feedbacks.Where(x => x.KitchenId == kitchenid).ToList();
+            var result = _context.Feedbacks
+                .Include(x => x.Customer).ThenInclude(x => x.User).ThenInclude(x => x.District)
+                .Include(x => x.Kitchen)
+                .Where(x => x.KitchenId == kitchenid).ToList();
             if (result.Any())
             {
                 var mapped = result.Select(feedback =>
@@ -103,8 +145,26 @@ namespace HomeMealTaste.Services.Implement
                     var response = _mapper.Map<FeedbackResponseModel>(feedback);
                     response.CreateDate = feedback.CreateDate.ToString();
                     response.Description = feedback.Description;
-                    response.CustomerId = feedback.CustomerId;
-                    response.KitchenId = feedback.KitchenId;
+                    response.CustomerDtoFeedbackReponseModel = new CustomerDtoFeedbackReponseModel
+                    {
+                        CustomerId = feedback.Customer.CustomerId,
+                        UserId = feedback.Customer.UserId,
+                        Name = feedback.Customer.Name,
+                        Phone = feedback.Customer.Phone,
+                        DistrictDtoFeedbackResponseModel = new DistrictDtoFeedbackResponseModel
+                        {
+                            DistrictId = feedback.Customer.District.DistrictId,
+                            DistrictName = feedback.Customer.District.DistrictName,
+                        },
+                    };
+                    response.KitchenDtoFeedbackResponseModel = new KitchenDtoFeedbackResponseModel
+                    {
+                        KitchenId = feedback.Kitchen.KitchenId,
+                        UserId = feedback.Kitchen.UserId,
+                        Name = feedback.Kitchen.Name,
+                        Address = feedback.Kitchen.Address,
+                    };
+
                     return response;
                 }).ToList();
                 return mapped;
