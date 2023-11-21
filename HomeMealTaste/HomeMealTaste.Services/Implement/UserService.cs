@@ -237,17 +237,29 @@ namespace HomeMealTaste.Services.Implement
             await _context.SaveChangesAsync();
         }
 
-        public async Task<User> GetUserById(int id)
+        public async Task<GetUserByIdResponseModel> GetUserById(int id)
         {
             var result = await _context.Users
-         .Include(x => x.Wallets)
-         .Where(x => x.UserId == id)
-         .FirstOrDefaultAsync();
-
-            if (result != null)
+        .Include(x => x.Wallets)
+        .Where(x => x.UserId == id).Select(x => new GetUserByIdResponseModel
+        {
+            UserId = x.UserId,
+            Name = x.Name,
+            Username = x.Username,
+            Email = x.Email,
+            Phone = x.Phone,
+            Address = x.Address,
+            DistrictId = x.DistrictId,
+            RoleId = x.RoleId,
+            Status = x.Status,
+            AreaId = x.AreaId,
+            WalletDto = x.Wallets.Select(w => new WalletDto
             {
-                result.Wallets = result.Wallets.Take(1).ToList();
-            }
+                WalletId = w.WalletId,
+                UserId = w.UserId,
+                Balance = w.Balance,
+            }).FirstOrDefault(),
+        }).FirstOrDefaultAsync();
 
             return result;
         }
