@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using HomeMealTaste.API.Hubs;
 using HomeMealTaste.Data.Helper;
 using HomeMealTaste.Data.Models;
 using HomeMealTaste.Data.Repositories;
@@ -6,6 +7,7 @@ using HomeMealTaste.Data.RequestModel;
 using HomeMealTaste.Data.ResponseModel;
 using HomeMealTaste.Services.Interface;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
 using System.Collections.ObjectModel;
 using System.Globalization;
@@ -18,6 +20,7 @@ namespace HomeMealTaste.Services.Implement
         private readonly IOrderRepository _orderRepository;
         private readonly IMapper _mapper;
         private readonly HomeMealTasteContext _context;
+        private readonly IHubContext<NotificationHub> _hubContext;
         public OrderService(IOrderRepository orderRepository, IMapper mapper, HomeMealTasteContext context)
         {
             _orderRepository = orderRepository;
@@ -271,7 +274,15 @@ namespace HomeMealTaste.Services.Implement
                     MealSession = new MealSessionDto
                     {
                         MealSessionId = x.MealSession.MealSessionId,
-                        MealId = x.MealSession.MealId,
+                        MealDtoOrderResponse = new MealDtoOrderResponse
+                        {
+                            MealId = x.MealSession.Meal.MealId,
+                            Name = x.MealSession.Meal.Name,
+                            Image = x.MealSession.Meal.Image,
+                            KitchenId = x.MealSession.Meal.KitchenId,
+                            CreateDate = x.MealSession.Meal.CreateDate.ToString(),
+                            Description = x.MealSession.Meal.Description
+                        },
                         SessionDto = new SessionDto
                         {
                             SessionId = x.MealSession.Session.SessionId,
@@ -400,8 +411,6 @@ namespace HomeMealTaste.Services.Implement
                     _context.Wallets.Add(newWalletChef);
                 }
             }
-
-            
 
             _context.MealSessions.Update(mealsessionid);
             _context.Wallets.Update(walletid);

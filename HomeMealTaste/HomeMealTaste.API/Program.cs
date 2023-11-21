@@ -11,6 +11,7 @@ using System.Text;
 using HomeMealTaste.Data;
 using HomeMealTaste.Data.RequestModel;
 using Azure.Storage.Blobs;
+using HomeMealTaste.API.Hubs;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -133,7 +134,7 @@ app.UseAuthorization();
 app.UseEndpoints(endpoints =>
 {
     endpoints.MapControllers();
-    endpoints.MapHub<OrderNotificationHub>("/orderNotificationHub");
+    endpoints.MapHub<NotificationHub>("/notificationHub");
 });
 
 app.Run();

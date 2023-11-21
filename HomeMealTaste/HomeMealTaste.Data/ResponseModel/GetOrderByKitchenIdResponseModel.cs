@@ -32,7 +32,7 @@ namespace HomeMealTaste.Data.ResponseModel
     public class MealSessionDto
     {
         public int MealSessionId { get; set; }
-        public int? MealId { get; set; }
+        public MealDtoOrderResponse? MealDtoOrderResponse { get; set; }
         public SessionDto? SessionDto { get; set; }
         public int? Price { get; set; }
         public int? Quantity { get; set; }
@@ -67,5 +67,15 @@ namespace HomeMealTaste.Data.ResponseModel
     {
         public int DistrictId { get; set; }
         public string? DistrictName { get; set; }
+    }
+
+    public class MealDtoOrderResponse
+    {
+        public int MealId { get; set; }
+        public string? Name { get; set; }
+        public string? Image { get; set; }
+        public int? KitchenId { get; set; }
+        public string? CreateDate { get; set; }
+        public string? Description { get; set; }
     }
 }
