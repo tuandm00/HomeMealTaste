@@ -47,6 +47,7 @@ namespace HomeMealTaste.Data.RequestModel
             CreateMap<FeedbackRequestModel, Feedback>().ReverseMap();
             CreateMap<FeedbackResponseModel, Feedback>().ReverseMap();
             CreateMap<GetUserByIdResponseModel, User>().ReverseMap();
+            CreateMap<GetAllTransactionByUserIdResponseModel, Transaction>().ReverseMap();
 
             
 
