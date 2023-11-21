@@ -21,7 +21,7 @@ namespace HomeMealTaste.Data.ResponseModel
         public string? Username { get; set; }
         public string? Email { get; set; }
         public string? Phone { get; set; }
-        public List<WalletDtoKitchenResponseModel>? WalletDtoKitchenResponseModel { get; set; }
+        public WalletDtoKitchenResponseModel? WalletDtoKitchenResponseModel { get; set; }
 
     }
     public class WalletDtoKitchenResponseModel
