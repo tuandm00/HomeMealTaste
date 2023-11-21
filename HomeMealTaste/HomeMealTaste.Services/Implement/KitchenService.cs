@@ -52,7 +52,7 @@ namespace HomeMealTaste.Services.Implement
 
                     }).ToList()
                 };
-                
+
                 response.Name = kitchen.Name;
                 response.Address = kitchen.Address;
 
@@ -69,7 +69,17 @@ namespace HomeMealTaste.Services.Implement
                 KitchenId = x.KitchenId,
                 UserDtoKitchenResponseModel = new UserDtoKitchenResponseModel
                 {
-                   UserId= x.User.UserId,
+                    UserId = x.User.UserId,
+                    Username = x.User.Username,
+                    Email = x.User.Email,
+                    Phone = x.User.Phone,
+                    WalletDtoKitchenResponseModel = x.User.Wallets.Select(wallet => new WalletDtoKitchenResponseModel
+                    {
+                        WalletId = wallet.WalletId,
+                        UserId = wallet.UserId,
+                        Balance = wallet.Balance,
+
+                    }).ToList()
                 },
                 Name = x.Name,
                 Address = x.Address,
