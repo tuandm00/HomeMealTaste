@@ -224,7 +224,16 @@ namespace HomeMealTaste.Services.Implement
 
         public async Task<User> GetUserById(int id)
         {
-            var result = await _context.Users.Where(x => x.UserId == id).FirstOrDefaultAsync();
+            var result = await _context.Users
+         .Include(x => x.Wallets)
+         .Where(x => x.UserId == id)
+         .FirstOrDefaultAsync();
+
+            if (result != null)
+            {
+                result.Wallets = result.Wallets.Take(1).ToList();
+            }
+
             return result;
         }
 
