@@ -12,5 +12,6 @@ namespace HomeMealTaste.Services.Interface
     {
          Task<FeedbackResponseModel> CreateFeedback(FeedbackRequestModel feedbackRequest);
          Task<List<FeedbackResponseModel>> GetAllFeedback();
+         Task<List<FeedbackResponseModel>> GetFeedbackByKitchenId(int kitchenid);
     }
 }
