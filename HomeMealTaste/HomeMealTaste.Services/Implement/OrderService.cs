@@ -347,6 +347,7 @@ namespace HomeMealTaste.Services.Implement
             //add order to table order
             var createOrder = new CreateOrderRequestModel
             {
+                
                 CustomerId = entity.CustomerId,
                 TotalPrice = (int?)totalprice,
                 Time = GetDateTimeTimeZoneVietNam(),
@@ -415,23 +416,23 @@ namespace HomeMealTaste.Services.Implement
             _context.MealSessions.Update(mealsessionid);
             _context.Wallets.Update(walletid);
 
-            //save to table transaction
+            var orderEntity = _mapper.Map<Order>(createOrder);
+            await _context.AddAsync(orderEntity);
+            await _context.SaveChangesAsync();
 
-            var transactionid = _context.Orders
-                .Select(x => new Transaction
-                {
-                    OrderId = x.OrderId,
-                    WalletId = walletid.WalletId,
-                    Date = createOrder.Time,
-                    Amount = (decimal?)totalprice,
-                    Description = "DONE WITH PAYMENT",
-                    Status = "SUCCEED",
-                }).AsNoTracking().FirstOrDefault();
+            //save to table transaction
+            var transactionid = new Transaction
+            {
+                OrderId = orderEntity.OrderId,
+                WalletId = walletid.WalletId,
+                Date = createOrder.Time,
+                Amount = (decimal?)totalprice,
+                Description = "DONE WITH PAYMENT",
+                Status = "SUCCEED",
+            };
 
             _context.Transactions.Add(transactionid);
 
-            var orderEntity = _mapper.Map<Order>(createOrder);
-            await _context.AddAsync(orderEntity);
             await _context.SaveChangesAsync();
             transaction.Commit();
             var mapped = _mapper.Map<CreateOrderResponseModel>(orderEntity);
