@@ -188,7 +188,7 @@ namespace HomeMealTaste.Services.Implement
             vnpay.AddRequestData("vnp_OrderInfo", "Thanh toan don hang:" + order.OrderId);
             vnpay.AddRequestData("vnp_OrderType", "other"); //default value: other
 
-            vnpay.AddRequestData("vnp_ReturnUrl", "https://localhost:7294/api/Payment/createpaymentlink");
+            vnpay.AddRequestData("vnp_ReturnUrl", "https://homemealtaste.azurewebsites.net/api/Payment/createpaymentlink");
             vnpay.AddRequestData("vnp_TxnRef", order.OrderId.ToString()); // Mã tham chiếu của giao dịch tại hệ thống của merchant. Mã này là duy nhất dùng để phân biệt các đơn hàng gửi sang VNPAY. Không được trùng lặp trong ngày
 
 
