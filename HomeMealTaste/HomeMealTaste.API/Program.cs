@@ -50,6 +50,7 @@ builder.Services.AddScoped<IAreaService, AreaService>();
 builder.Services.AddScoped<IBlobService, BlobService>();
 builder.Services.AddScoped<IFeedbackService, FeedbackService>();
 builder.Services.AddScoped<ITransactionService, TransactionService>();
+builder.Services.AddScoped<VnPayApiService>();
 builder.Services.AddDbContext<HomeMealTasteContext>(option => option.UseSqlServer
 (builder.Configuration.GetConnectionString("HomeMealTaste")));
 
@@ -90,6 +91,8 @@ builder.Services.AddSingleton(_ =>
 
 builder.Services.AddSignalR();
 builder.Services.AddAutoMapper(typeof(MapperProfile).Assembly);
+
+
 
 builder.Services.AddCors(p => p.AddPolicy("MyCors", build =>
 {
