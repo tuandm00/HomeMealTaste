@@ -11,7 +11,6 @@ using System.Text;
 using HomeMealTaste.Data;
 using HomeMealTaste.Data.RequestModel;
 using Azure.Storage.Blobs;
-using HomeMealTaste.API.Hubs;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -50,7 +49,7 @@ builder.Services.AddScoped<IAreaService, AreaService>();
 builder.Services.AddScoped<IBlobService, BlobService>();
 builder.Services.AddScoped<IFeedbackService, FeedbackService>();
 builder.Services.AddScoped<ITransactionService, TransactionService>();
-builder.Services.AddScoped<VnPayApiService>();
+builder.Services.AddScoped<IVnPayService, VnPayService>();
 builder.Services.AddDbContext<HomeMealTasteContext>(option => option.UseSqlServer
 (builder.Configuration.GetConnectionString("HomeMealTaste")));
 
@@ -139,7 +138,6 @@ app.UseAuthorization();
 app.UseEndpoints(endpoints =>
 {
     endpoints.MapControllers();
-    endpoints.MapHub<NotificationHub>("/notificationHub");
 });
 
 app.Run();

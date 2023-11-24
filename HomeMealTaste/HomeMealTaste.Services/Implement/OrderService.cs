@@ -1,5 +1,4 @@
 ﻿using AutoMapper;
-using HomeMealTaste.API.Hubs;
 using HomeMealTaste.Data.Helper;
 using HomeMealTaste.Data.Models;
 using HomeMealTaste.Data.Repositories;
@@ -20,7 +19,6 @@ namespace HomeMealTaste.Services.Implement
         private readonly IOrderRepository _orderRepository;
         private readonly IMapper _mapper;
         private readonly HomeMealTasteContext _context;
-        private readonly IHubContext<NotificationHub> _hubContext;
         public OrderService(IOrderRepository orderRepository, IMapper mapper, HomeMealTasteContext context)
         {
             _orderRepository = orderRepository;
