@@ -1,5 +1,6 @@
 ﻿using HomeMealTaste.API.Dto;
 using HomeMealTaste.Data.RequestModel;
+using HomeMealTaste.Data.ResponseModel;
 using HomeMealTaste.Services.Implement;
 using HomeMealTaste.Services.Interface;
 using MediatR;
@@ -56,13 +57,10 @@ namespace HomeMealTaste.API.Controllers
 
         [HttpGet("get-payment-return")]
         
-        public IActionResult PaymentCallback()
+        public string PaymentCallback()
         {
             var response = _vnPayService.PaymentExcute(Request.Query);
-            return new JsonResult(response)
-            {
-                StatusCode = 200,
-            };
+            return response;
         }
     }
 }

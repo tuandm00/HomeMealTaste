@@ -55,7 +55,7 @@ namespace HomeMealTaste.Services.Implement
             return paymentUrl;
         }
 
-        public async Task<PaymentResponseModel> PaymentExcute(IQueryCollection collections)
+        public string PaymentExcute(IQueryCollection collections)
         {
             var pay = new VnPayLibrary();
             var response = pay.GetFullResponseData(collections, _configuration["VnPay:HashSecret"]);
@@ -65,9 +65,10 @@ namespace HomeMealTaste.Services.Implement
             {
                 balance.Balance += (response.Balance) / 100;
                 _context.Wallets.Update(balance);
-                await _context.SaveChangesAsync();
+                _context.SaveChangesAsync();
             }
-            return response;
+            var end = $"UserID: {response.UserId}" +"\n"+ $"Balance: {(response.Balance) / 100}";
+            return end;
         }
 
         
