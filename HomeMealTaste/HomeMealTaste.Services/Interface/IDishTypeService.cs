@@ -13,5 +13,6 @@ namespace HomeMealTaste.Services.Interface
         Task<PagedList<DishType>> GetAllDishType(PagingParams pagingParams);
         Task DeleteDishTypeById(int id);
         
+        
     }
 }
