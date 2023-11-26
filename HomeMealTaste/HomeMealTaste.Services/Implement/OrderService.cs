@@ -66,7 +66,7 @@ namespace HomeMealTaste.Services.Implement
                     OrderId = x.OrderId,
                     Time = x.Time.ToString(),
                     Quantity = x.Quantity,
-                    
+
                     CustomerDto1 = new CustomerDto1
                     {
                         CustomerId = x.Customer.CustomerId,
@@ -323,7 +323,7 @@ namespace HomeMealTaste.Services.Implement
         {
             using Microsoft.EntityFrameworkCore.Storage.IDbContextTransaction? transaction = _context.Database.BeginTransaction();
             var entity = _mapper.Map<Order>(createOrderRequest);
-            var customerid = _context.Customers.Where(customer => customer.CustomerId == entity.CustomerId).FirstOrDefault();
+            var customerid = _context.Customers.Where(customerid => customerid.UserId == entity.CustomerId).FirstOrDefault();
             var mealsessionid = _context.MealSessions
                 .Where(mealsession => mealsession.MealSessionId == entity.MealSessionId)
                 .Include(mealsession => mealsession.Meal)
@@ -345,7 +345,7 @@ namespace HomeMealTaste.Services.Implement
             //add order to table order
             var createOrder = new CreateOrderRequestModel
             {
-                
+
                 CustomerId = entity.CustomerId,
                 TotalPrice = (int?)totalprice,
                 Time = GetDateTimeTimeZoneVietNam(),
@@ -387,7 +387,7 @@ namespace HomeMealTaste.Services.Implement
                 .Include(x => x.Kitchen)
                 .AsNoTracking()
                 .FirstOrDefault();
-            
+
             if (kitchen != null)
             {
                 var priceToKitchen = totalprice - ((totalprice * 10) / 100);
@@ -437,6 +437,34 @@ namespace HomeMealTaste.Services.Implement
             return mapped;
         }
 
+        public async Task<RefundMoneyToWalletByOrderIdResponseModel> RefundMoneyToCustomer(RefundMoneyToWalletByOrderIdRequestModel refundRequest)
+        {
+            using Microsoft.EntityFrameworkCore.Storage.IDbContextTransaction? transaction = _context.Database.BeginTransaction();
+            var entity = _mapper.Map<Order>(refundRequest);
+            var orderid = _context.Orders.Where(x => x.OrderId == entity.OrderId).FirstOrDefault();
+            if (orderid != null && orderid.Status.Equals("PAID"))
+            {
+                orderid.Status = "CANCELLED";
+                _context.Orders.Update(orderid);
+                _context.SaveChanges();
+            }
 
+            var totalPriceOfOrder = orderid.TotalPrice;
+            var customerIdOfOrder = orderid.CustomerId;
+            var userId = _context.Customers.Where(x => x.CustomerId == customerIdOfOrder).Select(x => x.UserId).FirstOrDefault();
+            var walletOfCustomer = _context.Wallets.Where(x => x.UserId == userId).FirstOrDefault();
+            var balanceExisted = walletOfCustomer.Balance;
+            var newBalance = balanceExisted + ((totalPriceOfOrder * 90) / 100);
+
+            if (walletOfCustomer != null)
+            {
+                walletOfCustomer.Balance = newBalance;
+                _context.Wallets.Update(walletOfCustomer);
+            }
+            _context.SaveChanges();
+            transaction.Commit();
+            var mapped = _mapper.Map<RefundMoneyToWalletByOrderIdResponseModel>(orderid);
+            return mapped;
+        }
     }
 }
