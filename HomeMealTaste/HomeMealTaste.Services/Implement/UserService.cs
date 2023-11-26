@@ -64,9 +64,13 @@ namespace HomeMealTaste.Services.Implement
             var chekhash = BCrypt.Net.BCrypt.Verify(userRequest.Password, existedUser?.Password);
             if (!chekhash) throw new Exception("Username or Password not match!");
             var result = await _userRepository.GetUsernamePassword(userRequest);
-            if (result != null)
+            var customerIds = _context.Customers.Where(x => x.Phone == existedUser.Phone).Select(x => x.CustomerId).FirstOrDefault();
+            var kitchenIds = _context.Kitchens.Where(x => x.UserId == existedUser.UserId).Select(x => x.KitchenId).FirstOrDefault();
+            
+            switch (result.RoleId)
             {
-                return new UserResponseModel
+                case 2 : 
+                    return new UserResponseModel
                 {
                     Name = result.Name,
                     UserId = result.UserId,
@@ -77,9 +81,23 @@ namespace HomeMealTaste.Services.Implement
                     Status = result.Status,
                     RoleId = result.RoleId,
                     Token = GenerateToken(result),
+                    CustomerId = customerIds,
                 };
+                    case 3 :
+                    return new UserResponseModel
+                    {
+                        Name = result.Name,
+                        UserId = result.UserId,
+                        Address = result.Address,
+                        DistrictId = result.DistrictId,
+                        Email = result.Email,
+                        Phone = result.Phone,
+                        Status = result.Status,
+                        RoleId = result.RoleId,
+                        Token = GenerateToken(result),
+                        KitchenId = kitchenIds,
+                    };
             }
-
             return null;
         }
 
