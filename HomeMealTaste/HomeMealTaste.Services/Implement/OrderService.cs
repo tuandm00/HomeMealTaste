@@ -454,12 +454,26 @@ namespace HomeMealTaste.Services.Implement
             var userId = _context.Customers.Where(x => x.CustomerId == customerIdOfOrder).Select(x => x.UserId).FirstOrDefault();
             var walletOfCustomer = _context.Wallets.Where(x => x.UserId == userId).FirstOrDefault();
             var balanceExisted = walletOfCustomer.Balance;
-            var newBalance = balanceExisted + ((totalPriceOfOrder * 90) / 100);
+            var newBalanceForCustomer = balanceExisted + ((totalPriceOfOrder * 90) / 100);
 
             if (walletOfCustomer != null)
             {
-                walletOfCustomer.Balance = newBalance;
+                walletOfCustomer.Balance = newBalanceForCustomer;
                 _context.Wallets.Update(walletOfCustomer);
+            }
+
+            var admin = _context.Users.Where(x => x.RoleId == 1).FirstOrDefault();
+            if (admin != null)
+            {
+                var newBalanceForAdmin = ((totalPriceOfOrder * 10) / 100);
+
+                var adminWallet = _context.Wallets.FirstOrDefault(w => w.UserId == admin.UserId);
+
+                if (adminWallet != null)
+                {
+                    adminWallet.Balance += (int?)newBalanceForAdmin;
+                    _context.Wallets.Update(adminWallet);
+                }
             }
             _context.SaveChanges();
             transaction.Commit();
@@ -468,3 +482,4 @@ namespace HomeMealTaste.Services.Implement
         }
     }
 }
+
