@@ -32,6 +32,7 @@ namespace HomeMealTaste.Services.Implement
         {
             var result = _context.Kitchens
                 .Include(x => x.User)
+                .ThenInclude(x => x.Wallets)
                 .ToList();
             var mapped = result.Select(kitchen =>
             {
@@ -43,7 +44,17 @@ namespace HomeMealTaste.Services.Implement
                     Username = kitchen.User.Username,
                     Email = kitchen.User.Email,
                     Phone = kitchen.User.Phone,
+                    WalletDtoKitchenResponseModel = kitchen.User.Wallets
+                .OrderBy(wallet => wallet.WalletId)
+                .Select(wallet => new WalletDtoKitchenResponseModel
+                {
+                    WalletId = wallet.WalletId,
+                    UserId = wallet.UserId,
+                    Balance = wallet.Balance,
+                })
+                .FirstOrDefault(),
                 };
+
                 response.Name = kitchen.Name;
                 response.Address = kitchen.Address;
 
@@ -55,12 +66,25 @@ namespace HomeMealTaste.Services.Implement
 
         public async Task<KitchenResponseModel> GetAllKitchenByKitchenId(int id)
         {
-            var result = _context.Kitchens.Where(x => x.KitchenId == id).Select(x => new KitchenResponseModel
+            var result = _context.Kitchens
+                .Where(x => x.KitchenId == id)
+                .Select(x => new KitchenResponseModel
             {
                 KitchenId = x.KitchenId,
                 UserDtoKitchenResponseModel = new UserDtoKitchenResponseModel
                 {
-                   UserId= x.User.UserId,
+                    UserId = x.User.UserId,
+                    Username = x.User.Username,
+                    Email = x.User.Email,
+                    Phone = x.User.Phone,
+                    WalletDtoKitchenResponseModel = x.User.Wallets
+                .OrderBy(wallet => wallet.WalletId)
+                .Select(wallet => new WalletDtoKitchenResponseModel
+                {
+                    WalletId = wallet.WalletId,
+                    UserId = wallet.UserId,
+                    Balance = wallet.Balance,
+                }).FirstOrDefault(),
                 },
                 Name = x.Name,
                 Address = x.Address,

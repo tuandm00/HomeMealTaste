@@ -31,7 +31,7 @@ namespace HomeMealTaste.API.Controllers
             var result = await _kitchenService.GetAllKitchenByKitchenId(id);
             return Ok(result);
         }
-
+        
         
     }
 }

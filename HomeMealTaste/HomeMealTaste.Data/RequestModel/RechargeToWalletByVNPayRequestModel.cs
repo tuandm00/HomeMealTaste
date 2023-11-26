@@ -6,13 +6,9 @@ using System.Threading.Tasks;
 
 namespace HomeMealTaste.Data.RequestModel
 {
-    public class UserRequestModel
+    public class RechargeToWalletByVNPayRequestModel
     {
-        
-        public string? Password { get; set; }
-        
-        public string? Phone { get; set; }
-        
-
+        public int? UserId { get; set; }
+        public double Balance { get; set; }
     }
 }

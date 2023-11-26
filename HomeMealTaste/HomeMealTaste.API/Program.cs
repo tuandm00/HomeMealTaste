@@ -36,7 +36,8 @@ builder.Services.AddScoped<IMealDishRepository, MealDishRepository>();
 builder.Services.AddScoped<IOrderRepository, OrderRepository>();
 builder.Services.AddScoped<IKitchenRepository, KitchenRepository>();
 builder.Services.AddScoped<IAreaRepository, AreaRepository>();
-builder.Services.AddScoped<IPostRepository, PostRepository>();
+builder.Services.AddScoped<IFeedbackRepository, FeedbackRepository>();
+builder.Services.AddScoped<ITransactionRepository, TransactionRepository>();
 
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IDishService, DishService>();
@@ -49,7 +50,9 @@ builder.Services.AddScoped<IOrderService, OrderService>();
 builder.Services.AddScoped<IKitchenService, KitchenService>();
 builder.Services.AddScoped<IAreaService, AreaService>();
 builder.Services.AddScoped<IBlobService, BlobService>();
-builder.Services.AddScoped<IPostService, PostService>();
+builder.Services.AddScoped<IFeedbackService, FeedbackService>();
+builder.Services.AddScoped<ITransactionService, TransactionService>();
+builder.Services.AddScoped<IVnPayService, VnPayService>();
 builder.Services.AddDbContext<HomeMealTasteContext>(option => option.UseSqlServer
 (builder.Configuration.GetConnectionString("HomeMealTaste")));
 
@@ -88,8 +91,10 @@ builder.Services.AddSwaggerGen(c =>
 builder.Services.AddSingleton(_ =>
             new BlobServiceClient(builder.Configuration.GetSection("AzureStorage:ConnectionString").Value));
 
-
+builder.Services.AddSignalR();
 builder.Services.AddAutoMapper(typeof(MapperProfile).Assembly);
+
+
 
 builder.Services.AddCors(p => p.AddPolicy("MyCors", build =>
 {
@@ -127,7 +132,7 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseSwagger();
-app.UseSwaggerUI(c => { c.SwaggerEndpoint("/swagger/v1/swagger.json", "HomeMealTaste v1"); c.RoutePrefix = String.Empty;  });
+app.UseSwaggerUI(c => { c.SwaggerEndpoint("/swagger/v1/swagger.json", "HomeMealTaste v1"); c.RoutePrefix = String.Empty; });
 
 app.UseHttpsRedirection();
 
@@ -139,6 +144,9 @@ app.UseCors("MyCors");
 
 app.UseAuthorization();
 
-app.UseEndpoints(endpoints => endpoints.MapControllers());
+app.UseEndpoints(endpoints =>
+{
+    endpoints.MapControllers();
+});
 
 app.Run();

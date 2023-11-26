@@ -11,11 +11,10 @@ namespace HomeMealTaste.Data.ResponseModel
     public class GetOrderByKitchenIdResponseModel
     {
         public int OrderId { get; set; }
-        public DateTime? Date { get; set; }
+        public string? Date { get; set; }
         public CustomerDto? Customer { get; set; }
         public string? Status { get; set; }
         public MealSessionDto? MealSession { get; set; }
-        public SessionDto? Session { get; set; }
         public int? TotalPrice { get; set; }
         public string? Time { get; set; }
 
@@ -26,17 +25,15 @@ namespace HomeMealTaste.Data.ResponseModel
         public int CustomerId { get; set; }
         public int? UserId { get; set; }
         public string? Name { get; set; }
-        public string? Address { get; set; }
         public string? Phone { get; set; }
-        public bool? AccountStatus { get; set; }
         public int? DistrictId { get; set; }
     }
 
     public class MealSessionDto
     {
         public int MealSessionId { get; set; }
-        public int? MealId { get; set; }
-        public int? SessionId { get; set; }
+        public MealDtoOrderResponse? MealDtoOrderResponse { get; set; }
+        public SessionDto? SessionDto { get; set; }
         public int? Price { get; set; }
         public int? Quantity { get; set; }
         public int? RemainQuantity { get; set; }
@@ -51,9 +48,34 @@ namespace HomeMealTaste.Data.ResponseModel
         public DateTime? StartTime { get; set; }
         public DateTime? EndTime { get; set; }
         public DateTime? EndDate { get; set; }
-        public string? SessionName { get; set; }
         public int? UserId { get; set; }
         public bool? Status { get; set; }
-        public string? SessionType { get; set; }    
+        public string? SessionType { get; set; }
+        public AreaDtoOrderResponse? AreaDtoOrderResponse { get; set; }
+
+    }
+
+    public class AreaDtoOrderResponse
+    {
+        public int AreaId { get; set; }
+        public string? Address { get; set; }
+        public string? AreaName { get; set; }
+        public DistrictDtoOrderResponse? DistrictDtoOrderResponse { get; set; }
+    }
+
+    public class DistrictDtoOrderResponse
+    {
+        public int DistrictId { get; set; }
+        public string? DistrictName { get; set; }
+    }
+
+    public class MealDtoOrderResponse
+    {
+        public int MealId { get; set; }
+        public string? Name { get; set; }
+        public string? Image { get; set; }
+        public int? KitchenId { get; set; }
+        public string? CreateDate { get; set; }
+        public string? Description { get; set; }
     }
 }

@@ -44,8 +44,11 @@ namespace HomeMealTaste.Data.RequestModel
             CreateMap<CreateOrderResponseModel, Order>().ReverseMap();
             CreateMap<CreateOrderRequestModel, Order>().ReverseMap();
             CreateMap<GetAllMealResponseModelNew, Meal>().ReverseMap();
-            CreateMap<PostRequestModel, Post>().ReverseMap();
-            CreateMap<PostResponseModel, Post>().ReverseMap();
+            CreateMap<FeedbackRequestModel, Feedback>().ReverseMap();
+            CreateMap<FeedbackResponseModel, Feedback>().ReverseMap();
+            CreateMap<GetUserByIdResponseModel, User>().ReverseMap();
+            CreateMap<GetAllTransactionByUserIdResponseModel, Transaction>().ReverseMap();
+            CreateMap<GetDishByKitchenIdResponseModel, Dish>().ReverseMap();
 
 
 

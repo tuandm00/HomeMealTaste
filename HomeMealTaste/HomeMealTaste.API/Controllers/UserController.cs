@@ -88,10 +88,10 @@ namespace HomeMealTaste.Controllers
         }
 
         [HttpGet("get-user-by-id")]
-        public async Task<User> GetUserById(int id)
+        public async Task<IActionResult> GetUserById(int id)
         {
             var result = await _userService.GetUserById(id);
-            return result;
+            return Ok(result);
         }
 
         [HttpGet("get-all-user-with-role-customer-chef")]

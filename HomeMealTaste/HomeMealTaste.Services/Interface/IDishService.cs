@@ -19,5 +19,6 @@ namespace HomeMealTaste.Services.Interface
         Task<PagedList<Dish>> GetAllDishAsync(PagingParams pagingParams);
         Task DeleteAsync(int id);
         Task<List<GetDishIdByMealIdResponseModel>> GetDishIdByMealId(int mealid);
+        Task<List<GetDishByKitchenIdResponseModel>> GetDishByKitchenId(int kitchenid);
     }
 }

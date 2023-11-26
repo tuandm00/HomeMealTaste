@@ -50,14 +50,14 @@ namespace HomeMealTaste.Services.Implement
         {
             _ = await _dishRepository.GetFirstOrDefault(x => x.DishId == id) ??
                 throw new Exception($"No dish found with id {id}");
-            
+
             await _dishRepository.Delete(id);
         }
 
         public async Task<PagedList<Dish>> GetAllDishAsync(PagingParams pagingParams)
         {
             var result = await _dishRepository.GetWithPaging(pagingParams);
-            
+
             return result;
         }
 
@@ -76,7 +76,27 @@ namespace HomeMealTaste.Services.Implement
                 }
             });
 
-            var mapped =  result.Select(r => _mapper.Map<GetDishIdByMealIdResponseModel>(r)).ToList();
+            var mapped = result.Select(r => _mapper.Map<GetDishIdByMealIdResponseModel>(r)).ToList();
+            return Task.FromResult(mapped);
+        }
+
+        public Task<List<GetDishByKitchenIdResponseModel>> GetDishByKitchenId(int kitchenid)
+        {
+            var result = _context.Dishes.Where(x => x.KitchenId == kitchenid).Select(x => new GetDishByKitchenIdResponseModel
+            {
+                DishId = x.DishId,
+                Name = x.Name,
+                Image = x.Image,
+                DishTypeResponse = new DishTypeResponse
+                {
+                    DishTypeId = x.DishType.DishTypeId,
+                    Name = x.DishType.Name,
+                    Description = x.DishType.Description
+                },
+                KitchenId = kitchenid,
+            });
+
+            var mapped = result.Select(r => _mapper.Map<GetDishByKitchenIdResponseModel>(r)).ToList();
             return Task.FromResult(mapped);
         }
     }

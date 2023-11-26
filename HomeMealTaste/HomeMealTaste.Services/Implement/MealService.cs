@@ -158,6 +158,7 @@ namespace HomeMealTaste.Services.Implement
                         Name = group.Kitchen.Name,
                         Address = group.Kitchen.Address,
                     },
+                    Description = group.Description,
                     DishDto = group.MealDishes.Select(md => new DishDto
                     {
                         DishId = md.Dish.DishId,

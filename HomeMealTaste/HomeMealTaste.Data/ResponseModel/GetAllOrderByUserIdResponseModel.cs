@@ -14,6 +14,7 @@ namespace HomeMealTaste.Data.ResponseModel
         public string? Status { get; set; }
         public MealSessionDto2? MealSessionDto2 { get; set; }
         public int? TotalPrice { get; set; }
+        public int? Quantity { get; set; }
         public string? Time { get; set; }
 
     }
@@ -37,7 +38,6 @@ namespace HomeMealTaste.Data.ResponseModel
         public int? RemainQuantity { get; set; }
         public string? Status { get; set; }
         public string? CreateDate { get; set; }
-        public KitchenDto2? KitchenDto2 { get; set; }
     }
 
     public class MealDto2

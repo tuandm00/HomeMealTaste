@@ -6,6 +6,7 @@ using HomeMealTaste.Data.RequestModel;
 using HomeMealTaste.Data.ResponseModel;
 using HomeMealTaste.Services.Interface;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
 using System.Collections.ObjectModel;
 using System.Globalization;
@@ -65,6 +66,7 @@ namespace HomeMealTaste.Services.Implement
                     OrderId = x.OrderId,
                     Time = x.Time.ToString(),
                     Quantity = x.Quantity,
+                    
                     CustomerDto1 = new CustomerDto1
                     {
                         CustomerId = x.Customer.CustomerId,
@@ -72,6 +74,7 @@ namespace HomeMealTaste.Services.Implement
                         Phone = x.Customer.Phone,
                         DistrictId = x.Customer.DistrictId,
                         AreaId = x.Customer.AreaId,
+                        UserId = x.Customer.UserId,
                     },
                     MealSessionDto1 = new MealSessionDto1
                     {
@@ -176,6 +179,7 @@ namespace HomeMealTaste.Services.Implement
                     },
                     Status = x.Status,
                     TotalPrice = x.TotalPrice,
+                    Quantity = x.Quantity,
                 }).FirstOrDefault();
 
             return Task.FromResult(results);
@@ -183,7 +187,7 @@ namespace HomeMealTaste.Services.Implement
 
         public async Task<List<GetAllOrderByUserIdResponseModel>> GetAllOrderByCustomerId(int id)
         {
-            var results = _context.Orders.Where(x => x.CustomerId == id).Select(x => new GetAllOrderByUserIdResponseModel
+            var results = _context.Orders.Include(x => x.MealSession).Where(x => x.CustomerId == id).Select(x => new GetAllOrderByUserIdResponseModel
             {
                 OrderId = x.OrderId,
                 Time = x.Time.ToString(),
@@ -195,6 +199,7 @@ namespace HomeMealTaste.Services.Implement
                     Phone = x.Customer.Phone,
                     DistrictId = x.Customer.DistrictId,
                     AreaId = x.Customer.AreaId,
+                    UserId = x.Customer.UserId
                 },
                 MealSessionDto2 = new MealSessionDto2
                 {
@@ -236,6 +241,7 @@ namespace HomeMealTaste.Services.Implement
                 },
                 Status = x.Status,
                 TotalPrice = x.TotalPrice,
+                Quantity = x.Quantity,
 
             }).ToList();
 
@@ -254,7 +260,7 @@ namespace HomeMealTaste.Services.Implement
                 {
                     OrderId = x.OrderId,
                     Time = x.Time.ToString(),
-
+                    Date = GetDateTimeTimeZoneVietNam().ToString(),
                     Customer = new CustomerDto
                     {
                         CustomerId = x.Customer.CustomerId,
@@ -266,11 +272,42 @@ namespace HomeMealTaste.Services.Implement
                     MealSession = new MealSessionDto
                     {
                         MealSessionId = x.MealSession.MealSessionId,
-                        MealId = x.MealSession.MealId,
+                        MealDtoOrderResponse = new MealDtoOrderResponse
+                        {
+                            MealId = x.MealSession.Meal.MealId,
+                            Name = x.MealSession.Meal.Name,
+                            Image = x.MealSession.Meal.Image,
+                            KitchenId = x.MealSession.Meal.KitchenId,
+                            CreateDate = x.MealSession.Meal.CreateDate.ToString(),
+                            Description = x.MealSession.Meal.Description
+                        },
+                        SessionDto = new SessionDto
+                        {
+                            SessionId = x.MealSession.Session.SessionId,
+                            CreateDate = x.MealSession.Session.CreateDate,
+                            StartTime = x.MealSession.Session.StartTime,
+                            EndTime = x.MealSession.Session.EndTime,
+                            EndDate = x.MealSession.Session.EndDate,
+                            Status = x.MealSession.Session.Status,
+                            SessionType = x.MealSession.Session.SessionType,
+                            UserId = x.MealSession.Session.UserId,
+                            AreaDtoOrderResponse = new AreaDtoOrderResponse
+                            {
+                                AreaId = x.MealSession.Session.Area.AreaId,
+                                Address = x.MealSession.Session.Area.Address,
+                                AreaName = x.MealSession.Session.Area.AreaName,
+                                DistrictDtoOrderResponse = new DistrictDtoOrderResponse
+                                {
+                                    DistrictId = x.MealSession.Session.Area.District.DistrictId,
+                                    DistrictName = x.MealSession.Session.Area.District.DistrictName,
+                                }
+                            }
+                        },
                         Quantity = x.MealSession.Quantity,
                         RemainQuantity = x.MealSession.RemainQuantity,
                         Status = x.MealSession.Status,
-                        CreateDate = x.MealSession.CreateDate
+                        CreateDate = x.MealSession.CreateDate,
+                        Price = (int?)x.MealSession.Price,
                     },
                     Status = x.Status,
                     TotalPrice = x.TotalPrice,
@@ -308,6 +345,7 @@ namespace HomeMealTaste.Services.Implement
             //add order to table order
             var createOrder = new CreateOrderRequestModel
             {
+                
                 CustomerId = entity.CustomerId,
                 TotalPrice = (int?)totalprice,
                 Time = GetDateTimeTimeZoneVietNam(),
@@ -373,28 +411,26 @@ namespace HomeMealTaste.Services.Implement
                 }
             }
 
-            
-
             _context.MealSessions.Update(mealsessionid);
             _context.Wallets.Update(walletid);
 
-            //save to table transaction
+            var orderEntity = _mapper.Map<Order>(createOrder);
+            await _context.AddAsync(orderEntity);
+            await _context.SaveChangesAsync();
 
-            var transactionid = _context.Orders
-                .Select(x => new Transaction
-                {
-                    OrderId = x.OrderId,
-                    WalletId = walletid.WalletId,
-                    Date = createOrder.Time,
-                    Amount = (decimal?)totalprice,
-                    Description = "DONE WITH PAYMENT",
-                    Status = "SUCCEED",
-                }).AsNoTracking().FirstOrDefault();
+            //save to table transaction
+            var transactionid = new Transaction
+            {
+                OrderId = orderEntity.OrderId,
+                WalletId = walletid.WalletId,
+                Date = createOrder.Time,
+                Amount = (decimal?)totalprice,
+                Description = "DONE WITH PAYMENT",
+                Status = "SUCCEED",
+            };
 
             _context.Transactions.Add(transactionid);
 
-            var orderEntity = _mapper.Map<Order>(createOrder);
-            await _context.AddAsync(orderEntity);
             await _context.SaveChangesAsync();
             transaction.Commit();
             var mapped = _mapper.Map<CreateOrderResponseModel>(orderEntity);

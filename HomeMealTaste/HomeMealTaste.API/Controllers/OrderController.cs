@@ -1,9 +1,13 @@
-﻿using HomeMealTaste.Data.RequestModel;
+﻿using HomeMealTaste.Data.Models;
+using HomeMealTaste.Data.RequestModel;
 using HomeMealTaste.Data.ResponseModel;
 using HomeMealTaste.Services.Helper;
+using HomeMealTaste.Services.Implement;
 using HomeMealTaste.Services.Interface;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.SignalR;
+using Microsoft.EntityFrameworkCore;
 
 namespace HomeMealTaste.API.Controllers
 {
@@ -12,10 +16,13 @@ namespace HomeMealTaste.API.Controllers
     public class OrderController : ControllerBase
     {
         private readonly IOrderService _orderService;
-
-        public OrderController(IOrderService orderService)
+        private readonly HomeMealTasteContext _context;
+        private readonly IHubContext<OrderNotificationHub> _hubContext;
+        public OrderController(IOrderService orderService, IHubContext<OrderNotificationHub> hubContext, HomeMealTasteContext context)
         {
             _orderService = orderService;
+            _hubContext = hubContext;
+            _context = context;
         }
 
         [HttpGet("get-order-by-customer-id")]
@@ -51,6 +58,6 @@ namespace HomeMealTaste.API.Controllers
             var result = _orderService.CreateOrder(createOrderRequest);
             return Ok(result);
         }
-
+       
     }
 }

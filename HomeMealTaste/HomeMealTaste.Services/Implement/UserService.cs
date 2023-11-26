@@ -64,9 +64,13 @@ namespace HomeMealTaste.Services.Implement
             var chekhash = BCrypt.Net.BCrypt.Verify(userRequest.Password, existedUser?.Password);
             if (!chekhash) throw new Exception("Username or Password not match!");
             var result = await _userRepository.GetUsernamePassword(userRequest);
-            if (result != null)
+            var customerIds = _context.Customers.Where(x => x.Phone == existedUser.Phone).Select(x => x.CustomerId).FirstOrDefault();
+            var kitchenIds = _context.Kitchens.Where(x => x.UserId == existedUser.UserId).Select(x => x.KitchenId).FirstOrDefault();
+            
+            switch (result.RoleId)
             {
-                return new UserResponseModel
+                case 2 : 
+                    return new UserResponseModel
                 {
                     Name = result.Name,
                     UserId = result.UserId,
@@ -77,9 +81,23 @@ namespace HomeMealTaste.Services.Implement
                     Status = result.Status,
                     RoleId = result.RoleId,
                     Token = GenerateToken(result),
+                    CustomerId = customerIds,
                 };
+                    case 3 :
+                    return new UserResponseModel
+                    {
+                        Name = result.Name,
+                        UserId = result.UserId,
+                        Address = result.Address,
+                        DistrictId = result.DistrictId,
+                        Email = result.Email,
+                        Phone = result.Phone,
+                        Status = result.Status,
+                        RoleId = result.RoleId,
+                        Token = GenerateToken(result),
+                        KitchenId = kitchenIds,
+                    };
             }
-
             return null;
         }
 
@@ -90,6 +108,7 @@ namespace HomeMealTaste.Services.Implement
             if (existedUser.Count() != 0) throw new Exception("existed Username");
             entity.Password = BCrypt.Net.BCrypt.HashPassword(entity.Password);
             entity.RoleId = 2;
+            entity.AreaId = userRegisterCustomerRequest.AreaId;
             var result = await _userRepository.Create(entity, true);
             if (result != null)
             {
@@ -100,6 +119,13 @@ namespace HomeMealTaste.Services.Implement
                     Phone = result.Phone,
                     DistrictId = result.DistrictId,
                 };
+
+                var wallet = new Wallet
+                {
+                    UserId = entity.UserId,
+                    Balance = 0,
+                };
+                await _context.AddAsync(wallet);
                 await _context.AddAsync(customer);
                 await _context.SaveChangesAsync();
             }
@@ -113,6 +139,7 @@ namespace HomeMealTaste.Services.Implement
             if (existedUser.Count() != 0) throw new Exception("existed Username");
             entity.Password = BCrypt.Net.BCrypt.HashPassword(entity.Password);
             entity.RoleId = 3;
+            entity.AreaId = userRegisterChefRequest.AreaId;
             var result = await _userRepository.Create(entity, true);
             if (result != null)
             {
@@ -122,7 +149,13 @@ namespace HomeMealTaste.Services.Implement
                     Name = result.Name,
                     Address = result.Address,
                     AreaId = result.AreaId,
+                }; 
+                var wallet = new Wallet
+                {
+                    UserId = entity.UserId,
+                    Balance = 0,
                 };
+                await _context.AddAsync(wallet);
                 await _context.AddAsync(chef);
                 await _context.SaveChangesAsync();
             }
@@ -222,9 +255,30 @@ namespace HomeMealTaste.Services.Implement
             await _context.SaveChangesAsync();
         }
 
-        public async Task<User> GetUserById(int id)
+        public async Task<GetUserByIdResponseModel> GetUserById(int id)
         {
-            var result = await _context.Users.Where(x => x.UserId == id).FirstOrDefaultAsync();
+            var result = await _context.Users
+        .Include(x => x.Wallets)
+        .Where(x => x.UserId == id).Select(x => new GetUserByIdResponseModel
+        {
+            UserId = x.UserId,
+            Name = x.Name,
+            Username = x.Username,
+            Email = x.Email,
+            Phone = x.Phone,
+            Address = x.Address,
+            DistrictId = x.DistrictId,
+            RoleId = x.RoleId,
+            Status = x.Status,
+            AreaId = x.AreaId,
+            WalletDto = x.Wallets.Select(w => new WalletDto
+            {
+                WalletId = w.WalletId,
+                UserId = w.UserId,
+                Balance = w.Balance,
+            }).FirstOrDefault(),
+        }).FirstOrDefaultAsync();
+
             return result;
         }
 

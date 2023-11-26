@@ -15,6 +15,7 @@ using System.Threading.Tasks;
 using HomeMealTaste.Data.Helper;
 using HomeMealTaste.Data.ResponseModel;
 using HomeMealTaste.Services.Helper;
+using Microsoft.EntityFrameworkCore;
 
 namespace HomeMealTaste.Services.Implement
 {
@@ -60,11 +61,20 @@ namespace HomeMealTaste.Services.Implement
                             );
             return isValid ? date : null;
         }
+        private async Task<bool> SessionExists(string sessionType)
+        {
+            // Assuming your DbContext has a Sessions DbSet
+            return await _context.Sessions.AnyAsync(s => s.SessionType.ToLower() == sessionType.ToLower());
+        }
         public async Task<SessionResponseModel> CreateSession(SessionRequestModel sessionRequest)
         {
             var entity = _mapper.Map<Session>(sessionRequest);
             var sessionTypeLower = entity.SessionType.ToLower();
-            if(string.Equals(sessionTypeLower, "lunch", StringComparison.OrdinalIgnoreCase))
+            if (await SessionExists(sessionTypeLower))
+            {
+                throw new Exception("This SessionType is EXISTED");
+            }
+            if (string.Equals(sessionTypeLower, "lunch", StringComparison.OrdinalIgnoreCase))
             {
                 entity.CreateDate = GetDateTimeTimeZoneVietNam();
                 entity.StartTime = GetDateTimeTimeZoneVietNam().Date.AddHours(10);
