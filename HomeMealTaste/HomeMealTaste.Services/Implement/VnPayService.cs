@@ -11,6 +11,8 @@ using System.Text;
 using System.Threading.Tasks;
 using HomeMealTaste.Data.Models;
 using AutoMapper;
+using System.Collections.ObjectModel;
+using System.Globalization;
 
 namespace HomeMealTaste.Services.Implement
 {
@@ -26,7 +28,36 @@ namespace HomeMealTaste.Services.Implement
             _context = context;
             _mapper = mapper;
         }
+        public static DateTime TranferDateTimeByTimeZone(DateTime dateTime, string timezoneArea)
+        {
 
+            ReadOnlyCollection<TimeZoneInfo> collection = TimeZoneInfo.GetSystemTimeZones();
+            var timeZone = collection.ToList().Where(x => x.DisplayName.ToLower().Contains(timezoneArea)).First();
+
+            var timeZoneLocal = TimeZoneInfo.Local;
+
+            var utcDateTime = TimeZoneInfo.ConvertTime(dateTime, timeZoneLocal, timeZone);
+
+            return utcDateTime;
+        }
+
+        public static DateTime GetDateTimeTimeZoneVietNam()
+        {
+
+            return TranferDateTimeByTimeZone(DateTime.Now, "hanoi");
+        }
+        public static DateTime? StringToDateTimeVN(string dateStr)
+        {
+
+            var isValid = System.DateTime.TryParseExact(
+                                dateStr,
+                                "d'/'M'/'yyyy",
+                                CultureInfo.InvariantCulture,
+                                DateTimeStyles.None,
+                                out var date
+                            );
+            return isValid ? date : null;
+        }
         public string CreateRechargeUrlForWallet(RechargeToWalletByVNPayRequestModel model)
         {
             var timeZoneById = TimeZoneInfo.FindSystemTimeZoneById(_configuration["TimeZoneId"]);
@@ -60,7 +91,7 @@ namespace HomeMealTaste.Services.Implement
             var pay = new VnPayLibrary();
             var response = pay.GetFullResponseData(collections, _configuration["VnPay:HashSecret"]);
             var responseCode = Convert.ToInt32(response.VnPayResponseCode);
-            if(responseCode == 00)
+            if (responseCode == 00)
             {
                 var userid = response.UserId;
                 var balance = _context.Wallets.FirstOrDefault(x => x.UserId == userid);
@@ -69,21 +100,27 @@ namespace HomeMealTaste.Services.Implement
                     balance.Balance += (response.Balance) / 100;
                     _context.Wallets.Update(balance);
                     _context.SaveChangesAsync();
+
+                    var transactionRequest = new TransactionByUserIdRequestModel
+                    {
+                        OrderId = null,
+                        WalletId = balance.WalletId,
+                        Date = GetDateTimeTimeZoneVietNam().ToString("dd-MM-yyyy"),
+                        Amount = (double)(response.Balance) / 100,
+                        Description = "DONE WITH RECHARGEMENT",
+                        Status = "SUCCEED",
+                        TransactionType = "RECHARGE",
+                        UserId = balance.UserId,
+                    };
+                    var mapped = _mapper.Map<Transaction>(transactionRequest);
+                    _context.Transactions.Add(mapped);
+                    _context.SaveChanges();
+
+                    return response;
                 }
-                var transaction = _context.Transactions.Select(x => new Transaction
-                {
-
-                });
-                // var end = $"UserID: {response.UserId}" +"\n"+ $"Balance: {(response.Balance) / 100}";
-                return response;
             }
-
             return null;
-            
         }
-
-        
-
-
     }
 }
+
