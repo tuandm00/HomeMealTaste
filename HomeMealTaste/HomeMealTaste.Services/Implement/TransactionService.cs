@@ -49,6 +49,29 @@ namespace HomeMealTaste.Services.Implement
             return mapped;
         }
 
+        public async Task<List<GetAllTransactionByTransactionTypeRECHARGED>> GetAllTransactionByTransactionTypeRECHARGED()
+        {
+            var result = _context.Transactions
+                .Where(x => x.TransactionType == "RECHARGED")
+                .Select(t => new GetAllTransactionByTransactionTypeRECHARGED
+                {
+                    TransactionId = t.TransactionId,
+                    OrderId = t.OrderId,
+                    WalletDtoGetAllTransactionRECHARGED = new WalletDtoGetAllTransactionRECHARGED
+                    {
+                        WalletId = t.Wallet.WalletId,
+                        UserId = t.Wallet.UserId,
+                        Balance = t.Wallet.Balance,
+                    },
+                    Date = t.Date.ToString(),
+                    Amount = t.Amount,
+                    Description = t.Description,
+                    Status = t.Status,
+                    TransactionType = t.TransactionType,
+                });
+            var mapped = result.Select(result => _mapper.Map<GetAllTransactionByTransactionTypeRECHARGED>(result)).ToList();
+            return mapped;
+        }
 
         public async Task<List<GetAllTransactionByUserIdResponseModel>> GetAllTransactionByUserId(int userid)
         {
