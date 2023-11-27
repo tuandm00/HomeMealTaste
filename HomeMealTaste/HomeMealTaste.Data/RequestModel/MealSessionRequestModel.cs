@@ -12,7 +12,6 @@ namespace HomeMealTaste.Data.RequestModel
         public int? SessionId { get; set; }
         public decimal? Price { get; set; }
         public int? Quantity { get; set; }
-        public int? RemainQuantity { get; set; }
         public int? KitchenId { get; set; }
     }
 }
