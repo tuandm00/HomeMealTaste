@@ -24,10 +24,36 @@ namespace HomeMealTaste.Services.Implement
             _context = context;
             _mapper = mapper;
         }
+
+        public async Task<List<GetAllTransactionByTransactionTypeORDERED>> GetAllTransactionByTransactionTypeORDERED()
+        {
+            var result = _context.Transactions
+                .Where(x => x.TransactionType == "ORDERED")
+                .Select(t => new GetAllTransactionByTransactionTypeORDERED
+                {
+                    TransactionId = t.TransactionId,
+                    OrderId = t.OrderId,
+                    WalletDtoGetAllTransaction = new WalletDtoGetAllTransaction
+                    {
+                        WalletId = t.Wallet.WalletId,
+                        UserId = t.Wallet.UserId,
+                        Balance = t.Wallet.Balance,
+                    },
+                    Date = t.Date.ToString(),
+                    Amount = t.Amount,
+                    Description = t.Description,
+                    Status = t.Status,
+                    TransactionType = t.TransactionType,
+                });
+            var mapped = result.Select(result => _mapper.Map<GetAllTransactionByTransactionTypeORDERED>(result)).ToList();
+            return mapped;
+        }
+
+
         public async Task<List<GetAllTransactionByUserIdResponseModel>> GetAllTransactionByUserId(int userid)
         {
             var result = _context.Transactions
-        .Include(x => x.Wallet) 
+        .Include(x => x.Wallet)
         .ThenInclude(x => x.User)
         .Include(x => x.Order)
         .Where(x => x.Wallet.UserId == userid)
