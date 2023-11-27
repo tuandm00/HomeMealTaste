@@ -12,6 +12,7 @@ namespace HomeMealTaste.Data.Models
         public decimal? Amount { get; set; }
         public string? Description { get; set; }
         public string? Status { get; set; }
+        public string? TransactionType { get; set; }
 
         public virtual Order? Order { get; set; }
         public virtual Wallet? Wallet { get; set; }
