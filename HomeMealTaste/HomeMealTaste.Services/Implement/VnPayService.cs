@@ -101,19 +101,18 @@ namespace HomeMealTaste.Services.Implement
                     _context.Wallets.Update(balance);
                     _context.SaveChangesAsync();
 
-                    var transactionRequest = new TransactionByUserIdRequestModel
+                    var transactionRequest = new Transaction
                     {
                         OrderId = null,
                         WalletId = balance.WalletId,
-                        Date = GetDateTimeTimeZoneVietNam().ToString("dd-MM-yyyy"),
-                        Amount = (double)(response.Balance) / 100,
+                        Date = GetDateTimeTimeZoneVietNam(),
+                        Amount = (response.Balance) / 100,
                         Description = "DONE WITH RECHARGEMENT",
                         Status = "SUCCEED",
                         TransactionType = "RECHARGE",
                         UserId = balance.UserId,
                     };
-                    var mapped = _mapper.Map<Transaction>(transactionRequest);
-                    _context.Transactions.Add(mapped);
+                    _context.Transactions.Add(transactionRequest);
                     _context.SaveChanges();
 
                     return response;
