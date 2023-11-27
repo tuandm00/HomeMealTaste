@@ -340,8 +340,6 @@ namespace HomeMealTaste.Services.Implement
             var remainquantity = mealsessionid.RemainQuantity;
             mealsessionid.RemainQuantity = remainquantity - createOrderRequest.Quantity;
             var totalprice = price * createOrderRequest.Quantity;
-            walletid.Balance = (int?)(walletid.Balance - totalprice);
-
             //add order to table order
             var createOrder = new CreateOrderRequestModel
             {
@@ -354,6 +352,19 @@ namespace HomeMealTaste.Services.Implement
                 Quantity = createOrderRequest.Quantity,
             };
 
+            var customer = _context.Customers.Where(z => z.CustomerId == createOrder.CustomerId).FirstOrDefault();
+            var user = _context.Users.Where(x => x.UserId == customer.UserId).FirstOrDefault();
+            var walletCustomer = _context.Wallets.Where(x => x.UserId == user.UserId).FirstOrDefault();
+            if (walletCustomer != null)
+            {
+                var afterBalanceCustomer = (int?)(walletCustomer.Balance - totalprice);
+
+                if (walletCustomer != null)
+                {
+                    walletCustomer.Balance = afterBalanceCustomer;
+                    _context.Wallets.Update(walletCustomer);
+                }
+            }
             // save to admin wallet take 10%
             var admin = _context.Users.Where(x => x.RoleId == 1).FirstOrDefault();
             if (admin != null)
@@ -427,6 +438,7 @@ namespace HomeMealTaste.Services.Implement
                 Amount = (decimal?)totalprice,
                 Description = "DONE WITH PAYMENT",
                 Status = "SUCCEED",
+                TransactionType = "ORDERED",
             };
 
             _context.Transactions.Add(transactionid);
