@@ -469,12 +469,14 @@ namespace HomeMealTaste.Services.Implement
             var balanceExisted = walletOfCustomer.Balance;
             var newBalanceForCustomer = balanceExisted + ((totalPriceOfOrder * 90) / 100);
 
+            // customer receive 90% money back
             if (walletOfCustomer != null)
             {
                 walletOfCustomer.Balance = newBalanceForCustomer;
                 _context.Wallets.Update(walletOfCustomer);
             }
 
+            // admin keep 10% totalPrice
             var admin = _context.Users.Where(x => x.RoleId == 1).FirstOrDefault();
             if (admin != null)
             {
@@ -488,7 +490,29 @@ namespace HomeMealTaste.Services.Implement
                     _context.Wallets.Update(adminWallet);
                 }
             }
-
+            // back a remainquantity
+            var remainquantityInMealSession = _context.MealSessions
+                .Where(x => x.MealSessionId == orderid.MealSessionId)
+                .Select(x => x.RemainQuantity).FirstOrDefault();
+            if (remainquantityInMealSession != null)
+            {
+                var newRemainQuantity = remainquantityInMealSession + orderid.Quantity;
+                var mealSession = _context.MealSessions.FirstOrDefault(x => x.MealSessionId == orderid.MealSessionId);
+                if (mealSession != null)
+                {
+                    mealSession.RemainQuantity = newRemainQuantity;
+                    _context.MealSessions.Update(mealSession);
+                }
+            }
+            // minus money of kitchen in wallet as 90% totalPrice
+            var kitchenid = _context.MealSessions.Where(x => x.MealSessionId == orderid.MealSessionId).Select(x => x.KitchenId).FirstOrDefault();
+            var userIdOfKitchen = _context.Kitchens.Where(x => x.KitchenId == kitchenid).Select(x => x.UserId).FirstOrDefault();
+            var kitchenWallet = _context.Wallets.Where(x => x.UserId == userIdOfKitchen).FirstOrDefault();
+            if (kitchenWallet != null)
+            {
+                kitchenWallet.Balance -= ((totalPriceOfOrder * 90) / 100);
+                _context.Wallets.Update(kitchenWallet);
+            }
             _context.SaveChanges();
             transaction.Commit();
             var mapped = _mapper.Map<RefundMoneyToWalletByOrderIdResponseModel>(orderid);
