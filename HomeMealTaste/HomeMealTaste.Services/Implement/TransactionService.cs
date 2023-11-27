@@ -36,7 +36,18 @@ namespace HomeMealTaste.Services.Implement
                     WalletDtoGetAllTransaction = new WalletDtoGetAllTransaction
                     {
                         WalletId = t.Wallet.WalletId,
-                        UserId = t.Wallet.UserId,
+                        UserDtoGetAllTransaction = new UserDtoGetAllTransaction
+                        {
+                            UserId = t.Wallet.User.UserId,
+                            Name = t.Wallet.User.Name,
+                            Username = t.Wallet.User.Username,
+                            Email = t.Wallet.User.Email,
+                            Phone = t.Wallet.User.Phone,
+                            Address = t.Wallet.User.Address,
+                            DistrictId = t.Wallet.User.DistrictId,
+                            Status = t.Wallet.User.Status,
+                            AreaId = t.Wallet.User.AreaId,
+                        },
                         Balance = t.Wallet.Balance,
                     },
                     Date = t.Date.ToString(),
@@ -60,7 +71,18 @@ namespace HomeMealTaste.Services.Implement
                     WalletDtoGetAllTransactionRECHARGED = new WalletDtoGetAllTransactionRECHARGED
                     {
                         WalletId = t.Wallet.WalletId,
-                        UserId = t.Wallet.UserId,
+                        UserDtoGetAllTransactionRECHARGED = new UserDtoGetAllTransactionRECHARGED
+                        {
+                            UserId = t.Wallet.User.UserId,
+                            Name = t.Wallet.User.Name,
+                            Username = t.Wallet.User.Username,
+                            Email = t.Wallet.User.Email,
+                            Phone = t.Wallet.User.Phone,
+                            Address = t.Wallet.User.Address,
+                            DistrictId = t.Wallet.User.DistrictId,
+                            Status = t.Wallet.User.Status,
+                            AreaId = t.Wallet.User.AreaId,
+                        },
                         Balance = t.Wallet.Balance,
                     },
                     Date = t.Date.ToString(),
