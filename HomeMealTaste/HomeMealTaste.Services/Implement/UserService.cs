@@ -66,9 +66,21 @@ namespace HomeMealTaste.Services.Implement
             var result = await _userRepository.GetUsernamePassword(userRequest);
             var customerIds = _context.Customers.Where(x => x.Phone == existedUser.Phone).Select(x => x.CustomerId).FirstOrDefault();
             var kitchenIds = _context.Kitchens.Where(x => x.UserId == existedUser.UserId).Select(x => x.KitchenId).FirstOrDefault();
-            
             switch (result.RoleId)
             {
+                case 1:
+                    return new UserResponseModel
+                    {
+                        Name = result.Name,
+                        UserId = result.UserId,
+                        Address = result.Address,
+                        DistrictId = result.DistrictId,
+                        Email = result.Email,
+                        Phone = result.Phone,
+                        Status = result.Status,
+                        RoleId = result.RoleId,
+                        Token = GenerateToken(result),
+                    };
                 case 2 : 
                     return new UserResponseModel
                 {
