@@ -32,5 +32,4 @@ namespace HomeMealTaste.Data.Models
         public virtual ICollection<Session> Sessions { get; set; }
         public virtual ICollection<Wallet> Wallets { get; set; }
     }
-
 }

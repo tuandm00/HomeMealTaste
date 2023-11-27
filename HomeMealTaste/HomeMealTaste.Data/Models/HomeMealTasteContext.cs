@@ -289,6 +289,8 @@ namespace HomeMealTaste.Data.Models
 
                 entity.Property(e => e.Status).HasMaxLength(50);
 
+                entity.Property(e => e.TransactionType).HasMaxLength(50);
+
                 entity.HasOne(d => d.Order)
                     .WithMany(p => p.Transactions)
                     .HasForeignKey(d => d.OrderId)
