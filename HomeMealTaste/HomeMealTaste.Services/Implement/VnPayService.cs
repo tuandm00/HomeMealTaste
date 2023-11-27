@@ -33,7 +33,7 @@ namespace HomeMealTaste.Services.Implement
             var timeNow = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, timeZoneById);
             var tick = DateTime.Now.Ticks.ToString();
             var pay = new VnPayLibrary();
-            var urlCallBack = _configuration["PaymentCallBack:ReturnUrl"];
+            var urlCallBack = _configuration["Vnpay:ReturnUrl"];
 
             pay.AddRequestData("vnp_Version", _configuration["Vnpay:Version"]);
             pay.AddRequestData("vnp_Command", _configuration["Vnpay:Command"]);
@@ -55,22 +55,35 @@ namespace HomeMealTaste.Services.Implement
             return paymentUrl;
         }
 
-        public string PaymentExcute(IQueryCollection collections)
+        public PaymentResponseModel PaymentExcute(IQueryCollection collections)
         {
             var pay = new VnPayLibrary();
             var response = pay.GetFullResponseData(collections, _configuration["VnPay:HashSecret"]);
-            var userid = response.UserId;
-            var balance = _context.Wallets.FirstOrDefault(x => x.UserId == userid);
-            if (balance != null)
+            var responseCode = Convert.ToInt32(response.VnPayResponseCode);
+            if(responseCode == 00)
             {
-                balance.Balance += (response.Balance) / 100;
-                _context.Wallets.Update(balance);
-                _context.SaveChangesAsync();
+                var userid = response.UserId;
+                var balance = _context.Wallets.FirstOrDefault(x => x.UserId == userid);
+                if (balance != null)
+                {
+                    balance.Balance += (response.Balance) / 100;
+                    _context.Wallets.Update(balance);
+                    _context.SaveChangesAsync();
+                }
+                var transaction = _context.Transactions.Select(x => new Transaction
+                {
+
+                });
+                // var end = $"UserID: {response.UserId}" +"\n"+ $"Balance: {(response.Balance) / 100}";
+                return response;
             }
-            var end = $"UserID: {response.UserId}" +"\n"+ $"Balance: {(response.Balance) / 100}";
-            return end;
+
+            return null;
+            
         }
 
         
+
+
     }
 }
