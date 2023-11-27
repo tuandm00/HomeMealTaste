@@ -428,7 +428,7 @@ namespace HomeMealTaste.Services.Implement
             var orderEntity = _mapper.Map<Order>(createOrder);
             await _context.AddAsync(orderEntity);
             await _context.SaveChangesAsync();
-
+            var useridwallet = _context.Wallets.Select(x => x.UserId).FirstOrDefault();
             //save to table transaction
             var transactionid = new Transaction
             {
@@ -439,6 +439,7 @@ namespace HomeMealTaste.Services.Implement
                 Description = "DONE WITH PAYMENT",
                 Status = "SUCCEED",
                 TransactionType = "ORDERED",
+                UserId = user.UserId,
             };
 
             _context.Transactions.Add(transactionid);
