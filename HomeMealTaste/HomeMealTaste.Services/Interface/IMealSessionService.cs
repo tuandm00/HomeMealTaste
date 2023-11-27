@@ -21,5 +21,6 @@ namespace HomeMealTaste.Services.Interface
 
         Task<List<MealSessionResponseModel>> GetAllMeallSessionBySessionId(int sessionid);
         Task<List<MealSessionResponseModel>> GetAllMeallSessionByKitchenId(int kitchenid);
+        Task<List<MealSessionResponseModel>> GetAllMeallSessionWithStatusAPPROVEDandREMAINQUANTITYhigherthan0();
     }
 }

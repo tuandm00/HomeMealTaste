@@ -81,6 +81,12 @@ namespace HomeMealTaste.Controllers
             var result = await _mealSessionService.GetAllMeallSessionByKitchenId(kitchenId);
             return Ok(result);
         }
+        [HttpGet("get-all-meal-session-with-status-APPROVED-and-REMAINQUANTITY->-0")]
+        public async Task<IActionResult> GetAllMeallSessionWithStatusAPPROVEDandREMAINQUANTITYhigherthan0()
+        {
+            var result = await _mealSessionService.GetAllMeallSessionWithStatusAPPROVEDandREMAINQUANTITYhigherthan0();
+            return Ok(result);
+        }
     }
 }
 
