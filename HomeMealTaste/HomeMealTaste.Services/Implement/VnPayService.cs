@@ -99,21 +99,20 @@ namespace HomeMealTaste.Services.Implement
                 {
                     balance.Balance += (response.Balance) / 100;
                     _context.Wallets.Update(balance);
-                    _context.SaveChangesAsync();
 
-                    //var transactionRequest = new Transaction
-                    //{
-                    //    OrderId = null,
-                    //    WalletId = balance.WalletId,
-                    //    Date = GetDateTimeTimeZoneVietNam(),
-                    //    Amount = (response.Balance) / 100,
-                    //    Description = "DONE WITH RECHARGEMENT",
-                    //    Status = "SUCCEED",
-                    //    TransactionType = "RECHARGE",
-                    //    UserId = balance.UserId,
-                    //};
-                    //_context.Transactions.Add(transactionRequest);
-                    //_context.SaveChanges();
+                    var transactionRequest = new Transaction
+                    {
+                        OrderId = null,
+                        WalletId = balance.WalletId,
+                        Date = GetDateTimeTimeZoneVietNam(),
+                        Amount = (response.Balance) / 100,
+                        Description = "DONE WITH RECHARGEMENT",
+                        Status = "SUCCEED",
+                        TransactionType = "RECHARGE",
+                        UserId = balance.UserId,
+                    };
+                    _context.Transactions.Add(transactionRequest);
+                    _context.SaveChanges();
 
                 }
                 return response;
