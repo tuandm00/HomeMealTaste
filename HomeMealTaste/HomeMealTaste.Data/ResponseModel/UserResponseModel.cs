@@ -13,6 +13,13 @@
         public string Token { get; set; }
         public int? CustomerId { get; set; }
         public int? KitchenId { get; set; }
+        public WalletDtoAdminResponse? WalletDtoAdminResponse { get; set; }
+    }
+    public class WalletDtoAdminResponse
+    {
+        public int WalletId { get; set; }
+        public int? UserId { get; set; }
+        public int? Balance { get; set; }
     }
 
    
