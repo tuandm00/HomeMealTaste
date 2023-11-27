@@ -115,8 +115,8 @@ namespace HomeMealTaste.Services.Implement
                     _context.Transactions.Add(transactionRequest);
                     _context.SaveChanges();
 
-                    return response;
                 }
+                return response;
             }
             return null;
         }
