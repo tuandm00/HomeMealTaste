@@ -296,6 +296,11 @@ namespace HomeMealTaste.Data.Models
                     .HasForeignKey(d => d.OrderId)
                     .HasConstraintName("FK_Transaction_Order");
 
+                entity.HasOne(d => d.User)
+                    .WithMany(p => p.Transactions)
+                    .HasForeignKey(d => d.UserId)
+                    .HasConstraintName("FK_Transaction_User");
+
                 entity.HasOne(d => d.Wallet)
                     .WithMany(p => p.Transactions)
                     .HasForeignKey(d => d.WalletId)
