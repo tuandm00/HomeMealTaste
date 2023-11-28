@@ -13,6 +13,6 @@ namespace HomeMealTaste.Data.ResponseModel
         public int? UserId { get; set; }
         public int? Balance { get; set; }
         public string? VnPayResponseCode { get; set; }
-
+        public string? urlReturnApp {  get; set; }
     }
 }
