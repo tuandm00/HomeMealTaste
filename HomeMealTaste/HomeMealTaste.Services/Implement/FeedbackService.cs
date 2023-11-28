@@ -65,7 +65,7 @@ namespace HomeMealTaste.Services.Implement
             entity.Description = feedbackRequest.Description;
             entity.CustomerId = feedbackRequest?.CustomerId;
             entity.KitchenId = feedbackRequest?.KitchenId;
-            entity.CreateDate = GetDateTimeTimeZoneVietNam();
+           // entity.CreateDate = GetDateTimeTimeZoneVietNam();
 
             var result = await _feedbackRepository.Create(entity, true);
             _context.Entry(result).Reference(f => f.Customer).Load();
@@ -106,7 +106,7 @@ namespace HomeMealTaste.Services.Implement
             var mapped = result.Select(feedback =>
             {
                 var response = _mapper.Map<FeedbackResponseModel>(feedback);
-                response.CreateDate = feedback.CreateDate.ToString();
+               // response.CreateDate = feedback.CreateDate.ToString();
                 response.Description = feedback.Description;
                 response.CustomerDtoFeedbackReponseModel = new CustomerDtoFeedbackReponseModel
                 {
@@ -143,7 +143,7 @@ namespace HomeMealTaste.Services.Implement
                 var mapped = result.Select(feedback =>
                 {
                     var response = _mapper.Map<FeedbackResponseModel>(feedback);
-                    response.CreateDate = feedback.CreateDate.ToString();
+                 //   response.CreateDate = feedback.CreateDate.ToString();
                     response.Description = feedback.Description;
                     response.CustomerDtoFeedbackReponseModel = new CustomerDtoFeedbackReponseModel
                     {

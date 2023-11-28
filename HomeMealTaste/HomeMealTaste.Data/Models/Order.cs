@@ -18,7 +18,6 @@ namespace HomeMealTaste.Data.Models
         public int? TotalPrice { get; set; }
         public DateTime? Time { get; set; }
         public int? Quantity { get; set; }
-        public int? MealSessionId { get; set; }
 
         public virtual Customer? Customer { get; set; }
         public virtual MealSession? MealSession { get; set; }

@@ -1,5 +1,4 @@
-﻿using FirebaseAdmin.Messaging;
-using HomeMealTaste.Data.RequestModel;
+﻿using HomeMealTaste.Data.RequestModel;
 using HomeMealTaste.Services.Interface;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -27,21 +26,21 @@ namespace HomeMealTaste.API.Controllers
 
             return Ok(result);
         }
-        [HttpPost("sendNotification")]
-        public async Task SendNotificationAsync(string DeviceToken, Task<string> title, string? body)
-        {
-            var message = new Message()
-            {
-                Notification = new FirebaseAdmin.Messaging.Notification
-                {
-                    Title ="Your Meal:"+ title +"is",
-                    Body = body
-                },
-                Token = DeviceToken,
-            };
-            var messaging = FirebaseMessaging.DefaultInstance;
-            var result = await messaging.SendAsync(message);
-        }
+        //[HttpPost("sendNotification")]
+        //public async Task SendNotificationAsync(string DeviceToken, Task<string> title, string? body)
+        //{
+        //    var message = new Message()
+        //    {
+        //        Notification = new FirebaseAdmin.Messaging.Notification
+        //        {
+        //            Title ="Your Meal:"+ title +"is",
+        //            Body = body
+        //        },
+        //        Token = DeviceToken,
+        //    };
+        //    var messaging = FirebaseMessaging.DefaultInstance;
+        //    var result = await messaging.SendAsync(message);
+        //}
 
     }
 }

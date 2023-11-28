@@ -12,8 +12,6 @@ using HomeMealTaste.Data;
 using HomeMealTaste.Data.RequestModel;
 using Azure.Storage.Blobs;
 using Microsoft.AspNetCore.Builder.Extensions;
-using Google.Apis.Auth.OAuth2;
-using FirebaseAdmin;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -117,12 +115,12 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     });
 
 var app = builder.Build();
-var defaultApp = FirebaseApp.Create(new AppOptions()
-{
-    Credential =
-  GoogleCredential.FromFile(Path.Combine(AppDomain.CurrentDomain.BaseDirectory,
-  "key.json")),
-});
+//var defaultApp = FirebaseApp.Create(new AppOptions()
+//{
+//    Credential =
+//  GoogleCredential.FromFile(Path.Combine(AppDomain.CurrentDomain.BaseDirectory,
+//  "key.json")),
+//});
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
