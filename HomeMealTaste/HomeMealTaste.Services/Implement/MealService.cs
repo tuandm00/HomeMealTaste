@@ -72,7 +72,7 @@ namespace HomeMealTaste.Services.Implement
             var imagePath = await _blobService.UploadQuestImgAndReturnImgPathAsync(mealRequest.Image, "meal-image");
             entity.Image = imagePath;
             entity.CreateDate = GetDateTimeTimeZoneVietNam();
-            
+            entity.Description = mealRequest.Description;
             var result = await _mealRepository.Create(entity, true);
 
             if(result != null)
@@ -86,7 +86,6 @@ namespace HomeMealTaste.Services.Implement
                 await _context.SaveChangesAsync();
             }
              var response = _mapper.Map<MealResponseModel>(result);
-            //response.CreateDate = result.CreateDate?.ToString("yyyy-MM-dd HH:mm:ss");
             response.CreateDate = result.CreateDate?.ToString("dd-MM-yyyy");
             return response;
         }
@@ -118,6 +117,7 @@ namespace HomeMealTaste.Services.Implement
             MealId = group.Key,
             Name = group.First().Meal.Name, 
             Image = group.First().Meal.Image,
+            Description = group.First().Meal.Description,
             KitchenDtoReponseMeal = new KitchenDtoReponseMeal
             {
                 KitchenId = group.First().Meal.Kitchen.KitchenId,

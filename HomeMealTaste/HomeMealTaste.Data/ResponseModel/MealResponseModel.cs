@@ -12,6 +12,8 @@ namespace HomeMealTaste.Data.ResponseModel
         public string? Image { get; set; }
         public int? KitchenId { get; set; }
         public String? CreateDate { get; set; }
+        public string? Description { get; set; }
+
 
     }
 }
