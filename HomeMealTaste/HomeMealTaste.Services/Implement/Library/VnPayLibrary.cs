@@ -36,6 +36,9 @@ namespace HomeMealTaste.Services.Library
             var amount = Convert.ToInt32(vnPay.GetResponseData("vnp_Amount"));
             var checkSignature =
                 vnPay.ValidateSignature(vnpSecureHash, hashSecret); //check Signature
+           
+            //moithem
+            var returnUrlApp = "com.anonymous.homemealtaste://Wallet";
 
             if (!checkSignature)
                 return new PaymentResponseModel()
@@ -50,6 +53,8 @@ namespace HomeMealTaste.Services.Library
                 VnPayResponseCode = vnpResponseCode,
                 Balance = amount,
                 UserId = orderInfo,
+                //moithem
+                urlReturnApp = returnUrlApp,
             };
         }
         public string GetIpAddress()
