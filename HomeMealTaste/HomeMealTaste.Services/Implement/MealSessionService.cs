@@ -361,7 +361,7 @@ namespace HomeMealTaste.Services.Implement
                 .Include(x => x.Meal)
                 .Include(x => x.Session).ThenInclude(x => x.Area).ThenInclude(x => x.District)
                 .Include(x => x.Kitchen)
-                .Where(x => x.SessionId == sessionid && x.Status.Equals("APPROVED") && x.RemainQuantity > 0)
+                .Where(x => x.SessionId == sessionid)
                 .ToList();
             var mapped = result.Select(mealsession =>
             {
