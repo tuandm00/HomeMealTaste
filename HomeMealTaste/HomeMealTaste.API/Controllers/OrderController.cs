@@ -64,6 +64,12 @@ namespace HomeMealTaste.API.Controllers
             var result = await _orderService.RefundMoneyToCustomer(refundRequest);
             return Ok(result);
         }
+        [HttpPatch("change-status-order-to-COMPLETED")]
+        public async Task<IActionResult> ChangeStatusOrderToCompleted(int orderid)
+        {
+            var result = await _orderService.ChangeStatusOrderToCompleted(orderid);
+            return Ok(result);
+        }
 
 
     }

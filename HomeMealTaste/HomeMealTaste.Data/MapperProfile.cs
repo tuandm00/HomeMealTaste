@@ -52,6 +52,7 @@ namespace HomeMealTaste.Data.RequestModel
             CreateMap<RefundMoneyToWalletByOrderIdRequestModel, Order>().ReverseMap();
             CreateMap<RefundMoneyToWalletByOrderIdResponseModel, Order>().ReverseMap();
             CreateMap<TransactionByUserIdRequestModel, Transaction>().ReverseMap();
+            CreateMap<ChangeStatusOrderToCompletedResponseModel, Order>().ReverseMap();
 
             
 

@@ -518,6 +518,28 @@ namespace HomeMealTaste.Services.Implement
             var mapped = _mapper.Map<RefundMoneyToWalletByOrderIdResponseModel>(orderid);
             return mapped;
         }
+
+        public async Task<ChangeStatusOrderToCompletedResponseModel> ChangeStatusOrderToCompleted(int orderid)
+        {
+            var result = await _context.Orders.Where(x => x.OrderId == orderid).FirstOrDefaultAsync();
+            if(result != null && result.Status.Equals("PAID", StringComparison.OrdinalIgnoreCase))
+            {
+                result.Status = "COMPLETED";
+                await _context.SaveChangesAsync();
+
+                return new ChangeStatusOrderToCompletedResponseModel
+                {
+                    OrderId = orderid,
+                    Status = result.Status,
+                    CustomerId = result.CustomerId,
+                    MealSessionId = result.MealSessionId,
+                    TotalPrice = result.TotalPrice,
+                    Time = result.Time.ToString(),
+                    Quantity = result.Quantity,
+                };
+            }
+            return null;
+        }
     }
 }
 
