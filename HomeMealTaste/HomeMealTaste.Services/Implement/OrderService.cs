@@ -64,7 +64,7 @@ namespace HomeMealTaste.Services.Implement
                 .Select(x => new OrderResponseModel
                 {
                     OrderId = x.OrderId,
-                    Time = ((DateTime)x.Time).ToString("HH:mm"),
+                    Time = ((DateTime)x.Time).ToString("dd-MM-yyy HH:mm"),
                     Quantity = x.Quantity,
 
                     CustomerDto1 = new CustomerDto1

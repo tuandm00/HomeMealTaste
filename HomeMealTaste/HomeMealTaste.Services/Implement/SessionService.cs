@@ -240,6 +240,30 @@ namespace HomeMealTaste.Services.Implement
 
         public Task<List<GetAllSessionByAreaIdResponseModel>> GetAllSessionByAreaId(int areaid)
         {
+            var result = _context.Sessions.Where(x => x.AreaId == areaid).Select(x => new GetAllSessionByAreaIdResponseModel
+            {
+                SessionId = x.SessionId,
+                CreateDate = ((DateTime)x.CreateDate).ToString("dd-MM-yyyy"),
+                StartTime = ((DateTime)x.StartTime).ToString("HH:mm"),
+                EndTime = ((DateTime)x.EndTime).ToString("HH:mm"),
+                EndDate = ((DateTime)x.EndDate).ToString("dd-MM-yyyy"),
+                UserId = x.UserId,
+                SessionType = x.SessionType,
+                AreaDto = new AreaDto
+                {
+                    AreaId = areaid,
+                    Address = x.Area.Address,
+                    DistrictId = x.Area.DistrictId,
+                },
+                Status = x.Status,
+            });
+
+            var mappedResults = result.Select(session => _mapper.Map<GetAllSessionByAreaIdResponseModel>(session)).ToList();
+            return Task.FromResult(mappedResults);
+        }
+        
+        public Task<List<GetAllSessionByAreaIdResponseModel>> GetAllSessionByAreaIdWithStatusTrue(int areaid)
+        {
             var result = _context.Sessions.Where(x => x.AreaId == areaid && x.Status == true).Select(x => new GetAllSessionByAreaIdResponseModel
             {
                 SessionId = x.SessionId,
