@@ -28,32 +28,32 @@ namespace HomeMealTaste.Services.Implement
             _context = context;
         }
 
-        public async Task<AreaResponseModel> CreateArea(AreaRequestModel areaRequest)
-        {
-            //var entity = _mapper.Map<Area>(areaRequest);
-            //var result = await _areaRepository.Create(entity, true);
-            //var mapped = _mapper.Map<AreaResponseModel>(result);
-            //mapped.DistrictDtoAreaResponseModel = new DistrictDtoAreaResponseModel
-            //{
-            //    DistrictId = result.District.DistrictId,
-            //    DistrictName = result.District.DistrictName
-            //};
+            public async Task<AreaResponseModel> CreateArea(AreaRequestModel areaRequest)
+            {
+                //var entity = _mapper.Map<Area>(areaRequest);
+                //var result = await _areaRepository.Create(entity, true);
+                //var mapped = _mapper.Map<AreaResponseModel>(result);
+                //mapped.DistrictDtoAreaResponseModel = new DistrictDtoAreaResponseModel
+                //{
+                //    DistrictId = result.District.DistrictId,
+                //    DistrictName = result.District.DistrictName
+                //};
 
-            //return mapped;
+                //return mapped;
 
-            var areaEntity = _mapper.Map<Area>(areaRequest);
+                var areaEntity = _mapper.Map<Area>(areaRequest);
 
-            areaEntity.DistrictId = areaRequest.DistrictId;
+                areaEntity.DistrictId = areaRequest.DistrictId;
 
-            var createdArea = await _areaRepository.Create(areaEntity, true);
+                var createdArea = await _areaRepository.Create(areaEntity, true);
 
-            var areaWithDistrict = await _context.Areas
-                .Include(x => x.District)
-                .FirstOrDefaultAsync(x => x.AreaId == createdArea.AreaId);
+                var areaWithDistrict = await _context.Areas
+                    .Include(x => x.District)
+                    .FirstOrDefaultAsync(x => x.AreaId == createdArea.AreaId);
 
-            var mapped = _mapper.Map<AreaResponseModel>(areaWithDistrict);
-            return mapped;
-        }
+                var mapped = _mapper.Map<AreaResponseModel>(areaWithDistrict);
+                return mapped;
+            }
 
         public Task DeleteArea(int areaid)
         {

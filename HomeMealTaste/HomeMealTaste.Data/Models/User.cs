@@ -10,6 +10,7 @@ namespace HomeMealTaste.Data.Models
             Customers = new HashSet<Customer>();
             Kitchens = new HashSet<Kitchen>();
             Sessions = new HashSet<Session>();
+            Transactions = new HashSet<Transaction>();
             Wallets = new HashSet<Wallet>();
         }
 
@@ -31,7 +32,7 @@ namespace HomeMealTaste.Data.Models
         public virtual ICollection<Customer> Customers { get; set; }
         public virtual ICollection<Kitchen> Kitchens { get; set; }
         public virtual ICollection<Session> Sessions { get; set; }
+        public virtual ICollection<Transaction> Transactions { get; set; }
         public virtual ICollection<Wallet> Wallets { get; set; }
     }
-
 }

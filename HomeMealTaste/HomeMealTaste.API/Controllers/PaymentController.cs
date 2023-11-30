@@ -3,10 +3,8 @@ using HomeMealTaste.Data.RequestModel;
 using HomeMealTaste.Data.ResponseModel;
 using HomeMealTaste.Services.Implement;
 using HomeMealTaste.Services.Interface;
-using MediatR;
-using Microsoft.AspNetCore.Http;
+using HomeMealTaste.Services.Library;
 using Microsoft.AspNetCore.Mvc;
-using System.Net;
 
 namespace HomeMealTaste.API.Controllers
 {
@@ -42,25 +40,28 @@ namespace HomeMealTaste.API.Controllers
         //}
 
         private readonly IVnPayService _vnPayService;
+        private readonly IConfiguration _configuration;
 
-        public PaymentController(IVnPayService vnPayService)
+        public PaymentController(IVnPayService vnPayService, IConfiguration configuration)
         {
             _vnPayService = vnPayService;
+            _configuration = configuration;
         }
 
         [HttpPost]
         public IActionResult CreatePaymentUrl(RechargeToWalletByVNPayRequestModel model)
         {
             var url = _vnPayService.CreateRechargeUrlForWallet(model);
+
             return new ObjectResult(url);
         }
 
         [HttpGet("get-payment-return")]
-        
-        public string PaymentCallback()
+        public async Task<IActionResult> PaymentCallback()
         {
             var response = _vnPayService.PaymentExcute(Request.Query);
-            return response;
+
+            return Ok(response);
         }
     }
 }

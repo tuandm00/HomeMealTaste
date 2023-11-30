@@ -68,14 +68,14 @@ namespace HomeMealTaste.Services.Implement
         public async Task<MealResponseModel> CreateMeal(MealRequestModel mealRequest)
         {
             var entity = _mapper.Map<Meal>(mealRequest);
-            
+
             var imagePath = await _blobService.UploadQuestImgAndReturnImgPathAsync(mealRequest.Image, "meal-image");
             entity.Image = imagePath;
             entity.CreateDate = GetDateTimeTimeZoneVietNam();
-            
+            entity.Description = mealRequest.Description;
             var result = await _mealRepository.Create(entity, true);
 
-            if(result != null)
+            if (result != null)
             {
                 var mealdish = new MealDish
                 {
@@ -85,8 +85,7 @@ namespace HomeMealTaste.Services.Implement
                 await _context.AddAsync(mealdish);
                 await _context.SaveChangesAsync();
             }
-             var response = _mapper.Map<MealResponseModel>(result);
-            //response.CreateDate = result.CreateDate?.ToString("yyyy-MM-dd HH:mm:ss");
+            var response = _mapper.Map<MealResponseModel>(result);
             response.CreateDate = result.CreateDate?.ToString("dd-MM-yyyy");
             return response;
         }
@@ -118,6 +117,7 @@ namespace HomeMealTaste.Services.Implement
             MealId = group.Key,
             Name = group.First().Meal.Name, 
             Image = group.First().Meal.Image,
+            Description = group.First().Meal.Description,
             KitchenDtoReponseMeal = new KitchenDtoReponseMeal
             {
                 KitchenId = group.First().Meal.Kitchen.KitchenId,
@@ -199,6 +199,60 @@ namespace HomeMealTaste.Services.Implement
             }).ToList();
 
              return mapped;
+        }
+
+        public async Task DeleteMealIdNotExistInSessionByMealId(int mealid)
+        {
+            var mealsessionExisted = _context.MealSessions.Where(x => x.MealId == mealid).FirstOrDefault();
+            if(mealsessionExisted != null)
+            {
+                throw new Exception("Meal is EXISTED in Session");
+            }else
+            {
+                var result = await _context.MealDishes.Where(x => x.MealId == mealid).FirstOrDefaultAsync();
+                if (result != null)
+                {
+                    _context.MealDishes.Remove(result);
+                    var meal = _context.Meals.Where(x => x.MealId == result.MealId).FirstOrDefault();
+                    _context.Meals.Remove(meal);
+                }
+            }
+            await _context.SaveChangesAsync();
+
+        }
+
+        public async Task<UpdateMealIdNotExistInSessionByMealIdResponseModel> UpdateMealIdNotExistInSessionByMealId(UpdateMealIdNotExistInSessionByMealIdRequestModel request)
+        {
+            var entity = _mapper.Map<Meal>(request);
+            var mealsessionExisted = _context.MealSessions.Where(x => x.MealId == entity.MealId).FirstOrDefault();
+            if (mealsessionExisted != null)
+            {
+                throw new Exception("Meal is EXISTED in Session");
+            }
+            else
+            {
+                var imagePath = await _blobService.UploadQuestImgAndReturnImgPathAsync(request.Image, "meal-image");
+                var result = _context.Meals.Where(x => x.MealId == entity.MealId).FirstOrDefault();
+                if (result != null)
+                {
+                    result.MealId = entity.MealId;
+                    result.Name = entity.Name;
+                    result.Description = entity.Description;
+                    result.Image = imagePath;
+                    result.CreateDate = GetDateTimeTimeZoneVietNam();
+                    result.KitchenId = entity.KitchenId;
+
+                    await _mealRepository.Update(result);
+                }
+                else
+                {
+                    throw new Exception("Cannot Found Meal");
+                }
+                await _context.SaveChangesAsync();
+                var mapped = _mapper.Map<UpdateMealIdNotExistInSessionByMealIdResponseModel>(result);
+                mapped.CreateDate = result.CreateDate?.ToString("dd-MM-yyyy");
+                return mapped;
+            }
         }
     }
 }

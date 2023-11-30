@@ -65,6 +65,7 @@ namespace HomeMealTaste.Services.Implement
             entity.Status = "PROCESSING";
             entity.CreateDate = GetDateTimeTimeZoneVietNam();
             entity.Quantity = mealSessionRequest.Quantity;
+            entity.RemainQuantity = entity.Quantity;
             var result = await _mealSessionRepository.Create(entity, true);
 
 
@@ -294,7 +295,7 @@ namespace HomeMealTaste.Services.Implement
                 }
             }
             await _context.SaveChangesAsync();
-            if(result != null && result.Status.Equals("APPROVED" , StringComparison.OrdinalIgnoreCase))
+            if (result != null && result.Status.Equals("APPROVED", StringComparison.OrdinalIgnoreCase))
             {
                 if (string.Equals("APPROVED", status, StringComparison.OrdinalIgnoreCase))
                 {
@@ -303,8 +304,8 @@ namespace HomeMealTaste.Services.Implement
                 else result.Status = "REJECTED";
             }
             await _context.SaveChangesAsync();
-            
-            if(result != null && result.Status.Equals("REJECTED", StringComparison.OrdinalIgnoreCase))
+
+            if (result != null && result.Status.Equals("REJECTED", StringComparison.OrdinalIgnoreCase))
             {
                 if (string.Equals("REJECTED", status, StringComparison.OrdinalIgnoreCase))
                 {
@@ -360,7 +361,7 @@ namespace HomeMealTaste.Services.Implement
                 .Include(x => x.Meal)
                 .Include(x => x.Session).ThenInclude(x => x.Area).ThenInclude(x => x.District)
                 .Include(x => x.Kitchen)
-                .Where(x => x.SessionId == sessionid && x.Status.Equals("APPROVED") && x.RemainQuantity > 0)
+                .Where(x => x.SessionId == sessionid)
                 .ToList();
             var mapped = result.Select(mealsession =>
             {
@@ -478,6 +479,65 @@ namespace HomeMealTaste.Services.Implement
             }).ToList();
 
             return Task.FromResult(mapped);
+        }
+
+        public async Task<List<MealSessionResponseModel>> GetAllMeallSessionWithStatusAPPROVEDandREMAINQUANTITYhigherthan0()
+        {
+            var result = await _context.MealSessions
+        .Include(x => x.Meal)
+        .Include(x => x.Session).ThenInclude(x => x.Area)
+        .Include(x => x.Kitchen)
+        .Where(x => x.Status == "APPROVED" && x.RemainQuantity > 0)
+        .ToListAsync();
+
+            var mapped = result.Select(mealsession =>
+            {
+                var response = _mapper.Map<MealSessionResponseModel>(mealsession);
+                response.MealSessionId = mealsession.MealSessionId;
+                response.MealDtoForMealSession = new MealDtoForMealSession
+                {
+                    MealId = mealsession.Meal.MealId,
+                    Name = mealsession.Meal.Name,
+                    Image = mealsession.Meal.Image,
+                    KitchenId = mealsession.KitchenId,
+                    CreateDate = mealsession.CreateDate.ToString(),
+                    Description = mealsession.Meal?.Description,
+                };
+                response.SessionDtoForMealSession = new SessionDtoForMealSession
+                {
+                    SessionId = mealsession.Session.SessionId,
+                    CreateDate = mealsession.Session.CreateDate.ToString(),
+                    StartTime = mealsession.Session.StartTime.ToString(),
+                    EndTime = mealsession.Session.EndTime.ToString(),
+                    EndDate = mealsession.Session.EndDate.ToString(),
+                    UserId = mealsession.Session?.UserId,
+                    Status = mealsession.Session.Status,
+                    SessionType = mealsession.Session.SessionType,
+                    AreaDtoForMealSession = new AreaDtoForMealSession
+                    {
+                        AreaId = mealsession.Session.Area.AreaId,
+                        Address = mealsession.Session.Area.Address,
+                        AreaName = mealsession.Session.Area.AreaName,
+                    },
+                };
+                response.KitchenDtoForMealSession = new KitchenDtoForMealSession
+                {
+                    KitchenId = mealsession.Meal.Kitchen.KitchenId,
+                    UserId = mealsession.Meal.Kitchen.KitchenId,
+                    Name = mealsession.Meal.Kitchen?.Name,
+                    Address = mealsession.Meal.Kitchen.Address,
+                };
+                response.Price = (decimal?)mealsession.Price;
+                response.Quantity = mealsession.Quantity;
+                response.RemainQuantity = mealsession.RemainQuantity;
+                response.Status = mealsession.Status;
+                response.CreateDate = mealsession.CreateDate.ToString();
+
+                return response;
+            }).ToList();
+
+            return mapped;
+
         }
     }
 }

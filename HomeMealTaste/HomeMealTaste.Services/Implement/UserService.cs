@@ -66,24 +66,52 @@ namespace HomeMealTaste.Services.Implement
             var result = await _userRepository.GetUsernamePassword(userRequest);
             var customerIds = _context.Customers.Where(x => x.Phone == existedUser.Phone).Select(x => x.CustomerId).FirstOrDefault();
             var kitchenIds = _context.Kitchens.Where(x => x.UserId == existedUser.UserId).Select(x => x.KitchenId).FirstOrDefault();
-            
+
             switch (result.RoleId)
             {
-                case 2 : 
+                case 1:
+                    var adminWalletId = _context.Wallets
+                        .Where(x => x.UserId == result.UserId)
+                        .Select(x => x.WalletId)
+                        .FirstOrDefault();
+                    var adminBalance = _context.Wallets
+                        .Where(x => x.UserId == result.UserId)
+                        .Select(x => x.Balance)
+                        .FirstOrDefault();
                     return new UserResponseModel
-                {
-                    Name = result.Name,
-                    UserId = result.UserId,
-                    Address = result.Address,
-                    DistrictId = result.DistrictId,
-                    Email = result.Email,
-                    Phone = result.Phone,
-                    Status = result.Status,
-                    RoleId = result.RoleId,
-                    Token = GenerateToken(result),
-                    CustomerId = customerIds,
-                };
-                    case 3 :
+                    {
+                        Name = result.Name,
+                        UserId = result.UserId,
+                        Address = result.Address,
+                        DistrictId = result.DistrictId,
+                        Email = result.Email,
+                        Phone = result.Phone,
+                        Status = result.Status,
+                        RoleId = result.RoleId,
+                        Token = GenerateToken(result),
+                        WalletDtoAdminResponse = new WalletDtoAdminResponse
+                        {
+                            WalletId = adminWalletId,
+                            UserId = result.UserId,
+                            Balance = adminBalance,
+                        }
+
+                    };
+                case 2:
+                    return new UserResponseModel
+                    {
+                        Name = result.Name,
+                        UserId = result.UserId,
+                        Address = result.Address,
+                        DistrictId = result.DistrictId,
+                        Email = result.Email,
+                        Phone = result.Phone,
+                        Status = result.Status,
+                        RoleId = result.RoleId,
+                        Token = GenerateToken(result),
+                        CustomerId = customerIds,
+                    };
+                case 3:
                     return new UserResponseModel
                     {
                         Name = result.Name,
@@ -149,7 +177,7 @@ namespace HomeMealTaste.Services.Implement
                     Name = result.Name,
                     Address = result.Address,
                     AreaId = result.AreaId,
-                }; 
+                };
                 var wallet = new Wallet
                 {
                     UserId = entity.UserId,

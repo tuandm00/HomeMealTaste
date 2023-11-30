@@ -239,9 +239,9 @@ namespace HomeMealTaste.Data.Models
             {
                 entity.ToTable("Post");
 
-                entity.Property(e => e.Status)
-                    .HasMaxLength(50)
-                    .HasColumnName("status");
+                entity.Property(e => e.PostId).ValueGeneratedNever();
+
+                entity.Property(e => e.Status).HasMaxLength(1000);
 
                 entity.HasOne(d => d.Order)
                     .WithMany(p => p.Posts)
@@ -291,10 +291,17 @@ namespace HomeMealTaste.Data.Models
 
                 entity.Property(e => e.Status).HasMaxLength(50);
 
+                entity.Property(e => e.TransactionType).HasMaxLength(50);
+
                 entity.HasOne(d => d.Order)
                     .WithMany(p => p.Transactions)
                     .HasForeignKey(d => d.OrderId)
                     .HasConstraintName("FK_Transaction_Order");
+
+                entity.HasOne(d => d.User)
+                    .WithMany(p => p.Transactions)
+                    .HasForeignKey(d => d.UserId)
+                    .HasConstraintName("FK_Transaction_User");
 
                 entity.HasOne(d => d.Wallet)
                     .WithMany(p => p.Transactions)

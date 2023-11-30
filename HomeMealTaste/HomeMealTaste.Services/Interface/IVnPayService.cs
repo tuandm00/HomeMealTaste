@@ -12,7 +12,7 @@ namespace HomeMealTaste.Services.Interface
     public interface IVnPayService
     {
         string CreateRechargeUrlForWallet(RechargeToWalletByVNPayRequestModel model);
-        string PaymentExcute(IQueryCollection collections);
+        PaymentResponseModel PaymentExcute(IQueryCollection collections);
 
     }
 }

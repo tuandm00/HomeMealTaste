@@ -22,5 +22,18 @@ namespace HomeMealTaste.API.Controllers
             return Ok(result);
         }
 
+        [HttpGet("get-transaction-by-transaction-type-OREDER")]
+        public async Task<IActionResult> GetAllTransactionByTransactionTypeORDERED()
+        {
+            var result = await _transactionService.GetAllTransactionByTransactionTypeORDERED();
+            return Ok(result);
+        }
+        [HttpGet("get-transaction-by-transaction-type-RECHARGED")]
+        public async Task<IActionResult> GetAllTransactionByTransactionTypeRECHARGED()
+        {
+            var result = await _transactionService.GetAllTransactionByTransactionTypeRECHARGED();
+            return Ok(result);
+        }
+
     }
 }

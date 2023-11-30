@@ -69,6 +69,12 @@ namespace HomeMealTaste.Controllers
             var result = await _sessionService.GetAllSessionByAreaId(areaid);
             return Ok(result);
         }
+        [HttpGet("get-all-session-by-area-id-with-status-true")]
+        public async Task<IActionResult> GetAllSessionByAreaIdWithStatusTrue(int areaid)
+        {
+            var result = await _sessionService.GetAllSessionByAreaIdWithStatusTrue(areaid);
+            return Ok(result);
+        }
 
         [HttpDelete]
         public async Task<IActionResult> DeleteSession(int sessionid)

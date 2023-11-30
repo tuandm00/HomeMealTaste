@@ -1,5 +1,4 @@
-﻿using HomeMealTaste.Data.Models;
-using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Http;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,13 +7,13 @@ using System.Threading.Tasks;
 
 namespace HomeMealTaste.Data.RequestModel
 {
-    public class MealRequestModel
+    public class UpdateMealIdNotExistInSessionByMealIdRequestModel
     {
-        public int DishId { get; set; }
+        public int MealId { get; set; }
         public string? Name { get; set; }
         public IFormFile? Image { get; set; }
         public int? KitchenId { get; set; }
-        public String? CreateDate { get; set; }
+        public string? CreateDate { get; set; }
         public string? Description { get; set; }
 
     }

@@ -24,10 +24,81 @@ namespace HomeMealTaste.Services.Implement
             _context = context;
             _mapper = mapper;
         }
+
+        public async Task<List<GetAllTransactionByTransactionTypeORDERED>> GetAllTransactionByTransactionTypeORDERED()
+        {
+            var result = _context.Transactions
+                .Where(x => x.TransactionType == "ORDERED")
+                .Select(t => new GetAllTransactionByTransactionTypeORDERED
+                {
+                    TransactionId = t.TransactionId,
+                    OrderId = t.OrderId,
+                    WalletDtoGetAllTransaction = new WalletDtoGetAllTransaction
+                    {
+                        WalletId = t.Wallet.WalletId,
+                        UserDtoGetAllTransaction = new UserDtoGetAllTransaction
+                        {
+                            UserId = t.Wallet.User.UserId,
+                            Name = t.Wallet.User.Name,
+                            Username = t.Wallet.User.Username,
+                            Email = t.Wallet.User.Email,
+                            Phone = t.Wallet.User.Phone,
+                            Address = t.Wallet.User.Address,
+                            DistrictId = t.Wallet.User.DistrictId,
+                            Status = t.Wallet.User.Status,
+                            AreaId = t.Wallet.User.AreaId,
+                        },
+                        Balance = t.Wallet.Balance,
+                    },
+                    Date = t.Date.ToString(),
+                    Amount = t.Amount,
+                    Description = t.Description,
+                    Status = t.Status,
+                    TransactionType = t.TransactionType,
+                });
+            var mapped = result.Select(result => _mapper.Map<GetAllTransactionByTransactionTypeORDERED>(result)).ToList();
+            return mapped;
+        }
+
+        public async Task<List<GetAllTransactionByTransactionTypeRECHARGED>> GetAllTransactionByTransactionTypeRECHARGED()
+        {
+            var result = _context.Transactions
+                .Where(x => x.TransactionType == "RECHARGED")
+                .Select(t => new GetAllTransactionByTransactionTypeRECHARGED
+                {
+                    TransactionId = t.TransactionId,
+                    OrderId = t.OrderId,
+                    WalletDtoGetAllTransactionRECHARGED = new WalletDtoGetAllTransactionRECHARGED
+                    {
+                        WalletId = t.Wallet.WalletId,
+                        UserDtoGetAllTransactionRECHARGED = new UserDtoGetAllTransactionRECHARGED
+                        {
+                            UserId = t.Wallet.User.UserId,
+                            Name = t.Wallet.User.Name,
+                            Username = t.Wallet.User.Username,
+                            Email = t.Wallet.User.Email,
+                            Phone = t.Wallet.User.Phone,
+                            Address = t.Wallet.User.Address,
+                            DistrictId = t.Wallet.User.DistrictId,
+                            Status = t.Wallet.User.Status,
+                            AreaId = t.Wallet.User.AreaId,
+                        },
+                        Balance = t.Wallet.Balance,
+                    },
+                    Date = t.Date.ToString(),
+                    Amount = t.Amount,
+                    Description = t.Description,
+                    Status = t.Status,
+                    TransactionType = t.TransactionType,
+                });
+            var mapped = result.Select(result => _mapper.Map<GetAllTransactionByTransactionTypeRECHARGED>(result)).ToList();
+            return mapped;
+        }
+
         public async Task<List<GetAllTransactionByUserIdResponseModel>> GetAllTransactionByUserId(int userid)
         {
             var result = _context.Transactions
-        .Include(x => x.Wallet) 
+        .Include(x => x.Wallet)
         .ThenInclude(x => x.User)
         .Include(x => x.Order)
         .Where(x => x.Wallet.UserId == userid)

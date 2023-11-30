@@ -6,14 +6,13 @@ using System.Threading.Tasks;
 
 namespace HomeMealTaste.Data.ResponseModel
 {
-    public class MealResponseModel
+    public class UpdateMealIdNotExistInSessionByMealIdResponseModel
     {
+        public int MealId { get; set; }
         public string? Name { get; set; }
         public string? Image { get; set; }
         public int? KitchenId { get; set; }
-        public String? CreateDate { get; set; }
+        public string? CreateDate { get; set; }
         public string? Description { get; set; }
-
-
     }
 }

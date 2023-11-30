@@ -64,9 +64,9 @@ namespace HomeMealTaste.Services.Implement
                 .Select(x => new OrderResponseModel
                 {
                     OrderId = x.OrderId,
-                    Time = x.Time.ToString(),
+                    Time = ((DateTime)x.Time).ToString("dd-MM-yyy HH:mm"),
                     Quantity = x.Quantity,
-                    
+
                     CustomerDto1 = new CustomerDto1
                     {
                         CustomerId = x.Customer.CustomerId,
@@ -98,10 +98,10 @@ namespace HomeMealTaste.Services.Implement
                         SessionDto1 = new SessionDto1
                         {
                             SessionId = x.MealSession.Session.SessionId,
-                            CreateDate = x.MealSession.Session.CreateDate.ToString(),
-                            StartTime = x.MealSession.Session.StartTime.ToString(),
-                            EndTime = x.MealSession.Session.EndTime.ToString(),
-                            EndDate = x.MealSession.Session.EndDate.ToString(),
+                            CreateDate = ((DateTime)x.MealSession.Session.CreateDate).ToString("dd-MM-yyyy"),
+                            StartTime = ((DateTime)x.MealSession.Session.StartTime).ToString("HH:mm"),
+                            EndTime = ((DateTime)x.MealSession.Session.EndTime).ToString("HH:mm"),
+                            EndDate = ((DateTime)x.MealSession.Session.EndDate).ToString("dd-MM-yyyy"),
                             UserId = x.MealSession.Session.UserId,
                             Status = x.MealSession.Session.Status,
                             SessionType = x.MealSession.Session.SessionType,
@@ -129,7 +129,7 @@ namespace HomeMealTaste.Services.Implement
                 .Where(x => x.OrderId == id).Select(x => new GetAllOrderByUserIdResponseModel
                 {
                     OrderId = x.OrderId,
-                    Time = x.Time.ToString(),
+                    Time = ((DateTime)x.Time).ToString("HH:mm"),
                     CustomerDto2 = new CustomerDto2
                     {
                         CustomerId = x.Customer.CustomerId,
@@ -162,10 +162,10 @@ namespace HomeMealTaste.Services.Implement
                         SessionDto2 = new SessionDto2
                         {
                             SessionId = x.MealSession.Session.SessionId,
-                            CreateDate = x.MealSession.Session.CreateDate.ToString(),
-                            StartTime = x.MealSession.Session.StartTime.ToString(),
-                            EndTime = x.MealSession.Session.EndTime.ToString(),
-                            EndDate = x.MealSession.Session.EndDate.ToString(),
+                            CreateDate = ((DateTime)x.MealSession.Session.CreateDate).ToString("dd-MM-yyyy"),
+                            StartTime = ((DateTime)x.MealSession.Session.StartTime).ToString("HH:mm"),
+                            EndTime = ((DateTime)x.MealSession.Session.EndTime).ToString("HH:mm"),
+                            EndDate = ((DateTime)x.MealSession.Session.EndDate).ToString("dd-MM-yyyy"),
                             UserId = x.MealSession.Session.UserId,
                             Status = x.MealSession.Session.Status,
                             SessionType = x.MealSession.Session.SessionType,
@@ -190,7 +190,7 @@ namespace HomeMealTaste.Services.Implement
             var results = _context.Orders.Include(x => x.MealSession).Where(x => x.CustomerId == id).Select(x => new GetAllOrderByUserIdResponseModel
             {
                 OrderId = x.OrderId,
-                Time = x.Time.ToString(),
+                Time = ((DateTime)x.Time).ToString("HH:mm"),
 
                 CustomerDto2 = new CustomerDto2
                 {
@@ -224,10 +224,10 @@ namespace HomeMealTaste.Services.Implement
                     SessionDto2 = new SessionDto2
                     {
                         SessionId = x.MealSession.Session.SessionId,
-                        CreateDate = GetDateTimeTimeZoneVietNam().ToString("dd-MM-yyyy"),
-                        StartTime = GetDateTimeTimeZoneVietNam().ToString("HH:mm"),
-                        EndTime = GetDateTimeTimeZoneVietNam().ToString("HH:mm"),
-                        EndDate = GetDateTimeTimeZoneVietNam().ToString("dd-MM-yyyy"),
+                        CreateDate = ((DateTime)x.MealSession.Session.CreateDate).ToString("dd-MM-yyyy"),
+                        StartTime = ((DateTime)x.MealSession.Session.StartTime).ToString("HH:mm"),
+                        EndTime = ((DateTime)x.MealSession.Session.EndTime).ToString("HH:mm"),
+                        EndDate = ((DateTime)x.MealSession.Session.EndDate).ToString("dd-MM-yyyy"),
                         UserId = x.MealSession.Session.UserId,
                         Status = x.MealSession.Session.Status,
                         SessionType = x.MealSession.Session.SessionType,
@@ -259,7 +259,7 @@ namespace HomeMealTaste.Services.Implement
                 .Select(x => new GetOrderByKitchenIdResponseModel
                 {
                     OrderId = x.OrderId,
-                    Time = x.Time.ToString(),
+                    Time = ((DateTime)x.Time).ToString("HH:mm"),
                     Date = GetDateTimeTimeZoneVietNam().ToString(),
                     Customer = new CustomerDto
                     {
@@ -284,10 +284,10 @@ namespace HomeMealTaste.Services.Implement
                         SessionDto = new SessionDto
                         {
                             SessionId = x.MealSession.Session.SessionId,
-                            CreateDate = x.MealSession.Session.CreateDate,
-                            StartTime = x.MealSession.Session.StartTime,
-                            EndTime = x.MealSession.Session.EndTime,
-                            EndDate = x.MealSession.Session.EndDate,
+                            CreateDate = ((DateTime)x.MealSession.Session.CreateDate).ToString("dd-MM-yyyy"),
+                            StartTime = ((DateTime)x.MealSession.Session.StartTime).ToString("HH:mm"),
+                            EndTime = ((DateTime)x.MealSession.Session.EndTime).ToString("HH:mm"),
+                            EndDate = ((DateTime)x.MealSession.Session.EndDate).ToString("dd-MM-yyyy"),
                             Status = x.MealSession.Session.Status,
                             SessionType = x.MealSession.Session.SessionType,
                             UserId = x.MealSession.Session.UserId,
@@ -306,7 +306,7 @@ namespace HomeMealTaste.Services.Implement
                         Quantity = x.MealSession.Quantity,
                         RemainQuantity = x.MealSession.RemainQuantity,
                         Status = x.MealSession.Status,
-                        CreateDate = x.MealSession.CreateDate,
+                        CreateDate = ((DateTime)x.MealSession.CreateDate).ToString("dd-MM-yyyy"),
                         Price = (int?)x.MealSession.Price,
                     },
                     Status = x.Status,
@@ -323,7 +323,7 @@ namespace HomeMealTaste.Services.Implement
         {
             using Microsoft.EntityFrameworkCore.Storage.IDbContextTransaction? transaction = _context.Database.BeginTransaction();
             var entity = _mapper.Map<Order>(createOrderRequest);
-            var customerid = _context.Customers.Where(customer => customer.CustomerId == entity.CustomerId).FirstOrDefault();
+            var customerid = _context.Customers.Where(customerid => customerid.UserId == entity.CustomerId).FirstOrDefault();
             var mealsessionid = _context.MealSessions
                 .Where(mealsession => mealsession.MealSessionId == entity.MealSessionId)
                 .Include(mealsession => mealsession.Meal)
@@ -340,12 +340,10 @@ namespace HomeMealTaste.Services.Implement
             var remainquantity = mealsessionid.RemainQuantity;
             mealsessionid.RemainQuantity = remainquantity - createOrderRequest.Quantity;
             var totalprice = price * createOrderRequest.Quantity;
-            walletid.Balance = (int?)(walletid.Balance - totalprice);
-
             //add order to table order
             var createOrder = new CreateOrderRequestModel
             {
-                
+
                 CustomerId = entity.CustomerId,
                 TotalPrice = (int?)totalprice,
                 Time = GetDateTimeTimeZoneVietNam(),
@@ -354,6 +352,19 @@ namespace HomeMealTaste.Services.Implement
                 Quantity = createOrderRequest.Quantity,
             };
 
+            var customer = _context.Customers.Where(z => z.CustomerId == createOrder.CustomerId).FirstOrDefault();
+            var user = _context.Users.Where(x => x.UserId == customer.UserId).FirstOrDefault();
+            var walletCustomer = _context.Wallets.Where(x => x.UserId == user.UserId).FirstOrDefault();
+            if (walletCustomer != null)
+            {
+                var afterBalanceCustomer = (int?)(walletCustomer.Balance - totalprice);
+
+                if (walletCustomer != null)
+                {
+                    walletCustomer.Balance = afterBalanceCustomer;
+                    _context.Wallets.Update(walletCustomer);
+                }
+            }
             // save to admin wallet take 10%
             var admin = _context.Users.Where(x => x.RoleId == 1).FirstOrDefault();
             if (admin != null)
@@ -387,7 +398,7 @@ namespace HomeMealTaste.Services.Implement
                 .Include(x => x.Kitchen)
                 .AsNoTracking()
                 .FirstOrDefault();
-            
+
             if (kitchen != null)
             {
                 var priceToKitchen = totalprice - ((totalprice * 10) / 100);
@@ -417,7 +428,7 @@ namespace HomeMealTaste.Services.Implement
             var orderEntity = _mapper.Map<Order>(createOrder);
             await _context.AddAsync(orderEntity);
             await _context.SaveChangesAsync();
-
+            var useridwallet = _context.Wallets.Select(x => x.UserId).FirstOrDefault();
             //save to table transaction
             var transactionid = new Transaction
             {
@@ -427,6 +438,8 @@ namespace HomeMealTaste.Services.Implement
                 Amount = (decimal?)totalprice,
                 Description = "DONE WITH PAYMENT",
                 Status = "SUCCEED",
+                TransactionType = "ORDERED",
+                UserId = user.UserId,
             };
 
             _context.Transactions.Add(transactionid);
@@ -437,6 +450,96 @@ namespace HomeMealTaste.Services.Implement
             return mapped;
         }
 
+        public async Task<RefundMoneyToWalletByOrderIdResponseModel> RefundMoneyToCustomer(RefundMoneyToWalletByOrderIdRequestModel refundRequest)
+        {
+            using Microsoft.EntityFrameworkCore.Storage.IDbContextTransaction? transaction = _context.Database.BeginTransaction();
+            var entity = _mapper.Map<Order>(refundRequest);
+            var orderid = _context.Orders.Where(x => x.OrderId == entity.OrderId).FirstOrDefault();
+            if (orderid != null && orderid.Status.Equals("PAID"))
+            {
+                orderid.Status = "CANCELLED";
+                _context.Orders.Update(orderid);
+                _context.SaveChanges();
+            }
 
+            var totalPriceOfOrder = orderid.TotalPrice;
+            var customerIdOfOrder = orderid.CustomerId;
+            var userId = _context.Customers.Where(x => x.CustomerId == customerIdOfOrder).Select(x => x.UserId).FirstOrDefault();
+            var walletOfCustomer = _context.Wallets.Where(x => x.UserId == userId).FirstOrDefault();
+            var balanceExisted = walletOfCustomer.Balance;
+            var newBalanceForCustomer = balanceExisted + ((totalPriceOfOrder * 90) / 100);
+
+            // customer receive 90% money back
+            if (walletOfCustomer != null)
+            {
+                walletOfCustomer.Balance = newBalanceForCustomer;
+                _context.Wallets.Update(walletOfCustomer);
+            }
+
+            // admin keep 10% totalPrice
+            var admin = _context.Users.Where(x => x.RoleId == 1).FirstOrDefault();
+            if (admin != null)
+            {
+                var newBalanceForAdmin = ((totalPriceOfOrder * 10) / 100);
+
+                var adminWallet = _context.Wallets.FirstOrDefault(w => w.UserId == admin.UserId);
+
+                if (adminWallet != null)
+                {
+                    adminWallet.Balance += (int?)newBalanceForAdmin;
+                    _context.Wallets.Update(adminWallet);
+                }
+            }
+            // back a remainquantity
+            var remainquantityInMealSession = _context.MealSessions
+                .Where(x => x.MealSessionId == orderid.MealSessionId)
+                .Select(x => x.RemainQuantity).FirstOrDefault();
+            if (remainquantityInMealSession != null)
+            {
+                var newRemainQuantity = remainquantityInMealSession + orderid.Quantity;
+                var mealSession = _context.MealSessions.FirstOrDefault(x => x.MealSessionId == orderid.MealSessionId);
+                if (mealSession != null)
+                {
+                    mealSession.RemainQuantity = newRemainQuantity;
+                    _context.MealSessions.Update(mealSession);
+                }
+            }
+            // minus money of kitchen in wallet as 90% totalPrice
+            var kitchenid = _context.MealSessions.Where(x => x.MealSessionId == orderid.MealSessionId).Select(x => x.KitchenId).FirstOrDefault();
+            var userIdOfKitchen = _context.Kitchens.Where(x => x.KitchenId == kitchenid).Select(x => x.UserId).FirstOrDefault();
+            var kitchenWallet = _context.Wallets.Where(x => x.UserId == userIdOfKitchen).FirstOrDefault();
+            if (kitchenWallet != null)
+            {
+                kitchenWallet.Balance -= ((totalPriceOfOrder * 90) / 100);
+                _context.Wallets.Update(kitchenWallet);
+            }
+            _context.SaveChanges();
+            transaction.Commit();
+            var mapped = _mapper.Map<RefundMoneyToWalletByOrderIdResponseModel>(orderid);
+            return mapped;
+        }
+
+        public async Task<ChangeStatusOrderToCompletedResponseModel> ChangeStatusOrderToCompleted(int orderid)
+        {
+            var result = await _context.Orders.Where(x => x.OrderId == orderid).FirstOrDefaultAsync();
+            if(result != null && result.Status.Equals("PAID", StringComparison.OrdinalIgnoreCase))
+            {
+                result.Status = "COMPLETED";
+                await _context.SaveChangesAsync();
+
+                return new ChangeStatusOrderToCompletedResponseModel
+                {
+                    OrderId = orderid,
+                    Status = result.Status,
+                    CustomerId = result.CustomerId,
+                    MealSessionId = result.MealSessionId,
+                    TotalPrice = result.TotalPrice,
+                    Time = result.Time.ToString(),
+                    Quantity = result.Quantity,
+                };
+            }
+            return null;
+        }
     }
 }
+

@@ -61,55 +61,116 @@ namespace HomeMealTaste.Services.Implement
                             );
             return isValid ? date : null;
         }
-        private async Task<bool> SessionExists(string sessionType)
+        private async Task<bool> SessionExistsInArea(int areaId, string sessionType)
         {
-            // Assuming your DbContext has a Sessions DbSet
-            return await _context.Sessions.AnyAsync(s => s.SessionType.ToLower() == sessionType.ToLower());
+
+            var sessiontype = _context.Sessions.Where(x => x.AreaId == areaId).Select(x => x.SessionType).ToList();
+            
+            foreach(var type in sessiontype)
+            {
+                if ((type.ToLower()).Equals(sessionType))
+                {
+                    return false;
+                }
+            }
+            return true;
+            
         }
         public async Task<SessionResponseModel> CreateSession(SessionRequestModel sessionRequest)
         {
             var entity = _mapper.Map<Session>(sessionRequest);
             var sessionTypeLower = entity.SessionType.ToLower();
-            if (await SessionExists(sessionTypeLower))
+            //var areaId = (int)entity.AreaId;
+            var areaId = _context.Sessions.Where(x => x.AreaId == entity.AreaId).Select(x => x.AreaId).FirstOrDefault();
+            if (areaId != null)
             {
-                throw new Exception("This SessionType is EXISTED");
-            }
-            if (string.Equals(sessionTypeLower, "lunch", StringComparison.OrdinalIgnoreCase))
-            {
-                entity.CreateDate = GetDateTimeTimeZoneVietNam();
-                entity.StartTime = GetDateTimeTimeZoneVietNam().Date.AddHours(10);
-                entity.EndTime = entity.StartTime.Value.AddHours(2);
-                entity.EndDate = GetDateTimeTimeZoneVietNam();
-                entity.Status = true;
-                entity.UserId = 1;
-                entity.SessionType = "Lunch";
-                
-            }
-            else if(string.Equals(sessionTypeLower, "evening", StringComparison.OrdinalIgnoreCase))
-            {
-                entity.CreateDate = GetDateTimeTimeZoneVietNam();
-                entity.StartTime = GetDateTimeTimeZoneVietNam().Date.AddHours(16);
-                entity.EndTime = entity.StartTime.Value.AddHours(4);
-                entity.EndDate = GetDateTimeTimeZoneVietNam();
-                entity.Status = true;
-                entity.UserId = 1;
-                entity.SessionType = "Evening";
+
+                if (await SessionExistsInArea((int)areaId, sessionTypeLower))
+                {
+                    if (string.Equals(sessionTypeLower, "lunch", StringComparison.OrdinalIgnoreCase))
+                    {
+                        entity.CreateDate = GetDateTimeTimeZoneVietNam();
+                        entity.StartTime = GetDateTimeTimeZoneVietNam().Date.AddHours(10);
+                        entity.EndTime = entity.StartTime.Value.AddHours(2);
+                        entity.EndDate = GetDateTimeTimeZoneVietNam();
+                        entity.Status = true;
+                        entity.UserId = 1;
+                        entity.SessionType = "Lunch";
+                        entity.AreaId = areaId;
+
+                    }
+                    else if (string.Equals(sessionTypeLower, "evening", StringComparison.OrdinalIgnoreCase))
+                    {
+                        entity.CreateDate = GetDateTimeTimeZoneVietNam();
+                        entity.StartTime = GetDateTimeTimeZoneVietNam().Date.AddHours(16);
+                        entity.EndTime = entity.StartTime.Value.AddHours(4);
+                        entity.EndDate = GetDateTimeTimeZoneVietNam();
+                        entity.Status = true;
+                        entity.UserId = 1;
+                        entity.SessionType = "Evening";
+                        entity.AreaId = areaId;
 
 
+                    }
+                    else if (string.Equals(sessionTypeLower, "dinner", StringComparison.OrdinalIgnoreCase))
+                    {
+                        entity.CreateDate = GetDateTimeTimeZoneVietNam();
+                        entity.StartTime = GetDateTimeTimeZoneVietNam().Date.AddHours(17);
+                        entity.EndTime = entity.StartTime.Value.AddHours(2);
+                        entity.EndDate = GetDateTimeTimeZoneVietNam();
+                        entity.Status = true;
+                        entity.UserId = 1;
+                        entity.SessionType = "Dinner";
+                        entity.AreaId = areaId;
+
+                    }
+                }
+                else
+                {
+                    throw new Exception("sessionType is EXISTED");
+                }
             }
-            else if(string.Equals(sessionTypeLower, "dinner", StringComparison.OrdinalIgnoreCase))
+            else
             {
-                entity.CreateDate = GetDateTimeTimeZoneVietNam();
-                entity.StartTime = GetDateTimeTimeZoneVietNam().Date.AddHours(17);
-                entity.EndTime = entity.StartTime.Value.AddHours(2);
-                entity.EndDate = GetDateTimeTimeZoneVietNam();
-                entity.Status = true;
-                entity.UserId = 1;
-                entity.SessionType = "Dinner";
+                if (string.Equals(sessionTypeLower, "lunch", StringComparison.OrdinalIgnoreCase))
+                {
+                    entity.CreateDate = GetDateTimeTimeZoneVietNam();
+                    entity.StartTime = GetDateTimeTimeZoneVietNam().Date.AddHours(10);
+                    entity.EndTime = entity.StartTime.Value.AddHours(2);
+                    entity.EndDate = GetDateTimeTimeZoneVietNam();
+                    entity.Status = true;
+                    entity.UserId = 1;
+                    entity.SessionType = "Lunch";
+                    entity.AreaId = sessionRequest.AreaId;
 
+                }
+                else if (string.Equals(sessionTypeLower, "evening", StringComparison.OrdinalIgnoreCase))
+                {
+                    entity.CreateDate = GetDateTimeTimeZoneVietNam();
+                    entity.StartTime = GetDateTimeTimeZoneVietNam().Date.AddHours(16);
+                    entity.EndTime = entity.StartTime.Value.AddHours(4);
+                    entity.EndDate = GetDateTimeTimeZoneVietNam();
+                    entity.Status = true;
+                    entity.UserId = 1;
+                    entity.SessionType = "Evening";
+                    entity.AreaId = sessionRequest.AreaId;
+
+
+                }
+                else if (string.Equals(sessionTypeLower, "dinner", StringComparison.OrdinalIgnoreCase))
+                {
+                    entity.CreateDate = GetDateTimeTimeZoneVietNam();
+                    entity.StartTime = GetDateTimeTimeZoneVietNam().Date.AddHours(17);
+                    entity.EndTime = entity.StartTime.Value.AddHours(2);
+                    entity.EndDate = GetDateTimeTimeZoneVietNam();
+                    entity.Status = true;
+                    entity.UserId = 1;
+                    entity.SessionType = "Dinner";
+                    entity.AreaId = sessionRequest.AreaId;
+
+                }
             }
-
-            var result = await _sessionRepository.Create(entity,true);
+            var result = await _sessionRepository.Create(entity, true);
 
             var responseModel = _mapper.Map<SessionResponseModel>(result);
 
@@ -141,9 +202,9 @@ namespace HomeMealTaste.Services.Implement
         //        x => x.User.Kitchens
         //    };
         //    Expression<Func<Session, bool>> conditionAddition = e => e.StartTime < (pagingParams.SessionStartTime ?? DateTime.Now);
-            
+
         //    var result = await _sessionRepository.GetWithPaging(pagingParams, conditionAddition, selectExpression, includes);
-            
+
         //    return result;
         //}
 
@@ -161,7 +222,7 @@ namespace HomeMealTaste.Services.Implement
 
         public async Task<List<SessionResponseModel>> GetAllSession()
         {
-            var result =  _context.Sessions.ToList();
+            var result = _context.Sessions.ToList();
             var mapped = result.Select(session =>
             {
                 var responseModel = _mapper.Map<SessionResponseModel>(session);
@@ -182,10 +243,34 @@ namespace HomeMealTaste.Services.Implement
             var result = _context.Sessions.Where(x => x.AreaId == areaid).Select(x => new GetAllSessionByAreaIdResponseModel
             {
                 SessionId = x.SessionId,
-                CreateDate = x.CreateDate.ToString(),
-                StartTime = x.StartTime.ToString(),
-                EndTime = x.EndTime.ToString(),
-                EndDate = x.EndDate.ToString(),
+                CreateDate = ((DateTime)x.CreateDate).ToString("dd-MM-yyyy"),
+                StartTime = ((DateTime)x.StartTime).ToString("HH:mm"),
+                EndTime = ((DateTime)x.EndTime).ToString("HH:mm"),
+                EndDate = ((DateTime)x.EndDate).ToString("dd-MM-yyyy"),
+                UserId = x.UserId,
+                SessionType = x.SessionType,
+                AreaDto = new AreaDto
+                {
+                    AreaId = areaid,
+                    Address = x.Area.Address,
+                    DistrictId = x.Area.DistrictId,
+                },
+                Status = x.Status,
+            });
+
+            var mappedResults = result.Select(session => _mapper.Map<GetAllSessionByAreaIdResponseModel>(session)).ToList();
+            return Task.FromResult(mappedResults);
+        }
+        
+        public Task<List<GetAllSessionByAreaIdResponseModel>> GetAllSessionByAreaIdWithStatusTrue(int areaid)
+        {
+            var result = _context.Sessions.Where(x => x.AreaId == areaid && x.Status == true).Select(x => new GetAllSessionByAreaIdResponseModel
+            {
+                SessionId = x.SessionId,
+                CreateDate = ((DateTime)x.CreateDate).ToString("dd-MM-yyyy"),
+                StartTime = ((DateTime)x.StartTime).ToString("HH:mm"),
+                EndTime = ((DateTime)x.EndTime).ToString("HH:mm"),
+                EndDate = ((DateTime)x.EndDate).ToString("dd-MM-yyyy"),
                 UserId = x.UserId,
                 SessionType = x.SessionType,
                 AreaDto = new AreaDto
@@ -203,7 +288,7 @@ namespace HomeMealTaste.Services.Implement
 
         public Task DeleteSession(int sessionId)
         {
-            var result =  _sessionRepository.Delete(sessionId);
+            var result = _sessionRepository.Delete(sessionId);
             return result;
         }
     }

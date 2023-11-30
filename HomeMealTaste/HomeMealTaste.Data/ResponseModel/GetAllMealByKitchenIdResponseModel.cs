@@ -12,8 +12,10 @@ namespace HomeMealTaste.Data.ResponseModel
         public int MealId { get; set; }
         public string? Name { get; set; }
         public string? Image { get; set; }
+        public string? Description { get; set; }
         public KitchenDtoReponseMeal? KitchenDtoReponseMeal { get; set; }
         public List<DishModel?> DishModel { get; set; }
+
     }
 
     public class DishModel
