@@ -17,7 +17,9 @@ namespace HomeMealTaste.Services.Interface
         Task<DishResponseModel> CreateDishAsync(DishRequestModel dish);
         Task<DishResponseModel> GetDetailAsync(int id);
         Task<PagedList<Dish>> GetAllDishAsync(PagingParams pagingParams);
-        Task DeleteAsync(int id);
+        Task DeleteSingleDishById(int dishid);
+        Task DeleteDishInMealDish(int dishid, int mealid);
+        Task<UpdateDishResponseModel> UpdateDishNotExistInMealSession(UpdateDishRequestModel request);
         Task<List<GetDishIdByMealIdResponseModel>> GetDishIdByMealId(int mealid);
         Task<List<GetDishByKitchenIdResponseModel>> GetDishByKitchenId(int kitchenid);
     }

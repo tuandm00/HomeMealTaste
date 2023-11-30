@@ -21,7 +21,7 @@ namespace HomeMealTaste.Controllers
 
         //[Authorize]
         [HttpPost]
-        public async Task<IActionResult> CreateDishAsync([FromForm]DishRequestModel dishRequest)
+        public async Task<IActionResult> CreateDishAsync(DishRequestModel dishRequest)
         {
             var result = await _dishService.CreateDishAsync(dishRequest);
             return Ok(result);
@@ -44,9 +44,9 @@ namespace HomeMealTaste.Controllers
         } 
 
         [HttpDelete]
-        public async Task<IActionResult> DeleteDishAsync(int id)
+        public async Task<IActionResult> DeleteSingleDishById(int dishid)
         {
-            await _dishService.DeleteAsync(id);
+            await _dishService.DeleteSingleDishById(dishid);
             return NoContent();
         }
 
@@ -69,6 +69,18 @@ namespace HomeMealTaste.Controllers
         {
             var result = await _dishService.GetDishByKitchenId(kitchenid);
             return Ok(result);
+        }
+        [HttpPut("update-dish")]
+        public async Task<IActionResult> UpdateDishNotExistInMealSession([FromForm]UpdateDishRequestModel request)
+        {
+            var result = await _dishService.UpdateDishNotExistInMealSession(request);
+            return Ok(result);
+        }
+        [HttpDelete("delete-dish-in-meal-dish")]
+        public Task  DeleteDishInMealDish(int  dishid, int mealid)
+        {
+            var result =  _dishService.DeleteDishInMealDish(dishid, mealid);
+            return result;
         }
 
     }

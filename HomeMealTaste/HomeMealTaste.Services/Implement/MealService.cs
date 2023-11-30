@@ -68,14 +68,14 @@ namespace HomeMealTaste.Services.Implement
         public async Task<MealResponseModel> CreateMeal(MealRequestModel mealRequest)
         {
             var entity = _mapper.Map<Meal>(mealRequest);
-            
+
             var imagePath = await _blobService.UploadQuestImgAndReturnImgPathAsync(mealRequest.Image, "meal-image");
             entity.Image = imagePath;
             entity.CreateDate = GetDateTimeTimeZoneVietNam();
             entity.Description = mealRequest.Description;
             var result = await _mealRepository.Create(entity, true);
 
-            if(result != null)
+            if (result != null)
             {
                 var mealdish = new MealDish
                 {
@@ -85,7 +85,7 @@ namespace HomeMealTaste.Services.Implement
                 await _context.AddAsync(mealdish);
                 await _context.SaveChangesAsync();
             }
-             var response = _mapper.Map<MealResponseModel>(result);
+            var response = _mapper.Map<MealResponseModel>(result);
             response.CreateDate = result.CreateDate?.ToString("dd-MM-yyyy");
             return response;
         }
@@ -203,8 +203,6 @@ namespace HomeMealTaste.Services.Implement
 
         public async Task DeleteMealIdNotExistInSessionByMealId(int mealid)
         {
-            
-            
             var mealsessionExisted = _context.MealSessions.Where(x => x.MealId == mealid).FirstOrDefault();
             if(mealsessionExisted != null)
             {
@@ -235,7 +233,7 @@ namespace HomeMealTaste.Services.Implement
             {
                 var imagePath = await _blobService.UploadQuestImgAndReturnImgPathAsync(request.Image, "meal-image");
                 var result = _context.Meals.Where(x => x.MealId == entity.MealId).FirstOrDefault();
-                if(result != null)
+                if (result != null)
                 {
                     result.MealId = entity.MealId;
                     result.Name = entity.Name;
