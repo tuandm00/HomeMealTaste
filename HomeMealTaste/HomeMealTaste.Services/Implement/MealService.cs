@@ -223,5 +223,38 @@ namespace HomeMealTaste.Services.Implement
 
         }
 
+        public async Task<UpdateMealIdNotExistInSessionByMealIdResponseModel> UpdateMealIdNotExistInSessionByMealId(UpdateMealIdNotExistInSessionByMealIdRequestModel request)
+        {
+            var entity = _mapper.Map<Meal>(request);
+            var mealsessionExisted = _context.MealSessions.Where(x => x.MealId == entity.MealId).FirstOrDefault();
+            if (mealsessionExisted != null)
+            {
+                throw new Exception("Meal is EXISTED in Session");
+            }
+            else
+            {
+                var imagePath = await _blobService.UploadQuestImgAndReturnImgPathAsync(request.Image, "meal-image");
+                var result = _context.Meals.Where(x => x.MealId == entity.MealId).FirstOrDefault();
+                if(result != null)
+                {
+                    result.MealId = entity.MealId;
+                    result.Name = entity.Name;
+                    result.Description = entity.Description;
+                    result.Image = imagePath;
+                    result.CreateDate = GetDateTimeTimeZoneVietNam();
+                    result.KitchenId = entity.KitchenId;
+
+                    await _mealRepository.Update(result);
+                }
+                else
+                {
+                    throw new Exception("Cannot Found Meal");
+                }
+                await _context.SaveChangesAsync();
+                var mapped = _mapper.Map<UpdateMealIdNotExistInSessionByMealIdResponseModel>(result);
+                mapped.CreateDate = result.CreateDate?.ToString("dd-MM-yyyy");
+                return mapped;
+            }
+        }
     }
 }
