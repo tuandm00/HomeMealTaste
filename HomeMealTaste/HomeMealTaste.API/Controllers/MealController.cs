@@ -61,6 +61,12 @@ namespace HomeMealTaste.API.Controllers
             var result = await _mealService.GetMealByMealId(mealid);
             return Ok(result);
         }
+        [HttpDelete("delete-meal-id")]
+        public async Task DeleteMealIdNotExistInSessionByMealId(int mealid)
+        {
+            await _mealService.DeleteMealIdNotExistInSessionByMealId(mealid);
+        }
+
 
     }
 }

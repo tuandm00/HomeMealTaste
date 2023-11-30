@@ -200,5 +200,28 @@ namespace HomeMealTaste.Services.Implement
 
              return mapped;
         }
+
+        public async Task DeleteMealIdNotExistInSessionByMealId(int mealid)
+        {
+            
+            
+            var mealsessionExisted = _context.MealSessions.Where(x => x.MealId == mealid).FirstOrDefault();
+            if(mealsessionExisted != null)
+            {
+                throw new Exception("Meal is EXISTED in Session");
+            }else
+            {
+                var result = await _context.MealDishes.Where(x => x.MealId == mealid).FirstOrDefaultAsync();
+                if (result != null)
+                {
+                    _context.MealDishes.Remove(result);
+                    var meal = _context.Meals.Where(x => x.MealId == result.MealId).FirstOrDefault();
+                    _context.Meals.Remove(meal);
+                }
+            }
+            await _context.SaveChangesAsync();
+
+        }
+
     }
 }
