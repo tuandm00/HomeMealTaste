@@ -13,6 +13,7 @@ namespace HomeMealTaste.Services.Interface
         Task<CreateOrderResponseModel> CreateOrder(CreateOrderRequestModel createOrderRequest);
         Task<RefundMoneyToWalletByOrderIdResponseModel> RefundMoneyToCustomer(RefundMoneyToWalletByOrderIdRequestModel refundRequest);
         Task<ChangeStatusOrderToCompletedResponseModel> ChangeStatusOrderToCompleted(int orderid);
+        Task<int> TotalOrderInSystem();
 
     }
 }

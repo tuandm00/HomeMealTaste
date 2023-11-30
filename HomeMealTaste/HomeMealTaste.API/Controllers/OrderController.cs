@@ -70,7 +70,12 @@ namespace HomeMealTaste.API.Controllers
             var result = await _orderService.ChangeStatusOrderToCompleted(orderid);
             return Ok(result);
         }
-
+        [HttpGet("count-order-in-system")]
+        public async Task<IActionResult> TotalOrderInSystem()
+        {
+            var result = await _orderService.TotalOrderInSystem();
+            return Ok(result);
+        }
 
     }
 }

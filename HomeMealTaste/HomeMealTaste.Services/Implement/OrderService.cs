@@ -554,6 +554,13 @@ namespace HomeMealTaste.Services.Implement
             }
             return null;
         }
+
+        public async Task<int> TotalOrderInSystem()
+        {
+
+            int orderCount = await _context.Orders.CountAsync();
+            return orderCount;
+        }
     }
 }
 
