@@ -243,10 +243,10 @@ namespace HomeMealTaste.Services.Implement
             var result = _context.Sessions.Where(x => x.AreaId == areaid && x.Status == true).Select(x => new GetAllSessionByAreaIdResponseModel
             {
                 SessionId = x.SessionId,
-                CreateDate = x.CreateDate.ToString(),
-                StartTime = x.StartTime.ToString(),
-                EndTime = x.EndTime.ToString(),
-                EndDate = x.EndDate.ToString(),
+                CreateDate = ((DateTime)x.CreateDate).ToString("dd-MM-yyyy"),
+                StartTime = ((DateTime)x.StartTime).ToString("HH:mm"),
+                EndTime = ((DateTime)x.EndTime).ToString("HH:mm"),
+                EndDate = ((DateTime)x.EndDate).ToString("dd-MM-yyyy"),
                 UserId = x.UserId,
                 SessionType = x.SessionType,
                 AreaDto = new AreaDto
