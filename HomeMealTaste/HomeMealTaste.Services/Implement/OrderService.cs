@@ -367,10 +367,10 @@ namespace HomeMealTaste.Services.Implement
             }
             // save to admin wallet take 10%
             var admin = _context.Users.Where(x => x.RoleId == 1).FirstOrDefault();
+            var priceToAdmin = (totalprice * 10) / 100;
+
             if (admin != null)
             {
-                var priceToAdmin = ((totalprice * 10) / 100);
-
                 // Check if the admin already has a wallet
                 var adminWallet = _context.Wallets.FirstOrDefault(w => w.UserId == admin.UserId);
 
@@ -380,16 +380,7 @@ namespace HomeMealTaste.Services.Implement
                     adminWallet.Balance += (int?)priceToAdmin;
                     _context.Wallets.Update(adminWallet);
                 }
-                else
-                {
-                    // Create a new wallet for the admin
-                    var newWalletAdmin = new Wallet
-                    {
-                        UserId = admin.UserId,
-                        Balance = (int?)priceToAdmin
-                    };
-                    _context.Wallets.Add(newWalletAdmin);
-                }
+                
             }
 
             //then transfer price after 10 % to kitchen
@@ -398,28 +389,19 @@ namespace HomeMealTaste.Services.Implement
                 .Include(x => x.Kitchen)
                 .AsNoTracking()
                 .FirstOrDefault();
+            var priceToChef = totalprice - priceToAdmin;
 
             if (kitchen != null)
             {
-                var priceToKitchen = totalprice - ((totalprice * 10) / 100);
                 var chefWallet = _context.Wallets.FirstOrDefault(w => w.UserId == kitchen.Kitchen.UserId);
 
                 if (chefWallet != null)
                 {
                     // Update the existing wallet
-                    chefWallet.Balance += (int?)priceToKitchen;
+                    chefWallet.Balance += (int?)priceToChef;
                     _context.Wallets.Update(chefWallet);
                 }
-                else
-                {
-                    // Create a new wallet for the chef
-                    var newWalletChef = new Wallet
-                    {
-                        UserId = kitchen.Kitchen.UserId,
-                        Balance = (int?)priceToKitchen
-                    };
-                    _context.Wallets.Add(newWalletChef);
-                }
+                
             }
 
             _context.MealSessions.Update(mealsessionid);
@@ -428,6 +410,38 @@ namespace HomeMealTaste.Services.Implement
             var orderEntity = _mapper.Map<Order>(createOrder);
             await _context.AddAsync(orderEntity);
             await _context.SaveChangesAsync();
+
+            // Save to transaction for admin
+            var transactionToAdmin = new Transaction
+            {
+                OrderId = orderEntity.OrderId,
+                WalletId = walletid.WalletId,
+                Date = createOrder.Time,
+                Amount = (decimal?)priceToAdmin,
+                Description = "DONE WITH REVENUE",
+                Status = "SUCCEED",
+                TransactionType = "RR",
+                UserId = admin.UserId,
+            };
+
+            _context.Transactions.Add(transactionToAdmin);
+
+            // Save to transaction for chef
+            var transactionToChef = new Transaction
+            {
+                OrderId = orderEntity.OrderId,
+                WalletId = walletid.WalletId,
+                Date = createOrder.Time,
+                Amount = (decimal?)priceToChef,
+                Description = "DONE WITH REVENUE",
+                Status = "SUCCEED",
+                TransactionType = "RR",
+                UserId = kitchen.Kitchen.UserId,
+            };
+
+            _context.Transactions.Add(transactionToChef);
+
+
             var useridwallet = _context.Wallets.Select(x => x.UserId).FirstOrDefault();
             //save to table transaction
             var transactionid = new Transaction
