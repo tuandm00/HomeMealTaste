@@ -142,8 +142,8 @@ namespace HomeMealTaste.Services.Implement
             else
             {
                 var listmealid = _context.MealDishes.Where(x => x.DishId == getDishById.DishId).Select(x => x.MealId).ToList();
-                
-                foreach(var mealid in listmealid)
+                UpdateDishResponseModel mapped = null;
+                foreach (var mealid in listmealid)
                 {
                     var mealExist = _context.MealSessions.Where(x => x.MealId == mealid).FirstOrDefault();
                     if (mealExist != null)
@@ -160,11 +160,11 @@ namespace HomeMealTaste.Services.Implement
                         getDishById.KitchenId = entity.KitchenId;
                         getDishById.Image = imagePath;
 
-                        _context.Dishes.Update(getDishById);
+                        await _dishRepository.Update(getDishById);
+                        _context.SaveChanges();
+                        mapped = _mapper.Map<UpdateDishResponseModel>(getDishById);
                     }
-                };
-                var mapped = _mapper.Map<UpdateDishResponseModel>(getDishById);
-                _context.SaveChanges();
+                }
                 return mapped;
 
             }
