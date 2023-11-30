@@ -329,5 +329,12 @@ namespace HomeMealTaste.Services.Implement
             var mapped = result.Select(x => _mapper.Map<GetAllUserWithRoleCustomerAndChefResponseModel>(x)).ToList();
             return Task.FromResult(mapped);
         }
+
+        public async Task<int> TotalAccountInSystem()
+        {
+            int userCount = await _context.Users.CountAsync();
+            return userCount;
+
+        }
     }
 }

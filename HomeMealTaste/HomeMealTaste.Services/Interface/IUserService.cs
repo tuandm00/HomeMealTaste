@@ -18,6 +18,7 @@ namespace HomeMealTaste.Services.Interface
         Task UpdatePasswordAccount(string username, string newPassword);
         Task UpdateStatusUser(int userid);
         Task<GetUserByIdResponseModel> GetUserById(int id);
+        Task<int> TotalAccountInSystem();
         Task<List<GetAllUserWithRoleCustomerAndChefResponseModel>> GetAllUserWithRoleCustomerAndChef();
     }
 }

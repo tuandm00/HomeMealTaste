@@ -100,5 +100,11 @@ namespace HomeMealTaste.Controllers
              var result = await _userService.GetAllUserWithRoleCustomerAndChef();
             return Ok(result);
         }
+        [HttpGet("count-user-in-system")]
+        public async Task<IActionResult> TotalAccountInSystem()
+        {
+             var result = await _userService.TotalAccountInSystem();
+            return Ok(result);
+        }
     }
 }
