@@ -64,7 +64,7 @@ namespace HomeMealTaste.Services.Implement
                 .Select(x => new OrderResponseModel
                 {
                     OrderId = x.OrderId,
-                    Time = x.Time.ToString(),
+                    Time = ((DateTime)x.Time).ToString("HH:mm"),
                     Quantity = x.Quantity,
 
                     CustomerDto1 = new CustomerDto1
@@ -98,10 +98,10 @@ namespace HomeMealTaste.Services.Implement
                         SessionDto1 = new SessionDto1
                         {
                             SessionId = x.MealSession.Session.SessionId,
-                            CreateDate = x.MealSession.Session.CreateDate.ToString(),
-                            StartTime = x.MealSession.Session.StartTime.ToString(),
-                            EndTime = x.MealSession.Session.EndTime.ToString(),
-                            EndDate = x.MealSession.Session.EndDate.ToString(),
+                            CreateDate = ((DateTime)x.MealSession.Session.CreateDate).ToString("dd-MM-yyyy"),
+                            StartTime = ((DateTime)x.MealSession.Session.StartTime).ToString("HH:mm"),
+                            EndTime = ((DateTime)x.MealSession.Session.EndTime).ToString("HH:mm"),
+                            EndDate = ((DateTime)x.MealSession.Session.EndDate).ToString("dd-MM-yyyy"),
                             UserId = x.MealSession.Session.UserId,
                             Status = x.MealSession.Session.Status,
                             SessionType = x.MealSession.Session.SessionType,
@@ -129,7 +129,7 @@ namespace HomeMealTaste.Services.Implement
                 .Where(x => x.OrderId == id).Select(x => new GetAllOrderByUserIdResponseModel
                 {
                     OrderId = x.OrderId,
-                    Time = x.Time.ToString(),
+                    Time = ((DateTime)x.Time).ToString("HH:mm"),
                     CustomerDto2 = new CustomerDto2
                     {
                         CustomerId = x.Customer.CustomerId,
@@ -162,10 +162,10 @@ namespace HomeMealTaste.Services.Implement
                         SessionDto2 = new SessionDto2
                         {
                             SessionId = x.MealSession.Session.SessionId,
-                            CreateDate = x.MealSession.Session.CreateDate.ToString(),
-                            StartTime = x.MealSession.Session.StartTime.ToString(),
-                            EndTime = x.MealSession.Session.EndTime.ToString(),
-                            EndDate = x.MealSession.Session.EndDate.ToString(),
+                            CreateDate = ((DateTime)x.MealSession.Session.CreateDate).ToString("dd-MM-yyyy"),
+                            StartTime = ((DateTime)x.MealSession.Session.StartTime).ToString("HH:mm"),
+                            EndTime = ((DateTime)x.MealSession.Session.EndTime).ToString("HH:mm"),
+                            EndDate = ((DateTime)x.MealSession.Session.EndDate).ToString("dd-MM-yyyy"),
                             UserId = x.MealSession.Session.UserId,
                             Status = x.MealSession.Session.Status,
                             SessionType = x.MealSession.Session.SessionType,
@@ -190,7 +190,7 @@ namespace HomeMealTaste.Services.Implement
             var results = _context.Orders.Include(x => x.MealSession).Where(x => x.CustomerId == id).Select(x => new GetAllOrderByUserIdResponseModel
             {
                 OrderId = x.OrderId,
-                Time = x.Time.ToString(),
+                Time = ((DateTime)x.Time).ToString("HH:mm"),
 
                 CustomerDto2 = new CustomerDto2
                 {
@@ -224,10 +224,10 @@ namespace HomeMealTaste.Services.Implement
                     SessionDto2 = new SessionDto2
                     {
                         SessionId = x.MealSession.Session.SessionId,
-                        CreateDate = GetDateTimeTimeZoneVietNam().ToString("dd-MM-yyyy"),
-                        StartTime = GetDateTimeTimeZoneVietNam().ToString("HH:mm"),
-                        EndTime = GetDateTimeTimeZoneVietNam().ToString("HH:mm"),
-                        EndDate = GetDateTimeTimeZoneVietNam().ToString("dd-MM-yyyy"),
+                        CreateDate = ((DateTime)x.MealSession.Session.CreateDate).ToString("dd-MM-yyyy"),
+                        StartTime = ((DateTime)x.MealSession.Session.StartTime).ToString("HH:mm"),
+                        EndTime = ((DateTime)x.MealSession.Session.EndTime).ToString("HH:mm"),
+                        EndDate = ((DateTime)x.MealSession.Session.EndDate).ToString("dd-MM-yyyy"),
                         UserId = x.MealSession.Session.UserId,
                         Status = x.MealSession.Session.Status,
                         SessionType = x.MealSession.Session.SessionType,
@@ -259,7 +259,7 @@ namespace HomeMealTaste.Services.Implement
                 .Select(x => new GetOrderByKitchenIdResponseModel
                 {
                     OrderId = x.OrderId,
-                    Time = x.Time.ToString(),
+                    Time = ((DateTime)x.Time).ToString("HH:mm"),
                     Date = GetDateTimeTimeZoneVietNam().ToString(),
                     Customer = new CustomerDto
                     {
@@ -284,10 +284,10 @@ namespace HomeMealTaste.Services.Implement
                         SessionDto = new SessionDto
                         {
                             SessionId = x.MealSession.Session.SessionId,
-                            CreateDate = x.MealSession.Session.CreateDate,
-                            StartTime = x.MealSession.Session.StartTime,
-                            EndTime = x.MealSession.Session.EndTime,
-                            EndDate = x.MealSession.Session.EndDate,
+                            CreateDate = ((DateTime)x.MealSession.Session.CreateDate).ToString("dd-MM-yyyy"),
+                            StartTime = ((DateTime)x.MealSession.Session.StartTime).ToString("HH:mm"),
+                            EndTime = ((DateTime)x.MealSession.Session.EndTime).ToString("HH:mm"),
+                            EndDate = ((DateTime)x.MealSession.Session.EndDate).ToString("dd-MM-yyyy"),
                             Status = x.MealSession.Session.Status,
                             SessionType = x.MealSession.Session.SessionType,
                             UserId = x.MealSession.Session.UserId,
@@ -306,7 +306,7 @@ namespace HomeMealTaste.Services.Implement
                         Quantity = x.MealSession.Quantity,
                         RemainQuantity = x.MealSession.RemainQuantity,
                         Status = x.MealSession.Status,
-                        CreateDate = x.MealSession.CreateDate,
+                        CreateDate = ((DateTime)x.MealSession.CreateDate).ToString("dd-MM-yyyy"),
                         Price = (int?)x.MealSession.Price,
                     },
                     Status = x.Status,
