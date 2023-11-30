@@ -35,6 +35,7 @@ builder.Services.AddScoped<IKitchenRepository, KitchenRepository>();
 builder.Services.AddScoped<IAreaRepository, AreaRepository>();
 builder.Services.AddScoped<IFeedbackRepository, FeedbackRepository>();
 builder.Services.AddScoped<ITransactionRepository, TransactionRepository>();
+builder.Services.AddScoped<IWalletRepository, WalletRepository>();
 
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IDishService, DishService>();
@@ -50,6 +51,7 @@ builder.Services.AddScoped<IBlobService, BlobService>();
 builder.Services.AddScoped<IFeedbackService, FeedbackService>();
 builder.Services.AddScoped<ITransactionService, TransactionService>();
 builder.Services.AddScoped<IVnPayService, VnPayService>();
+builder.Services.AddScoped<IWalletService, WalletService>();
 builder.Services.AddDbContext<HomeMealTasteContext>(option => option.UseSqlServer
 (builder.Configuration.GetConnectionString("HomeMealTaste")));
 
