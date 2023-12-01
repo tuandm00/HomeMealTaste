@@ -61,10 +61,10 @@ namespace HomeMealTaste.Services.Implement
                             );
             return isValid ? date : null;
         }
-        private async Task<bool> SessionExistsInArea(int areaId, string sessionType)
+        private async Task<bool> SessionTypeExistsInAreaInDayNow(int areaId, string sessionType)
         {
-
-            var sessiontype = _context.Sessions.Where(x => x.AreaId == areaId).Select(x => x.SessionType).ToList();
+            var date = GetDateTimeTimeZoneVietNam();
+            var sessiontype = _context.Sessions.Where(x => x.AreaId == areaId && x.SessionType == sessionType && x.CreateDate == date).Select(x => x.SessionType).ToList();
             
             foreach(var type in sessiontype)
             {
@@ -80,11 +80,12 @@ namespace HomeMealTaste.Services.Implement
         {
             var entity = _mapper.Map<Session>(sessionRequest);
             var sessionTypeLower = entity.SessionType.ToLower();
+
             var areaId = _context.Sessions.Where(x => x.AreaId == entity.AreaId).Select(x => x.AreaId).FirstOrDefault();
             if (areaId != null)
             {
 
-                if (await SessionExistsInArea((int)areaId, sessionTypeLower))
+                if (await SessionTypeExistsInAreaInDayNow((int)areaId, sessionTypeLower))
                 {
                     if (string.Equals(sessionTypeLower, "lunch", StringComparison.OrdinalIgnoreCase))
                     {
