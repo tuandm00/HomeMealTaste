@@ -260,7 +260,7 @@ namespace HomeMealTaste.Services.Implement
                 {
                     OrderId = x.OrderId,
                     Time = ((DateTime)x.Time).ToString("HH:mm"),
-                    Date = GetDateTimeTimeZoneVietNam().ToString(),
+                    Date = GetDateTimeTimeZoneVietNam().ToString("dd-MM-yyyy"),
                     Customer = new CustomerDto
                     {
                         CustomerId = x.Customer.CustomerId,
@@ -278,7 +278,7 @@ namespace HomeMealTaste.Services.Implement
                             Name = x.MealSession.Meal.Name,
                             Image = x.MealSession.Meal.Image,
                             KitchenId = x.MealSession.Meal.KitchenId,
-                            CreateDate = x.MealSession.Meal.CreateDate.ToString(),
+                            CreateDate = ((DateTime)x.MealSession.Meal.CreateDate).ToString("dd-MM-yyyy"),
                             Description = x.MealSession.Meal.Description
                         },
                         SessionDto = new SessionDto

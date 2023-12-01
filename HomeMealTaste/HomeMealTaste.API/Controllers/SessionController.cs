@@ -64,15 +64,15 @@ namespace HomeMealTaste.Controllers
             return Ok(result);
         }
         [HttpGet("get-all-session-by-area-id")]
-        public async Task<IActionResult> GetAllSessionByAreaId(int areaid)
+        public async Task<IActionResult> GetAllSessionByAreaIdAndInDay(int areaid)
         {
-            var result = await _sessionService.GetAllSessionByAreaId(areaid);
+            var result = await _sessionService.GetAllSessionByAreaIdAndInDay(areaid);
             return Ok(result);
         }
         [HttpGet("get-all-session-by-area-id-with-status-true")]
-        public async Task<IActionResult> GetAllSessionByAreaIdWithStatusTrue(int areaid)
+        public async Task<IActionResult> GetAllSessionByAreaIdWithStatusTrueAndInDay(int areaid)
         {
-            var result = await _sessionService.GetAllSessionByAreaIdWithStatusTrue(areaid);
+            var result = await _sessionService.GetAllSessionByAreaIdWithStatusTrueAndInDay(areaid);
             return Ok(result);
         }
 

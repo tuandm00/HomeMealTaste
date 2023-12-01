@@ -80,7 +80,6 @@ namespace HomeMealTaste.Services.Implement
         {
             var entity = _mapper.Map<Session>(sessionRequest);
             var sessionTypeLower = entity.SessionType.ToLower();
-            //var areaId = (int)entity.AreaId;
             var areaId = _context.Sessions.Where(x => x.AreaId == entity.AreaId).Select(x => x.AreaId).FirstOrDefault();
             if (areaId != null)
             {
@@ -238,9 +237,10 @@ namespace HomeMealTaste.Services.Implement
             return mapped;
         }
 
-        public Task<List<GetAllSessionByAreaIdResponseModel>> GetAllSessionByAreaId(int areaid)
+        public Task<List<GetAllSessionByAreaIdResponseModel>> GetAllSessionByAreaIdAndInDay(int areaid)
         {
-            var result = _context.Sessions.Where(x => x.AreaId == areaid).Select(x => new GetAllSessionByAreaIdResponseModel
+            var dateNow = GetDateTimeTimeZoneVietNam();
+            var result = _context.Sessions.Where(x => x.AreaId == areaid && x.CreateDate == dateNow).Select(x => new GetAllSessionByAreaIdResponseModel
             {
                 SessionId = x.SessionId,
                 CreateDate = ((DateTime)x.CreateDate).ToString("dd-MM-yyyy"),
@@ -262,9 +262,11 @@ namespace HomeMealTaste.Services.Implement
             return Task.FromResult(mappedResults);
         }
         
-        public Task<List<GetAllSessionByAreaIdResponseModel>> GetAllSessionByAreaIdWithStatusTrue(int areaid)
+        public Task<List<GetAllSessionByAreaIdResponseModel>> GetAllSessionByAreaIdWithStatusTrueAndInDay(int areaid)
         {
-            var result = _context.Sessions.Where(x => x.AreaId == areaid && x.Status == true).Select(x => new GetAllSessionByAreaIdResponseModel
+            var dateNow = GetDateTimeTimeZoneVietNam();
+
+            var result = _context.Sessions.Where(x => x.AreaId == areaid && x.Status == true && x.CreateDate == dateNow).Select(x => new GetAllSessionByAreaIdResponseModel
             {
                 SessionId = x.SessionId,
                 CreateDate = ((DateTime)x.CreateDate).ToString("dd-MM-yyyy"),
