@@ -11,7 +11,6 @@ namespace HomeMealTaste.Data.ResponseModel
     public class GetOrderByKitchenIdResponseModel
     {
         public int OrderId { get; set; }
-        public string? Date { get; set; }
         public CustomerDto? Customer { get; set; }
         public string? Status { get; set; }
         public MealSessionDto? MealSession { get; set; }

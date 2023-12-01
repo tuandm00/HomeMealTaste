@@ -259,8 +259,7 @@ namespace HomeMealTaste.Services.Implement
                 .Select(x => new GetOrderByKitchenIdResponseModel
                 {
                     OrderId = x.OrderId,
-                    Time = ((DateTime)x.Time).ToString("HH:mm"),
-                    Date = GetDateTimeTimeZoneVietNam().ToString("dd-MM-yyyy"),
+                    Time = ((DateTime)x.Time).ToString("dd-MM-yyyy HH:mm"),
                     Customer = new CustomerDto
                     {
                         CustomerId = x.Customer.CustomerId,
@@ -489,74 +488,24 @@ namespace HomeMealTaste.Services.Implement
             return mapped;
         }
 
-        public async Task<RefundMoneyToWalletByOrderIdResponseModel> RefundMoneyToCustomer(RefundMoneyToWalletByOrderIdRequestModel refundRequest)
-        {
-            using Microsoft.EntityFrameworkCore.Storage.IDbContextTransaction? transaction = _context.Database.BeginTransaction();
-            var entity = _mapper.Map<Order>(refundRequest);
-            var orderid = _context.Orders.Where(x => x.OrderId == entity.OrderId).FirstOrDefault();
-            if (orderid != null && orderid.Status.Equals("PAID"))
-            {
-                orderid.Status = "CANCELLED";
-                _context.Orders.Update(orderid);
-                _context.SaveChanges();
-            }
+        //public async Task<RefundMoneyToWalletByOrderIdResponseModel> RefundMoneyToCustomer(RefundMoneyToWalletByOrderIdRequestModel refundRequest)
+        //{
+        //    using Microsoft.EntityFrameworkCore.Storage.IDbContextTransaction? transaction = _context.Database.BeginTransaction();
+        //    var entity = _mapper.Map<Transaction>(refundRequest);
+        //    var orderIdRequst = _context.Transactions.Where(x => x.OrderId == refundRequest.OrderId).ToList();
+        //    if (orderIdRequst == null)
+        //    {
+        //        throw new Exception("Can not find Order!");
+        //    }
 
-            var totalPriceOfOrder = orderid.TotalPrice;
-            var customerIdOfOrder = orderid.CustomerId;
-            var userId = _context.Customers.Where(x => x.CustomerId == customerIdOfOrder).Select(x => x.UserId).FirstOrDefault();
-            var walletOfCustomer = _context.Wallets.Where(x => x.UserId == userId).FirstOrDefault();
-            var balanceExisted = walletOfCustomer.Balance;
-            var newBalanceForCustomer = balanceExisted + ((totalPriceOfOrder * 90) / 100);
+        //    //refund money to customer
+        //    foreach(var check in orderIdRequst)
+        //    {
+        //        //var findUserIdOFCustomer = _context.Users.Where(x => x.UserId == );
+        //    }
+        //    transaction.Commit();
 
-            // customer receive 90% money back
-            if (walletOfCustomer != null)
-            {
-                walletOfCustomer.Balance = newBalanceForCustomer;
-                _context.Wallets.Update(walletOfCustomer);
-            }
-
-            // admin keep 10% totalPrice
-            var admin = _context.Users.Where(x => x.RoleId == 1).FirstOrDefault();
-            if (admin != null)
-            {
-                var newBalanceForAdmin = ((totalPriceOfOrder * 10) / 100);
-
-                var adminWallet = _context.Wallets.FirstOrDefault(w => w.UserId == admin.UserId);
-
-                if (adminWallet != null)
-                {
-                    adminWallet.Balance += (int?)newBalanceForAdmin;
-                    _context.Wallets.Update(adminWallet);
-                }
-            }
-            // back a remainquantity
-            var remainquantityInMealSession = _context.MealSessions
-                .Where(x => x.MealSessionId == orderid.MealSessionId)
-                .Select(x => x.RemainQuantity).FirstOrDefault();
-            if (remainquantityInMealSession != null)
-            {
-                var newRemainQuantity = remainquantityInMealSession + orderid.Quantity;
-                var mealSession = _context.MealSessions.FirstOrDefault(x => x.MealSessionId == orderid.MealSessionId);
-                if (mealSession != null)
-                {
-                    mealSession.RemainQuantity = newRemainQuantity;
-                    _context.MealSessions.Update(mealSession);
-                }
-            }
-            // minus money of kitchen in wallet as 90% totalPrice
-            var kitchenid = _context.MealSessions.Where(x => x.MealSessionId == orderid.MealSessionId).Select(x => x.KitchenId).FirstOrDefault();
-            var userIdOfKitchen = _context.Kitchens.Where(x => x.KitchenId == kitchenid).Select(x => x.UserId).FirstOrDefault();
-            var kitchenWallet = _context.Wallets.Where(x => x.UserId == userIdOfKitchen).FirstOrDefault();
-            if (kitchenWallet != null)
-            {
-                kitchenWallet.Balance -= ((totalPriceOfOrder * 90) / 100);
-                _context.Wallets.Update(kitchenWallet);
-            }
-            _context.SaveChanges();
-            transaction.Commit();
-            var mapped = _mapper.Map<RefundMoneyToWalletByOrderIdResponseModel>(orderid);
-            return mapped;
-        }
+        //}
 
         public async Task<ChangeStatusOrderToCompletedResponseModel> ChangeStatusOrderToCompleted(int orderid)
         {
