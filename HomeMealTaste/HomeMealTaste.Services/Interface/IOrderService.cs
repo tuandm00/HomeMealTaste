@@ -11,7 +11,7 @@ namespace HomeMealTaste.Services.Interface
         Task<List<OrderResponseModel>> GetAllOrder();
         Task<List<GetOrderByKitchenIdResponseModel>> GetOrderByKitchenId(int kitchenid);
         Task<CreateOrderResponseModel> CreateOrder(CreateOrderRequestModel createOrderRequest);
-        Task<RefundMoneyToWalletByOrderIdResponseModel> RefundMoneyToCustomer(RefundMoneyToWalletByOrderIdRequestModel refundRequest);
+        //Task<RefundMoneyToWalletByOrderIdResponseModel> RefundMoneyToCustomer(RefundMoneyToWalletByOrderIdRequestModel refundRequest);
         Task<ChangeStatusOrderToCompletedResponseModel> ChangeStatusOrderToCompleted(int orderid);
         Task<int> TotalOrderInSystem();
 
