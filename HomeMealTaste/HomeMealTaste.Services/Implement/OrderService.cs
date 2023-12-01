@@ -323,9 +323,22 @@ namespace HomeMealTaste.Services.Implement
         {
             using Microsoft.EntityFrameworkCore.Storage.IDbContextTransaction? transaction = _context.Database.BeginTransaction();
             var entity = _mapper.Map<Order>(createOrderRequest);
+            var mealSessionIdInOrder = _context.Orders.Select(x => x.MealSessionId).ToList();
+            foreach(var id in mealSessionIdInOrder)
+            {
+                if(entity.MealSessionId != id)
+                {
+                    var sessionCheck1 = _context.MealSessions.Where(x => x.MealSessionId == entity.MealSessionId).Select(x => x.SessionId).FirstOrDefault();
+                    var sessionCheck2 = _context.MealSessions.Where(x => x.MealSessionId == id).Select(x => x.SessionId).FirstOrDefault();
+                    if (sessionCheck1 == sessionCheck2)
+                    {
+                        throw new Exception("Can Not Order In Same Session");
+                    }
+                }
+            }
             var customerid = _context.Customers.Where(customerid => customerid.UserId == entity.CustomerId).FirstOrDefault();
             var mealsessionid = _context.MealSessions
-                .Where(mealsession => mealsession.MealSessionId == entity.MealSessionId)
+                .Where(mealsession => mealsession.MealSessionId == entity.MealSessionId && mealsession.Status.Equals("APPROVED"))
                 .Include(mealsession => mealsession.Meal)
                     .ThenInclude(meal => meal.MealDishes)
                     .ThenInclude(mealDish => mealDish.Dish)
@@ -336,21 +349,29 @@ namespace HomeMealTaste.Services.Implement
                 .ThenInclude(customer => customer.Customers)
                 .Where(x => x.UserId == x.User.UserId).FirstOrDefault();
 
+            if(mealsessionid == null)
+            {
+                throw new Exception("Session is not start");
+            }
+            if(mealsessionid.RemainQuantity == 0)
+            {
+                throw new Exception("No meal can order because the quantity is over");
+            }
             var price = mealsessionid.Price;
             var remainquantity = mealsessionid.RemainQuantity;
             mealsessionid.RemainQuantity = remainquantity - createOrderRequest.Quantity;
             var totalprice = price * createOrderRequest.Quantity;
-            //add order to table order
-            var createOrder = new CreateOrderRequestModel
-            {
+            //check mealsessionid then add order to table order
+                var createOrder = new CreateOrderRequestModel
+                {
 
-                CustomerId = entity.CustomerId,
-                TotalPrice = (int?)totalprice,
-                Time = GetDateTimeTimeZoneVietNam(),
-                Status = "PAID",
-                MealSessionId = mealsessionid.MealSessionId,
-                Quantity = createOrderRequest.Quantity,
-            };
+                    CustomerId = entity.CustomerId,
+                    TotalPrice = (int?)totalprice,
+                    Time = GetDateTimeTimeZoneVietNam(),
+                    Status = "PAID",
+                    MealSessionId = mealsessionid.MealSessionId,
+                    Quantity = createOrderRequest.Quantity,
+                };
 
             var customer = _context.Customers.Where(z => z.CustomerId == createOrder.CustomerId).FirstOrDefault();
             var user = _context.Users.Where(x => x.UserId == customer.UserId).FirstOrDefault();
@@ -359,10 +380,14 @@ namespace HomeMealTaste.Services.Implement
             {
                 var afterBalanceCustomer = (int?)(walletCustomer.Balance - totalprice);
 
-                if (walletCustomer != null)
+                if (afterBalanceCustomer >= 0)
                 {
                     walletCustomer.Balance = afterBalanceCustomer;
                     _context.Wallets.Update(walletCustomer);
+                }
+                else
+                {
+                    throw new Exception("YOUR BALANCE IS OUT OF AMOUNT");
                 }
             }
             // save to admin wallet take 10%
@@ -383,7 +408,7 @@ namespace HomeMealTaste.Services.Implement
                 
             }
 
-            //then transfer price after 10 % to kitchen
+            //then transfer price after 10 % of admin to kitchen
             var kitchen = _context.MealSessions
                 .Where(x => x.MealSessionId == entity.MealSessionId)
                 .Include(x => x.Kitchen)
