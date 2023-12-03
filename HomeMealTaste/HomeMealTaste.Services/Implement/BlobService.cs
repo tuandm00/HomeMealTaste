@@ -31,27 +31,5 @@ namespace HomeMealTaste.Services.Implement
 
             return blobClient.Uri.AbsoluteUri;
         }
-
-        public async Task<string> UploadQuestImgAndReturnImgPathAsync111(string imageUrl, string containerName)
-        {
-            if (imageUrl == null) return null!;
-
-            //byte[] imageBytes;
-            //using (var httpClient = new HttpClient())
-            //{
-            //    imageBytes = await httpClient.GetByteArrayAsync(imageUrl);
-            //}
-            byte[] imageBytes = File.ReadAllBytes(imageUrl);
-            string uniqueBlobName = $"{Guid.NewGuid()}_image.png";
-            var containerClient = _blobServiceClient.GetBlobContainerClient(containerName);
-            var blobClient = containerClient.GetBlobClient(uniqueBlobName);
-
-            using (var memoryStream = new MemoryStream(imageBytes))
-            {
-                await blobClient.UploadAsync(memoryStream, true);
-            }
-
-            return blobClient.Uri.AbsoluteUri;
-        }
     }
 }
