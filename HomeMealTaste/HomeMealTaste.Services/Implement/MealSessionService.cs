@@ -86,17 +86,17 @@ namespace HomeMealTaste.Services.Implement
                 Name = result.Meal.Name,
                 Image = result.Meal.Image,
                 KitchenId = result.Meal.KitchenId,
-                CreateDate = result.Meal.CreateDate.ToString(),
+                CreateDate = ((DateTime)result.Meal.CreateDate).ToString("dd-MM-yyyy"),
                 Description = result.Meal.Description,
             };
             mapped.SessionDtoForMealSession = new SessionDtoForMealSession
             {
                 SessionId = result.Session.SessionId,
-                CreateDate = result.Session.CreateDate.ToString(),
-                StartTime = result.Session.StartTime.ToString(),
-                EndTime = result.Session.EndTime.ToString(),
-                EndDate = result.Session.EndDate.ToString(),
-                UserId = result.Session.UserId,
+                CreateDate = ((DateTime)result.Session.CreateDate).ToString("dd-MM-yyyy"),
+                StartTime = ((DateTime)result.Session.StartTime).ToString("HH:mm"),
+                EndTime = ((DateTime)result.Session.EndTime).ToString("HH:mm"),
+                EndDate = ((DateTime)result.Session.EndDate).ToString("dd-MM-yyyy"),
+                UserId = result.Session?.UserId,
                 Status = result.Session.Status,
                 SessionType = result.Session.SessionType,
             };
@@ -128,16 +128,16 @@ namespace HomeMealTaste.Services.Implement
                     Name = mealsession.Meal.Name,
                     Image = mealsession.Meal.Image,
                     KitchenId = mealsession.KitchenId,
-                    CreateDate = mealsession.CreateDate.ToString(),
+                    CreateDate = ((DateTime)mealsession.CreateDate).ToString("dd-MM-yyyy"),
                     Description = mealsession.Meal?.Description,
                 };
                 response.SessionDtoForMealSession = new SessionDtoForMealSession
                 {
                     SessionId = mealsession.Session.SessionId,
-                    CreateDate = mealsession.Session.CreateDate.ToString(),
-                    StartTime = mealsession.Session.StartTime.ToString(),
-                    EndTime = mealsession.Session.EndTime.ToString(),
-                    EndDate = mealsession.Session.EndDate.ToString(),
+                    CreateDate = ((DateTime)mealsession.Session.CreateDate).ToString("dd-MM-yyyy"),
+                    StartTime = ((DateTime)mealsession.Session.StartTime).ToString("HH:mm"),
+                    EndTime = ((DateTime)mealsession.Session.EndTime).ToString("HH:mm"),
+                    EndDate = ((DateTime)mealsession.Session.EndDate).ToString("dd-MM-yyyy"),
                     UserId = mealsession.Session?.UserId,
                     Status = mealsession.Session.Status,
                     SessionType = mealsession.Session.SessionType,
@@ -159,7 +159,7 @@ namespace HomeMealTaste.Services.Implement
                 response.Quantity = mealsession.Quantity;
                 response.RemainQuantity = mealsession.RemainQuantity;
                 response.Status = mealsession.Status;
-                response.CreateDate = mealsession.CreateDate.ToString();
+                response.CreateDate = ((DateTime)mealsession.CreateDate).ToString("dd-MM-yyyy");
 
                 return response;
             }).ToList();
@@ -186,16 +186,16 @@ namespace HomeMealTaste.Services.Implement
                     Name = mealsession.Meal.Name,
                     Image = mealsession.Meal.Image,
                     KitchenId = mealsession.KitchenId,
-                    CreateDate = mealsession.CreateDate.ToString(),
+                    CreateDate = ((DateTime)mealsession.CreateDate).ToString("dd-MM-yyyy"),
                     Description = mealsession.Meal?.Description,
                 };
                 response.SessionDtoForMealSession = new SessionDtoForMealSession
                 {
                     SessionId = mealsession.Session.SessionId,
-                    CreateDate = mealsession.Session.CreateDate.ToString(),
-                    StartTime = mealsession.Session.StartTime.ToString(),
-                    EndTime = mealsession.Session.EndTime.ToString(),
-                    EndDate = mealsession.Session.EndDate.ToString(),
+                    CreateDate = ((DateTime)mealsession.Session.CreateDate).ToString("dd-MM-yyyy"),
+                    StartTime = ((DateTime)mealsession.Session.StartTime).ToString("HH:mm"),
+                    EndTime = ((DateTime)mealsession.Session.EndTime).ToString("HH:mm"),
+                    EndDate = ((DateTime)mealsession.Session.EndDate).ToString("dd-MM-yyyy"),
                     UserId = mealsession.Session?.UserId,
                     Status = mealsession.Session.Status,
                     SessionType = mealsession.Session.SessionType,
@@ -213,7 +213,7 @@ namespace HomeMealTaste.Services.Implement
                 response.Quantity = mealsession.Quantity;
                 response.RemainQuantity = mealsession.RemainQuantity;
                 response.Status = mealsession.Status;
-                response.CreateDate = mealsession.CreateDate.ToString();
+                response.CreateDate = ((DateTime)mealsession.CreateDate).ToString("dd-MM-yyyy");
 
                 return response;
             }).ToList();
@@ -237,16 +237,16 @@ namespace HomeMealTaste.Services.Implement
                 Name = result.Meal.Name,
                 Image = result.Meal.Image,
                 KitchenId = result.KitchenId,
-                CreateDate = result.CreateDate.ToString(),
+                CreateDate = ((DateTime)result.CreateDate).ToString("dd-MM-yyyy"),
                 Description = result.Meal?.Description,
             };
             mapped.SessionDtoForMealSession = new SessionDtoForMealSession
             {
                 SessionId = result.Session.SessionId,
-                CreateDate = result.Session.CreateDate.ToString(),
-                StartTime = result.Session.StartTime.ToString(),
-                EndTime = result.Session.EndTime.ToString(),
-                EndDate = result.Session.EndDate.ToString(),
+                CreateDate = ((DateTime)result.Session.CreateDate).ToString("dd-MM-yyyy"),
+                StartTime = ((DateTime)result.Session.StartTime).ToString("HH:mm"),
+                EndTime = ((DateTime)result.Session.EndTime).ToString("HH:mm"),
+                EndDate = ((DateTime)result.Session.EndDate).ToString("dd-MM-yyyy"),
                 UserId = result.Session?.UserId,
                 Status = result.Session.Status,
                 SessionType = result.Session.SessionType,
@@ -273,7 +273,7 @@ namespace HomeMealTaste.Services.Implement
             mapped.Quantity = result.Quantity;
             mapped.RemainQuantity = result.RemainQuantity;
             mapped.Status = result.Status;
-            mapped.CreateDate = result.CreateDate.ToString();
+            mapped.CreateDate = ((DateTime)result.CreateDate).ToString("dd-MM-yyyy");
 
             return mapped;
 
@@ -373,16 +373,16 @@ namespace HomeMealTaste.Services.Implement
                     Name = mealsession.Meal.Name,
                     Image = mealsession.Meal.Image,
                     KitchenId = mealsession.KitchenId,
-                    CreateDate = mealsession.CreateDate.ToString(),
+                    CreateDate = ((DateTime)mealsession.CreateDate).ToString("dd-MM-yyyy"),
                     Description = mealsession.Meal?.Description,
                 };
                 response.SessionDtoForMealSession = new SessionDtoForMealSession
                 {
                     SessionId = mealsession.Session.SessionId,
-                    CreateDate = mealsession.Session.CreateDate.ToString(),
-                    StartTime = mealsession.Session.StartTime.ToString(),
-                    EndTime = mealsession.Session.EndTime.ToString(),
-                    EndDate = mealsession.Session.EndDate.ToString(),
+                    CreateDate = ((DateTime)mealsession.Session.CreateDate).ToString("dd-MM-yyyy"),
+                    StartTime = ((DateTime)mealsession.Session.StartTime).ToString("HH:mm"),
+                    EndTime = ((DateTime)mealsession.Session.EndTime).ToString("HH:mm"),
+                    EndDate = ((DateTime)mealsession.Session.EndDate).ToString("dd-MM-yyyy"),
                     UserId = mealsession.Session?.UserId,
                     Status = mealsession.Session.Status,
                     SessionType = mealsession.Session.SessionType,
@@ -410,7 +410,7 @@ namespace HomeMealTaste.Services.Implement
                 response.Quantity = mealsession.Quantity;
                 response.RemainQuantity = mealsession.RemainQuantity;
                 response.Status = mealsession.Status;
-                response.CreateDate = mealsession.CreateDate.ToString();
+                response.CreateDate = ((DateTime)mealsession.CreateDate).ToString("dd-MM-yyyy");
 
                 return response;
             }).ToList();
@@ -436,16 +436,16 @@ namespace HomeMealTaste.Services.Implement
                     Name = mealsession.Meal.Name,
                     Image = mealsession.Meal.Image,
                     KitchenId = mealsession.KitchenId,
-                    CreateDate = mealsession.CreateDate.ToString(),
+                    CreateDate = ((DateTime)mealsession.CreateDate).ToString("dd-MM-yyyy"),
                     Description = mealsession.Meal?.Description,
                 };
                 response.SessionDtoForMealSession = new SessionDtoForMealSession
                 {
                     SessionId = mealsession.Session.SessionId,
-                    CreateDate = mealsession.Session.CreateDate.ToString(),
-                    StartTime = mealsession.Session.StartTime.ToString(),
-                    EndTime = mealsession.Session.EndTime.ToString(),
-                    EndDate = mealsession.Session.EndDate.ToString(),
+                    CreateDate = ((DateTime)mealsession.Session.CreateDate).ToString("dd-MM-yyyy"),
+                    StartTime = ((DateTime)mealsession.Session.StartTime).ToString("HH:mm"),
+                    EndTime = ((DateTime)mealsession.Session.EndTime).ToString("HH:mm"),
+                    EndDate = ((DateTime)mealsession.Session.EndDate).ToString("dd-MM-yyyy"),
                     UserId = mealsession.Session?.UserId,
                     Status = mealsession.Session.Status,
                     SessionType = mealsession.Session.SessionType,
@@ -473,7 +473,7 @@ namespace HomeMealTaste.Services.Implement
                 response.Quantity = mealsession.Quantity;
                 response.RemainQuantity = mealsession.RemainQuantity;
                 response.Status = mealsession.Status;
-                response.CreateDate = mealsession.CreateDate.ToString();
+                response.CreateDate = ((DateTime)mealsession.CreateDate).ToString("dd-MM-yyyy");
 
                 return response;
             }).ToList();
@@ -500,16 +500,16 @@ namespace HomeMealTaste.Services.Implement
                     Name = mealsession.Meal.Name,
                     Image = mealsession.Meal.Image,
                     KitchenId = mealsession.KitchenId,
-                    CreateDate = mealsession.CreateDate.ToString(),
+                    CreateDate = ((DateTime)mealsession.CreateDate).ToString("dd-MM-yyyy"),
                     Description = mealsession.Meal?.Description,
                 };
                 response.SessionDtoForMealSession = new SessionDtoForMealSession
                 {
                     SessionId = mealsession.Session.SessionId,
-                    CreateDate = mealsession.Session.CreateDate.ToString(),
-                    StartTime = mealsession.Session.StartTime.ToString(),
-                    EndTime = mealsession.Session.EndTime.ToString(),
-                    EndDate = mealsession.Session.EndDate.ToString(),
+                    CreateDate = ((DateTime)mealsession.Session.CreateDate).ToString("dd-MM-yyyy"),
+                    StartTime = ((DateTime)mealsession.Session.StartTime).ToString("HH:mm"),
+                    EndTime = ((DateTime)mealsession.Session.EndTime).ToString("HH:mm"),
+                    EndDate = ((DateTime)mealsession.Session.EndDate).ToString("dd-MM-yyyy"),
                     UserId = mealsession.Session?.UserId,
                     Status = mealsession.Session.Status,
                     SessionType = mealsession.Session.SessionType,
@@ -531,7 +531,7 @@ namespace HomeMealTaste.Services.Implement
                 response.Quantity = mealsession.Quantity;
                 response.RemainQuantity = mealsession.RemainQuantity;
                 response.Status = mealsession.Status;
-                response.CreateDate = mealsession.CreateDate.ToString();
+                response.CreateDate = ((DateTime)mealsession.CreateDate).ToString("dd-MM-yyyy");
 
                 return response;
             }).ToList();

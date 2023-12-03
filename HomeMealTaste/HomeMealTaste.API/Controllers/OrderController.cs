@@ -57,19 +57,24 @@ namespace HomeMealTaste.API.Controllers
             var result = _orderService.CreateOrder(createOrderRequest);
             return Ok(result);
         }
-        [HttpPost("refund-money-when-order-cancel")]
-        public async Task<IActionResult> RefundMoneyToCustomer(RefundMoneyToWalletByOrderIdRequestModel refundRequest)
-        {
-            var result = await _orderService.RefundMoneyToCustomer(refundRequest);
-            return Ok(result);
-        }
+        //[HttpPost("refund-money-when-order-cancel")]
+        //public async Task<IActionResult> RefundMoneyToCustomer(RefundMoneyToWalletByOrderIdRequestModel refundRequest)
+        //{
+        //    var result = await _orderService.RefundMoneyToCustomer(refundRequest);
+        //    return Ok(result);
+        //}
         [HttpPatch("change-status-order-to-COMPLETED")]
         public async Task<IActionResult> ChangeStatusOrderToCompleted(int orderid)
         {
             var result = await _orderService.ChangeStatusOrderToCompleted(orderid);
             return Ok(result);
         }
-
+        [HttpGet("count-order-in-system")]
+        public async Task<IActionResult> TotalOrderInSystem()
+        {
+            var result = await _orderService.TotalOrderInSystem();
+            return Ok(result);
+        }
 
     }
 }

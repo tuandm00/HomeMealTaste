@@ -49,10 +49,10 @@ namespace HomeMealTaste.Services.Implement
         {
 
             var entity = _mapper.Map<Dish>(dishRequest);
-            var imagePath = await _blobService.UploadQuestImgAndReturnImgPathAsync(dishRequest.Image, "dish-image");
+            var imagePath = await _blobService.UploadImage(dishRequest.Image);
 
 
-            entity.Image = imagePath;
+            entity.Image = imagePath.ToString();
 
             var result = await _dishRepository.Create(entity, true);
 

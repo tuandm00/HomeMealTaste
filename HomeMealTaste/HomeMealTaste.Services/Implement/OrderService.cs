@@ -259,8 +259,7 @@ namespace HomeMealTaste.Services.Implement
                 .Select(x => new GetOrderByKitchenIdResponseModel
                 {
                     OrderId = x.OrderId,
-                    Time = ((DateTime)x.Time).ToString("HH:mm"),
-                    Date = GetDateTimeTimeZoneVietNam().ToString(),
+                    Time = ((DateTime)x.Time).ToString("dd-MM-yyyy HH:mm"),
                     Customer = new CustomerDto
                     {
                         CustomerId = x.Customer.CustomerId,
@@ -278,7 +277,7 @@ namespace HomeMealTaste.Services.Implement
                             Name = x.MealSession.Meal.Name,
                             Image = x.MealSession.Meal.Image,
                             KitchenId = x.MealSession.Meal.KitchenId,
-                            CreateDate = x.MealSession.Meal.CreateDate.ToString(),
+                            CreateDate = ((DateTime)x.MealSession.Meal.CreateDate).ToString("dd-MM-yyyy"),
                             Description = x.MealSession.Meal.Description
                         },
                         SessionDto = new SessionDto
@@ -323,9 +322,22 @@ namespace HomeMealTaste.Services.Implement
         {
             using Microsoft.EntityFrameworkCore.Storage.IDbContextTransaction? transaction = _context.Database.BeginTransaction();
             var entity = _mapper.Map<Order>(createOrderRequest);
+            var mealSessionIdInOrder = _context.Orders.Select(x => x.MealSessionId).ToList();
+            foreach(var id in mealSessionIdInOrder)
+            {
+                if(entity.MealSessionId != id)
+                {
+                    var sessionCheck1 = _context.MealSessions.Where(x => x.MealSessionId == entity.MealSessionId).Select(x => x.SessionId).FirstOrDefault();
+                    var sessionCheck2 = _context.MealSessions.Where(x => x.MealSessionId == id).Select(x => x.SessionId).FirstOrDefault();
+                    if (sessionCheck1 == sessionCheck2)
+                    {
+                        throw new Exception("Can Not Order In Same Session");
+                    }
+                }
+            }
             var customerid = _context.Customers.Where(customerid => customerid.UserId == entity.CustomerId).FirstOrDefault();
             var mealsessionid = _context.MealSessions
-                .Where(mealsession => mealsession.MealSessionId == entity.MealSessionId)
+                .Where(mealsession => mealsession.MealSessionId == entity.MealSessionId && mealsession.Status.Equals("APPROVED"))
                 .Include(mealsession => mealsession.Meal)
                     .ThenInclude(meal => meal.MealDishes)
                     .ThenInclude(mealDish => mealDish.Dish)
@@ -336,21 +348,29 @@ namespace HomeMealTaste.Services.Implement
                 .ThenInclude(customer => customer.Customers)
                 .Where(x => x.UserId == x.User.UserId).FirstOrDefault();
 
+            if(mealsessionid == null)
+            {
+                throw new Exception("Session is not start");
+            }
+            if(mealsessionid.RemainQuantity == 0)
+            {
+                throw new Exception("No meal can order because the quantity is over");
+            }
             var price = mealsessionid.Price;
             var remainquantity = mealsessionid.RemainQuantity;
             mealsessionid.RemainQuantity = remainquantity - createOrderRequest.Quantity;
             var totalprice = price * createOrderRequest.Quantity;
-            //add order to table order
-            var createOrder = new CreateOrderRequestModel
-            {
+            //check mealsessionid then add order to table order
+                var createOrder = new CreateOrderRequestModel
+                {
 
-                CustomerId = entity.CustomerId,
-                TotalPrice = (int?)totalprice,
-                Time = GetDateTimeTimeZoneVietNam(),
-                Status = "PAID",
-                MealSessionId = mealsessionid.MealSessionId,
-                Quantity = createOrderRequest.Quantity,
-            };
+                    CustomerId = entity.CustomerId,
+                    TotalPrice = (int?)totalprice,
+                    Time = GetDateTimeTimeZoneVietNam(),
+                    Status = "PAID",
+                    MealSessionId = mealsessionid.MealSessionId,
+                    Quantity = createOrderRequest.Quantity,
+                };
 
             var customer = _context.Customers.Where(z => z.CustomerId == createOrder.CustomerId).FirstOrDefault();
             var user = _context.Users.Where(x => x.UserId == customer.UserId).FirstOrDefault();
@@ -359,18 +379,22 @@ namespace HomeMealTaste.Services.Implement
             {
                 var afterBalanceCustomer = (int?)(walletCustomer.Balance - totalprice);
 
-                if (walletCustomer != null)
+                if (afterBalanceCustomer >= 0)
                 {
                     walletCustomer.Balance = afterBalanceCustomer;
                     _context.Wallets.Update(walletCustomer);
                 }
+                else
+                {
+                    throw new Exception("YOUR BALANCE IS OUT OF AMOUNT");
+                }
             }
             // save to admin wallet take 10%
             var admin = _context.Users.Where(x => x.RoleId == 1).FirstOrDefault();
+            var priceToAdmin = (totalprice * 10) / 100;
+
             if (admin != null)
             {
-                var priceToAdmin = ((totalprice * 10) / 100);
-
                 // Check if the admin already has a wallet
                 var adminWallet = _context.Wallets.FirstOrDefault(w => w.UserId == admin.UserId);
 
@@ -380,46 +404,28 @@ namespace HomeMealTaste.Services.Implement
                     adminWallet.Balance += (int?)priceToAdmin;
                     _context.Wallets.Update(adminWallet);
                 }
-                else
-                {
-                    // Create a new wallet for the admin
-                    var newWalletAdmin = new Wallet
-                    {
-                        UserId = admin.UserId,
-                        Balance = (int?)priceToAdmin
-                    };
-                    _context.Wallets.Add(newWalletAdmin);
-                }
+                
             }
 
-            //then transfer price after 10 % to kitchen
+            //then transfer price after 10 % of admin to kitchen
             var kitchen = _context.MealSessions
                 .Where(x => x.MealSessionId == entity.MealSessionId)
                 .Include(x => x.Kitchen)
                 .AsNoTracking()
                 .FirstOrDefault();
+            var priceToChef = totalprice - priceToAdmin;
 
             if (kitchen != null)
             {
-                var priceToKitchen = totalprice - ((totalprice * 10) / 100);
                 var chefWallet = _context.Wallets.FirstOrDefault(w => w.UserId == kitchen.Kitchen.UserId);
 
                 if (chefWallet != null)
                 {
                     // Update the existing wallet
-                    chefWallet.Balance += (int?)priceToKitchen;
+                    chefWallet.Balance += (int?)priceToChef;
                     _context.Wallets.Update(chefWallet);
                 }
-                else
-                {
-                    // Create a new wallet for the chef
-                    var newWalletChef = new Wallet
-                    {
-                        UserId = kitchen.Kitchen.UserId,
-                        Balance = (int?)priceToKitchen
-                    };
-                    _context.Wallets.Add(newWalletChef);
-                }
+                
             }
 
             _context.MealSessions.Update(mealsessionid);
@@ -428,6 +434,38 @@ namespace HomeMealTaste.Services.Implement
             var orderEntity = _mapper.Map<Order>(createOrder);
             await _context.AddAsync(orderEntity);
             await _context.SaveChangesAsync();
+
+            // Save to transaction for admin
+            var transactionToAdmin = new Transaction
+            {
+                OrderId = orderEntity.OrderId,
+                WalletId = walletid.WalletId,
+                Date = createOrder.Time,
+                Amount = (decimal?)priceToAdmin,
+                Description = "DONE WITH REVENUE",
+                Status = "SUCCEED",
+                TransactionType = "RR",
+                UserId = admin.UserId,
+            };
+
+            _context.Transactions.Add(transactionToAdmin);
+
+            // Save to transaction for chef
+            var transactionToChef = new Transaction
+            {
+                OrderId = orderEntity.OrderId,
+                WalletId = walletid.WalletId,
+                Date = createOrder.Time,
+                Amount = (decimal?)priceToChef,
+                Description = "DONE WITH REVENUE",
+                Status = "SUCCEED",
+                TransactionType = "RR",
+                UserId = kitchen.Kitchen.UserId,
+            };
+
+            _context.Transactions.Add(transactionToChef);
+
+
             var useridwallet = _context.Wallets.Select(x => x.UserId).FirstOrDefault();
             //save to table transaction
             var transactionid = new Transaction
@@ -450,74 +488,24 @@ namespace HomeMealTaste.Services.Implement
             return mapped;
         }
 
-        public async Task<RefundMoneyToWalletByOrderIdResponseModel> RefundMoneyToCustomer(RefundMoneyToWalletByOrderIdRequestModel refundRequest)
-        {
-            using Microsoft.EntityFrameworkCore.Storage.IDbContextTransaction? transaction = _context.Database.BeginTransaction();
-            var entity = _mapper.Map<Order>(refundRequest);
-            var orderid = _context.Orders.Where(x => x.OrderId == entity.OrderId).FirstOrDefault();
-            if (orderid != null && orderid.Status.Equals("PAID"))
-            {
-                orderid.Status = "CANCELLED";
-                _context.Orders.Update(orderid);
-                _context.SaveChanges();
-            }
+        //public async Task<RefundMoneyToWalletByOrderIdResponseModel> RefundMoneyToCustomer(RefundMoneyToWalletByOrderIdRequestModel refundRequest)
+        //{
+        //    using Microsoft.EntityFrameworkCore.Storage.IDbContextTransaction? transaction = _context.Database.BeginTransaction();
+        //    var entity = _mapper.Map<Transaction>(refundRequest);
+        //    var orderIdRequst = _context.Transactions.Where(x => x.OrderId == refundRequest.OrderId).ToList();
+        //    if (orderIdRequst == null)
+        //    {
+        //        throw new Exception("Can not find Order!");
+        //    }
 
-            var totalPriceOfOrder = orderid.TotalPrice;
-            var customerIdOfOrder = orderid.CustomerId;
-            var userId = _context.Customers.Where(x => x.CustomerId == customerIdOfOrder).Select(x => x.UserId).FirstOrDefault();
-            var walletOfCustomer = _context.Wallets.Where(x => x.UserId == userId).FirstOrDefault();
-            var balanceExisted = walletOfCustomer.Balance;
-            var newBalanceForCustomer = balanceExisted + ((totalPriceOfOrder * 90) / 100);
+        //    //refund money to customer
+        //    foreach(var check in orderIdRequst)
+        //    {
+        //        //var findUserIdOFCustomer = _context.Users.Where(x => x.UserId == );
+        //    }
+        //    transaction.Commit();
 
-            // customer receive 90% money back
-            if (walletOfCustomer != null)
-            {
-                walletOfCustomer.Balance = newBalanceForCustomer;
-                _context.Wallets.Update(walletOfCustomer);
-            }
-
-            // admin keep 10% totalPrice
-            var admin = _context.Users.Where(x => x.RoleId == 1).FirstOrDefault();
-            if (admin != null)
-            {
-                var newBalanceForAdmin = ((totalPriceOfOrder * 10) / 100);
-
-                var adminWallet = _context.Wallets.FirstOrDefault(w => w.UserId == admin.UserId);
-
-                if (adminWallet != null)
-                {
-                    adminWallet.Balance += (int?)newBalanceForAdmin;
-                    _context.Wallets.Update(adminWallet);
-                }
-            }
-            // back a remainquantity
-            var remainquantityInMealSession = _context.MealSessions
-                .Where(x => x.MealSessionId == orderid.MealSessionId)
-                .Select(x => x.RemainQuantity).FirstOrDefault();
-            if (remainquantityInMealSession != null)
-            {
-                var newRemainQuantity = remainquantityInMealSession + orderid.Quantity;
-                var mealSession = _context.MealSessions.FirstOrDefault(x => x.MealSessionId == orderid.MealSessionId);
-                if (mealSession != null)
-                {
-                    mealSession.RemainQuantity = newRemainQuantity;
-                    _context.MealSessions.Update(mealSession);
-                }
-            }
-            // minus money of kitchen in wallet as 90% totalPrice
-            var kitchenid = _context.MealSessions.Where(x => x.MealSessionId == orderid.MealSessionId).Select(x => x.KitchenId).FirstOrDefault();
-            var userIdOfKitchen = _context.Kitchens.Where(x => x.KitchenId == kitchenid).Select(x => x.UserId).FirstOrDefault();
-            var kitchenWallet = _context.Wallets.Where(x => x.UserId == userIdOfKitchen).FirstOrDefault();
-            if (kitchenWallet != null)
-            {
-                kitchenWallet.Balance -= ((totalPriceOfOrder * 90) / 100);
-                _context.Wallets.Update(kitchenWallet);
-            }
-            _context.SaveChanges();
-            transaction.Commit();
-            var mapped = _mapper.Map<RefundMoneyToWalletByOrderIdResponseModel>(orderid);
-            return mapped;
-        }
+        //}
 
         public async Task<ChangeStatusOrderToCompletedResponseModel> ChangeStatusOrderToCompleted(int orderid)
         {
@@ -539,6 +527,13 @@ namespace HomeMealTaste.Services.Implement
                 };
             }
             return null;
+        }
+
+        public async Task<int> TotalOrderInSystem()
+        {
+
+            int orderCount = await _context.Orders.CountAsync();
+            return orderCount;
         }
     }
 }
