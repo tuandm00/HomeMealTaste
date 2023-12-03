@@ -39,7 +39,8 @@ namespace HomeMealTaste.Services.Implement
         {
             try
             {
-                byte[] imageBytes = Encoding.UTF8.GetBytes(imageData);
+                var file = File.ReadAllBytes(imageData);
+                byte[] imageBytes = Encoding.UTF8.GetBytes(file.ToString());
                 string blobName = "image_" + DateTime.Now.ToString("yyyyMMddHHmmssfff") + ".png";
 
                 BlobServiceClient blobServiceClient = new BlobServiceClient(connectionString);
