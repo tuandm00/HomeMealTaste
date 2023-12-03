@@ -355,13 +355,14 @@ namespace HomeMealTaste.Services.Implement
 
         }
 
-        public Task<List<MealSessionResponseModel>> GetAllMeallSessionBySessionId(int sessionid)
+        public Task<List<MealSessionResponseModel>> GetAllMeallSessionBySessionIdINDAY(int sessionid)
         {
+            var datenow = GetDateTimeTimeZoneVietNam();
             var result = _context.MealSessions
                 .Include(x => x.Meal)
                 .Include(x => x.Session).ThenInclude(x => x.Area).ThenInclude(x => x.District)
                 .Include(x => x.Kitchen)
-                .Where(x => x.SessionId == sessionid)
+                .Where(x => x.SessionId == sessionid && x.CreateDate == datenow)
                 .ToList();
             var mapped = result.Select(mealsession =>
             {
@@ -481,13 +482,14 @@ namespace HomeMealTaste.Services.Implement
             return Task.FromResult(mapped);
         }
 
-        public async Task<List<MealSessionResponseModel>> GetAllMeallSessionWithStatusAPPROVEDandREMAINQUANTITYhigherthan0()
+        public async Task<List<MealSessionResponseModel>> GetAllMeallSessionWithStatusAPPROVEDandREMAINQUANTITYhigherthan0InDay()
         {
+            var datenow = GetDateTimeTimeZoneVietNam();
             var result = await _context.MealSessions
         .Include(x => x.Meal)
         .Include(x => x.Session).ThenInclude(x => x.Area)
         .Include(x => x.Kitchen)
-        .Where(x => x.Status == "APPROVED" && x.RemainQuantity > 0)
+        .Where(x => x.Status == "APPROVED" && x.RemainQuantity > 0 && x.CreateDate == datenow)
         .ToListAsync();
 
             var mapped = result.Select(mealsession =>

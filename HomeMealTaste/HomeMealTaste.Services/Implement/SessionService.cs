@@ -238,10 +238,9 @@ namespace HomeMealTaste.Services.Implement
             return mapped;
         }
 
-        public Task<List<GetAllSessionByAreaIdResponseModel>> GetAllSessionByAreaIdAndInDay(int areaid)
+        public Task<List<GetAllSessionByAreaIdResponseModel>> GetAllSessionByAreaId(int areaid)
         {
-            var dateNow = GetDateTimeTimeZoneVietNam();
-            var result = _context.Sessions.Where(x => x.AreaId == areaid && x.CreateDate == dateNow).Select(x => new GetAllSessionByAreaIdResponseModel
+            var result = _context.Sessions.Where(x => x.AreaId == areaid).Select(x => new GetAllSessionByAreaIdResponseModel
             {
                 SessionId = x.SessionId,
                 CreateDate = ((DateTime)x.CreateDate).ToString("dd-MM-yyyy"),
@@ -263,11 +262,10 @@ namespace HomeMealTaste.Services.Implement
             return Task.FromResult(mappedResults);
         }
         
-        public Task<List<GetAllSessionByAreaIdResponseModel>> GetAllSessionByAreaIdWithStatusTrueAndInDay(int areaid)
+        public Task<List<GetAllSessionByAreaIdResponseModel>> GetAllSessionByAreaIdWithStatusTrue(int areaid)
         {
-            var dateNow = GetDateTimeTimeZoneVietNam();
 
-            var result = _context.Sessions.Where(x => x.AreaId == areaid && x.Status == true && x.CreateDate == dateNow).Select(x => new GetAllSessionByAreaIdResponseModel
+            var result = _context.Sessions.Where(x => x.AreaId == areaid && x.Status == true).Select(x => new GetAllSessionByAreaIdResponseModel
             {
                 SessionId = x.SessionId,
                 CreateDate = ((DateTime)x.CreateDate).ToString("dd-MM-yyyy"),
