@@ -323,9 +323,9 @@ namespace HomeMealTaste.Services.Implement
             using Microsoft.EntityFrameworkCore.Storage.IDbContextTransaction? transaction = _context.Database.BeginTransaction();
             var entity = _mapper.Map<Order>(createOrderRequest);
             var mealSessionIdInOrder = _context.Orders.Select(x => x.MealSessionId).ToList();
-            foreach(var id in mealSessionIdInOrder)
+            foreach (var id in mealSessionIdInOrder)
             {
-                if(entity.MealSessionId != id)
+                if (entity.MealSessionId != id)
                 {
                     var sessionCheck1 = _context.MealSessions.Where(x => x.MealSessionId == entity.MealSessionId).Select(x => x.SessionId).FirstOrDefault();
                     var sessionCheck2 = _context.MealSessions.Where(x => x.MealSessionId == id).Select(x => x.SessionId).FirstOrDefault();
@@ -348,11 +348,11 @@ namespace HomeMealTaste.Services.Implement
                 .ThenInclude(customer => customer.Customers)
                 .Where(x => x.UserId == x.User.UserId).FirstOrDefault();
 
-            if(mealsessionid == null)
+            if (mealsessionid == null)
             {
                 throw new Exception("Session is not start");
             }
-            if(mealsessionid.RemainQuantity == 0)
+            if (mealsessionid.RemainQuantity == 0)
             {
                 throw new Exception("No meal can order because the quantity is over");
             }
@@ -361,16 +361,16 @@ namespace HomeMealTaste.Services.Implement
             mealsessionid.RemainQuantity = remainquantity - createOrderRequest.Quantity;
             var totalprice = price * createOrderRequest.Quantity;
             //check mealsessionid then add order to table order
-                var createOrder = new CreateOrderRequestModel
-                {
+            var createOrder = new CreateOrderRequestModel
+            {
 
-                    CustomerId = entity.CustomerId,
-                    TotalPrice = (int?)totalprice,
-                    Time = GetDateTimeTimeZoneVietNam(),
-                    Status = "PAID",
-                    MealSessionId = mealsessionid.MealSessionId,
-                    Quantity = createOrderRequest.Quantity,
-                };
+                CustomerId = entity.CustomerId,
+                TotalPrice = (int?)totalprice,
+                Time = GetDateTimeTimeZoneVietNam(),
+                Status = "PAID",
+                MealSessionId = mealsessionid.MealSessionId,
+                Quantity = createOrderRequest.Quantity,
+            };
 
             var customer = _context.Customers.Where(z => z.CustomerId == createOrder.CustomerId).FirstOrDefault();
             var user = _context.Users.Where(x => x.UserId == customer.UserId).FirstOrDefault();
@@ -404,7 +404,7 @@ namespace HomeMealTaste.Services.Implement
                     adminWallet.Balance += (int?)priceToAdmin;
                     _context.Wallets.Update(adminWallet);
                 }
-                
+
             }
 
             //then transfer price after 10 % of admin to kitchen
@@ -425,7 +425,7 @@ namespace HomeMealTaste.Services.Implement
                     chefWallet.Balance += (int?)priceToChef;
                     _context.Wallets.Update(chefWallet);
                 }
-                
+
             }
 
             _context.MealSessions.Update(mealsessionid);
@@ -492,17 +492,28 @@ namespace HomeMealTaste.Services.Implement
         //{
         //    using Microsoft.EntityFrameworkCore.Storage.IDbContextTransaction? transaction = _context.Database.BeginTransaction();
         //    var entity = _mapper.Map<Transaction>(refundRequest);
-        //    var orderIdRequst = _context.Transactions.Where(x => x.OrderId == refundRequest.OrderId).ToList();
-        //    if (orderIdRequst == null)
+        //    var orderIdRequest = await _context.Transactions.Where(x => x.OrderId == entity.OrderId).FirstOrDefaultAsync();
+        //    if (orderIdRequest == null)
         //    {
         //        throw new Exception("Can not find Order!");
         //    }
 
-        //    //refund money to customer
-        //    foreach(var check in orderIdRequst)
+        //    var getOrderId = await _context.Orders.Where(orderid => orderid.OrderId == entity.OrderId).FirstOrDefaultAsync(); // get orderId
+        //    var mealSessionBelongToOrder = await _context.MealSessions.Where(mealsession => mealsession.MealSessionId == getOrderId.MealSessionId).FirstOrDefaultAsync();// get mealsession belong to OrderId
+        //    var kitchenIdInMealSession = mealSessionBelongToOrder?.KitchenId;
+        //    var userIdOfKitchen = await _context.Kitchens.Where(x => x.KitchenId == kitchenIdInMealSession).Select(x => x.UserId).FirstOrDefaultAsync();
+           
+        //    //get userId of kitchen and customer in table Wallet
+        //    var userIdInWalletChef = await _context.Wallets.Where(x => x.UserId == userIdOfKitchen).Select(x => x.UserId).FirstOrDefaultAsync();
+        //    var userIdInWalletCustomer = await _context.Wallets.Where(x => x.UserId == orderIdRequest.UserId).Select(x => x.UserId).FirstOrDefaultAsync();
+
+        //    //refund
+        //    if (userIdInWalletChef != null && userIdInWalletCustomer != null)
         //    {
-        //        //var findUserIdOFCustomer = _context.Users.Where(x => x.UserId == );
+        //        var chefRefundAmount = (decimal)0.9 * orderIdRequest.Amount;
+        //        var adminRefundAmount = (decimal)0.1 * orderIdRequest.Amount;
         //    }
+
         //    transaction.Commit();
 
         //}
@@ -510,7 +521,7 @@ namespace HomeMealTaste.Services.Implement
         public async Task<ChangeStatusOrderToCompletedResponseModel> ChangeStatusOrderToCompleted(int orderid)
         {
             var result = await _context.Orders.Where(x => x.OrderId == orderid).FirstOrDefaultAsync();
-            if(result != null && result.Status.Equals("PAID", StringComparison.OrdinalIgnoreCase))
+            if (result != null && result.Status.Equals("PAID", StringComparison.OrdinalIgnoreCase))
             {
                 result.Status = "COMPLETED";
                 await _context.SaveChangesAsync();
