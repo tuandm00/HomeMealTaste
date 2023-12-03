@@ -11,7 +11,7 @@ namespace HomeMealTaste.Services.ResponseModel
     {
         public int DishId { get; set; }
         public string? Name { get; set; }
-        public IFormFile? Image { get; set; }
+        public string? Image { get; set; }
         public int? DishTypeId { get; set; }
         public int? KitchenId { get; set; }
     }   

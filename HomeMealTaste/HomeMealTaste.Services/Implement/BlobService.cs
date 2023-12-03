@@ -30,5 +30,39 @@ namespace HomeMealTaste.Services.Implement
 
             return blobClient.Uri.AbsoluteUri;
         }
+
+
+        private const string connectionString = "DefaultEndpointsProtocol=https;AccountName=homemealtaste;AccountKey=xBT5OBqwV85Z3gHHxPBPTlabsmEvGMtoJUrKhcmNiqurBcapv3EGD6gvSS6GjYhsnJUKv3iBD8io+ASt17IZQA==;EndpointSuffix=core.windows.net";
+        private const string containerName = "meal-image"; // Replace with your container name
+
+        public async Task<string> UploadImage(string imageData)
+        {
+            try
+            {
+                byte[] imageBytes = Encoding.UTF8.GetBytes(imageData);
+                string blobName = "image_" + DateTime.Now.ToString("yyyyMMddHHmmssfff") + ".png";
+
+                BlobServiceClient blobServiceClient = new BlobServiceClient(connectionString);
+                BlobContainerClient containerClient = blobServiceClient.GetBlobContainerClient(containerName);
+                BlobClient blobClient = containerClient.GetBlobClient(blobName);
+
+                using (MemoryStream stream = new MemoryStream(imageBytes))
+                {
+                    await blobClient.UploadAsync(stream, true);
+                }
+
+                // Save metadata to the database
+                // Code to save metadata to Azure SQL Database can be implemented here
+
+                Console.WriteLine("Image uploaded successfully!");
+                return blobClient.Uri.AbsoluteUri;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error uploading image: {ex.Message}");
+                return null;
+            }
+        }
+
     }
 }
