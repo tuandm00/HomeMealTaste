@@ -35,19 +35,24 @@ namespace HomeMealTaste.Services.Implement
         private const string connectionString = "DefaultEndpointsProtocol=https;AccountName=homemealtaste;AccountKey=xBT5OBqwV85Z3gHHxPBPTlabsmEvGMtoJUrKhcmNiqurBcapv3EGD6gvSS6GjYhsnJUKv3iBD8io+ASt17IZQA==;EndpointSuffix=core.windows.net";
         private const string containerName = "meal-image"; // Replace with your container name
 
+        private string GetLocalFilePathFromUri(string fileUri)
+        {
+            Uri uri = new Uri(fileUri);
+            return uri.LocalPath;
+        }
         public async Task<string> UploadImage(string imageData)
         {
             try
             {
-                var file = File.ReadAllBytes(imageData);
-                byte[] imageBytes = Encoding.UTF8.GetBytes(file.ToString());
+                string localFilePath = GetLocalFilePathFromUri(imageData);
+                byte[] fileBytes = File.ReadAllBytes(localFilePath);
                 string blobName = "image_" + DateTime.Now.ToString("yyyyMMddHHmmssfff") + ".png";
 
                 BlobServiceClient blobServiceClient = new BlobServiceClient(connectionString);
                 BlobContainerClient containerClient = blobServiceClient.GetBlobContainerClient(containerName);
                 BlobClient blobClient = containerClient.GetBlobClient(blobName);
 
-                using (MemoryStream stream = new MemoryStream(imageBytes))
+                using (MemoryStream stream = new MemoryStream(fileBytes))
                 {
                     await blobClient.UploadAsync(stream, true);
                 }
