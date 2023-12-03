@@ -10,6 +10,5 @@ namespace HomeMealTaste.Services.Interface
     public interface IBlobService
     {
         Task<string> UploadQuestImgAndReturnImgPathAsync(IFormFile file, string containerName);
-        Task<string> UploadImage(string imageData);
     }
 }

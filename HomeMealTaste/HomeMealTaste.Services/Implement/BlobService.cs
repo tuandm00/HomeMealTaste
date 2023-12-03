@@ -21,8 +21,9 @@ namespace HomeMealTaste.Services.Implement
         public async Task<string> UploadQuestImgAndReturnImgPathAsync(IFormFile file, string containerName)
         {
             if (file == null) return null!;
-
-            var renameFile = file.FileName.Replace(file.FileName, containerName);
+            string fileName = Path.GetFileNameWithoutExtension(file.FileName);
+            string renameFile = $"{fileName}.png";
+            //var renameFile = file.FileName.Replace(file.FileName, containerName);
 
             var containerClient = _blobServiceClient.GetBlobContainerClient(containerName);
             var blobClient = containerClient.GetBlobClient($"{Guid.NewGuid()}_{renameFile}");
@@ -30,48 +31,5 @@ namespace HomeMealTaste.Services.Implement
 
             return blobClient.Uri.AbsoluteUri;
         }
-
-
-        private const string connectionString = "DefaultEndpointsProtocol=https;AccountName=homemealtaste;AccountKey=xBT5OBqwV85Z3gHHxPBPTlabsmEvGMtoJUrKhcmNiqurBcapv3EGD6gvSS6GjYhsnJUKv3iBD8io+ASt17IZQA==;EndpointSuffix=core.windows.net";
-        private const string containerName = "meal-image"; // Replace with your container name
-        private string GetLocalFilePathFromUri(string fileUri)
-        {
-            Uri uri = new Uri(fileUri);
-            return uri.LocalPath;
-        }
-        public async Task<string> UploadImage(string imageData)
-        {
-            try
-            {
-                string localFilePath = GetLocalFilePathFromUri(imageData);
-
-                // Read the content of the file into a byte array
-                byte[] fileBytes = File.ReadAllBytes(localFilePath);
-
-                // Create a unique blob name
-                string blobName = "file_" + DateTime.Now.ToString("yyyyMMddHHmmssfff") + ".png";
-
-                BlobServiceClient blobServiceClient = new BlobServiceClient(connectionString);
-                BlobContainerClient containerClient = blobServiceClient.GetBlobContainerClient(containerName);
-                BlobClient blobClient = containerClient.GetBlobClient(blobName);
-
-                using (MemoryStream stream = new MemoryStream(fileBytes))
-                {
-                    await blobClient.UploadAsync(stream, true);
-                }
-
-                // Save metadata to the database
-                // Code to save metadata to Azure SQL Database can be implemented here
-
-                Console.WriteLine("Image uploaded successfully!");
-                return blobClient.Uri.AbsoluteUri;
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine($"Error uploading image: {ex.Message}");
-                return null;
-            }
-        }
-
     }
 }
