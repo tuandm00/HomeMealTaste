@@ -111,11 +111,11 @@ namespace HomeMealTaste.Services.Implement
         .Include(x => x.Dish)
         .ThenInclude(x => x.Kitchen)
         .Where(x => x.Dish.Kitchen.KitchenId == id)
-        .GroupBy(x => x.Meal.MealId)
+        .GroupBy(x => x.Meal.MealId) 
         .Select(group => new GetAllMealByKitchenIdResponseModel
         {
             MealId = group.Key,
-            Name = group.First().Meal.Name,
+            Name = group.First().Meal.Name, 
             Image = group.First().Meal.Image,
             Description = group.First().Meal.Description,
             KitchenDtoReponseMeal = new KitchenDtoReponseMeal
@@ -140,7 +140,7 @@ namespace HomeMealTaste.Services.Implement
             return result;
         }
 
-        public Task<GetMealByMealIdResponseModel> GetMealByMealId(int mealid)
+        public  Task<GetMealByMealIdResponseModel> GetMealByMealId(int mealid)
         {
             var result = _context.Meals
                 .Include(x => x.MealDishes)
@@ -198,17 +198,16 @@ namespace HomeMealTaste.Services.Implement
                 return response;
             }).ToList();
 
-            return mapped;
+             return mapped;
         }
 
         public async Task DeleteMealIdNotExistInSessionByMealId(int mealid)
         {
             var mealsessionExisted = _context.MealSessions.Where(x => x.MealId == mealid).FirstOrDefault();
-            if (mealsessionExisted != null)
+            if(mealsessionExisted != null)
             {
                 throw new Exception("Meal is EXISTED in Session");
-            }
-            else
+            }else
             {
                 var result = await _context.MealDishes.Where(x => x.MealId == mealid).FirstOrDefaultAsync();
                 if (result != null)
@@ -226,37 +225,11 @@ namespace HomeMealTaste.Services.Implement
         {
             var entity = _mapper.Map<Meal>(request);
             var mealsessionExisted = _context.MealSessions.Where(x => x.MealId == entity.MealId).FirstOrDefault();
-            var dateToday = GetDateTimeTimeZoneVietNam().ToString("yyyy-MM-dd");
             if (mealsessionExisted != null)
             {
-                var cast = mealsessionExisted.CreateDate?.ToString("yyyy-MM-dd");
-
-                if (cast != dateToday)
-                {
-                    var imagePath = await _blobService.UploadQuestImgAndReturnImgPathAsync(request.Image, "meal-image");
-                    var result = _context.Meals.Where(x => x.MealId == entity.MealId).FirstOrDefault();
-                    if (result != null)
-                    {
-                        result.MealId = entity.MealId;
-                        result.Name = entity.Name;
-                        result.Description = entity.Description;
-                        result.Image = imagePath;
-                        result.CreateDate = GetDateTimeTimeZoneVietNam();
-                        result.KitchenId = entity.KitchenId;
-
-                        await _mealRepository.Update(result);
-                    }
-                    else
-                    {
-                        throw new Exception("Cannot Found Meal");
-                    }
-                    await _context.SaveChangesAsync();
-                    var mapped = _mapper.Map<UpdateMealIdNotExistInSessionByMealIdResponseModel>(result);
-                    mapped.CreateDate = result.CreateDate?.ToString("dd-MM-yyyy");
-                    return mapped;
-                }
-
-            }else
+                throw new Exception("Meal is EXISTED in Session");
+            }
+            else
             {
                 var imagePath = await _blobService.UploadQuestImgAndReturnImgPathAsync(request.Image, "meal-image");
                 var result = _context.Meals.Where(x => x.MealId == entity.MealId).FirstOrDefault();
@@ -280,7 +253,6 @@ namespace HomeMealTaste.Services.Implement
                 mapped.CreateDate = result.CreateDate?.ToString("dd-MM-yyyy");
                 return mapped;
             }
-            throw new Exception("Cannot Update");
         }
     }
 }
