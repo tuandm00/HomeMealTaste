@@ -658,6 +658,24 @@ namespace HomeMealTaste.Services.Implement
             int orderCount = await _context.Orders.CountAsync();
             return orderCount;
         }
+
+        public async Task<List<GetAllOrderByMealSessionIdResponseModel>> GetAllOrderByMealSessionId(int mealsessionid)
+        {
+            var result = _context.Orders.Where(x => x.MealSessionId == mealsessionid).Select(x => new GetAllOrderByMealSessionIdResponseModel
+            {
+                OrderId=x.OrderId,
+                MealSessionId=mealsessionid,
+                CustomerId=x.CustomerId,
+                Quantity=x.Quantity,
+                Status=x.Status,
+                Time=((DateTime)x.Time).ToString("dd-MM-yyyy HH:mm"),
+                TotalPrice=x.TotalPrice,
+            }).ToList();
+
+            var mapped = result.Select(r => _mapper.Map<GetAllOrderByMealSessionIdResponseModel>(r)).ToList();
+            
+            return mapped;
+        }
     }
 }
 

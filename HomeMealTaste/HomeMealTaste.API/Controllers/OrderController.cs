@@ -76,6 +76,12 @@ namespace HomeMealTaste.API.Controllers
             var result = await _orderService.TotalOrderInSystem();
             return Ok(result);
         }
+        [HttpGet("get-all-order-by-mealsession-id")]
+        public async Task<IActionResult> GetAllOrderByMealSessionId(int mealsessionid)
+        {
+            var result = await _orderService.GetAllOrderByMealSessionId(mealsessionid);
+            return Ok(result);
+        }
 
     }
 }

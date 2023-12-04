@@ -57,6 +57,7 @@ namespace HomeMealTaste.Data.RequestModel
             CreateMap<UpdateMealIdNotExistInSessionByMealIdRequestModel, Meal>().ReverseMap();
             CreateMap<UpdateDishResponseModel, Dish>().ReverseMap();
             CreateMap<UpdateDishRequestModel, Dish>().ReverseMap();
+            CreateMap<GetAllOrderByMealSessionIdResponseModel, Order>().ReverseMap();
 
             
 

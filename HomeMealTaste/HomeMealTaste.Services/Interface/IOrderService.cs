@@ -14,6 +14,6 @@ namespace HomeMealTaste.Services.Interface
         Task ChefCancelledOrderRefundMoneyToCustomer(RefundMoneyToWalletByOrderIdRequestModel refundRequest);
         Task<ChangeStatusOrderToCompletedResponseModel> ChangeStatusOrderToCompleted(int orderid);
         Task<int> TotalOrderInSystem();
-
+        Task<List<GetAllOrderByMealSessionIdResponseModel>> GetAllOrderByMealSessionId(int mealsessionid);
     }
 }
