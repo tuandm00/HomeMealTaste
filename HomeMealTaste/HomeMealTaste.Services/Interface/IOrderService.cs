@@ -12,7 +12,7 @@ namespace HomeMealTaste.Services.Interface
         Task<List<GetOrderByKitchenIdResponseModel>> GetOrderByKitchenId(int kitchenid);
         Task<CreateOrderResponseModel> CreateOrder(CreateOrderRequestModel createOrderRequest);
         Task ChefCancelledOrderRefundMoneyToCustomer(RefundMoneyToWalletByOrderIdRequestModel refundRequest);
-        Task<ChangeStatusOrderToCompletedResponseModel> ChangeStatusOrderToCompleted(int orderid);
+        Task<List<ChangeStatusOrderToCompletedResponseModel>> ChangeStatusOrderToDONE(int mealsessionid, string status);
         Task<int> TotalOrderInSystem();
         Task<List<GetAllOrderByMealSessionIdResponseModel>> GetAllOrderByMealSessionId(int mealsessionid);
     }

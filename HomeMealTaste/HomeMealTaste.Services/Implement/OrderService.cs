@@ -630,24 +630,28 @@ namespace HomeMealTaste.Services.Implement
             transaction.Commit();
         }
 
-        public async Task<ChangeStatusOrderToCompletedResponseModel> ChangeStatusOrderToCompleted(int orderid)
+        public async Task<List<ChangeStatusOrderToCompletedResponseModel>> ChangeStatusOrderToDONE(int mealsessionid, string status)
         {
-            var result = await _context.Orders.Where(x => x.OrderId == orderid).FirstOrDefaultAsync();
-            if (result != null && result.Status.Equals("PAID", StringComparison.OrdinalIgnoreCase))
-            {
-                result.Status = "COMPLETED";
+            var listOrder = await _context.Orders.Where(x => x.MealSessionId == mealsessionid).ToListAsync();
+            
+            if (listOrder != null) 
+            { 
+
+                foreach (var list in listOrder)
+                {
+                    if (status.Equals("DONE", StringComparison.OrdinalIgnoreCase) && list.Status.Equals("PAID", StringComparison.OrdinalIgnoreCase))
+                    {
+                        list.Status = "DONE";
+                    }
+                    else list.Status = "CANCELLED";
+
+                     _context.Orders.Update(list);
+                    
+                }
                 await _context.SaveChangesAsync();
 
-                return new ChangeStatusOrderToCompletedResponseModel
-                {
-                    OrderId = orderid,
-                    Status = result.Status,
-                    CustomerId = result.CustomerId,
-                    MealSessionId = result.MealSessionId,
-                    TotalPrice = result.TotalPrice,
-                    Time = result.Time.ToString(),
-                    Quantity = result.Quantity,
-                };
+                var mapped = listOrder.Select(l => _mapper.Map<ChangeStatusOrderToCompletedResponseModel>(l)).ToList();
+                return mapped;
             }
             return null;
         }
