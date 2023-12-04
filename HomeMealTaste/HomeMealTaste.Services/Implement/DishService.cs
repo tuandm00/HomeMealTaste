@@ -66,7 +66,7 @@ namespace HomeMealTaste.Services.Implement
             return _mapper.Map<DishResponseModel>(dish);
         }
 
-        public async Task DeleteSingleDishById(int dishid)
+        public async Task DeleteDishNotExistInSessionByDishId(int dishid)
         {
             var getDishById = _context.Dishes.Where(x => x.DishId == dishid).FirstOrDefault();
             if(getDishById == null)

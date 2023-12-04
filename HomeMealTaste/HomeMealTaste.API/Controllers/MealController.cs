@@ -62,14 +62,14 @@ namespace HomeMealTaste.API.Controllers
             return Ok(result);
         }
         [HttpDelete("delete-meal-id")]
-        public async Task DeleteMealIdNotExistInSessionByMealId(int mealid)
+        public async Task DeleteMealNotExistInSessionByMealId(int mealid)
         {
-            await _mealService.DeleteMealIdNotExistInSessionByMealId(mealid);
+            await _mealService.DeleteMealNotExistInSessionByMealId(mealid);
         }
-        [HttpPut("update-meal-id")]
-        public async Task<IActionResult> UpdateMealIdNotExistInSessionByMealId([FromForm] UpdateMealIdNotExistInSessionByMealIdRequestModel request)
+        [HttpPut("update-meal")]
+        public async Task<IActionResult> UpdateMealNotExistInSession([FromForm] UpdateMealIdNotExistInSessionByMealIdRequestModel request)
         {
-           var result =  await _mealService.UpdateMealIdNotExistInSessionByMealId(request);
+           var result =  await _mealService.UpdateMealNotExistInSession(request);
             return Ok(result);
         }
 

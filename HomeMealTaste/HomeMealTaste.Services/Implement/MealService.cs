@@ -201,7 +201,7 @@ namespace HomeMealTaste.Services.Implement
              return mapped;
         }
 
-        public async Task DeleteMealIdNotExistInSessionByMealId(int mealid)
+        public async Task DeleteMealNotExistInSessionByMealId(int mealid)
         {
             var mealsessionExisted = _context.MealSessions.Where(x => x.MealId == mealid).FirstOrDefault();
             if(mealsessionExisted != null)
@@ -221,7 +221,7 @@ namespace HomeMealTaste.Services.Implement
 
         }
 
-        public async Task<UpdateMealIdNotExistInSessionByMealIdResponseModel> UpdateMealIdNotExistInSessionByMealId(UpdateMealIdNotExistInSessionByMealIdRequestModel request)
+        public async Task<UpdateMealIdNotExistInSessionByMealIdResponseModel> UpdateMealNotExistInSession(UpdateMealIdNotExistInSessionByMealIdRequestModel request)
         {
             var entity = _mapper.Map<Meal>(request);
             var mealsessionExisted = _context.MealSessions.Where(x => x.MealId == entity.MealId).FirstOrDefault();

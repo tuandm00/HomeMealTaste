@@ -43,10 +43,10 @@ namespace HomeMealTaste.Controllers
             return ApiResponse<List<Dish>>.Success(result, metadata);
         } 
 
-        [HttpDelete]
-        public async Task<IActionResult> DeleteSingleDishById(int dishid)
+        [HttpDelete("delete-dish-not-exist-in-session-by-dish-id")]
+        public async Task<IActionResult> DeleteDishNotExistInSessionByDishId(int dishid)
         {
-            await _dishService.DeleteSingleDishById(dishid);
+            await _dishService.DeleteDishNotExistInSessionByDishId(dishid);
             return NoContent();
         }
 
