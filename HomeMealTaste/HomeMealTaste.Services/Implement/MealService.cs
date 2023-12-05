@@ -75,14 +75,18 @@ namespace HomeMealTaste.Services.Implement
             entity.Description = mealRequest.Description;
             var result = await _mealRepository.Create(entity, true);
 
-            if (result != null)
+            if (result != null && mealRequest.DishIds != null)
             {
-                var mealdish = new MealDish
+                foreach(var dishId in mealRequest.DishIds)
                 {
-                    MealId = result.MealId,
-                    DishId = mealRequest.DishId
-                };
-                await _context.AddAsync(mealdish);
+                    var mealdish = new MealDish
+                    {
+                        MealId = result.MealId,
+                        DishId = dishId
+                    };
+                    await _context.AddAsync(mealdish);
+                }
+
                 await _context.SaveChangesAsync();
             }
             var response = _mapper.Map<MealResponseModel>(result);
