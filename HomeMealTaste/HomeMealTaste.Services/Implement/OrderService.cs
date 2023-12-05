@@ -190,7 +190,7 @@ namespace HomeMealTaste.Services.Implement
             var results = _context.Orders.Include(x => x.MealSession).Where(x => x.CustomerId == id).Select(x => new GetAllOrderByUserIdResponseModel
             {
                 OrderId = x.OrderId,
-                Time = ((DateTime)x.Time).ToString("HH:mm"),
+                Time = ((DateTime)x.Time).ToString("dd-MM-yyyy HH:mm"),
 
                 CustomerDto2 = new CustomerDto2
                 {
@@ -342,7 +342,7 @@ namespace HomeMealTaste.Services.Implement
                     .ThenInclude(meal => meal.MealDishes)
                     .ThenInclude(mealDish => mealDish.Dish)
                 .AsNoTracking().FirstOrDefault();
-
+            
             var walletid = _context.Wallets
                 .Include(user => user.User)
                 .ThenInclude(customer => customer.Customers)
@@ -375,6 +375,7 @@ namespace HomeMealTaste.Services.Implement
             var customer = _context.Customers.Where(z => z.CustomerId == createOrder.CustomerId).FirstOrDefault();
             var user = _context.Users.Where(x => x.UserId == customer.UserId).FirstOrDefault();
             var walletCustomer = _context.Wallets.Where(x => x.UserId == user.UserId).FirstOrDefault();
+            var walletOfUserIdOfCustomer = _context.Wallets.Where(x => x.UserId == user.UserId).Select(x => x.WalletId).FirstOrDefault();
             if (walletCustomer != null)
             {
                 var afterBalanceCustomer = (int?)(walletCustomer.Balance - totalprice);
@@ -413,6 +414,9 @@ namespace HomeMealTaste.Services.Implement
                 .Include(x => x.Kitchen)
                 .AsNoTracking()
                 .FirstOrDefault();
+            var kitchenid = _context.MealSessions.Where(x => x.MealSessionId == entity.MealSessionId).Select(x => x.KitchenId).FirstOrDefault();
+            var userIdChef = _context.Kitchens.Where(x => x.KitchenId == kitchenid).Select(x => x.UserId).FirstOrDefault();
+            var walletOfUserIdOfKitchen = _context.Wallets.Where(x => x.UserId == userIdChef).Select(X => X.WalletId).FirstOrDefault();
             var priceToChef = totalprice - priceToAdmin;
 
             if (kitchen != null)
@@ -454,7 +458,7 @@ namespace HomeMealTaste.Services.Implement
             var transactionToChef = new Transaction
             {
                 OrderId = orderEntity.OrderId,
-                WalletId = walletid.WalletId,
+                WalletId = walletOfUserIdOfKitchen,
                 Date = createOrder.Time,
                 Amount = (decimal?)priceToChef,
                 Description = "DONE WITH REVENUE",
@@ -471,7 +475,7 @@ namespace HomeMealTaste.Services.Implement
             var transactionid = new Transaction
             {
                 OrderId = orderEntity.OrderId,
-                WalletId = walletid.WalletId,
+                WalletId = walletOfUserIdOfCustomer,
                 Date = createOrder.Time,
                 Amount = (decimal?)totalprice,
                 Description = "DONE WITH PAYMENT",
