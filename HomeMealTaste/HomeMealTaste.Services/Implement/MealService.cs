@@ -131,7 +131,12 @@ namespace HomeMealTaste.Services.Implement
                 DishId = md.Dish.DishId,
                 Name = md.Dish.Name,
                 Image = md.Dish.Image,
-                DishTypeId = md.Dish.DishTypeId,
+                DishTypeDto = new DishTypeDto
+                {
+                    DishTypeId = md.Dish.DishType.DishTypeId,
+                    Name = md.Dish.DishType.Name,
+                    Description = md.Dish.DishType.Description,
+                },
                 KitchenId = md.Dish.KitchenId
             }).ToList()
 
