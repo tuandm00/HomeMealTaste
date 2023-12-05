@@ -669,7 +669,15 @@ namespace HomeMealTaste.Services.Implement
             {
                 OrderId=x.OrderId,
                 MealSessionId=mealsessionid,
-                CustomerId=x.CustomerId,
+                CutomerDtoGetAllOrderByMealSessionId = new CutomerDtoGetAllOrderByMealSessionId
+                {
+                    CustomerId = x.Customer.CustomerId,
+                    Name = x.Customer.Name,
+                    AreaId = x.Customer.AreaId,
+                    DistrictId = x.Customer.DistrictId,
+                    Phone = x.Customer.Phone,
+                    UserId = x.Customer.UserId,
+                },
                 Quantity=x.Quantity,
                 Status=x.Status,
                 Time=((DateTime)x.Time).ToString("dd-MM-yyyy HH:mm"),
