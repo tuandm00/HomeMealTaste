@@ -5,8 +5,7 @@ using HomeMealTaste.Data.Repositories;
 using HomeMealTaste.Data.RequestModel;
 using HomeMealTaste.Data.ResponseModel;
 using HomeMealTaste.Services.Interface;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.SignalR;
+
 using Microsoft.EntityFrameworkCore;
 using System.Collections.ObjectModel;
 using System.Globalization;
@@ -329,6 +328,21 @@ namespace HomeMealTaste.Services.Implement
                 {
                     var sessionCheck1 = _context.MealSessions.Where(x => x.MealSessionId == entity.MealSessionId).Select(x => x.SessionId).FirstOrDefault();
                     var sessionCheck2 = _context.MealSessions.Where(x => x.MealSessionId == id).Select(x => x.SessionId).FirstOrDefault();
+                    //var sessionCheck1 = _context.MealSessions
+                    //    .Where(x => x.MealSessionId == entity.MealSessionId)
+                    //    .Select(x => new { x.SessionId, x.Status })
+                    //    .FirstOrDefault();
+
+                    //var sessionCheck2 = _context.MealSessions
+                    //    .Where(x => x.MealSessionId == id)
+                    //    .Select(x => new { x.SessionId, x.Status })
+                    //    .FirstOrDefault();
+                    //if (sessionCheck1 != null && sessionCheck2 != null &&
+                    //    sessionCheck1.SessionId == sessionCheck2.SessionId &&
+                    //    sessionCheck1.Status == sessionCheck2.Status)
+                    //{
+                    //    throw new Exception("Cannot Order in the Same Session with the Same Status");
+                    //}
                     if (sessionCheck1 == sessionCheck2)
                     {
                         throw new Exception("Can Not Order In Same Session");
@@ -342,7 +356,7 @@ namespace HomeMealTaste.Services.Implement
                     .ThenInclude(meal => meal.MealDishes)
                     .ThenInclude(mealDish => mealDish.Dish)
                 .AsNoTracking().FirstOrDefault();
-            
+
             var walletid = _context.Wallets
                 .Include(user => user.User)
                 .ThenInclude(customer => customer.Customers)
@@ -565,7 +579,7 @@ namespace HomeMealTaste.Services.Implement
                 .Where(x => x.UserId == userIdOfKitchen)
                 .Select(x => x.WalletId)
                 .FirstOrDefaultAsync(); // get walletid by userid
-            
+
             var walletIdOfUserIdOfCustomer = await _context.Wallets
                 .Where(x => x.UserId == userIdOfCustomer)
                 .Select(x => x.WalletId)
@@ -637,9 +651,9 @@ namespace HomeMealTaste.Services.Implement
         public async Task<List<ChangeStatusOrderToCompletedResponseModel>> ChangeStatusOrderToDONE(int mealsessionid, string status)
         {
             var listOrder = await _context.Orders.Where(x => x.MealSessionId == mealsessionid).ToListAsync();
-            
-            if (listOrder != null) 
-            { 
+
+            if (listOrder != null)
+            {
 
                 foreach (var list in listOrder)
                 {
@@ -649,8 +663,8 @@ namespace HomeMealTaste.Services.Implement
                     }
                     else list.Status = "CANCELLED";
 
-                     _context.Orders.Update(list);
-                    
+                    _context.Orders.Update(list);
+
                 }
                 await _context.SaveChangesAsync();
 
@@ -671,8 +685,8 @@ namespace HomeMealTaste.Services.Implement
         {
             var result = _context.Orders.Where(x => x.MealSessionId == mealsessionid).Select(x => new GetAllOrderByMealSessionIdResponseModel
             {
-                OrderId=x.OrderId,
-                MealSessionId=mealsessionid,
+                OrderId = x.OrderId,
+                MealSessionId = mealsessionid,
                 CutomerDtoGetAllOrderByMealSessionId = new CutomerDtoGetAllOrderByMealSessionId
                 {
                     CustomerId = x.Customer.CustomerId,
@@ -682,14 +696,14 @@ namespace HomeMealTaste.Services.Implement
                     Phone = x.Customer.Phone,
                     UserId = x.Customer.UserId,
                 },
-                Quantity=x.Quantity,
-                Status=x.Status,
-                Time=((DateTime)x.Time).ToString("dd-MM-yyyy HH:mm"),
-                TotalPrice=x.TotalPrice,
+                Quantity = x.Quantity,
+                Status = x.Status,
+                Time = ((DateTime)x.Time).ToString("dd-MM-yyyy HH:mm"),
+                TotalPrice = x.TotalPrice,
             }).ToList();
 
             var mapped = result.Select(r => _mapper.Map<GetAllOrderByMealSessionIdResponseModel>(r)).ToList();
-            
+
             return mapped;
         }
     }
