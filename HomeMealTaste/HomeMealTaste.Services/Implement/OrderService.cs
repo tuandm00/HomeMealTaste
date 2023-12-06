@@ -129,7 +129,7 @@ namespace HomeMealTaste.Services.Implement
                 .Where(x => x.OrderId == id).Select(x => new GetAllOrderByUserIdResponseModel
                 {
                     OrderId = x.OrderId,
-                    Time = ((DateTime)x.Time).ToString("HH:mm"),
+                    Time = ((DateTime)x.Time).ToString("dd-MM-yyyy HH:mm"),
                     CustomerDto2 = new CustomerDto2
                     {
                         CustomerId = x.Customer.CustomerId,
