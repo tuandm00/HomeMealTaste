@@ -175,7 +175,7 @@ namespace HomeMealTaste.Services.Implement
                         Quantity = x.MealSession.Quantity,
                         RemainQuantity = x.MealSession.RemainQuantity,
                         Status = x.MealSession.Status,
-                        CreateDate = GetDateTimeTimeZoneVietNam().ToString("dd-MM-yyyy"),
+                        CreateDate = ((DateTime)x.MealSession.CreateDate).ToString("dd-MM-yyyy"),
                     },
                     Status = x.Status,
                     TotalPrice = x.TotalPrice,
