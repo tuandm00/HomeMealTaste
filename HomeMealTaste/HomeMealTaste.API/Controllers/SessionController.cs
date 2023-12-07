@@ -82,5 +82,11 @@ namespace HomeMealTaste.Controllers
             var result =  _sessionService.DeleteSession(sessionid);
             return Ok(result);
         }
+        [HttpGet("get-single-session-by-session-id")]
+        public async Task<IActionResult> GetSingleSessionBySessionId(int sessionid)
+        {
+            var result =  _sessionService.GetSingleSessionBySessionId(sessionid);
+            return Ok(result);
+        }
     }
 }

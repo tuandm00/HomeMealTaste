@@ -26,6 +26,7 @@ namespace HomeMealTaste.Data.Models
         public bool? Status { get; set; }
         public int? AreaId { get; set; }
 
+        public virtual Area? Area { get; set; }
         public virtual District? District { get; set; }
         public virtual Role? Role { get; set; }
         public virtual ICollection<Customer> Customers { get; set; }

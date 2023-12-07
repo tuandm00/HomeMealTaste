@@ -292,5 +292,38 @@ namespace HomeMealTaste.Services.Implement
             var result = _sessionRepository.Delete(sessionId);
             return result;
         }
+
+        public async Task<GetSingleSessionBySessionIdResponseModel> GetSingleSessionBySessionId(int sessionid)
+        {
+            var result = _context.Sessions.Where(x => x.SessionId == sessionid).Select(x => new GetSingleSessionBySessionIdResponseModel
+            {
+                SessionId = x.SessionId,
+                CreateDate = ((DateTime)x.CreateDate).ToString("dd-MM-yyyy"),
+                StartTime = ((DateTime)x.StartTime).ToString("HH:mm"),
+                EndTime = ((DateTime)x.EndTime).ToString("HH:mm"),
+                EndDate = ((DateTime)x.EndDate).ToString("HH:mm"),
+                Status = x.Status,
+                SessionType = x.SessionType,
+                SessionName = x.SessionName,
+                UserDtoGetSingleSessionBySessionId = new UserDtoGetSingleSessionBySessionId
+                {
+                    UserId = x.User.UserId,
+                    Username = x.User.Username,
+                    Address = x.User.Address,
+                    DistrictId = x.User.DistrictId,
+                    Email = x.User.Email,
+                    Name = x.User.Name, 
+                    Phone = x.User.Phone,
+                },
+                AreaDtoGetSingleSessionBySessionId = new AreaDtoGetSingleSessionBySessionId
+                {
+                    AreaId = x.Area.AreaId,
+                    Address = x.Area.Address,
+                    AreaName = x.Area.AreaName,
+                },
+            }).FirstOrDefault();
+
+            return _mapper.Map<GetSingleSessionBySessionIdResponseModel>(result);
+        }
     }
 }

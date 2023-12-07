@@ -19,5 +19,7 @@ namespace HomeMealTaste.Services.Interface
         Task<List<GetAllSessionByAreaIdResponseModel>> GetAllSessionByAreaId(int areaid);
         Task<List<GetAllSessionByAreaIdResponseModel>> GetAllSessionByAreaIdWithStatusTrue(int areaid);
         Task DeleteSession (int sessionId);
+        Task<GetSingleSessionBySessionIdResponseModel> GetSingleSessionBySessionId(int sessionid);
+
     }
 }

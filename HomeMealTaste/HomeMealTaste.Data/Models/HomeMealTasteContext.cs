@@ -260,6 +260,8 @@ namespace HomeMealTaste.Data.Models
 
                 entity.Property(e => e.EndTime).HasColumnType("smalldatetime");
 
+                entity.Property(e => e.SessionName).HasMaxLength(50);
+
                 entity.Property(e => e.SessionType).HasMaxLength(50);
 
                 entity.Property(e => e.StartTime).HasColumnType("smalldatetime");
@@ -320,6 +322,11 @@ namespace HomeMealTaste.Data.Models
                 entity.Property(e => e.Phone).HasMaxLength(50);
 
                 entity.Property(e => e.Username).HasMaxLength(50);
+
+                entity.HasOne(d => d.Area)
+                    .WithMany(p => p.Users)
+                    .HasForeignKey(d => d.AreaId)
+                    .HasConstraintName("FK_User_Area");
 
                 entity.HasOne(d => d.District)
                     .WithMany(p => p.Users)
