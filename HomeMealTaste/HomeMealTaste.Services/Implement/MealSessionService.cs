@@ -549,11 +549,11 @@ namespace HomeMealTaste.Services.Implement
         {
             var datenow = GetDateTimeTimeZoneVietNam();
             var result = await _context.MealSessions
-        .Include(x => x.Meal)
-        .Include(x => x.Session).ThenInclude(x => x.Area)
-        .Include(x => x.Kitchen)
-        .Where(x => x.Status == "APPROVED" && x.RemainQuantity > 0 && x.CreateDate == datenow)
-        .ToListAsync();
+                .Include(x => x.Meal)
+                .Include(x => x.Session).ThenInclude(x => x.Area)
+                .Include(x => x.Kitchen)
+                .Where(x => x.Status == "APPROVED" && x.RemainQuantity > 0 && x.CreateDate == datenow)
+                .ToListAsync();
 
             var mapped = result.Select(mealsession =>
             {

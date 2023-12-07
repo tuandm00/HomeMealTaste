@@ -1,13 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 
-namespace HomeMealTaste.Data.Models
+namespace HomeMealTaste.Data.ResponseModel
 {
-    public partial class Post
+    public class PostResponseModel
     {
         public int PostId { get; set; }
         public int? OrderId { get; set; }
         public string? Status { get; set; }
-        public virtual Order? Order { get; set; }
     }
 }
