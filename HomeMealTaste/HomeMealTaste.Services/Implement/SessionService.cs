@@ -80,7 +80,7 @@ namespace HomeMealTaste.Services.Implement
         {
             var entity = _mapper.Map<Session>(sessionRequest);
             var sessionTypeLower = entity.SessionType.ToLower();
-
+            var sessionName = entity.SessionName;
             var areaId = _context.Sessions.Where(x => x.AreaId == entity.AreaId).Select(x => x.AreaId).FirstOrDefault();
             if (areaId != null)
             {
@@ -97,6 +97,7 @@ namespace HomeMealTaste.Services.Implement
                         entity.UserId = 1;
                         entity.SessionType = "Lunch";
                         entity.AreaId = areaId;
+                        entity.SessionName = sessionName;
 
                     }
                     else if (string.Equals(sessionTypeLower, "evening", StringComparison.OrdinalIgnoreCase))
@@ -109,6 +110,7 @@ namespace HomeMealTaste.Services.Implement
                         entity.UserId = 1;
                         entity.SessionType = "Evening";
                         entity.AreaId = areaId;
+                        entity.SessionName = sessionName;
 
 
                     }
@@ -122,6 +124,7 @@ namespace HomeMealTaste.Services.Implement
                         entity.UserId = 1;
                         entity.SessionType = "Dinner";
                         entity.AreaId = areaId;
+                        entity.SessionName = sessionName;
 
                     }
                 }
@@ -142,6 +145,7 @@ namespace HomeMealTaste.Services.Implement
                     entity.UserId = 1;
                     entity.SessionType = "Lunch";
                     entity.AreaId = sessionRequest.AreaId;
+                    entity.SessionName = sessionName;
 
                 }
                 else if (string.Equals(sessionTypeLower, "evening", StringComparison.OrdinalIgnoreCase))
@@ -154,6 +158,7 @@ namespace HomeMealTaste.Services.Implement
                     entity.UserId = 1;
                     entity.SessionType = "Evening";
                     entity.AreaId = sessionRequest.AreaId;
+                    entity.SessionName = sessionName;
 
 
                 }
@@ -167,6 +172,7 @@ namespace HomeMealTaste.Services.Implement
                     entity.UserId = 1;
                     entity.SessionType = "Dinner";
                     entity.AreaId = sessionRequest.AreaId;
+                    entity.SessionName = sessionName;
 
                 }
             }
