@@ -1,4 +1,5 @@
 ﻿using HomeMealTaste.Data.Helper;
+using HomeMealTaste.Data.RequestModel;
 using HomeMealTaste.Data.ResponseModel;
 using HomeMealTaste.Services.Helper;
 using System;
@@ -13,5 +14,6 @@ namespace HomeMealTaste.Services.Interface
     {
         Task<List<KitchenResponseModel>> GetAllKitchen();
         Task<KitchenResponseModel> GetAllKitchenByKitchenId(int id);
+        Task<List<GetAllKitchenBySessionIdResponseModel>> GetAllKitchenBySessionId(int sessionid);
     }
 }

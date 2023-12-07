@@ -32,6 +32,13 @@ namespace HomeMealTaste.API.Controllers
             return Ok(result);
         }
         
+        [HttpGet("get-all-kitchen-by-session-id")]
+        public async Task<IActionResult> GetAllKitchenBySessionId(int sessionid)
+        {
+            var result = await _kitchenService.GetAllKitchenBySessionId(sessionid);
+            return Ok(result);
+        }
+        
         
     }
 }

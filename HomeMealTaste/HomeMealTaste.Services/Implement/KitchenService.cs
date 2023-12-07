@@ -2,6 +2,7 @@
 using HomeMealTaste.Data.Helper;
 using HomeMealTaste.Data.Models;
 using HomeMealTaste.Data.Repositories;
+using HomeMealTaste.Data.RequestModel;
 using HomeMealTaste.Data.ResponseModel;
 using HomeMealTaste.Services.Helper;
 using HomeMealTaste.Services.Interface;
@@ -91,6 +92,39 @@ namespace HomeMealTaste.Services.Implement
             }).FirstOrDefault();
 
             return _mapper.Map<KitchenResponseModel>(result);
+        }
+
+        public async Task<List<GetAllKitchenBySessionIdResponseModel>> GetAllKitchenBySessionId(int sessionid)
+        {
+            var kitchenid = _context.MealSessions
+                .Where(x => x.SessionId == sessionid)
+                .Select(x => x.KitchenId);
+
+            var result = _context.Kitchens.Where(x =>kitchenid.Contains(x.KitchenId)).Select(x => new GetAllKitchenBySessionIdResponseModel
+            {
+                KitchenId = x.KitchenId,
+                Address = x.Address,
+                Name = x.Name,
+                UserDtoGetAllKitchenBySessionId = new UserDtoGetAllKitchenBySessionId
+                {
+                    Name = x.User.Name,
+                    UserId = x.User.UserId,
+                    Username = x.User.Username,
+                    Address = x.User.Address,
+                    DistrictId = x.User.DistrictId,
+                    Email = x.User.Email,
+                    Phone = x.User.Phone,
+                },
+                AreaDtoGetAllKitchenBySessionId = new AreaDtoGetAllKitchenBySessionId
+                {
+                    Address = x.Area.Address,
+                    AreaId = x.Area.AreaId,
+                    AreaName = x.Area.AreaName,
+                },
+            });
+            
+            var mapped = result.Select(result => _mapper.Map<GetAllKitchenBySessionIdResponseModel>(result)).ToList();
+            return mapped;
         }
     }
 }
