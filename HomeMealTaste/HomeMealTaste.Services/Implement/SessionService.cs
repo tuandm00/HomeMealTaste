@@ -255,6 +255,7 @@ namespace HomeMealTaste.Services.Implement
                 EndDate = ((DateTime)x.EndDate).ToString("dd-MM-yyyy"),
                 UserId = x.UserId,
                 SessionType = x.SessionType,
+                SessionName = x.SessionName,
                 AreaDto = new AreaDto
                 {
                     AreaId = areaid,
@@ -280,6 +281,7 @@ namespace HomeMealTaste.Services.Implement
                 EndDate = ((DateTime)x.EndDate).ToString("dd-MM-yyyy"),
                 UserId = x.UserId,
                 SessionType = x.SessionType,
+                SessionName= x.SessionName,
                 AreaDto = new AreaDto
                 {
                     AreaId = areaid,
