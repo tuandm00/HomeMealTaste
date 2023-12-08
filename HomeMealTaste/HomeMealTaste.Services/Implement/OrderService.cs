@@ -727,7 +727,8 @@ namespace HomeMealTaste.Services.Implement
 
         public async Task<int> GetTotalPriceWithMealSessionBySessionIdAndKitchenId(int sessionId, int kitchenId)
         {
-            var listMealSession = _context.MealSessions.Where(x => x.SessionId == sessionId && x.KitchenId == kitchenId && x.Status.Equals("APPROVED")).ToList();
+            var datenow = GetDateTimeTimeZoneVietNam();
+            var listMealSession = _context.MealSessions.Where(x => x.SessionId == sessionId && x.KitchenId == kitchenId && x.Status.Equals("APPROVED") && x.CreateDate == datenow).ToList();
             int sum = 0;
              foreach(var i in listMealSession)
             {

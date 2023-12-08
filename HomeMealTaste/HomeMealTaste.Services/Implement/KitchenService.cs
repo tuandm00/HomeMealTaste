@@ -105,6 +105,7 @@ namespace HomeMealTaste.Services.Implement
                 KitchenId = x.KitchenId,
                 Address = x.Address,
                 Name = x.Name,
+                UserId = (int)x.UserId,
                 UserDtoGetAllKitchenBySessionId = new UserDtoGetAllKitchenBySessionId
                 {
                     Name = x.User.Name,

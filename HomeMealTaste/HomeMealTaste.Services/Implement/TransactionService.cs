@@ -6,6 +6,8 @@ using HomeMealTaste.Services.Interface;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -17,12 +19,48 @@ namespace HomeMealTaste.Services.Implement
         private readonly ITransactionRepository _transactionRepository;
         private readonly HomeMealTasteContext _context;
         private readonly IMapper _mapper;
+        private readonly IKitchenService _kitchenService;
+        private readonly IOrderService _orderService;
 
-        public TransactionService(ITransactionRepository transactionRepository, HomeMealTasteContext context, IMapper mapper)
+
+
+        public TransactionService(ITransactionRepository transactionRepository, HomeMealTasteContext context, IMapper mapper, IKitchenService kitchenService, IOrderService orderService)
         {
             _transactionRepository = transactionRepository;
             _context = context;
             _mapper = mapper;
+            _kitchenService = kitchenService;
+            _orderService = orderService;
+        }
+        public static DateTime TranferDateTimeByTimeZone(DateTime dateTime, string timezoneArea)
+        {
+
+            ReadOnlyCollection<TimeZoneInfo> collection = TimeZoneInfo.GetSystemTimeZones();
+            var timeZone = collection.ToList().Where(x => x.DisplayName.ToLower().Contains(timezoneArea)).First();
+
+            var timeZoneLocal = TimeZoneInfo.Local;
+
+            var utcDateTime = TimeZoneInfo.ConvertTime(dateTime, timeZoneLocal, timeZone);
+
+            return utcDateTime;
+        }
+
+        public static DateTime GetDateTimeTimeZoneVietNam()
+        {
+
+            return TranferDateTimeByTimeZone(DateTime.Now, "hanoi");
+        }
+        public static DateTime? StringToDateTimeVN(string dateStr)
+        {
+
+            var isValid = System.DateTime.TryParseExact(
+                                dateStr,
+                                "d'/'M'/'yyyy",
+                                CultureInfo.InvariantCulture,
+                                DateTimeStyles.None,
+                                out var date
+                            );
+            return isValid ? date : null;
         }
 
         public async Task<List<GetAllTransactionByTransactionTypeORDERED>> GetAllTransactionByTransactionTypeORDERED()
@@ -133,6 +171,33 @@ namespace HomeMealTaste.Services.Implement
 
             return mapped;
 
+        }
+
+        public async Task<List<SaveTotalPriceAfterFinishSessionResponseModel>> SaveTotalPriceAfterFinishSession(int sessionId)
+        {
+            var getAllKitchenBySession = await _kitchenService.GetAllKitchenBySessionId(sessionId);
+            var savedTransactions = new List<Transaction>();
+            foreach (var i in getAllKitchenBySession)
+            {
+                var getTotal = _orderService.GetTotalPriceWithMealSessionBySessionIdAndKitchenId(sessionId, i.KitchenId);
+                //var kitchen = await _context.Kitchens.Where(x => x.KitchenId == i.KitchenId).FirstOrDefaultAsync();
+                var saveToTransaction = new Transaction
+                {
+                    OrderId = null,
+                    WalletId = null,
+                    Date = GetDateTimeTimeZoneVietNam(),
+                    Amount = await getTotal,
+                    Description = "MONEY TRANSFER TO CHEF: " + i.Name,
+                    Status = "SUCCEED",
+                    TransactionType = "TOTAL TRANSFER",
+                    UserId = i.UserId,
+                };
+                _context.Transactions.Add(saveToTransaction);
+                savedTransactions.Add(saveToTransaction);
+            }
+            await _context.SaveChangesAsync();
+            var mapped = savedTransactions.Select(transaction => _mapper.Map<SaveTotalPriceAfterFinishSessionResponseModel>(transaction)).ToList();
+            return mapped;
         }
     }
 }

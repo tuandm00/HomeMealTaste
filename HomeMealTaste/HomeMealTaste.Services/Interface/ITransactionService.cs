@@ -12,5 +12,6 @@ namespace HomeMealTaste.Services.Interface
         Task<List<GetAllTransactionByUserIdResponseModel>> GetAllTransactionByUserId(int userid);
         Task<List<GetAllTransactionByTransactionTypeORDERED>> GetAllTransactionByTransactionTypeORDERED();
         Task<List<GetAllTransactionByTransactionTypeRECHARGED>> GetAllTransactionByTransactionTypeRECHARGED();
+        Task<List<SaveTotalPriceAfterFinishSessionResponseModel>> SaveTotalPriceAfterFinishSession(int sessionId);
     }
 }

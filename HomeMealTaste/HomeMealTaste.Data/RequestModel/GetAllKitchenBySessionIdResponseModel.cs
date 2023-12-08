@@ -9,6 +9,7 @@ namespace HomeMealTaste.Data.RequestModel
     public  class GetAllKitchenBySessionIdResponseModel
     {
         public int KitchenId { get; set; }
+        public int UserId { get; set; }
         public UserDtoGetAllKitchenBySessionId? UserDtoGetAllKitchenBySessionId { get; set; }
         public string? Name { get; set; }
         public string? Address { get; set; }
