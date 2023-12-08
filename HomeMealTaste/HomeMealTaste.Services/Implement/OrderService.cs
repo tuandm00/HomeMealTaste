@@ -706,6 +706,24 @@ namespace HomeMealTaste.Services.Implement
 
             return mapped;
         }
+
+        public async Task<int> GetTotalPriceWithMealSessionByMealSessionId(int mealsessionid)
+        {
+            var getMealsessionId = await _context.Orders.Where(x => x.MealSessionId == mealsessionid).ToListAsync();
+            int? sum = 0;
+            if (getMealsessionId != null)
+            {
+                foreach (var q in getMealsessionId)
+                {
+                    if (q.Status.Equals("PAID", StringComparison.OrdinalIgnoreCase))
+                    {
+                        sum += q.TotalPrice;
+                    }
+                }
+                return (int)sum;
+            }
+            return 0;
+        }
     }
 }
 

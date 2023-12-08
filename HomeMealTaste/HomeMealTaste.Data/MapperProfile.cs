@@ -62,6 +62,7 @@ namespace HomeMealTaste.Data.RequestModel
             CreateMap<PostResponseModel, Post>().ReverseMap();
             CreateMap<GetAllKitchenBySessionIdResponseModel, Kitchen>().ReverseMap();
             CreateMap<GetSingleSessionBySessionIdResponseModel, Session>().ReverseMap();
+            CreateMap<GetTotalPriceWithMealSessionByMealSessionIdResponseModel, Order>().ReverseMap();
 
             
 
