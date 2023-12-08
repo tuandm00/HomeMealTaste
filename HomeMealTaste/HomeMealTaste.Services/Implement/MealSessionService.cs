@@ -128,7 +128,7 @@ namespace HomeMealTaste.Services.Implement
                     Name = mealsession.Meal.Name,
                     Image = mealsession.Meal.Image,
                     KitchenId = mealsession.KitchenId,
-                    CreateDate = ((DateTime)mealsession.CreateDate).ToString("dd-MM-yyyy"),
+                    CreateDate = ((DateTime)mealsession.Meal.CreateDate).ToString("dd-MM-yyyy"),
                     Description = mealsession.Meal?.Description,
                 };
                 response.SessionDtoForMealSession = new SessionDtoForMealSession
@@ -186,7 +186,7 @@ namespace HomeMealTaste.Services.Implement
                     Name = mealsession.Meal.Name,
                     Image = mealsession.Meal.Image,
                     KitchenId = mealsession.KitchenId,
-                    CreateDate = ((DateTime)mealsession.CreateDate).ToString("dd-MM-yyyy"),
+                    CreateDate = ((DateTime)mealsession.Meal.CreateDate).ToString("dd-MM-yyyy"),
                     Description = mealsession.Meal?.Description,
                 };
                 response.SessionDtoForMealSession = new SessionDtoForMealSession
@@ -237,7 +237,7 @@ namespace HomeMealTaste.Services.Implement
                 Name = result.Meal.Name,
                 Image = result.Meal.Image,
                 KitchenId = result.KitchenId,
-                CreateDate = ((DateTime)result.CreateDate).ToString("dd-MM-yyyy"),
+                CreateDate = ((DateTime)result.Meal.CreateDate).ToString("dd-MM-yyyy"),
                 Description = result.Meal?.Description,
             };
             mapped.SessionDtoForMealSession = new SessionDtoForMealSession
@@ -374,7 +374,7 @@ namespace HomeMealTaste.Services.Implement
                     Name = mealsession.Meal.Name,
                     Image = mealsession.Meal.Image,
                     KitchenId = mealsession.KitchenId,
-                    CreateDate = ((DateTime)mealsession.CreateDate).ToString("dd-MM-yyyy"),
+                    CreateDate = ((DateTime)mealsession.Meal.CreateDate).ToString("dd-MM-yyyy"),
                     Description = mealsession.Meal?.Description,
                 };
                 response.SessionDtoForMealSession = new SessionDtoForMealSession
@@ -437,7 +437,7 @@ namespace HomeMealTaste.Services.Implement
                     Name = mealsession.Meal.Name,
                     Image = mealsession.Meal.Image,
                     KitchenId = mealsession.KitchenId,
-                    CreateDate = ((DateTime)mealsession.CreateDate).ToString("dd-MM-yyyy"),
+                    CreateDate = ((DateTime)mealsession.Meal.CreateDate).ToString("dd-MM-yyyy"),
                     Description = mealsession.Meal?.Description,
                 };
                 response.SessionDtoForMealSession = new SessionDtoForMealSession
@@ -500,7 +500,7 @@ namespace HomeMealTaste.Services.Implement
                     Name = mealsession.Meal.Name,
                     Image = mealsession.Meal.Image,
                     KitchenId = mealsession.KitchenId,
-                    CreateDate = ((DateTime)mealsession.CreateDate).ToString("dd-MM-yyyy"),
+                    CreateDate = ((DateTime)mealsession.Meal.CreateDate).ToString("dd-MM-yyyy"),
                     Description = mealsession.Meal?.Description,
                 };
                 response.SessionDtoForMealSession = new SessionDtoForMealSession
@@ -565,7 +565,7 @@ namespace HomeMealTaste.Services.Implement
                     Name = mealsession.Meal.Name,
                     Image = mealsession.Meal.Image,
                     KitchenId = mealsession.KitchenId,
-                    CreateDate = ((DateTime)mealsession.CreateDate).ToString("dd-MM-yyyy"),
+                    CreateDate = ((DateTime)mealsession.Meal.CreateDate).ToString("dd-MM-yyyy"),
                     Description = mealsession.Meal?.Description,
                 };
                 response.SessionDtoForMealSession = new SessionDtoForMealSession
