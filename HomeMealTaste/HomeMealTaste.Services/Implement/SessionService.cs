@@ -22,14 +22,16 @@ namespace HomeMealTaste.Services.Implement
     public class SessionService : ISessionService
     {
         private readonly ISessionRepository _sessionRepository;
+        private readonly ITransactionService _transactionService;
         private readonly HomeMealTasteContext _context;
         private readonly IMapper _mapper;
 
-        public SessionService(HomeMealTasteContext context, ISessionRepository sessionRepository, IMapper mapper)
+        public SessionService(HomeMealTasteContext context, ISessionRepository sessionRepository, IMapper mapper, ITransactionService transactionService)
         {
             _context = context;
             _sessionRepository = sessionRepository;
             _mapper = mapper;
+            _transactionService = transactionService;
         }
         public static DateTime TranferDateTimeByTimeZone(DateTime dateTime, string timezoneArea)
         {
@@ -220,6 +222,7 @@ namespace HomeMealTaste.Services.Implement
             if (result != null && result.Status == true)
             {
                 result.Status = false;
+                await _transactionService.SaveTotalPriceAfterFinishSession(sessionid);
             }
             else result.Status = true;
 
