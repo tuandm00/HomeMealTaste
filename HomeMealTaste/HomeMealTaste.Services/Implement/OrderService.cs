@@ -322,33 +322,33 @@ namespace HomeMealTaste.Services.Implement
             using Microsoft.EntityFrameworkCore.Storage.IDbContextTransaction? transaction = _context.Database.BeginTransaction();
             var entity = _mapper.Map<Order>(createOrderRequest);
             var mealSessionIdInOrder = _context.Orders.Select(x => x.MealSessionId).ToList();
-            foreach (var id in mealSessionIdInOrder)
-            {
-                if (entity.MealSessionId != id)
-                {
-                    var sessionCheck1 = _context.MealSessions.Where(x => x.MealSessionId == entity.MealSessionId).Select(x => x.SessionId).FirstOrDefault();
-                    var sessionCheck2 = _context.MealSessions.Where(x => x.MealSessionId == id).Select(x => x.SessionId).FirstOrDefault();
-                    //var sessionCheck1 = _context.MealSessions
-                    //    .Where(x => x.MealSessionId == entity.MealSessionId)
-                    //    .Select(x => new { x.SessionId, x.Status })
-                    //    .FirstOrDefault();
+            //foreach (var id in mealSessionIdInOrder)
+            //{
+            //    if (entity.MealSessionId != id)
+            //    {
+            //        var sessionCheck1 = _context.MealSessions.Where(x => x.MealSessionId == entity.MealSessionId).Select(x => x.SessionId).FirstOrDefault();
+            //        var sessionCheck2 = _context.MealSessions.Where(x => x.MealSessionId == id).Select(x => x.SessionId).FirstOrDefault();
+            //        //var sessionCheck1 = _context.MealSessions
+            //        //    .Where(x => x.MealSessionId == entity.MealSessionId)
+            //        //    .Select(x => new { x.SessionId, x.Status })
+            //        //    .FirstOrDefault();
 
-                    //var sessionCheck2 = _context.MealSessions
-                    //    .Where(x => x.MealSessionId == id)
-                    //    .Select(x => new { x.SessionId, x.Status })
-                    //    .FirstOrDefault();
-                    //if (sessionCheck1 != null && sessionCheck2 != null &&
-                    //    sessionCheck1.SessionId == sessionCheck2.SessionId &&
-                    //    sessionCheck1.Status == sessionCheck2.Status)
-                    //{
-                    //    throw new Exception("Cannot Order in the Same Session with the Same Status");
-                    //}
-                    if (sessionCheck1 == sessionCheck2)
-                    {
-                        throw new Exception("Can Not Order In Same Session");
-                    }
-                }
-            }
+            //        //var sessionCheck2 = _context.MealSessions
+            //        //    .Where(x => x.MealSessionId == id)
+            //        //    .Select(x => new { x.SessionId, x.Status })
+            //        //    .FirstOrDefault();
+            //        //if (sessionCheck1 != null && sessionCheck2 != null &&
+            //        //    sessionCheck1.SessionId == sessionCheck2.SessionId &&
+            //        //    sessionCheck1.Status == sessionCheck2.Status)
+            //        //{
+            //        //    throw new Exception("Cannot Order in the Same Session with the Same Status");
+            //        //}
+            //        if (sessionCheck1 == sessionCheck2)
+            //        {
+            //            throw new Exception("Can Not Order In Same Session");
+            //        }
+            //    }
+            //}
             var customerid = _context.Customers.Where(customerid => customerid.UserId == entity.CustomerId).FirstOrDefault();
             var mealsessionid = _context.MealSessions
                 .Where(mealsession => mealsession.MealSessionId == entity.MealSessionId && mealsession.Status.Equals("APPROVED"))
