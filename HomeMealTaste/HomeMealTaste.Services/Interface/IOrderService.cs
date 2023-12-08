@@ -16,5 +16,6 @@ namespace HomeMealTaste.Services.Interface
         Task<int> TotalOrderInSystem();
         Task<List<GetAllOrderByMealSessionIdResponseModel>> GetAllOrderByMealSessionId(int mealsessionid);
         Task<int> GetTotalPriceWithMealSessionByMealSessionId(int mealsessionid);
+        Task<int> GetTotalPriceWithMealSessionBySessionIdAndKitchenId(int sessionId, int kitchenId);
     }
 }

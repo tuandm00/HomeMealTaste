@@ -88,6 +88,12 @@ namespace HomeMealTaste.API.Controllers
             var result = await _orderService.GetTotalPriceWithMealSessionByMealSessionId(mealsessionid);
             return Ok(result);
         }
+        [HttpGet("get-total-price-of-mealsession-by-session-id-and-kitchen-id")]
+        public async Task<IActionResult> GetTotalPriceWithMealSessionBySessionIdAndKitchenId(int sessionId , int kitchenId)
+        {
+            var result = await _orderService.GetTotalPriceWithMealSessionBySessionIdAndKitchenId(sessionId, kitchenId);
+            return Ok(result);
+        }
 
     }
 }
