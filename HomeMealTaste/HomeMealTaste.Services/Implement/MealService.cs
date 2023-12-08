@@ -201,7 +201,7 @@ namespace HomeMealTaste.Services.Implement
                     Address = meal.Kitchen.Address,
                     AreaId = meal.Kitchen.AreaId,
                 };
-                response.CreateDate = meal.CreateDate.ToString();
+                response.CreateDate = ((DateTime)meal.CreateDate).ToString("dd-MM-yyyy");
                 response.Description = meal.Description;
 
                 return response;
