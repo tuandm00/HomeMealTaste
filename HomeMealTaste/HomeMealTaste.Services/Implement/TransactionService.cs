@@ -146,7 +146,7 @@ namespace HomeMealTaste.Services.Implement
             {
                 var response = _mapper.Map<GetAllTransactionByUserIdResponseModel>(transaction);
                 response.TransactionId = transaction.TransactionId;
-                response.Date = transaction.Date.ToString();
+                response.Date = ((DateTime)transaction.Date).ToString("dd-MM-yyyy");
                 response.Amount = transaction.Amount;
                 response.Description = transaction.Description;
                 response.Status = transaction.Status;
@@ -157,7 +157,7 @@ namespace HomeMealTaste.Services.Implement
                     Status = transaction.Order.Status,
                     MealSessionId = transaction.Order.MealSessionId,
                     TotalPrice = transaction.Order.TotalPrice,
-                    Time = transaction.Order.Time.ToString(),
+                    Time = ((DateTime)transaction.Order.Time).ToString("HH:mm"),
                     Quantity = transaction.Order.Quantity,
                 };
                 response.WalletDtoTransactionResponse = new WalletDtoTransactionResponse
