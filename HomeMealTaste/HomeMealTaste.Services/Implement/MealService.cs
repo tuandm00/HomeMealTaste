@@ -212,18 +212,25 @@ namespace HomeMealTaste.Services.Implement
 
         public async Task DeleteMealNotExistInSessionByMealId(int mealid)
         {
-            var mealsessionExisted = _context.MealSessions.Where(x => x.MealId == mealid).FirstOrDefault();
+            var mealsessionExisted = await _context.MealSessions.Where(x => x.MealId == mealid).FirstOrDefaultAsync();
             if(mealsessionExisted != null)
             {
                 throw new Exception("Meal is EXISTED in Session");
             }else
             {
                 var result = await _context.MealDishes.Where(x => x.MealId == mealid).FirstOrDefaultAsync();
-                if (result != null)
+                if (result == null)
                 {
-                    _context.MealDishes.Remove(result);
-                    var meal = _context.Meals.Where(x => x.MealId == result.MealId).FirstOrDefault();
+                    var meal = _context.Meals.Where(x => x.MealId == mealid).FirstOrDefault();
                     _context.Meals.Remove(meal);
+                }
+                else
+                {
+                    var mealdish = await _context.MealDishes.Where(x => x.MealId == mealid).FirstOrDefaultAsync();
+                    var meal = _context.Meals.Where(x => x.MealId == result.MealId).FirstOrDefault();
+                    _context.MealDishes.Remove(mealdish);
+                    _context.Meals.Remove(meal);
+
                 }
             }
             await _context.SaveChangesAsync();
