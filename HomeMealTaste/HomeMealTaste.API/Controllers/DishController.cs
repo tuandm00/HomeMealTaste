@@ -70,7 +70,7 @@ namespace HomeMealTaste.Controllers
             var result = await _dishService.GetDishByKitchenId(kitchenid);
             return Ok(result);
         }
-        [HttpPut("update-dish")]
+        [HttpPut("update-dish-not-exist-in-session")]
         public async Task<IActionResult> UpdateDishNotExistInMealSession([FromForm]UpdateDishRequestModel request)
         {
             var result = await _dishService.UpdateDishNotExistInMealSession(request);
