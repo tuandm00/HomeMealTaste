@@ -143,7 +143,7 @@ namespace HomeMealTaste.Services.Implement
                 var mapped = result.Select(feedback =>
                 {
                     var response = _mapper.Map<FeedbackResponseModel>(feedback);
-                    response.CreateDate = feedback.CreateDate.ToString();
+                    response.CreateDate = ((DateTime)feedback.CreateDate).ToString("dd-MM-yyyy");
                     response.Description = feedback.Description;
                     response.CustomerDtoFeedbackReponseModel = new CustomerDtoFeedbackReponseModel
                     {
