@@ -135,34 +135,52 @@ namespace HomeMealTaste.Services.Implement
         {
             var entity = _mapper.Map<Dish>(request);
             var getDishById = _context.Dishes.Where(x => x.DishId == request.DishId).FirstOrDefault();
+            UpdateDishResponseModel mapped = null;
+
             if (getDishById == null)
             {
                 throw new Exception("No dish found");
             }
             else
             {
-                var listmealid = _context.MealDishes.Where(x => x.DishId == getDishById.DishId).Select(x => x.MealId).ToList();
-                UpdateDishResponseModel mapped = null;
-                foreach (var mealid in listmealid)
+                var dishExist = _context.MealDishes.Where(x => x.DishId == getDishById.DishId).FirstOrDefault();
+                if (dishExist == null)
                 {
-                    var mealExist = _context.MealSessions.Where(x => x.MealId == mealid).FirstOrDefault();
-                    if (mealExist != null)
-                    {
-                        throw new Exception("Cannot Update");
-                    }
-                    else
-                    {
-                        var imagePath = await _blobService.UploadQuestImgAndReturnImgPathAsync(request.Image, "dish-image");
+                    var imagePath = await _blobService.UploadQuestImgAndReturnImgPathAsync(request.Image, "dish-image");
 
-                        getDishById.DishId = entity.DishId;
-                        getDishById.Name = entity.Name;
-                        getDishById.DishTypeId = entity.DishTypeId;
-                        getDishById.KitchenId = entity.KitchenId;
-                        getDishById.Image = imagePath;
+                    getDishById.DishId = entity.DishId;
+                    getDishById.Name = entity.Name;
+                    getDishById.DishTypeId = entity.DishTypeId;
+                    getDishById.KitchenId = entity.KitchenId;
+                    getDishById.Image = imagePath;
+                    await _dishRepository.Update(getDishById);
+                    _context.SaveChanges();
+                    mapped = _mapper.Map<UpdateDishResponseModel>(getDishById);
+                }
+                else
+                {
+                    var listmealid = _context.MealDishes.Where(x => x.DishId == getDishById.DishId).Select(x => x.MealId).ToList();
+                    foreach (var mealid in listmealid)
+                    {
+                        var mealExist = _context.MealSessions.Where(x => x.MealId == mealid).FirstOrDefault();
+                        if (mealExist != null)
+                        {
+                            throw new Exception("Cannot Update");
+                        }
+                        else
+                        {
+                            var imagePath = await _blobService.UploadQuestImgAndReturnImgPathAsync(request.Image, "dish-image");
 
-                        await _dishRepository.Update(getDishById);
-                        _context.SaveChanges();
-                        mapped = _mapper.Map<UpdateDishResponseModel>(getDishById);
+                            getDishById.DishId = entity.DishId;
+                            getDishById.Name = entity.Name;
+                            getDishById.DishTypeId = entity.DishTypeId;
+                            getDishById.KitchenId = entity.KitchenId;
+                            getDishById.Image = imagePath;
+
+                            await _dishRepository.Update(getDishById);
+                            _context.SaveChanges();
+                            mapped = _mapper.Map<UpdateDishResponseModel>(getDishById);
+                        }
                     }
                 }
                 return mapped;
