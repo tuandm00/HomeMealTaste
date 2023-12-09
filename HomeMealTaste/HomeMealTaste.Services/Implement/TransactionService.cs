@@ -189,7 +189,7 @@ namespace HomeMealTaste.Services.Implement
                     Amount = await getTotal,
                     Description = "MONEY TRANSFER TO CHEF: " + i.Name,
                     Status = "SUCCEED",
-                    TransactionType = "TOTAL TRANSFER",
+                    TransactionType = "TT",
                     UserId = i.UserId,
                 };
                 _context.Transactions.Add(saveToTransaction);
