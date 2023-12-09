@@ -40,6 +40,12 @@ namespace HomeMealTaste.API.Controllers
             var result = await _transactionService.SaveTotalPriceAfterFinishSession(sessionid);
             return Ok(result);
         }
+        [HttpGet("get-all-transaction")]
+        public async Task<IActionResult> GetAllTransaction()
+        {
+            var result = await _transactionService.GetAllTransaction();
+            return Ok(result);
+        }
 
     }
 }
