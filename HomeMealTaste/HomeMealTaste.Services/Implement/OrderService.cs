@@ -804,7 +804,7 @@ namespace HomeMealTaste.Services.Implement
             var orderid = _context.Orders.Where(x => x.MealSessionId == mealsessionId).Select(x => x.OrderId).FirstOrDefault();
             if (walletIdsOfKitchen != null)
             {
-                var afterCancelled = balanceOfKitchen - (totalPriceinOrder + (totalPriceinOrder * 10) / 100);
+                var afterCancelled = balanceOfKitchen - (totalPriceList + (totalPriceList * 10) / 100);
 
                 var walletOfUserIdOfKitchenWithOutSelect = await _context.Wallets
                     .Where(x => x.UserId == userIdOfKItchen)
@@ -835,7 +835,7 @@ namespace HomeMealTaste.Services.Implement
 
             if (walletIdsOfAdmin != null)
             {
-                var afterCancelledAdmin = balanceOfAdmin + ((totalPriceinOrder * 10) / 100);
+                var afterCancelledAdmin = ((totalPriceList * 10) / 100);
                 var walletOfUserIdOfAdminWithOutSelect = await _context.Wallets
                     .Where(x => x.UserId == userIdsOfAdmin)
                     .FirstOrDefaultAsync();
