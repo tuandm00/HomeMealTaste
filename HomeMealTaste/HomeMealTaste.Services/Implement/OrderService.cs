@@ -309,6 +309,7 @@ namespace HomeMealTaste.Services.Implement
                     },
                     Status = x.Status,
                     TotalPrice = x.TotalPrice,
+                    Quantity = x.Quantity,
                 });
 
             var mapped = result.Select(x => _mapper.Map<GetOrderByKitchenIdResponseModel>(x)).ToList();
