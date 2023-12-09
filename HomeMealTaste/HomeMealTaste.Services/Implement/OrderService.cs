@@ -447,8 +447,8 @@ namespace HomeMealTaste.Services.Implement
 
             }
 
-            _context.MealSessions.Update(mealsessionid);
-            _context.Wallets.Update(walletid);
+            //_context.MealSessions.Update(mealsessionid);
+           // _context.Wallets.Update(walletid);
 
             var orderEntity = _mapper.Map<Order>(createOrder);
             await _context.AddAsync(orderEntity);
@@ -649,7 +649,7 @@ namespace HomeMealTaste.Services.Implement
             transaction.Commit();
         }
 
-        public async Task<List<ChangeStatusOrderToCompletedResponseModel>> ChangeStatusOrderToDONE(int mealsessionid, string status)
+        public async Task<List<ChangeStatusOrderToCompletedResponseModel>> ChangeStatusOrder(int mealsessionid, string status)
         {
             var listOrder = await _context.Orders.Where(x => x.MealSessionId == mealsessionid).ToListAsync();
 
@@ -665,10 +665,14 @@ namespace HomeMealTaste.Services.Implement
                     else list.Status = "CANCELLED";
 
                     _context.Orders.Update(list);
-
+                    
                 }
                 await _context.SaveChangesAsync();
-
+                var Status = await _context.Orders.Where(x => x.MealSessionId == mealsessionid).Select(x => x.Status).FirstOrDefaultAsync();
+                if(Status.Equals("CANCELLED"))
+                {
+                    await ChefCancelledOrderRefundMoneyToCustomerV2(mealsessionid);
+                }
                 var mapped = listOrder.Select(l => _mapper.Map<ChangeStatusOrderToCompletedResponseModel>(l)).ToList();
                 return mapped;
             }
@@ -747,6 +751,12 @@ namespace HomeMealTaste.Services.Implement
         {
             using Microsoft.EntityFrameworkCore.Storage.IDbContextTransaction? transaction = _context.Database.BeginTransaction();
             var getListOrder = await GetAllOrderByMealSessionId(mealsessionId);
+            var sessionid = _context.MealSessions.Where(x => x.MealSessionId == mealsessionId).Select(x => x.SessionId).FirstOrDefault();
+            var sessionStatus = _context.Sessions.Where(x => x.SessionId == sessionid).Select(x => x.Status).FirstOrDefault();
+            if(sessionStatus == null || sessionStatus == true)
+            {
+                throw new Exception("Can not CANCEL");
+            }
             foreach (var item in getListOrder)
             {
                 var orderitem = _context.Orders.Where(x => x.OrderId == item.OrderId).FirstOrDefault();
@@ -797,15 +807,16 @@ namespace HomeMealTaste.Services.Implement
                 }
             }
 
-            var totalPriceinOrder = await GetTotalPriceWithMealSessionByMealSessionId(mealsessionId);
+           // var totalPriceinOrder = await GetTotalPriceWithMealSessionByMealSessionId(mealsessionId);
             var kitchenId = _context.MealSessions.Where(x => x.MealSessionId == mealsessionId).Select(x => x.KitchenId).FirstOrDefault();
             var userIdOfKItchen = _context.Kitchens.Where(x => x.KitchenId == kitchenId).Select(x => x.UserId).FirstOrDefault();
             var walletIdsOfKitchen = _context.Wallets.Where(x => x.UserId == userIdOfKItchen).Select(x => x.WalletId).FirstOrDefault();
             var balanceOfKitchen = _context.Wallets.Where(x => x.WalletId == walletIdsOfKitchen).Select(x => x.Balance).FirstOrDefault();
-            var orderid = _context.Orders.Where(x => x.MealSessionId == mealsessionId).Select(x => x.OrderId).FirstOrDefault();
+            var totalPriceListSum = _context.Orders.Where(x => orderId.Contains(x.OrderId)).Sum(x => x.TotalPrice);
+
             if (walletIdsOfKitchen != null)
             {
-                var afterCancelled = balanceOfKitchen - (totalPriceList + (totalPriceList * 10) / 100);
+                var afterCancelled = balanceOfKitchen - (totalPriceListSum + (totalPriceListSum * 10) / 100);
 
                 var walletOfUserIdOfKitchenWithOutSelect = await _context.Wallets
                     .Where(x => x.UserId == userIdOfKItchen)
@@ -817,11 +828,11 @@ namespace HomeMealTaste.Services.Implement
 
                     var addToTransactionKitchen = new Transaction
                     {
-                        OrderId = orderid,
+                        OrderId = null,
                         WalletId = walletIdsOfKitchen,
                         Date = datenow,
                         Amount = walletOfUserIdOfKitchenWithOutSelect.Balance,
-                        Description = "DONE WITH REFUND KITCHEN",
+                        Description = "DONE WITH FINED KITCHEN WHEN KITCHEN CANCEL",
                         Status = "SUCCEED",
                         TransactionType = "REFUNDED",
                         UserId = userIdOfKItchen,
@@ -836,7 +847,7 @@ namespace HomeMealTaste.Services.Implement
 
             if (walletIdsOfAdmin != null)
             {
-                var afterCancelledAdmin = ((totalPriceList * 10) / 100);
+                var afterCancelledAdmin = ((totalPriceListSum * 10) / 100);
                 var walletOfUserIdOfAdminWithOutSelect = await _context.Wallets
                     .Where(x => x.UserId == userIdsOfAdmin)
                     .FirstOrDefaultAsync();
@@ -847,11 +858,11 @@ namespace HomeMealTaste.Services.Implement
 
                     var addToTransactionAdmin = new Transaction
                     {
-                        OrderId = orderid,
+                        OrderId = null,
                         WalletId = walletIdsOfAdmin,
                         Date = datenow,
                         Amount = walletOfUserIdOfAdminWithOutSelect.Balance,
-                        Description = "DONE WITH REFUND ADMIN",
+                        Description = "DONE PROCESSS ADMIN WALLET WHEN CHEF CANCEL",
                         Status = "SUCCEED",
                         TransactionType = "REFUNDED",
                         UserId = userIdsOfAdmin,
