@@ -226,9 +226,13 @@ namespace HomeMealTaste.Services.Implement
                 }
                 else
                 {
-                    var mealdish = await _context.MealDishes.Where(x => x.MealId == mealid).FirstOrDefaultAsync();
+                    var mealdish = await _context.MealDishes.Where(x => x.MealId == mealid).ToListAsync();
+                    foreach(var i in mealdish)
+                    {
+                        _context.MealDishes.Remove(i);
+
+                    }
                     var meal = _context.Meals.Where(x => x.MealId == result.MealId).FirstOrDefault();
-                    _context.MealDishes.Remove(mealdish);
                     _context.Meals.Remove(meal);
 
                 }
