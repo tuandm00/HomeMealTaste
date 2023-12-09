@@ -59,9 +59,9 @@ namespace HomeMealTaste.API.Controllers
             return Ok(result);
         }
         [HttpPost("refund-money-when-chef-order-cancel")]
-        public Task ChefCancelledOrderRefundMoneyToCustomer(RefundMoneyToWalletByOrderIdRequestModel refundRequest)
+        public Task ChefCancelledOrderRefundMoneyToCustomerV2(int mealsessionId)
         {
-            var result = _orderService.ChefCancelledOrderRefundMoneyToCustomer(refundRequest);
+            var result = _orderService.ChefCancelledOrderRefundMoneyToCustomerV2(mealsessionId);
             return result;
         }
         [HttpPatch("change-status-order-to-DONE")]
@@ -94,6 +94,7 @@ namespace HomeMealTaste.API.Controllers
             var result = await _orderService.GetTotalPriceWithMealSessionBySessionIdAndKitchenId(sessionId, kitchenId);
             return Ok(result);
         }
+        
 
     }
 }
