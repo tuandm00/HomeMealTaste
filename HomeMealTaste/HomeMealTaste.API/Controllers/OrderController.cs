@@ -101,9 +101,9 @@ namespace HomeMealTaste.API.Controllers
         //    return Ok(result);
         //}
         [HttpGet("total-price-of-order-in-system")]
-        public async Task<IActionResult> TotalPriceOfOrderInSystem()
+        public async Task<IActionResult> TotalPriceOfOrderInSystemWithEveryMonth()
         {
-            var result = await _orderService.TotalPriceOfOrderInSystem();
+            var result = await _orderService.TotalPriceOfOrderInSystemWithEveryMonth();
             return Ok(result);
         }
         [HttpGet("total-customer-order-in-system")]

@@ -16,7 +16,7 @@ namespace HomeMealTaste.Services.Interface
         Task<List<ChangeStatusOrderToCompletedResponseModel>> ChangeStatusOrder(int mealsessionid, string status);
         Task<int> TotalOrderInSystem();
         Task<int> TotalPriceOfOrderInSystemInEveryMonth(int month);
-        Task<int> TotalPriceOfOrderInSystem();
+        Task<List<TotalPriceOfOrderInSystemWithEveryMonthResponseModel>> TotalPriceOfOrderInSystemWithEveryMonth();
         Task<int> TotalCustomerOrderInSystem();
         Task<List<GetAllOrderByMealSessionIdResponseModel>> GetAllOrderByMealSessionId(int mealsessionid);
         Task<int> GetTotalPriceWithMealSessionByMealSessionId(int mealsessionid);

@@ -884,11 +884,19 @@ namespace HomeMealTaste.Services.Implement
             return (int)totalPriceInMonth;
         }
 
-        public async Task<int> TotalPriceOfOrderInSystem()
+        public async Task<List<TotalPriceOfOrderInSystemWithEveryMonthResponseModel>> TotalPriceOfOrderInSystemWithEveryMonth()
         {
-            var totalPrice = _context.Orders.Sum(x => x.TotalPrice);
+            var totalPriceByMonth = await _context.Orders
+            .Where(x => x.Time.HasValue)
+            .GroupBy(x => x.Time.Value.Month)
+            .Select(group => new TotalPriceOfOrderInSystemWithEveryMonthResponseModel
+        {
+            Month = group.Key,
+            TotalPrice = group.Sum(x => x.TotalPrice)
+        })
+        .ToListAsync();
 
-            return (int)totalPrice;
+            return totalPriceByMonth;
         }
 
         public async Task<int> TotalCustomerOrderInSystem()

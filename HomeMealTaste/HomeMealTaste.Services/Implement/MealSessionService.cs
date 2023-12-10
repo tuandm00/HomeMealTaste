@@ -281,40 +281,48 @@ namespace HomeMealTaste.Services.Implement
 
         public async Task UpdateStatusMeallSession(int mealsessionid, string status)
         {
+            var datenow = GetDateTimeTimeZoneVietNam();
             var result = await _context.MealSessions.SingleOrDefaultAsync(x => x.MealSessionId == mealsessionid);
-
-            if (result != null && result.Status.Equals("PROCESSING", StringComparison.OrdinalIgnoreCase))
+            if(result.CreateDate != datenow)
             {
-                if (string.Equals("APPROVED", status, StringComparison.OrdinalIgnoreCase))
-                {
-                    result.Status = "APPROVED";
-                }
-                else if (string.Equals("REJECTED", status, StringComparison.OrdinalIgnoreCase))
-                {
-                    result.Status = "REJECTED";
-                }
+                throw new Exception("Can not Update Because Not In Day");
             }
-            await _context.SaveChangesAsync();
-            if (result != null && result.Status.Equals("APPROVED", StringComparison.OrdinalIgnoreCase))
+            else
             {
-                if (string.Equals("APPROVED", status, StringComparison.OrdinalIgnoreCase))
+                if (result != null && result.Status.Equals("PROCESSING", StringComparison.OrdinalIgnoreCase))
                 {
-                    result.Status = "APPROVED";
+                    if (string.Equals("APPROVED", status, StringComparison.OrdinalIgnoreCase))
+                    {
+                        result.Status = "APPROVED";
+                    }
+                    else if (string.Equals("REJECTED", status, StringComparison.OrdinalIgnoreCase))
+                    {
+                        result.Status = "REJECTED";
+                    }
                 }
-                else result.Status = "REJECTED";
-            }
-            await _context.SaveChangesAsync();
-
-            if (result != null && result.Status.Equals("REJECTED", StringComparison.OrdinalIgnoreCase))
-            {
-                if (string.Equals("REJECTED", status, StringComparison.OrdinalIgnoreCase))
+                await _context.SaveChangesAsync();
+                if (result != null && result.Status.Equals("APPROVED", StringComparison.OrdinalIgnoreCase))
                 {
-                    result.Status = "REJECTED";
+                    if (string.Equals("APPROVED", status, StringComparison.OrdinalIgnoreCase))
+                    {
+                        result.Status = "APPROVED";
+                    }
+                    else result.Status = "REJECTED";
                 }
-                else result.Status = "APPROVED";
-            }
+                await _context.SaveChangesAsync();
 
-            await _context.SaveChangesAsync();
+                if (result != null && result.Status.Equals("REJECTED", StringComparison.OrdinalIgnoreCase))
+                {
+                    if (string.Equals("REJECTED", status, StringComparison.OrdinalIgnoreCase))
+                    {
+                        result.Status = "REJECTED";
+                    }
+                    else result.Status = "APPROVED";
+                }
+
+                await _context.SaveChangesAsync();
+            }
+            
             //public async Task<PagedList<GetAllMealInCurrentSessionResponseModel>> GetAllMealSession(
             //    GetAllMealRequest pagingParams)
             //{
