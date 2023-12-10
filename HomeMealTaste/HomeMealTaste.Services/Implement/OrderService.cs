@@ -953,9 +953,7 @@ namespace HomeMealTaste.Services.Implement
 
         public async Task<List<GetTop5ChefOrderTimesResponseModel>> GetTop5ChefOrderTimes()
         {
-            var getKitchenId = _context.MealSessions.Select(x => x.KitchenId).FirstOrDefault();
             var listMealSessionIds = _context.MealSessions
-                .Where(x => x.KitchenId == getKitchenId)
                 .Select(x => x.MealSessionId)
                 .ToList();
 
@@ -985,6 +983,7 @@ namespace HomeMealTaste.Services.Implement
 
             return new List<GetTop5ChefOrderTimesResponseModel>();
         }
+
 
 
 
