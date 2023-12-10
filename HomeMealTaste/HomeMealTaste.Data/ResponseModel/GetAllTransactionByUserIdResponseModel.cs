@@ -19,7 +19,7 @@ namespace HomeMealTaste.Data.ResponseModel
 
     public class OrderDtoTransactionResponse
     {
-        public int OrderId { get; set; }
+        public int? OrderId { get; set; }
         public int? CustomerId { get; set; }
         public string? Status { get; set; }
         public int? MealSessionId { get; set; }
@@ -30,7 +30,7 @@ namespace HomeMealTaste.Data.ResponseModel
 
     public class WalletDtoTransactionResponse
     {
-        public int WalletId { get; set; }
+        public int? WalletId { get; set; }
         public int? UserId { get; set; }
         public int? Balance { get; set; }
     }
