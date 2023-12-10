@@ -135,41 +135,39 @@ namespace HomeMealTaste.Services.Implement
 
         public async Task<List<GetAllTransactionByUserIdResponseModel>> GetAllTransactionByUserId(int userid)
         {
+            var userids = _context.Users.Where(u => u.UserId == userid).Select(u => u.UserId).FirstOrDefault();
             var result = _context.Transactions
-        .Include(x => x.Wallet)
-        .ThenInclude(x => x.User)
-        .Include(x => x.Order)
-        .Where(x => x.Wallet.UserId == userid)
-        .ToList();
-
-            var mapped = result.Select(transaction =>
+        //.Include(x => x.Wallet)
+        //.ThenInclude(x => x.User)
+        //.Include(x => x.Order)
+        .Where(x => x.UserId == userids).Select(x => new GetAllTransactionByUserIdResponseModel
+        {
+            TransactionId = x.TransactionId,
+            UserId = x.UserId,
+            Amount = x.Amount,
+            Date = ((DateTime)x.Date).ToString("dd-MM-yyyy"),
+            Description = x.Description,
+            Status = x.Status,
+            OrderDtoTransactionResponse = new OrderDtoTransactionResponse
             {
-                var response = _mapper.Map<GetAllTransactionByUserIdResponseModel>(transaction);
-                response.TransactionId = transaction.TransactionId;
-                response.Date = ((DateTime)transaction.Date).ToString("dd-MM-yyyy");
-                response.Amount = transaction.Amount;
-                response.Description = transaction.Description;
-                response.Status = transaction.Status;
-                response.OrderDtoTransactionResponse = new OrderDtoTransactionResponse
-                {
-                    OrderId = transaction.Order.OrderId,
-                    CustomerId = transaction.Order.CustomerId,
-                    Status = transaction.Order.Status,
-                    MealSessionId = transaction.Order.MealSessionId,
-                    TotalPrice = transaction.Order.TotalPrice,
-                    Time = ((DateTime)transaction.Order.Time).ToString("HH:mm"),
-                    Quantity = transaction.Order.Quantity,
-                };
-                response.WalletDtoTransactionResponse = new WalletDtoTransactionResponse
-                {
-                    WalletId = transaction.Wallet.WalletId,
-                    UserId = transaction.Wallet.UserId,
-                    Balance = transaction.Wallet.Balance,
-                };
-                return response;
-            }).ToList();
-
-            return mapped;
+                 OrderId = x.Order.OrderId,
+                 CustomerId = x.Order.CustomerId,
+                 MealSessionId = x.Order.MealSessionId,
+                 Quantity = x.Order.Quantity,
+                 Time = ((DateTime)x.Date).ToString("HH:mm"),
+                 TotalPrice = x.Order.TotalPrice,
+                 Status = x.Order.Status,
+            },
+            WalletDtoTransactionResponse = new WalletDtoTransactionResponse
+            {
+                WalletId = x.Wallet.WalletId,
+                Balance = x.Wallet.Balance,
+                UserId = x.Wallet.UserId,
+            }
+        })
+        .ToList();
+        var mapped = result.Select(r => _mapper.Map<GetAllTransactionByUserIdResponseModel>(r)).ToList();
+        return mapped;
 
         }
 
@@ -209,7 +207,7 @@ namespace HomeMealTaste.Services.Implement
                 Date = ((DateTime)x.Date).ToString("dd-MM-yyyy"),
                 Description = x.Description,
                 Status = x.Status,
-                TransactionType=x.TransactionType,
+                TransactionType = x.TransactionType,
                 OrderDtoGetAllTransactions = new OrderDtoGetAllTransactions
                 {
                     OrderId = x.Order.OrderId,
@@ -235,7 +233,7 @@ namespace HomeMealTaste.Services.Implement
                 WalletDtoGetAllTransactions = new WalletDtoGetAllTransactions
                 {
                     Balance = x.Wallet.Balance,
-                    UserId = x.Wallet.UserId,   
+                    UserId = x.Wallet.UserId,
                     WalletId = x.Wallet.WalletId,
                 },
             }).ToList();

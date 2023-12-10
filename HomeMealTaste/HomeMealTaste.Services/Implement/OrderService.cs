@@ -887,16 +887,31 @@ namespace HomeMealTaste.Services.Implement
         public async Task<List<TotalPriceOfOrderInSystemWithEveryMonthResponseModel>> TotalPriceOfOrderInSystemWithEveryMonth()
         {
             var totalPriceByMonth = await _context.Orders
-            .Where(x => x.Time.HasValue)
-            .GroupBy(x => x.Time.Value.Month)
-            .Select(group => new TotalPriceOfOrderInSystemWithEveryMonthResponseModel
+        .Where(x => x.Time.HasValue)
+        .GroupBy(x => x.Time.Value.Month)
+        .Select(group => new TotalPriceOfOrderInSystemWithEveryMonthResponseModel
         {
             Month = group.Key,
             TotalPrice = group.Sum(x => x.TotalPrice)
         })
         .ToListAsync();
 
-            return totalPriceByMonth;
+            // Generate a range of months from 1 to 12
+            var allMonths = Enumerable.Range(1, 12);
+
+            // Left join the grouped data with the range of months
+            var result = allMonths
+                .GroupJoin(totalPriceByMonth,
+                    m => m,
+                    t => t?.Month ?? 0, // Handle null Month values
+                    (month, totals) => new TotalPriceOfOrderInSystemWithEveryMonthResponseModel
+                    {
+                        Month = month,
+                        TotalPrice = totals.Sum(t => t?.TotalPrice) ?? 0
+                    })
+                .ToList();
+
+            return result;
         }
 
         public async Task<int> TotalCustomerOrderInSystem()

@@ -9,6 +9,7 @@ namespace HomeMealTaste.Data.ResponseModel
     public class GetAllTransactionByUserIdResponseModel
     {
         public int TransactionId { get; set; }
+        public int? UserId { get; set; }
         public OrderDtoTransactionResponse? OrderDtoTransactionResponse { get; set; }
         public WalletDtoTransactionResponse? WalletDtoTransactionResponse { get; set; }
         public string? Date { get; set; }
