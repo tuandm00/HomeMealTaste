@@ -920,6 +920,37 @@ namespace HomeMealTaste.Services.Implement
 
             return totalCustomerOrder;
         }
+
+        public async Task<List<GetTop5CustomerOrderTimesResponseModel>> GetTop5CustomerOrderTimes()
+        {
+            var top5OrderTimes = await _context.Orders
+                .GroupBy(x => x.CustomerId)
+                .Select(group => new
+                {
+                    CustomerDtoGetTop5 = new CustomerDtoGetTop5
+                    {
+                        UserId = group.Key,
+                        Name = group.Key.ToString(),
+                        AreaId = group.Key,
+                        CustomerId = group.Key,
+                        DistrictId = group.Key,
+                        Phone = group.Key.ToString(),
+                    },
+                    CustomerId = group.Key,
+                    OrderTimes = group.Count()
+                })
+                .OrderByDescending(x => x.OrderTimes)
+                .Take(5)
+                .Select(x => new GetTop5CustomerOrderTimesResponseModel
+                {
+                    CustomerDtoGetTop5 = x.CustomerDtoGetTop5,
+                    OrderTimes = x.OrderTimes
+                })
+                .ToListAsync();
+
+            return top5OrderTimes;
+        }
+        
     }
 }
 
