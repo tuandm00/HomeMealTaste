@@ -9,6 +9,7 @@ using HomeMealTaste.Services.Interface;
 using Microsoft.EntityFrameworkCore;
 using System.Collections.ObjectModel;
 using System.Globalization;
+
 using System.Security.Claims;
 
 namespace HomeMealTaste.Services.Implement
@@ -448,7 +449,7 @@ namespace HomeMealTaste.Services.Implement
             }
 
             //_context.MealSessions.Update(mealsessionid);
-           // _context.Wallets.Update(walletid);
+            // _context.Wallets.Update(walletid);
 
             var orderEntity = _mapper.Map<Order>(createOrder);
             await _context.AddAsync(orderEntity);
@@ -665,11 +666,11 @@ namespace HomeMealTaste.Services.Implement
                     else list.Status = "CANCELLED";
 
                     _context.Orders.Update(list);
-                    
+
                 }
                 await _context.SaveChangesAsync();
                 var Status = await _context.Orders.Where(x => x.MealSessionId == mealsessionid).Select(x => x.Status).FirstOrDefaultAsync();
-                if(Status.Equals("CANCELLED"))
+                if (Status.Equals("CANCELLED"))
                 {
                     await ChefCancelledOrderRefundMoneyToCustomerV2(mealsessionid);
                 }
@@ -681,7 +682,6 @@ namespace HomeMealTaste.Services.Implement
 
         public async Task<int> TotalOrderInSystem()
         {
-
             int orderCount = await _context.Orders.CountAsync();
             return orderCount;
         }
@@ -753,7 +753,7 @@ namespace HomeMealTaste.Services.Implement
             var getListOrder = await GetAllOrderByMealSessionId(mealsessionId);
             var sessionid = _context.MealSessions.Where(x => x.MealSessionId == mealsessionId).Select(x => x.SessionId).FirstOrDefault();
             var sessionStatus = _context.Sessions.Where(x => x.SessionId == sessionid).Select(x => x.Status).FirstOrDefault();
-            if(sessionStatus == null || sessionStatus == true)
+            if (sessionStatus == null || sessionStatus == true)
             {
                 throw new Exception("Can not CANCEL");
             }
@@ -762,7 +762,7 @@ namespace HomeMealTaste.Services.Implement
                 var orderitem = _context.Orders.Where(x => x.OrderId == item.OrderId).FirstOrDefault();
                 orderitem.Status = "CANCELLED";
                 _context.Orders.Update(orderitem);
-                 
+
             }
 
             var datenow = GetDateTimeTimeZoneVietNam();
@@ -807,7 +807,7 @@ namespace HomeMealTaste.Services.Implement
                 }
             }
 
-           // var totalPriceinOrder = await GetTotalPriceWithMealSessionByMealSessionId(mealsessionId);
+            // var totalPriceinOrder = await GetTotalPriceWithMealSessionByMealSessionId(mealsessionId);
             var kitchenId = _context.MealSessions.Where(x => x.MealSessionId == mealsessionId).Select(x => x.KitchenId).FirstOrDefault();
             var userIdOfKItchen = _context.Kitchens.Where(x => x.KitchenId == kitchenId).Select(x => x.UserId).FirstOrDefault();
             var walletIdsOfKitchen = _context.Wallets.Where(x => x.UserId == userIdOfKItchen).Select(x => x.WalletId).FirstOrDefault();
@@ -873,6 +873,29 @@ namespace HomeMealTaste.Services.Implement
 
             await _context.SaveChangesAsync();
             transaction.Commit();
+        }
+
+        public async Task<int> TotalPriceOfOrderInSystemInEveryMonth(int month)
+        {
+            decimal? totalPriceInMonth = await _context.Orders
+        .Where(x => x.Time.HasValue && x.Time.Value.Month == month)
+        .SumAsync(x => x.TotalPrice);
+
+            return (int)totalPriceInMonth;
+        }
+
+        public async Task<int> TotalPriceOfOrderInSystem()
+        {
+            var totalPrice = _context.Orders.Sum(x => x.TotalPrice);
+
+            return (int)totalPrice;
+        }
+
+        public async Task<int> TotalCustomerOrderInSystem()
+        {
+            var totalCustomerOrder = await _context.Orders.Select(x => x.CustomerId).CountAsync();
+
+            return totalCustomerOrder;
         }
     }
 }
