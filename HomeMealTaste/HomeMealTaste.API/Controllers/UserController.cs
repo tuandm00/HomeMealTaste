@@ -106,5 +106,11 @@ namespace HomeMealTaste.Controllers
              var result = await _userService.TotalAccountInSystem();
             return Ok(result);
         }
+        [HttpGet("count-all-user-with-roleid-2")]
+        public async Task<IActionResult> CountAllUserWithRoleId2()
+        {
+             var result = await _userService.CountAllUserWithRoleId2();
+            return Ok(result);
+        }
     }
 }

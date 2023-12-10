@@ -20,5 +20,6 @@ namespace HomeMealTaste.Services.Interface
         Task<GetUserByIdResponseModel> GetUserById(int id);
         Task<int> TotalAccountInSystem();
         Task<List<GetAllUserWithRoleCustomerAndChefResponseModel>> GetAllUserWithRoleCustomerAndChef();
+        Task<int> CountAllUserWithRoleId2();
     }
 }

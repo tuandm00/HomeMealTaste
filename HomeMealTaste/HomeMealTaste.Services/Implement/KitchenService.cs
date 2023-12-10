@@ -4,14 +4,12 @@ using HomeMealTaste.Data.Models;
 using HomeMealTaste.Data.Repositories;
 using HomeMealTaste.Data.RequestModel;
 using HomeMealTaste.Data.ResponseModel;
-using HomeMealTaste.Services.Helper;
 using HomeMealTaste.Services.Interface;
+using iText.Kernel.Pdf;
+using iText.Layout;
+using iText.Layout.Element;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+
 
 namespace HomeMealTaste.Services.Implement
 {
@@ -70,15 +68,15 @@ namespace HomeMealTaste.Services.Implement
             var result = _context.Kitchens
                 .Where(x => x.KitchenId == id)
                 .Select(x => new KitchenResponseModel
-            {
-                KitchenId = x.KitchenId,
-                UserDtoKitchenResponseModel = new UserDtoKitchenResponseModel
                 {
-                    UserId = x.User.UserId,
-                    Username = x.User.Username,
-                    Email = x.User.Email,
-                    Phone = x.User.Phone,
-                    WalletDtoKitchenResponseModel = x.User.Wallets
+                    KitchenId = x.KitchenId,
+                    UserDtoKitchenResponseModel = new UserDtoKitchenResponseModel
+                    {
+                        UserId = x.User.UserId,
+                        Username = x.User.Username,
+                        Email = x.User.Email,
+                        Phone = x.User.Phone,
+                        WalletDtoKitchenResponseModel = x.User.Wallets
                 .OrderBy(wallet => wallet.WalletId)
                 .Select(wallet => new WalletDtoKitchenResponseModel
                 {
@@ -86,10 +84,10 @@ namespace HomeMealTaste.Services.Implement
                     UserId = wallet.UserId,
                     Balance = wallet.Balance,
                 }).FirstOrDefault(),
-                },
-                Name = x.Name,
-                Address = x.Address,
-            }).FirstOrDefault();
+                    },
+                    Name = x.Name,
+                    Address = x.Address,
+                }).FirstOrDefault();
 
             return _mapper.Map<KitchenResponseModel>(result);
         }
@@ -100,7 +98,7 @@ namespace HomeMealTaste.Services.Implement
                 .Where(x => x.SessionId == sessionid)
                 .Select(x => x.KitchenId);
 
-            var result = _context.Kitchens.Where(x =>kitchenid.Contains(x.KitchenId)).Select(x => new GetAllKitchenBySessionIdResponseModel
+            var result = _context.Kitchens.Where(x => kitchenid.Contains(x.KitchenId)).Select(x => new GetAllKitchenBySessionIdResponseModel
             {
                 KitchenId = x.KitchenId,
                 Address = x.Address,
@@ -123,9 +121,11 @@ namespace HomeMealTaste.Services.Implement
                     AreaName = x.Area.AreaName,
                 },
             });
-            
+
             var mapped = result.Select(result => _mapper.Map<GetAllKitchenBySessionIdResponseModel>(result)).ToList();
             return mapped;
         }
+
+
     }
 }

@@ -336,5 +336,11 @@ namespace HomeMealTaste.Services.Implement
             return userCount;
 
         }
+
+        public async Task<int> CountAllUserWithRoleId2()
+        {
+            int userCountWithRole2 = await _context.Users.Where(x => x.RoleId == 2).CountAsync();
+            return userCountWithRole2;
+        }
     }
 }

@@ -11,6 +11,5 @@ namespace HomeMealTaste.Services.Interface
     public interface IPostService 
     {
         Task PostForAllCustomerWithOrderId(PostRequestModel request);
-
     }
 }
