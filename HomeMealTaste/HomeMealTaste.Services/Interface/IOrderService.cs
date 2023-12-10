@@ -17,6 +17,7 @@ namespace HomeMealTaste.Services.Interface
         Task<int> TotalOrderInSystem();
         Task<int> TotalPriceOfOrderInSystemInEveryMonth(int month);
         Task<List<GetTop5CustomerOrderTimesResponseModel>> GetTop5CustomerOrderTimes();
+        Task<List<GetTop5ChefOrderTimesResponseModel>> GetTop5ChefOrderTimes();
         Task<List<TotalPriceOfOrderInSystemWithEveryMonthResponseModel>> TotalPriceOfOrderInSystemWithEveryMonth();
         Task<int> TotalCustomerOrderInSystem();
         Task<List<GetAllOrderByMealSessionIdResponseModel>> GetAllOrderByMealSessionId(int mealsessionid);

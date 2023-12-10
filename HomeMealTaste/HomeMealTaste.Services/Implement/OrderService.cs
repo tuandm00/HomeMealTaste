@@ -950,7 +950,44 @@ namespace HomeMealTaste.Services.Implement
 
             return top5OrderTimes;
         }
-        
+
+        public async Task<List<GetTop5ChefOrderTimesResponseModel>> GetTop5ChefOrderTimes()
+        {
+            var getKitchenId = _context.MealSessions.Select(x => x.KitchenId).FirstOrDefault();
+            var listMealSessionIds = _context.MealSessions
+                .Where(x => x.KitchenId == getKitchenId)
+                .Select(x => x.MealSessionId)
+                .ToList();
+
+            if (listMealSessionIds != null && listMealSessionIds.Any())
+            {
+                var top5OrderTimes = await _context.Orders
+                    .Where(order => listMealSessionIds.Contains((int)order.MealSessionId))
+                    .GroupBy(order => order.MealSession.KitchenId)
+                    .Select(group => new GetTop5ChefOrderTimesResponseModel
+                    {
+                        ChefDtoGetTop5 = new ChefDtoGetTop5
+                        {
+                            KitchenId = (int)group.Key,
+                            Name = group.First().MealSession.Kitchen.Name,
+                            UserId = group.First().MealSession.Kitchen.UserId,
+                            Address = group.First().MealSession.Kitchen.Address,
+                            AreaId = group.First().MealSession.Kitchen.AreaId,
+                        },
+                        OrderTimes = group.Count()
+                    })
+                    .OrderByDescending(x => x.OrderTimes)
+                    .Take(5)
+                    .ToListAsync();
+
+                return top5OrderTimes;
+            }
+
+            return new List<GetTop5ChefOrderTimesResponseModel>();
+        }
+
+
+
     }
 }
 

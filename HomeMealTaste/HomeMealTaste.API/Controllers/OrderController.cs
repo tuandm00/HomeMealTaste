@@ -118,6 +118,12 @@ namespace HomeMealTaste.API.Controllers
             var result = await _orderService.GetTop5CustomerOrderTimes();
             return Ok(result);
         }
+        [HttpGet("get-top-5-chef-order-times")]
+        public async Task<IActionResult> GetTop5ChefOrderTimes()
+        {
+            var result = await _orderService.GetTop5ChefOrderTimes();
+            return Ok(result);
+        }
 
     }
 }
