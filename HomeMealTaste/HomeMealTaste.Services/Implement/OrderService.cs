@@ -923,18 +923,18 @@ namespace HomeMealTaste.Services.Implement
 
         public async Task<List<GetTop5CustomerOrderTimesResponseModel>> GetTop5CustomerOrderTimes()
         {
-            var top5OrderTimes = await _context.Orders
+            var top5OrderTimes = await _context.Orders.Include(x => x.Customer)
                 .GroupBy(x => x.CustomerId)
                 .Select(group => new
                 {
                     CustomerDtoGetTop5 = new CustomerDtoGetTop5
                     {
                         UserId = group.Key,
-                        Name = group.Key.ToString(),
-                        AreaId = group.Key,
-                        CustomerId = group.Key,
-                        DistrictId = group.Key,
-                        Phone = group.Key.ToString(),
+                        Name = group.First().Customer.Name,
+                        AreaId = group.First().Customer.AreaId,
+                        CustomerId = group.First().Customer.CustomerId,
+                        DistrictId = group.First().Customer.DistrictId,
+                        Phone = group.First().Customer.Phone,
                     },
                     CustomerId = group.Key,
                     OrderTimes = group.Count()
