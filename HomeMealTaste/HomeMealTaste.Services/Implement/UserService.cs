@@ -161,8 +161,8 @@ namespace HomeMealTaste.Services.Implement
         public async Task<UserRegisterCustomerResponseModel> RegisterForCustomer(UserRegisterCustomerRequestModel userRegisterCustomerRequest)
         {
             var entity = _mapper.Map<User>(userRegisterCustomerRequest);
-            var existedUser = await _userRepository.GetByCondition(x => x.Username == entity.Username);
-            if (existedUser.Count() != 0) throw new Exception("existed Username");
+            var existedUser = await _userRepository.GetByCondition(x => x.Phone == entity.Phone);
+            if (existedUser.Count() != 0) throw new Exception("existed Phonenumber");
             entity.Password = BCrypt.Net.BCrypt.HashPassword(entity.Password);
             entity.RoleId = 2;
             entity.AreaId = userRegisterCustomerRequest.AreaId;
@@ -192,8 +192,8 @@ namespace HomeMealTaste.Services.Implement
         public async Task<UserRegisterChefResponseModel> RegisterForChef(UserRegisterChefRequestModel userRegisterChefRequest)
         {
             var entity = _mapper.Map<User>(userRegisterChefRequest);
-            var existedUser = await _userRepository.GetByCondition(x => x.Username == entity.Username);
-            if (existedUser.Count() != 0) throw new Exception("existed Username");
+            var existedUser = await _userRepository.GetByCondition(x => x.Phone == entity.Phone);
+            if (existedUser.Count() != 0) throw new Exception("existed Phone");
             entity.Password = BCrypt.Net.BCrypt.HashPassword(entity.Password);
             entity.RoleId = 3;
             entity.AreaId = userRegisterChefRequest.AreaId;

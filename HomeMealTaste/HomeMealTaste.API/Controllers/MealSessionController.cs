@@ -5,12 +5,14 @@ using HomeMealTaste.Data.ResponseModel;
 using HomeMealTaste.Response;
 using HomeMealTaste.Services.Helper;
 using HomeMealTaste.Services.Interface;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace HomeMealTaste.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class MealSessionController : ControllerBase
     {
         private readonly IMealSessionService _mealSessionService;

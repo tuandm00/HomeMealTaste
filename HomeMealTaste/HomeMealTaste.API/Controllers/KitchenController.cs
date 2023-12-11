@@ -7,6 +7,7 @@ using HomeMealTaste.Services.Interface;
 using iText.Kernel.Pdf;
 using iText.Layout;
 using iText.Layout.Element;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System.Collections.ObjectModel;
@@ -16,6 +17,7 @@ namespace HomeMealTaste.API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class KitchenController : ControllerBase
     {
         private readonly IKitchenService _kitchenService;
