@@ -283,7 +283,7 @@ namespace HomeMealTaste.Services.Implement
         {
             var datenow = GetDateTimeTimeZoneVietNam();
             var result = await _context.MealSessions.SingleOrDefaultAsync(x => x.MealSessionId == mealsessionid);
-            if(result.CreateDate != datenow)
+            if(result.CreateDate != datenow.Date)
             {
                 throw new Exception("Can not Update Because Not In Day");
             }
