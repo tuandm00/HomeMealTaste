@@ -118,5 +118,11 @@ namespace HomeMealTaste.Controllers
              var result = await _userService.UpdateProfileChef(request);
             return Ok(result);
         }
+        [HttpPut("update-profile-customer")]
+        public async Task<IActionResult> UpdateProfileCustomer(UpdateUserRequestModel request)
+        {
+             var result = await _userService.UpdateProfileCustomer(request);
+            return Ok(result);
+        }
     }
 }

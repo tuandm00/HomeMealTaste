@@ -162,8 +162,9 @@ namespace HomeMealTaste.API.Controllers
         {
             try
             {
-                var datenow = GetDateTimeTimeZoneVietNam().ToString("dd-MM-yyyy HH:mm");
+                var datenow = GetDateTimeTimeZoneVietNam();
                 var userId = _context.Kitchens.Where(x => x.KitchenId == kitchenid).Select(x => x.UserId).FirstOrDefault();
+                var UserNameChef = _context.Kitchens.Where(x => x.KitchenId == kitchenid).Select(x => x.Name).FirstOrDefault();
                 var checkUserKitchenAndMoney = _context.Wallets.Where(x => x.UserId == userId).FirstOrDefault();
 
                 if (checkUserKitchenAndMoney.Balance > 0)
@@ -172,7 +173,22 @@ namespace HomeMealTaste.API.Controllers
                     {
                         checkUserKitchenAndMoney.Balance -= moneyWithdraw;
                         _context.Wallets.Update(checkUserKitchenAndMoney);
+
+                        var transaction = new Transaction
+                        {
+                            OrderId = null,
+                            UserId = userId,
+                            Amount = moneyWithdraw,
+                            Date = datenow,
+                            Description = $"WITHDRAW WITH CHEF: {UserNameChef}",
+                            Status = "SUCCEED",
+                            TransactionType = "WITHDRAWN",
+                            WalletId = checkUserKitchenAndMoney.WalletId,
+                        };
+
+                        _context.Transactions.Add(transaction);
                         _context.SaveChanges();
+
                     }
                     else throw new Exception("Money Withdraw Must Be Equal or Higher than 50000");
                 }

@@ -406,5 +406,35 @@ namespace HomeMealTaste.Services.Implement
             mapped.KitchenId = kitchenId;
             return mapped;
         }
+        public async Task<UpdateUserResponseModel> UpdateProfileCustomer(UpdateUserRequestModel request)
+        {
+            var entity = _mapper.Map<User>(request);
+            var result = _context.Users.Where(x => x.UserId == request.UserId).FirstOrDefault();
+            var customerId = _context.Customers.Where(x => x.UserId == result.UserId).Select(x => x.CustomerId).FirstOrDefault();
+            if (result != null)
+            {
+                result.UserId = entity.UserId;
+                result.Name = entity.Name;
+                result.Username = entity.Username;
+                result.Email = entity.Email;
+                result.DistrictId = entity.DistrictId;
+
+                _context.Users.Update(result);
+
+                var customerTable = new Customer
+                {
+                    CustomerId = customerId,
+                    UserId = result.UserId,
+                    Name = result.Name,
+                    AreaId = result.AreaId,
+                    DistrictId = result.DistrictId,
+                };
+                _context.Customers.Update(customerTable);
+            }
+            await _context.SaveChangesAsync();
+            var mapped = _mapper.Map<UpdateUserResponseModel>(result);
+            mapped.KitchenId = customerId;
+            return mapped;
+        }
     }
 }
