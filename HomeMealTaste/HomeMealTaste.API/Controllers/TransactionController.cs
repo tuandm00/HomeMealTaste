@@ -22,16 +22,16 @@ namespace HomeMealTaste.API.Controllers
             return Ok(result);
         }
 
-        [HttpGet("get-transaction-by-transaction-type-OREDER")]
-        public async Task<IActionResult> GetAllTransactionByTransactionTypeORDERED()
+        [HttpGet("get-transaction-by-transaction-type-with-orderid")]
+        public async Task<IActionResult> GetAllTransactionByTransactionTypeWithOrderId()
         {
-            var result = await _transactionService.GetAllTransactionByTransactionTypeORDERED();
+            var result = await _transactionService.GetAllTransactionByTransactionTypeWithOrderId();
             return Ok(result);
         }
-        [HttpGet("get-transaction-by-transaction-type-RECHARGED")]
-        public async Task<IActionResult> GetAllTransactionByTransactionTypeRECHARGED()
+        [HttpGet("get-transaction-by-transaction-type-without-orderid")]
+        public async Task<IActionResult> GetAllTransactionByTransactionTypeWithOutOrderId()
         {
-            var result = await _transactionService.GetAllTransactionByTransactionTypeRECHARGED();
+            var result = await _transactionService.GetAllTransactionByTransactionTypeWithOutOrderId();
             return Ok(result);
         } 
         [HttpGet("save-total-price-after-finish-session")]

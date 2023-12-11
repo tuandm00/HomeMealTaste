@@ -108,7 +108,7 @@ namespace HomeMealTaste.Services.Implement
                         Amount = (response.Balance) / 100,
                         Description = "DONE WITH RECHARGEMENT",
                         Status = "SUCCEED",
-                        TransactionType = "RECHARGE",
+                        TransactionType = "RECHARGED",
                         UserId = balance.UserId,
                     };
                     _context.Transactions.Add(transactionRequest);

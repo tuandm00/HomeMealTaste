@@ -19,13 +19,13 @@ namespace HomeMealTaste.Data.ResponseModel
     }
     public class WalletDtoGetAllTransactionRECHARGED
     {
-        public int WalletId { get; set; }
+        public int? WalletId { get; set; }
         public UserDtoGetAllTransactionRECHARGED? UserDtoGetAllTransactionRECHARGED { get; set; }
         public int? Balance { get; set; }
     }
     public class UserDtoGetAllTransactionRECHARGED
     {
-        public int UserId { get; set; }
+        public int? UserId { get; set; }
         public string? Name { get; set; }
         public string? Username { get; set; }
         public string? Email { get; set; }

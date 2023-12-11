@@ -63,10 +63,10 @@ namespace HomeMealTaste.Services.Implement
             return isValid ? date : null;
         }
 
-        public async Task<List<GetAllTransactionByTransactionTypeORDERED>> GetAllTransactionByTransactionTypeORDERED()
+        public async Task<List<GetAllTransactionByTransactionTypeORDERED>> GetAllTransactionByTransactionTypeWithOrderId()
         {
             var result = _context.Transactions
-                .Where(x => x.TransactionType == "ORDERED")
+                .Where(x => x.TransactionType == "ORDERED" || x.TransactionType == "RR" || x.TransactionType == "REFUNDED")
                 .Select(t => new GetAllTransactionByTransactionTypeORDERED
                 {
                     TransactionId = t.TransactionId,
@@ -85,6 +85,7 @@ namespace HomeMealTaste.Services.Implement
                             DistrictId = t.Wallet.User.DistrictId,
                             Status = t.Wallet.User.Status,
                             AreaId = t.Wallet.User.AreaId,
+                            RoleId = t.Wallet.User.RoleId,
                         },
                         Balance = t.Wallet.Balance,
                     },
@@ -98,10 +99,10 @@ namespace HomeMealTaste.Services.Implement
             return mapped;
         }
 
-        public async Task<List<GetAllTransactionByTransactionTypeRECHARGED>> GetAllTransactionByTransactionTypeRECHARGED()
+        public async Task<List<GetAllTransactionByTransactionTypeRECHARGED>> GetAllTransactionByTransactionTypeWithOutOrderId()
         {
             var result = _context.Transactions
-                .Where(x => x.TransactionType == "RECHARGED")
+                .Where(x => x.TransactionType == "RECHARGED" || x.TransactionType == "TT")
                 .Select(t => new GetAllTransactionByTransactionTypeRECHARGED
                 {
                     TransactionId = t.TransactionId,
@@ -120,10 +121,11 @@ namespace HomeMealTaste.Services.Implement
                             DistrictId = t.Wallet.User.DistrictId,
                             Status = t.Wallet.User.Status,
                             AreaId = t.Wallet.User.AreaId,
+                            RoleId = t.Wallet.User.RoleId,
                         },
                         Balance = t.Wallet.Balance,
                     },
-                    Date = t.Date.ToString(),
+                    Date = ((DateTime)t.Date).ToString("dd-MM-yyyy HH:mm"),
                     Amount = t.Amount,
                     Description = t.Description,
                     Status = t.Status,
