@@ -32,10 +32,10 @@ namespace HomeMealTaste.API.Controllers
             var result = await _kitchenService.GetAllKitchen();
             return Ok(result);
         }
-        [HttpGet("get-all-kitchen-by-kitchen-id")]
-        public async Task<IActionResult> GetAllKitchenByKitchenId(int id)
+        [HttpGet("get-single-kitchen-by-kitchen-id")]
+        public async Task<IActionResult> GetSingleKitchenByKitchenId(int id)
         {
-            var result = await _kitchenService.GetAllKitchenByKitchenId(id);
+            var result = await _kitchenService.GetSingleKitchenByKitchenId(id);
             return Ok(result);
         }
 

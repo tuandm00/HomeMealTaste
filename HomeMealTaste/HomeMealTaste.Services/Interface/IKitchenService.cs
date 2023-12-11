@@ -13,7 +13,7 @@ namespace HomeMealTaste.Services.Interface
     public interface IKitchenService
     {
         Task<List<KitchenResponseModel>> GetAllKitchen();
-        Task<KitchenResponseModel> GetAllKitchenByKitchenId(int id);
+        Task<KitchenResponseModel> GetSingleKitchenByKitchenId(int id);
         Task<List<GetAllKitchenBySessionIdResponseModel>> GetAllKitchenBySessionId(int sessionid);
     }
 }

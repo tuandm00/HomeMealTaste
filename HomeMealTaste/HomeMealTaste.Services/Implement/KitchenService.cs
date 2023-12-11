@@ -63,33 +63,41 @@ namespace HomeMealTaste.Services.Implement
             return mapped;
         }
 
-        public async Task<KitchenResponseModel> GetAllKitchenByKitchenId(int id)
+        public async Task<KitchenResponseModel> GetSingleKitchenByKitchenId(int id)
         {
-            var result = _context.Kitchens
-                .Where(x => x.KitchenId == id)
-                .Select(x => new KitchenResponseModel
+            var result = await _context.Kitchens
+        .Include(x => x.User)
+        .ThenInclude(x => x.Wallets)
+        .Where(x => x.KitchenId == id)
+        .Select(x => new KitchenResponseModel
+        {
+            KitchenId = x.KitchenId,
+            Address = x.Address,
+            Name = x.Name,
+            DistrictDtoGetKitchen = new DistrictDtoGetKitchen
+            {
+                DistrictId = x.District.DistrictId,
+                DistrictName = x.District.DistrictName,
+            },
+            UserDtoKitchenResponseModel = new UserDtoKitchenResponseModel
+            {
+                UserId = x.User.UserId,
+                Email = x.User.Email,
+                Phone = x.User.Phone,
+                Username = x.User.Username,
+                WalletDtoKitchenResponseModel = new WalletDtoKitchenResponseModel
                 {
-                    KitchenId = x.KitchenId,
-                    UserDtoKitchenResponseModel = new UserDtoKitchenResponseModel
-                    {
-                        UserId = x.User.UserId,
-                        Username = x.User.Username,
-                        Email = x.User.Email,
-                        Phone = x.User.Phone,
-                        WalletDtoKitchenResponseModel = x.User.Wallets
-                .OrderBy(wallet => wallet.WalletId)
-                .Select(wallet => new WalletDtoKitchenResponseModel
-                {
-                    WalletId = wallet.WalletId,
-                    UserId = wallet.UserId,
-                    Balance = wallet.Balance,
-                }).FirstOrDefault(),
-                    },
-                    Name = x.Name,
-                    Address = x.Address,
-                }).FirstOrDefault();
+                    // Assuming Wallets is a collection and you want the balance from the first wallet
+                    UserId = x.User.Wallets.FirstOrDefault().UserId,
+                    Balance = x.User.Wallets.FirstOrDefault().Balance,
+                    WalletId = x.User.Wallets.FirstOrDefault().WalletId,
+                }
+            }
+        })
+        .FirstOrDefaultAsync();
 
-            return _mapper.Map<KitchenResponseModel>(result);
+            var mapped =  _mapper.Map<KitchenResponseModel>(result);
+            return mapped;
         }
 
         public async Task<List<GetAllKitchenBySessionIdResponseModel>> GetAllKitchenBySessionId(int sessionid)

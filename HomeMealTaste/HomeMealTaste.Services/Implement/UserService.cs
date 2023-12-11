@@ -342,5 +342,38 @@ namespace HomeMealTaste.Services.Implement
             int userCountWithRole2 = await _context.Users.Where(x => x.RoleId == 2).CountAsync();
             return userCountWithRole2;
         }
+
+        public async Task<UpdateUserResponseModel> UpdateProfileChef(UpdateUserRequestModel request)
+        {
+            var entity = _mapper.Map<User>(request);
+            var result = _context.Users.Where(x => x.UserId == request.UserId).FirstOrDefault();
+            var kitchenId = _context.Kitchens.Where(x => x.UserId == result.UserId).Select(x => x.KitchenId).FirstOrDefault();
+            if(result != null)
+            {
+                result.UserId = entity.UserId;
+                result.Name = entity.Name;
+                result.Username = entity.Username;
+                result.Email = entity.Email;
+                result.Address = entity.Address;
+                result.DistrictId = entity.DistrictId;
+
+                _context.Users.Update(result);
+
+                var kitchenTable = new Kitchen
+                {
+                    KitchenId = kitchenId,
+                    UserId = result.UserId,
+                    Name = result.Name,
+                    Address = result.Address,
+                    AreaId = result.AreaId,
+                    DistrictId = result.DistrictId,
+                };
+                _context.Kitchens.Update(kitchenTable);
+            }
+            await _context.SaveChangesAsync();
+            var mapped = _mapper.Map<UpdateUserResponseModel>(result);
+            mapped.KitchenId = kitchenId;
+            return mapped;
+        }
     }
 }

@@ -65,6 +65,9 @@ namespace HomeMealTaste.Data.RequestModel
             CreateMap<GetTotalPriceWithMealSessionByMealSessionIdResponseModel, Order>().ReverseMap();
             CreateMap<GetAllTransactionsResponseModel, Transaction>().ReverseMap();
             CreateMap<TotalPriceOfOrderInSystemWithEveryMonthResponseModel, Order>().ReverseMap();
+            CreateMap<UpdateUserRequestModel, User>().ReverseMap();
+            CreateMap<UpdateUserResponseModel, User>().ReverseMap();
+            CreateMap<TotalPriceOfOrderInSystemWithEveryMonthResponseModel, Order>().ReverseMap();
 
             
 

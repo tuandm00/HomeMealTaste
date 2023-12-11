@@ -13,6 +13,7 @@ namespace HomeMealTaste.Data.ResponseModel
         public UserDtoKitchenResponseModel? UserDtoKitchenResponseModel { get; set; }
         public string? Name { get; set; }
         public string? Address { get; set; }
+        public DistrictDtoGetKitchen? DistrictDtoGetKitchen { get; set; }
     }
 
     public class UserDtoKitchenResponseModel
@@ -29,5 +30,10 @@ namespace HomeMealTaste.Data.ResponseModel
         public int WalletId { get; set; }
         public int? UserId { get; set; }
         public int? Balance { get; set; }
+    }
+    public class DistrictDtoGetKitchen
+    {
+        public int DistrictId { get; set; }
+        public string? DistrictName { get; set; }
     }
 }

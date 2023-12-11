@@ -112,5 +112,11 @@ namespace HomeMealTaste.Controllers
              var result = await _userService.CountAllUserWithRoleId2();
             return Ok(result);
         }
+        [HttpPut("update-user")]
+        public async Task<IActionResult> UpdateProfileChef(UpdateUserRequestModel request)
+        {
+             var result = await _userService.UpdateProfileChef(request);
+            return Ok(result);
+        }
     }
 }
