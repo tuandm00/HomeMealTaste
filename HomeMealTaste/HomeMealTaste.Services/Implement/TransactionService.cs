@@ -88,7 +88,7 @@ namespace HomeMealTaste.Services.Implement
                         },
                         Balance = t.Wallet.Balance,
                     },
-                    Date = t.Date.ToString(),
+                    Date = ((DateTime)t.Date).ToString("dd-MM-yyyy HH:mm"),
                     Amount = t.Amount,
                     Description = t.Description,
                     Status = t.Status,
@@ -250,5 +250,7 @@ namespace HomeMealTaste.Services.Implement
             var mapped = result.Select(r => _mapper.Map<GetAllTransactionsResponseModel>(r)).ToList();
             return mapped;
         }
+
+        
     }
 }
