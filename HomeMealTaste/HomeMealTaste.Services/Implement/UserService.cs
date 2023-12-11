@@ -65,8 +65,9 @@ namespace HomeMealTaste.Services.Implement
             if (!chekhash) throw new Exception("Username or Password not match!");
             var result = await _userRepository.GetUsernamePassword(userRequest);
             var customerIds = _context.Customers.Where(x => x.Phone == existedUser.Phone).Select(x => x.CustomerId).FirstOrDefault();
+            var userIdOfCustomer = _context.Customers.Where(x => x.CustomerId == customerIds).Select(x => x.UserId).FirstOrDefault();
             var kitchenIds = _context.Kitchens.Where(x => x.UserId == existedUser.UserId).Select(x => x.KitchenId).FirstOrDefault();
-
+            var userIdOfKitchen = _context.Kitchens.Where(x => x.KitchenId == kitchenIds).Select(x => x.UserId).FirstOrDefault();
             switch (result.RoleId)
             {
                 case 1:
@@ -89,7 +90,7 @@ namespace HomeMealTaste.Services.Implement
                         Status = result.Status,
                         RoleId = result.RoleId,
                         Token = GenerateToken(result),
-                        WalletDtoAdminResponse = new WalletDtoAdminResponse
+                        WalletDtoResponse = new WalletDtoResponse
                         {
                             WalletId = adminWalletId,
                             UserId = result.UserId,
@@ -98,6 +99,14 @@ namespace HomeMealTaste.Services.Implement
 
                     };
                 case 2:
+                    var CustomerWalletId = _context.Wallets
+                        .Where(x => x.UserId == userIdOfCustomer)
+                        .Select(x => x.WalletId)
+                        .FirstOrDefault();
+                    var CustomerBalance = _context.Wallets
+                        .Where(x => x.UserId == userIdOfCustomer)
+                        .Select(x => x.Balance)
+                        .FirstOrDefault();
                     return new UserResponseModel
                     {
                         Name = result.Name,
@@ -110,8 +119,22 @@ namespace HomeMealTaste.Services.Implement
                         RoleId = result.RoleId,
                         Token = GenerateToken(result),
                         CustomerId = customerIds,
+                        WalletDtoResponse = new WalletDtoResponse
+                        {
+                            WalletId = CustomerWalletId,
+                            UserId = userIdOfCustomer,
+                            Balance = CustomerBalance,
+                        }
                     };
                 case 3:
+                    var kitchenWalletId = _context.Wallets
+                        .Where(x => x.UserId == userIdOfKitchen)
+                        .Select(x => x.WalletId)
+                        .FirstOrDefault();
+                    var chefBalance = _context.Wallets
+                        .Where(x => x.UserId == userIdOfKitchen)
+                        .Select(x => x.Balance)
+                        .FirstOrDefault();
                     return new UserResponseModel
                     {
                         Name = result.Name,
@@ -124,6 +147,12 @@ namespace HomeMealTaste.Services.Implement
                         RoleId = result.RoleId,
                         Token = GenerateToken(result),
                         KitchenId = kitchenIds,
+                        WalletDtoResponse = new WalletDtoResponse
+                        {
+                            WalletId = kitchenWalletId,
+                            UserId = userIdOfKitchen,
+                            Balance = chefBalance,
+                        }
                     };
             }
             return null;

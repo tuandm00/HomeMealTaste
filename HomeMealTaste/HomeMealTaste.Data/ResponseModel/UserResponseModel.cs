@@ -13,9 +13,9 @@
         public string Token { get; set; }
         public int? CustomerId { get; set; }
         public int? KitchenId { get; set; }
-        public WalletDtoAdminResponse? WalletDtoAdminResponse { get; set; }
+        public WalletDtoResponse? WalletDtoResponse { get; set; }
     }
-    public class WalletDtoAdminResponse
+    public class WalletDtoResponse
     {
         public int WalletId { get; set; }
         public int? UserId { get; set; }
