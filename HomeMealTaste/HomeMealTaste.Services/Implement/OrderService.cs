@@ -407,7 +407,7 @@ namespace HomeMealTaste.Services.Implement
                 }
             }
             // save to admin wallet take 10%
-            var admin = _context.Users.Where(x => x.RoleId == 1).FirstOrDefault();
+            var admin = _context.Users.Where(x => x.RoleId == 1 && x.UserId == 2).FirstOrDefault();
             var priceToAdmin = (totalprice * 10) / 100;
 
             if (admin != null)
@@ -841,7 +841,7 @@ namespace HomeMealTaste.Services.Implement
                 }
             }
 
-            var userIdsOfAdmin = _context.Users.Where(x => x.RoleId == 1).Select(x => x.UserId).FirstOrDefault();
+            var userIdsOfAdmin = _context.Users.Where(x => x.RoleId == 1 && x.UserId == 2).Select(x => x.UserId).FirstOrDefault();
             var walletIdsOfAdmin = _context.Wallets.Where(x => x.UserId == userIdsOfAdmin).Select(x => x.WalletId).FirstOrDefault();
             var balanceOfAdmin = _context.Wallets.Where(x => x.WalletId == walletIdsOfAdmin).Select(x => x.Balance).FirstOrDefault();
 
