@@ -40,7 +40,7 @@ namespace HomeMealTaste.Data.ResponseModel
 
     public class CustomerDtoTransaction
     {
-        public int CustomerId { get; set; }
+        public int? CustomerId { get; set; }
         public int? UserId { get; set; }
         public string? Name { get; set; }
         public string? Phone { get; set; }
