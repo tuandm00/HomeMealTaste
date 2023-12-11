@@ -45,6 +45,12 @@ namespace HomeMealTaste.API.Controllers
             var result = await _kitchenService.GetAllKitchenBySessionId(sessionid);
             return Ok(result);
         }
+        [HttpGet("get-single-kitchen-by-userid-id")]
+        public async Task<IActionResult> GetSingleKitchenByUserId(int userid)
+        {
+            var result = await _kitchenService.GetSingleKitchenByUserId(userid);
+            return Ok(result);
+        }
         public static DateTime TranferDateTimeByTimeZone(DateTime dateTime, string timezoneArea)
         {
 

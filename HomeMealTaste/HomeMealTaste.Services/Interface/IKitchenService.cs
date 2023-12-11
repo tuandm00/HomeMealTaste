@@ -14,6 +14,7 @@ namespace HomeMealTaste.Services.Interface
     {
         Task<List<KitchenResponseModel>> GetAllKitchen();
         Task<KitchenResponseModel> GetSingleKitchenByKitchenId(int id);
+        Task<KitchenResponseModel> GetSingleKitchenByUserId(int userid);
         Task<List<GetAllKitchenBySessionIdResponseModel>> GetAllKitchenBySessionId(int sessionid);
     }
 }

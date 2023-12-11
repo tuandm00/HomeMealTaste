@@ -134,6 +134,42 @@ namespace HomeMealTaste.Services.Implement
             return mapped;
         }
 
+        public async Task<KitchenResponseModel> GetSingleKitchenByUserId(int userid)
+        {
+            var result = await _context.Kitchens
+        .Include(x => x.User)
+        .ThenInclude(x => x.Wallets)
+        .Where(x => x.UserId == userid)
+        .Select(x => new KitchenResponseModel
+        {
+            KitchenId = x.KitchenId,
+            Address = x.Address,
+            Name = x.Name,
+            DistrictDtoGetKitchen = new DistrictDtoGetKitchen
+            {
+                DistrictId = x.District.DistrictId,
+                DistrictName = x.District.DistrictName,
+            },
+            UserDtoKitchenResponseModel = new UserDtoKitchenResponseModel
+            {
+                UserId = x.User.UserId,
+                Email = x.User.Email,
+                Phone = x.User.Phone,
+                Username = x.User.Username,
+                WalletDtoKitchenResponseModel = new WalletDtoKitchenResponseModel
+                {
+                    // Assuming Wallets is a collection and you want the balance from the first wallet
+                    UserId = x.User.Wallets.FirstOrDefault().UserId,
+                    Balance = x.User.Wallets.FirstOrDefault().Balance,
+                    WalletId = x.User.Wallets.FirstOrDefault().WalletId,
+                }
+            }
+        })
+        .FirstOrDefaultAsync();
 
+            var mapped = _mapper.Map<KitchenResponseModel>(result);
+            return mapped;
+        }
     }
+    
 }
