@@ -177,6 +177,7 @@ namespace HomeMealTaste.Services.Implement
                     Name = result.Name,
                     Address = result.Address,
                     AreaId = result.AreaId,
+                    DistrictId = result.DistrictId,
                 };
                 var wallet = new Wallet
                 {
