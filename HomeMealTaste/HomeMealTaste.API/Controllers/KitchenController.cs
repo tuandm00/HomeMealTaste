@@ -45,7 +45,7 @@ namespace HomeMealTaste.API.Controllers
             var result = await _kitchenService.GetAllKitchenBySessionId(sessionid);
             return Ok(result);
         }
-        [HttpGet("get-single-kitchen-by-userid-id")]
+        [HttpGet("get-single-kitchen-by-user-id")]
         public async Task<IActionResult> GetSingleKitchenByUserId(int userid)
         {
             var result = await _kitchenService.GetSingleKitchenByUserId(userid);
