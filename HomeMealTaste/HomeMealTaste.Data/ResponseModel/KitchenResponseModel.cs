@@ -27,13 +27,13 @@ namespace HomeMealTaste.Data.ResponseModel
     }
     public class WalletDtoKitchenResponseModel
     {
-        public int WalletId { get; set; }
+        public int? WalletId { get; set; }
         public int? UserId { get; set; }
         public int? Balance { get; set; }
     }
     public class DistrictDtoGetKitchen
     {
-        public int DistrictId { get; set; }
+        public int? DistrictId { get; set; }
         public string? DistrictName { get; set; }
     }
 }

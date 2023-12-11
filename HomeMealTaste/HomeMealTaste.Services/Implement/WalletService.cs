@@ -22,7 +22,7 @@ namespace HomeMealTaste.Services.Implement
 
         public async Task<decimal> GetRevenueSystem()
         {
-            var result = _context.Wallets.Where(x => x.UserId == 1).Select(x => x.Balance).FirstOrDefault();
+            var result = _context.Wallets.Where(x => x.UserId == 2).Select(x => x.Balance).FirstOrDefault();
             return result ?? 0m;
         }
     }
