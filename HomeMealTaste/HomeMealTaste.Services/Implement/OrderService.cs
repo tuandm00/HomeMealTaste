@@ -448,8 +448,8 @@ namespace HomeMealTaste.Services.Implement
 
             }
 
-            //_context.MealSessions.Update(mealsessionid);
-            // _context.Wallets.Update(walletid);
+            _context.MealSessions.Update(mealsessionid);
+            _context.Wallets.Update(walletid);
 
             var orderEntity = _mapper.Map<Order>(createOrder);
             await _context.AddAsync(orderEntity);
