@@ -168,6 +168,7 @@ namespace HomeMealTaste.Services.Implement
             entity.Password = BCrypt.Net.BCrypt.HashPassword(entity.Password);
             entity.RoleId = 3;
             entity.AreaId = userRegisterChefRequest.AreaId;
+            entity.DistrictId = userRegisterChefRequest.DistrictId;
             var result = await _userRepository.Create(entity, true);
             if (result != null)
             {
