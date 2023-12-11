@@ -145,13 +145,22 @@ namespace HomeMealTaste.Services.Implement
             TransactionId = x.TransactionId,
             UserId = x.UserId,
             Amount = x.Amount,
-            Date = ((DateTime)x.Date).ToString("dd-MM-yyyy"),
+            Date = ((DateTime)x.Date).ToString("dd-MM-yyyy HH:mm"),
             Description = x.Description,
             Status = x.Status,
+            TransactionType = x.TransactionType,
             OrderDtoTransactionResponse = new OrderDtoTransactionResponse
             {
                  OrderId = x.Order.OrderId,
-                 CustomerId = x.Order.CustomerId,
+                 CustomerDtoTransaction = new CustomerDtoTransaction
+                 {
+                     CustomerId = x.Order.Customer.CustomerId,
+                     AreaId = x.Order.Customer.AreaId,
+                     DistrictId = x.Order.Customer.DistrictId,
+                     Name = x.Order.Customer.Name,
+                     Phone = x.Order.Customer.Phone,
+                     UserId = x.Order.Customer.UserId,
+                 },
                  MealSessionId = x.Order.MealSessionId,
                  Quantity = x.Order.Quantity,
                  Time = ((DateTime)x.Date).ToString("HH:mm"),

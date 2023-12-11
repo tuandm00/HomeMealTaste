@@ -16,12 +16,14 @@ namespace HomeMealTaste.Data.ResponseModel
         public decimal? Amount { get; set; }
         public string? Description { get; set; }
         public string? Status { get; set; }
+        public string? TransactionType { get; set; }
+
     }
 
     public class OrderDtoTransactionResponse
     {
         public int? OrderId { get; set; }
-        public int? CustomerId { get; set; }
+        public CustomerDtoTransaction? CustomerDtoTransaction { get; set; }
         public string? Status { get; set; }
         public int? MealSessionId { get; set; }
         public int? TotalPrice { get; set; }
@@ -34,5 +36,15 @@ namespace HomeMealTaste.Data.ResponseModel
         public int? WalletId { get; set; }
         public int? UserId { get; set; }
         public int? Balance { get; set; }
+    }
+
+    public class CustomerDtoTransaction
+    {
+        public int CustomerId { get; set; }
+        public int? UserId { get; set; }
+        public string? Name { get; set; }
+        public string? Phone { get; set; }
+        public int? DistrictId { get; set; }
+        public int? AreaId { get; set; }
     }
 }
