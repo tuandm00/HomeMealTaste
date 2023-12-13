@@ -8,8 +8,8 @@ namespace HomeMealTaste.Data.RequestModel
 {
     public  class GetAllKitchenBySessionIdResponseModel
     {
-        public int KitchenId { get; set; }
-        public int UserId { get; set; }
+        public int? KitchenId { get; set; }
+        public int? UserId { get; set; }
         public UserDtoGetAllKitchenBySessionId? UserDtoGetAllKitchenBySessionId { get; set; }
         public string? Name { get; set; }
         public string? Address { get; set; }
@@ -18,7 +18,7 @@ namespace HomeMealTaste.Data.RequestModel
 
     public class UserDtoGetAllKitchenBySessionId
     {
-        public int UserId { get; set; }
+        public int? UserId { get; set; }
         public string? Name { get; set; }
         public string? Username { get; set; }
         public string? Email { get; set; }
@@ -29,7 +29,7 @@ namespace HomeMealTaste.Data.RequestModel
 
     public class AreaDtoGetAllKitchenBySessionId
     {
-        public int AreaId { get; set; }
+        public int? AreaId { get; set; }
         public string? Address { get; set; }
         public string? AreaName { get; set; }
     }
