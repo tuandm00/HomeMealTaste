@@ -282,14 +282,16 @@ namespace HomeMealTaste.Services.Implement
         public async Task UpdateStatusMeallSession(int mealsessionid, string status)
         {
             var datenow = GetDateTimeTimeZoneVietNam();
+            var sessionId = _context.MealSessions.Where(x => x.MealSessionId == mealsessionid).Select(x => x.SessionId).FirstOrDefault();
+            var sesstioStatus = _context.Sessions.Where(x => x.SessionId == sessionId).Select(x => x.Status).FirstOrDefault();
             var result = await _context.MealSessions.SingleOrDefaultAsync(x => x.MealSessionId == mealsessionid);
-            if(result.CreateDate != datenow.Date)
+            if (result.CreateDate.Value.Date != datenow.Date)
             {
                 throw new Exception("Can not Update Because Not In Day");
             }
             else
             {
-                if (result != null && result.Status.Equals("PROCESSING", StringComparison.OrdinalIgnoreCase))
+                if (result != null && result.Status.Equals("PROCESSING", StringComparison.OrdinalIgnoreCase) && sesstioStatus == true)
                 {
                     if (string.Equals("APPROVED", status, StringComparison.OrdinalIgnoreCase))
                     {
@@ -300,8 +302,7 @@ namespace HomeMealTaste.Services.Implement
                         result.Status = "REJECTED";
                     }
                 }
-                await _context.SaveChangesAsync();
-                if (result != null && result.Status.Equals("APPROVED", StringComparison.OrdinalIgnoreCase))
+                else if (result != null && result.Status.Equals("APPROVED", StringComparison.OrdinalIgnoreCase) && sesstioStatus == true)
                 {
                     if (string.Equals("APPROVED", status, StringComparison.OrdinalIgnoreCase))
                     {
@@ -309,9 +310,8 @@ namespace HomeMealTaste.Services.Implement
                     }
                     else result.Status = "REJECTED";
                 }
-                await _context.SaveChangesAsync();
 
-                if (result != null && result.Status.Equals("REJECTED", StringComparison.OrdinalIgnoreCase))
+                else if (result != null && result.Status.Equals("REJECTED", StringComparison.OrdinalIgnoreCase) && sesstioStatus == true)
                 {
                     if (string.Equals("REJECTED", status, StringComparison.OrdinalIgnoreCase))
                     {
@@ -319,10 +319,10 @@ namespace HomeMealTaste.Services.Implement
                     }
                     else result.Status = "APPROVED";
                 }
+                else throw new Exception("Session is OFF");
 
-                await _context.SaveChangesAsync();
             }
-            
+
             //public async Task<PagedList<GetAllMealInCurrentSessionResponseModel>> GetAllMealSession(
             //    GetAllMealRequest pagingParams)
             //{
@@ -359,6 +359,8 @@ namespace HomeMealTaste.Services.Implement
 
             //    return result;
             //}
+
+            await _context.SaveChangesAsync();
 
 
         }
@@ -619,7 +621,7 @@ namespace HomeMealTaste.Services.Implement
                 .Include(x => x.Meal)
                 .Include(x => x.Session).ThenInclude(x => x.Area).ThenInclude(x => x.District)
                 .Include(x => x.Kitchen)
-                .Where(x => x.KitchenId == kitchenid && x.SessionId == sessionid) 
+                .Where(x => x.KitchenId == kitchenid && x.SessionId == sessionid)
                 .ToList();
             var mapped = result.Select(mealsession =>
             {

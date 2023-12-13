@@ -735,16 +735,21 @@ namespace HomeMealTaste.Services.Implement
             var datenow = GetDateTimeTimeZoneVietNam();
             var listMealSession = _context.MealSessions.Where(x => x.SessionId == sessionId && x.KitchenId == kitchenId && x.Status.Equals("APPROVED") && x.CreateDate == datenow).ToList();
             int sum = 0;
-            foreach (var i in listMealSession)
+            if (listMealSession != null)
             {
-                int totalPrice = await GetTotalPriceWithMealSessionByMealSessionId(i.MealSessionId);
-
-                if (totalPrice != 0)
+                foreach (var i in listMealSession)
                 {
-                    sum += totalPrice;
+                    int totalPrice = await GetTotalPriceWithMealSessionByMealSessionId(i.MealSessionId);
+
+                    if (totalPrice != 0)
+                    {
+                        sum += totalPrice;
+                    }
                 }
+                return sum;
             }
-            return sum;
+            else throw new Exception("Can not Found");
+            
         }
 
         public async Task ChefCancelledOrderRefundMoneyToCustomerV2(int mealsessionId)

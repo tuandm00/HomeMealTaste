@@ -205,8 +205,17 @@ namespace HomeMealTaste.Services.Implement
                 savedTransactions.Add(saveToTransaction);
             }
             await _context.SaveChangesAsync();
-            var mapped = savedTransactions.Select(transaction => _mapper.Map<SaveTotalPriceAfterFinishSessionResponseModel>(transaction)).ToList();
-            return mapped;
+            var responseModels = savedTransactions.Select(transaction => new SaveTotalPriceAfterFinishSessionResponseModel
+            {
+                // Map properties from the transaction to the response model
+                TransactionId = transaction.TransactionId,
+                Amount = transaction.Amount,
+                Date = transaction.Date.ToString(),
+                Description = transaction.Description,
+                // Map other properties as needed
+            }).ToList();
+
+            return responseModels;
         }
 
         public async Task<List<GetAllTransactionsResponseModel>> GetAllTransaction()
