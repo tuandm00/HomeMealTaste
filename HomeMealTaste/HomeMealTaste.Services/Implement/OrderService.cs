@@ -720,7 +720,7 @@ namespace HomeMealTaste.Services.Implement
             {
                 foreach (var q in getMealsessionId)
                 {
-                    if (q.Status.Equals("PAID", StringComparison.OrdinalIgnoreCase))
+                    if (q.Status.Equals("PAID", StringComparison.OrdinalIgnoreCase) || q.Status.Equals("DONE", StringComparison.OrdinalIgnoreCase))
                     {
                         sum += q.TotalPrice;
                     }
@@ -733,7 +733,7 @@ namespace HomeMealTaste.Services.Implement
         public async Task<int> GetTotalPriceWithMealSessionBySessionIdAndKitchenId(int sessionId, int kitchenId)
         {
             var datenow = GetDateTimeTimeZoneVietNam();
-            var listMealSession = _context.MealSessions.Where(x => x.SessionId == sessionId && x.KitchenId == kitchenId && x.Status.Equals("APPROVED") && x.CreateDate == datenow).ToList();
+            var listMealSession = _context.MealSessions.Where(x => x.SessionId == sessionId && x.KitchenId == kitchenId && x.Status.Equals("APPROVED") && x.CreateDate.Value.Date == datenow.Date).ToList();
             int sum = 0;
             if (listMealSession != null)
             {
@@ -749,7 +749,6 @@ namespace HomeMealTaste.Services.Implement
                 return sum;
             }
             else throw new Exception("Can not Found");
-            
         }
 
         public async Task ChefCancelledOrderRefundMoneyToCustomerV2(int mealsessionId)
