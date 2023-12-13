@@ -89,6 +89,7 @@ namespace HomeMealTaste.Services.Implement
                         Phone = result.Phone,
                         Status = result.Status,
                         RoleId = result.RoleId,
+                        AreaId = result.AreaId,
                         Token = GenerateToken(result),
                         WalletDtoResponse = new WalletDtoResponse
                         {
@@ -117,6 +118,7 @@ namespace HomeMealTaste.Services.Implement
                         Phone = result.Phone,
                         Status = result.Status,
                         RoleId = result.RoleId,
+                        AreaId = result.AreaId,
                         Token = GenerateToken(result),
                         CustomerId = customerIds,
                         WalletDtoResponse = new WalletDtoResponse
@@ -141,6 +143,7 @@ namespace HomeMealTaste.Services.Implement
                         UserId = result.UserId,
                         Address = result.Address,
                         DistrictId = result.DistrictId,
+                        AreaId = result.AreaId,
                         Email = result.Email,
                         Phone = result.Phone,
                         Status = result.Status,
