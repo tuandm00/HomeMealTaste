@@ -14,7 +14,7 @@ namespace HomeMealTaste.API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    [Authorize]
+    
     public class OrderController : ControllerBase
     {
         private readonly IOrderService _orderService;

@@ -8,7 +8,7 @@ namespace HomeMealTaste.API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    [Authorize]
+    
     public class DistrictController : ControllerBase
     {
         private readonly IDistrictService _districtService;

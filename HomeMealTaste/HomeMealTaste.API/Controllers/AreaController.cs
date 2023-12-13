@@ -12,7 +12,7 @@ namespace HomeMealTaste.API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    [Authorize]
+    
     public class AreaController : ControllerBase
     {
         private readonly IAreaService _areaService;

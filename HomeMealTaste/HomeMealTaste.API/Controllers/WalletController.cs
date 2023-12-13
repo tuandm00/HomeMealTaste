@@ -7,7 +7,7 @@ namespace HomeMealTaste.API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    [Authorize]
+    
     public class WalletController : ControllerBase
     {
         private readonly IWalletService _walletService;

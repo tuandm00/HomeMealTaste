@@ -11,7 +11,7 @@ namespace HomeMealTaste.API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    [Authorize]
+    
     public class MealController : ControllerBase
     {
         private readonly IMealService _mealService;
