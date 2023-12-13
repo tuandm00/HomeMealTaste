@@ -43,7 +43,7 @@ namespace HomeMealTaste.Services.Implement
             var claims = new List<Claim>
             {
                 new Claim(ClaimTypes.NameIdentifier, users.UserId.ToString()),
-                new Claim(ClaimTypes.Name, users.Email),
+                //new Claim(ClaimTypes.Name, users.Email),
                 new Claim("RoleId", users.RoleId.ToString()),
                 new Claim("Phone", users.Phone.ToString()),
                 new Claim("Username", users.Username.ToString()),
@@ -58,7 +58,7 @@ namespace HomeMealTaste.Services.Implement
             return new JwtSecurityTokenHandler().WriteToken(token);
         }
 
-        public async Task<UserResponseModel> LoginAsync(UserRequestModel userRequest)
+        public async Task<UserResponseModel?> LoginAsync(UserRequestModel userRequest)
         {
             var existedUser = await _userRepository.GetFirstOrDefault(x => x.Phone == userRequest.Phone);
             var chekhash = BCrypt.Net.BCrypt.Verify(userRequest.Password, existedUser?.Password);
@@ -144,8 +144,8 @@ namespace HomeMealTaste.Services.Implement
                         Address = result.Address,
                         DistrictId = result.DistrictId,
                         AreaId = result.AreaId,
-                        Email = result.Email,
                         Phone = result.Phone,
+                        Email = result.Email,
                         Status = result.Status,
                         RoleId = result.RoleId,
                         Token = GenerateToken(result),
