@@ -13,7 +13,7 @@ namespace HomeMealTaste.Services.Interface
         Task<MealSessionResponseModel> CreateMealSession(MealSessionRequestModel mealSessionRequest);
         //Task<PagedList<GetAllMealInCurrentSessionResponseModel>> GetAllMealSession(GetAllMealRequest pagingParams);
         Task<List<MealSessionResponseModel>> GetAllMealSession();
-        Task<MealSessionResponseModel> GetSingleMealSessionById(int mealsessionid);
+        Task<GetSingleMealSessionByIdResponseModel> GetSingleMealSessionById(int mealsessionid);
 
         Task<List<MealSessionResponseModel>> GetAllMealSessionByStatus(string status);
 

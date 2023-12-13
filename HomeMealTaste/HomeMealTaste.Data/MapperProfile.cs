@@ -68,6 +68,7 @@ namespace HomeMealTaste.Data.RequestModel
             CreateMap<UpdateUserRequestModel, User>().ReverseMap();
             CreateMap<UpdateUserResponseModel, User>().ReverseMap();
             CreateMap<TotalPriceOfOrderInSystemWithEveryMonthResponseModel, Order>().ReverseMap();
+            CreateMap<GetSingleMealSessionByIdResponseModel, MealSession>().ReverseMap();
 
             
 
