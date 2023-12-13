@@ -198,6 +198,7 @@ namespace HomeMealTaste.Services.Implement
             entity.RoleId = 3;
             entity.AreaId = userRegisterChefRequest.AreaId;
             entity.DistrictId = userRegisterChefRequest.DistrictId;
+            entity.Status = true;
             var result = await _userRepository.Create(entity, true);
             if (result != null)
             {
