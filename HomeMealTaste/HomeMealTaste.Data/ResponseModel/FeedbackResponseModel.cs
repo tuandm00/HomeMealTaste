@@ -10,8 +10,8 @@ namespace HomeMealTaste.Data.ResponseModel
     {
         public int FeedbackId { get; set; }
         public string? Description { get; set; }
-        public KitchenDtoFeedbackResponseModel KitchenDtoFeedbackResponseModel { get; set; }
-        public CustomerDtoFeedbackReponseModel CustomerDtoFeedbackReponseModel { get; set; }
+        public KitchenDtoFeedbackResponseModel? KitchenDtoFeedbackResponseModel { get; set; }
+        public CustomerDtoFeedbackReponseModel? CustomerDtoFeedbackReponseModel { get; set; }
         public string? CreateDate { get; set; }
     }
 
@@ -21,7 +21,7 @@ namespace HomeMealTaste.Data.ResponseModel
         public int? UserId { get; set; }
         public string? Name { get; set; }
         public string? Phone { get; set; }
-        public DistrictDtoFeedbackResponseModel DistrictDtoFeedbackResponseModel { get; set; }
+        public DistrictDtoFeedbackResponseModel? DistrictDtoFeedbackResponseModel { get; set; }
     }
 
     public class KitchenDtoFeedbackResponseModel
