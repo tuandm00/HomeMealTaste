@@ -195,7 +195,7 @@ namespace HomeMealTaste.Services.Implement
                     OrderId = null,
                     WalletId = null,
                     Date = GetDateTimeTimeZoneVietNam(),
-                    Amount = await getTotal,
+                    Amount = await getTotal - ((await getTotal * 10) / 100),
                     Description = "MONEY TRANSFER TO CHEF: " + i.Name,
                     Status = "SUCCEED",
                     TransactionType = "TT",
