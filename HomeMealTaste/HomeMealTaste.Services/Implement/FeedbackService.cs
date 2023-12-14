@@ -137,39 +137,33 @@ namespace HomeMealTaste.Services.Implement
             var result = _context.Feedbacks
                 .Include(x => x.Customer).ThenInclude(x => x.User).ThenInclude(x => x.District)
                 .Include(x => x.Kitchen)
-                .Where(x => x.KitchenId == kitchenid).ToList();
-            if (result.Any())
-            {
-                var mapped = result.Select(feedback =>
+                .Where(x => x.KitchenId == kitchenid).Select(x => new FeedbackResponseModel
                 {
-                    var response = _mapper.Map<FeedbackResponseModel>(feedback);
-                    response.CreateDate = ((DateTime)feedback.CreateDate).ToString("dd-MM-yyyy");
-                    response.Description = feedback.Description;
-                    response.CustomerDtoFeedbackReponseModel = new CustomerDtoFeedbackReponseModel
+                    FeedbackId = x.FeedbackId,
+                    Description = x.Description,
+                    CreateDate = ((DateTime)x.CreateDate).ToString("dd-MM-yyyy"),
+                    CustomerDtoFeedbackReponseModel = new CustomerDtoFeedbackReponseModel
                     {
-                        CustomerId = feedback.Customer.CustomerId,
-                        UserId = feedback.Customer.UserId,
-                        Name = feedback.Customer.Name,
-                        Phone = feedback.Customer.Phone,
+                        CustomerId = x.Customer.CustomerId,
+                        Name = x.Customer.Name,
+                        Phone = x.Customer.Phone,
+                        UserId = x.Customer.UserId,
                         DistrictDtoFeedbackResponseModel = new DistrictDtoFeedbackResponseModel
                         {
-                            DistrictId = feedback.Customer.District.DistrictId,
-                            DistrictName = feedback.Customer.District.DistrictName,
-                        },
-                    };
-                    response.KitchenDtoFeedbackResponseModel = new KitchenDtoFeedbackResponseModel
+                            DistrictId = x.Customer.District.DistrictId,
+                            DistrictName = x.Customer.District.DistrictName,
+                        }
+                    },
+                    KitchenDtoFeedbackResponseModel = new KitchenDtoFeedbackResponseModel
                     {
-                        KitchenId = feedback.Kitchen.KitchenId,
-                        UserId = feedback.Kitchen.UserId,
-                        Name = feedback.Kitchen.Name,
-                        Address = feedback.Kitchen.Address,
-                    };
-
-                    return response;
+                        KitchenId = x.Kitchen.KitchenId,
+                        Name = x.Kitchen.Name,
+                        Address = x.Kitchen.Address,
+                        UserId = x.Kitchen.UserId,
+                    }
                 }).ToList();
-                return mapped;
-            }
-            return null;
+            var mapped = result.Select(result => _mapper.Map<FeedbackResponseModel>(result)).ToList();
+            return mapped;
         }
     }
 }
