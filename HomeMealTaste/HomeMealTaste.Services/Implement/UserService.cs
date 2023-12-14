@@ -97,8 +97,7 @@ namespace HomeMealTaste.Services.Implement
                             UserId = result.UserId,
                             Balance = adminBalance,
                         }
-
-                    };
+                    };  
                 case 2:
                     var CustomerWalletId = _context.Wallets
                         .Where(x => x.UserId == userIdOfCustomer)
