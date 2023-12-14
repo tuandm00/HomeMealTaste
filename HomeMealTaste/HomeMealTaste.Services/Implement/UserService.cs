@@ -330,7 +330,11 @@ namespace HomeMealTaste.Services.Implement
             Email = x.Email,
             Phone = x.Phone,
             Address = x.Address,
-            DistrictId = x.DistrictId,
+            DistrictDto = new DistrictDto
+            {
+                DistrictId = x.District.DistrictId,
+                DistrictName = x.District.DistrictName,
+            },
             RoleId = x.RoleId,
             Status = x.Status,
             AreaId = x.AreaId,
@@ -339,10 +343,11 @@ namespace HomeMealTaste.Services.Implement
                 WalletId = w.WalletId,
                 UserId = w.UserId,
                 Balance = w.Balance,
-            }).FirstOrDefault(),
+            }).FirstOrDefault()
         }).FirstOrDefaultAsync();
-
-            return result;
+        
+            var mapped = _mapper.Map<GetUserByIdResponseModel>(result);
+            return mapped;
         }
 
         public Task<List<GetAllUserWithRoleCustomerAndChefResponseModel>> GetAllUserWithRoleCustomerAndChef()

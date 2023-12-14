@@ -14,7 +14,7 @@ namespace HomeMealTaste.Data.ResponseModel
         public string? Email { get; set; }
         public string? Phone { get; set; }
         public string? Address { get; set; }
-        public int? DistrictId { get; set; }
+        public DistrictDto? DistrictDto { get; set; }
         public int? RoleId { get; set; }
         public bool? Status { get; set; }
         public int? AreaId { get; set; }
@@ -27,5 +27,10 @@ namespace HomeMealTaste.Data.ResponseModel
         public int WalletId { get; set; }
         public int? UserId { get; set; }
         public int? Balance { get; set; }
+    }
+    public class DistrictDto
+    {
+        public int? DistrictId { get; set; }
+        public string? DistrictName { get; set; }
     }
 }
