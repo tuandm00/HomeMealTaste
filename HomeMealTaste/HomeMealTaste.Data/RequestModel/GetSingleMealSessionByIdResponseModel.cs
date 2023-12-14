@@ -71,7 +71,14 @@ namespace HomeMealTaste.Data.RequestModel
         public int DishId { get; set; }
         public string? Name { get; set; }
         public string? Image { get; set; }
-        public int? DishTypeId { get; set; }
+        public DishTypeDtoMealSession? DishTypeDtoMealSession { get; set; }
         public int? KitchenId { get; set; }
+    }
+
+    public class DishTypeDtoMealSession
+    {
+        public int DishTypeId { get; set; }
+        public string? Name { get; set; }
+        public string? Description { get; set; }
     }
 }

@@ -251,7 +251,12 @@ namespace HomeMealTaste.Services.Implement
                     DishId = md.Dish.DishId,
                     Name = md.Dish.Name,
                     Image = md.Dish.Image,
-                    DishTypeId = md.Dish.DishTypeId,
+                    DishTypeDtoMealSession = new DishTypeDtoMealSession
+                    {
+                        DishTypeId = md.Dish.DishType.DishTypeId,
+                        Description = md.Dish.DishType.Description,
+                        Name = md.Dish.DishType.Name,
+                    },
                     KitchenId = md.Dish.KitchenId
                 })
                 .ToList(),
