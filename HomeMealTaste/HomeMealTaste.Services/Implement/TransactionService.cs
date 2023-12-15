@@ -309,7 +309,7 @@ namespace HomeMealTaste.Services.Implement
 
             return responseModels;
         }
-            public async Task<List<GetAllTransactionsResponseModel>> GetAllTransaction()
+        public async Task<List<GetAllTransactionsResponseModel>> GetAllTransaction()
         {
             var result = _context.Transactions.Select(x => new GetAllTransactionsResponseModel
             {

@@ -238,8 +238,6 @@ namespace HomeMealTaste.Data.Models
             {
                 entity.ToTable("Post");
 
-                entity.Property(e => e.PostId).ValueGeneratedNever();
-
                 entity.Property(e => e.Status).HasMaxLength(1000);
 
                 entity.HasOne(d => d.Order)

@@ -27,11 +27,10 @@ namespace HomeMealTaste.Services.Implement
             _mapper = mapper;
         }
 
-        public Task PostForAllCustomerWithOrderId(PostRequestModel request)
+        public Task PostForAllCustomerWithOrderId(int mealsessionId)
         {
-            var entity = _mapper.Map<Post>(request);
-            var orderIdByMealsessionId = _context.Orders.Where(x => x.MealSessionId == request.MealSessionId).Select(x => x.OrderId).ToList();
-            var checkStatusOrder = _context.Orders.Select(x => x.Status).FirstOrDefault();
+            var orderIdByMealsessionId = _context.Orders.Where(x => x.MealSessionId == mealsessionId).Select(x => x.OrderId).ToList();
+            var checkStatusOrder = _context.Orders.Where(x => orderIdByMealsessionId.Contains(x.OrderId)).Select(x => x.Status).FirstOrDefault();
             var result = _context.Posts.Where(x => orderIdByMealsessionId.Contains((int)x.OrderId)).ToList();
             var customerId = _context.Orders.Where(x => orderIdByMealsessionId.Contains((int)x.OrderId)).Select(x => x.CustomerId).ToList();
             var userId = _context.Customers.Where(x => customerId.Contains(x.CustomerId)).Select(x => x.UserId).ToList();
@@ -59,11 +58,9 @@ namespace HomeMealTaste.Services.Implement
                                 };
                                 _context.Posts.Add(add);
                             }
+                            _context.SaveChanges();
                         }
                         else throw new Exception("Can not Send Notification Because Status is CANCELLED or PAID");
-                        
-
-                        _context.SaveChanges();
                         transaction.Commit();
                     }
                     catch (Exception)

@@ -18,12 +18,14 @@ namespace HomeMealTaste.Services.Implement
     {
         private readonly IOrderRepository _orderRepository;
         private readonly IMapper _mapper;
+        private readonly IPostService _postService;
         private readonly HomeMealTasteContext _context;
-        public OrderService(IOrderRepository orderRepository, IMapper mapper, HomeMealTasteContext context)
+        public OrderService(IOrderRepository orderRepository, IMapper mapper, HomeMealTasteContext context, IPostService postService)
         {
             _orderRepository = orderRepository;
             _mapper = mapper;
             _context = context;
+            _postService = postService;
         }
         public static DateTime TranferDateTimeByTimeZone(DateTime dateTime, string timezoneArea)
         {
@@ -854,12 +856,13 @@ namespace HomeMealTaste.Services.Implement
                     {
                         list.Status = "DONE";
                     }
-                    else list.Status = "CANCELLED";
                     
                     _context.Orders.Update(list);
+                    await _context.SaveChangesAsync();
+
+                    await _postService.PostForAllCustomerWithOrderId((int)list.MealSessionId);
 
                 }
-                await _context.SaveChangesAsync();
                 var Status = await _context.Orders.Where(x => x.MealSessionId == mealsessionid).Select(x => x.Status).FirstOrDefaultAsync();
                 if (Status.Equals("CANCELLED"))
                 {

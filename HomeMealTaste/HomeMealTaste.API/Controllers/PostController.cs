@@ -19,9 +19,10 @@ namespace HomeMealTaste.API.Controllers
         }
 
         [HttpPost("post-a-notification-by-email")]
-        public async Task PostForAllCustomerWithOrderId(PostRequestModel request)
+        public async Task PostForAllCustomerWithOrderId(int mealsessionId)
         {
-            var result = _postService.PostForAllCustomerWithOrderId(request);
+            var result = _postService.PostForAllCustomerWithOrderId(mealsessionId);
+           
         }
     }
 }
