@@ -30,22 +30,48 @@ namespace HomeMealTaste.Services.Implement
         public Task PostForAllCustomerWithOrderId(PostRequestModel request)
         {
             var entity = _mapper.Map<Post>(request);
-            var result = _context.Posts.Where(x => x.OrderId == entity.OrderId).ToList();
-            var orderId = request.OrderId;
-            var customerId = _context.Orders.Where(x => x.OrderId == orderId).Select(x => x.CustomerId).SingleOrDefault();
-            var userId = _context.Customers.Where(x => x.CustomerId == customerId).Select(x => x.UserId).SingleOrDefault();
-            var userEmail = _context.Users.Where(x => x.UserId == userId).Select(x => x.Email).SingleOrDefault();
+            var orderIdByMealsessionId = _context.Orders.Where(x => x.MealSessionId == request.MealSessionId).Select(x => x.OrderId).ToList();
+            var checkStatusOrder = _context.Orders.Select(x => x.Status).FirstOrDefault();
+            var result = _context.Posts.Where(x => orderIdByMealsessionId.Contains((int)x.OrderId)).ToList();
+            var customerId = _context.Orders.Where(x => orderIdByMealsessionId.Contains((int)x.OrderId)).Select(x => x.CustomerId).ToList();
+            var userId = _context.Customers.Where(x => customerId.Contains(x.CustomerId)).Select(x => x.UserId).ToList();
+            var userEmail = _context.Users.Where(x => userId.Contains(x.UserId)).Select(x => x.Email).ToList();
 
-            if (userEmail != null)
+            if (userEmail.Any())
             {
-                SendNotificationEmail(userEmail, "Order Post", "A new Order for you is available. Check it out!");
-                var add = new Post
+                using (var transaction = _context.Database.BeginTransaction())
                 {
-                    OrderId = orderId,
-                    Status = "PUSHED",
-                };
-                _context.Posts.Add(add);
-                _context.SaveChanges();
+                    try
+                    {
+                        if (checkStatusOrder.Equals("DONE"))
+                        {
+                            foreach (var email in userEmail)
+                            {
+                                SendNotificationEmail(email, "Order Post", "A new Order for you is available. Check it out!");
+                            }
+
+                            foreach (var orderId in orderIdByMealsessionId)
+                            {
+                                var add = new Post
+                                {
+                                    OrderId = orderId,
+                                    Status = "PUSHED",
+                                };
+                                _context.Posts.Add(add);
+                            }
+                        }
+                        else throw new Exception("Can not Send Notification Because Status is CANCELLED or PAID");
+                        
+
+                        _context.SaveChanges();
+                        transaction.Commit();
+                    }
+                    catch (Exception)
+                    {
+                        transaction.Rollback();
+                        // Handle exception, log, or rethrow as needed
+                    }
+                }
             }
 
             return Task.FromResult(result);

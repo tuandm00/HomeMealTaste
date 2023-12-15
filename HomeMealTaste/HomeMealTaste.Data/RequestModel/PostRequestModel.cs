@@ -8,7 +8,6 @@ namespace HomeMealTaste.Data.RequestModel
 {
     public class PostRequestModel
     {
-        public int? OrderId { get; set; }
-        public string? status { get; set; }
+        public int MealSessionId { get; set; }
     }
 }

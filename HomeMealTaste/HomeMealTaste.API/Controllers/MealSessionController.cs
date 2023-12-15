@@ -113,6 +113,12 @@ namespace HomeMealTaste.Controllers
             var result = await _mealSessionService.GetAllMeallSessionByKitchenIdWithStatusApprovedandREMAINQUANTITYhigherthan0InDay(kitchenid);
             return Ok(result);
         }
+        [HttpGet("get-all-meal-session-by-session-id-IN-DAY-and-by-kitchen-id")]
+        public async Task<IActionResult> GetAllMeallSessionBySessionIdINDAYAndByKitchenId(int sessionid, int kitchenid)
+        {
+            var result = await _mealSessionService.GetAllMeallSessionBySessionIdINDAYAndByKitchenId(sessionid, kitchenid);
+            return Ok(result);
+        }
     }
 }
 

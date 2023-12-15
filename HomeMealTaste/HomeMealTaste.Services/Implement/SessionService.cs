@@ -82,7 +82,7 @@ namespace HomeMealTaste.Services.Implement
         {
             var entity = _mapper.Map<Session>(sessionRequest);
             var sessionTypeLower = entity.SessionType.ToLower();
-            var sessionName = entity.SessionName;
+            var sessionName = sessionRequest.SessionName;
             var areaId = _context.Sessions.Where(x => x.AreaId == entity.AreaId).Select(x => x.AreaId).FirstOrDefault();
             if (areaId != null)
             {
@@ -137,46 +137,7 @@ namespace HomeMealTaste.Services.Implement
             }
             else
             {
-                if (string.Equals(sessionTypeLower, "lunch", StringComparison.OrdinalIgnoreCase))
-                {
-                    entity.CreateDate = GetDateTimeTimeZoneVietNam();
-                    entity.StartTime = GetDateTimeTimeZoneVietNam().Date.AddHours(10);
-                    entity.EndTime = entity.StartTime.Value.AddHours(2);
-                    entity.EndDate = GetDateTimeTimeZoneVietNam();
-                    entity.Status = true;
-                    entity.UserId = 1;
-                    entity.SessionType = "Lunch";
-                    entity.AreaId = sessionRequest.AreaId;
-                    entity.SessionName = sessionName;
-
-                }
-                else if (string.Equals(sessionTypeLower, "evening", StringComparison.OrdinalIgnoreCase))
-                {
-                    entity.CreateDate = GetDateTimeTimeZoneVietNam();
-                    entity.StartTime = GetDateTimeTimeZoneVietNam().Date.AddHours(16);
-                    entity.EndTime = entity.StartTime.Value.AddHours(4);
-                    entity.EndDate = GetDateTimeTimeZoneVietNam();
-                    entity.Status = true;
-                    entity.UserId = 1;
-                    entity.SessionType = "Evening";
-                    entity.AreaId = sessionRequest.AreaId;
-                    entity.SessionName = sessionName;
-
-
-                }
-                else if (string.Equals(sessionTypeLower, "dinner", StringComparison.OrdinalIgnoreCase))
-                {
-                    entity.CreateDate = GetDateTimeTimeZoneVietNam();
-                    entity.StartTime = GetDateTimeTimeZoneVietNam().Date.AddHours(17);
-                    entity.EndTime = entity.StartTime.Value.AddHours(2);
-                    entity.EndDate = GetDateTimeTimeZoneVietNam();
-                    entity.Status = true;
-                    entity.UserId = 1;
-                    entity.SessionType = "Dinner";
-                    entity.AreaId = sessionRequest.AreaId;
-                    entity.SessionName = sessionName;
-
-                }
+                throw new Exception("Not Exist Area to Create Session");
             }
             var result = await _sessionRepository.Create(entity, true);
 
