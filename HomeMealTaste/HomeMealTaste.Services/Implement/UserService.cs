@@ -97,7 +97,7 @@ namespace HomeMealTaste.Services.Implement
                             UserId = result.UserId,
                             Balance = adminBalance,
                         }
-                    };  
+                    };
                 case 2:
                     var CustomerWalletId = _context.Wallets
                         .Where(x => x.UserId == userIdOfCustomer)
@@ -221,7 +221,37 @@ namespace HomeMealTaste.Services.Implement
                 await _context.AddAsync(chef);
                 await _context.SaveChangesAsync();
             }
+
+
+            var subject = "Welcome to Our HomeMealTaste Platform";
+            var body = $"Thank you for registering as a chef! We are excited to have you on board.<br>" +
+                       $"This is your Phone and Password to login:<br>" +
+                       $"Phone: {userRegisterChefRequest.Phone}<br>" +
+                       $"Password: {userRegisterChefRequest.Password}";
+
+            await SendEmail(userRegisterChefRequest.Email, subject, body);
             return _mapper.Map<UserRegisterChefResponseModel>(result);
+        }
+        public async Task SendEmail(string? to, string subject, string body)
+        {
+            var smtpClient = new SmtpClient("smtp.gmail.com")
+            {
+                Port = 587,
+                Credentials = new NetworkCredential("dominhtuan23102000@gmail.com", "djmr tgxz wfao upwq"),
+                EnableSsl = true,
+            };
+
+            var mailMessage = new MailMessage
+            {
+                From = new MailAddress("dominhtuan23102000@gmail.com"),
+                Subject = subject,
+                Body = body,
+                IsBodyHtml = true,
+            };
+
+            mailMessage.To.Add(to);
+
+            await smtpClient.SendMailAsync(mailMessage);
         }
 
         public async Task<User> DeleteUserById(int id)
@@ -344,7 +374,7 @@ namespace HomeMealTaste.Services.Implement
                 Balance = w.Balance,
             }).FirstOrDefault()
         }).FirstOrDefaultAsync();
-        
+
             var mapped = _mapper.Map<GetUserByIdResponseModel>(result);
             return mapped;
         }
@@ -387,7 +417,7 @@ namespace HomeMealTaste.Services.Implement
             var entity = _mapper.Map<User>(request);
             var result = _context.Users.Where(x => x.UserId == request.UserId).FirstOrDefault();
             var kitchenId = _context.Kitchens.Where(x => x.UserId == result.UserId).Select(x => x.KitchenId).FirstOrDefault();
-            if(result != null)
+            if (result != null)
             {
                 result.UserId = entity.UserId;
                 result.Name = entity.Name;

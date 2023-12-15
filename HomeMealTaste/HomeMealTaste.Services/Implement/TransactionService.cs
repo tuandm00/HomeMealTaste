@@ -182,23 +182,115 @@ namespace HomeMealTaste.Services.Implement
 
         }
 
+        //public async Task<List<SaveTotalPriceAfterFinishSessionResponseModel>> SaveTotalPriceAfterFinishSession(int sessionId)
+        //{
+        //    var getAllKitchenBySession = await _kitchenService.GetAllKitchenBySessionId(sessionId);
+        //    var savedTransactions = new List<Transaction>();
+        //    foreach (var i in getAllKitchenBySession)
+        //    {
+        //        var getTotal = _orderService.GetTotalPriceWithMealSessionBySessionIdAndKitchenId(sessionId, i.KitchenId);
+        //        //var kitchen = await _context.Kitchens.Where(x => x.KitchenId == i.KitchenId).FirstOrDefaultAsync();
+        //        var saveToTransaction = new Transaction
+        //        {
+        //            OrderId = null,
+        //            WalletId = null,
+        //            Date = GetDateTimeTimeZoneVietNam(),
+        //            Amount = await getTotal - ((await getTotal * 10) / 100),
+        //            Description = "MONEY TRANSFER TO CHEF: " + i.Name,
+        //            Status = "SUCCEED",
+        //            TransactionType = "TT",
+        //            UserId = i.UserId,
+        //        };
+        //        _context.Transactions.Add(saveToTransaction);
+        //        savedTransactions.Add(saveToTransaction);
+        //    }
+        //    await _context.SaveChangesAsync();
+        //    var responseModels = savedTransactions.Select(transaction => new SaveTotalPriceAfterFinishSessionResponseModel
+        //    {
+        //        // Map properties from the transaction to the response model
+        //        TransactionId = transaction.TransactionId,
+        //        Amount = transaction.Amount,
+        //        Date = transaction.Date.ToString(),
+        //        Description = transaction.Description,
+        //        // Map other properties as needed
+        //    }).ToList();
+
+        //    return responseModels;
+        //}
+
         public async Task<List<SaveTotalPriceAfterFinishSessionResponseModel>> SaveTotalPriceAfterFinishSession(int sessionId)
         {
             var getAllKitchenBySession = await _kitchenService.GetAllKitchenBySessionId(sessionId);
             var savedTransactions = new List<Transaction>();
             foreach (var i in getAllKitchenBySession)
             {
-                var getTotal = _orderService.GetTotalPriceWithMealSessionBySessionIdAndKitchenId(sessionId, i.KitchenId);
+                var getTotal = await _orderService.GetTotalPriceWithMealSessionBySessionIdAndKitchenId(sessionId, i.KitchenId);
                 //var kitchen = await _context.Kitchens.Where(x => x.KitchenId == i.KitchenId).FirstOrDefaultAsync();
+
+                // save to admin wallet take 10 %
+                var admin = _context.Users.Where(x => x.RoleId == 1 && x.UserId == 2).FirstOrDefault();
+                var priceToAdmin = (getTotal * 10) / 100;
+                var adminWallet = _context.Wallets.FirstOrDefault(w => w.UserId == admin.UserId);
+
+                if (admin != null)
+                {
+                    // Check if the admin already has a wallet
+
+                    if (adminWallet != null)
+                    {
+                        // Update the existing wallet
+                        adminWallet.Balance += (int?)priceToAdmin;
+                        _context.Wallets.Update(adminWallet);
+                    }
+
+                }
+
+                //then transfer price after 10 % of admin to kitchen
+                //var kitchen = _context.MealSessions
+                //    .Where(x => x.MealSessionId == entity.MealSessionId)
+                //    .Include(x => x.Kitchen)
+                //    .AsNoTracking()
+                //    .FirstOrDefault();
+                //var kitchenid = _context.MealSessions.Where(x => x.MealSessionId == entity.MealSessionId).Select(x => x.KitchenId).FirstOrDefault();
+                //var userIdChef = _context.Kitchens.Where(x => x.KitchenId == kitchenid).Select(x => x.UserId).FirstOrDefault();
+                var walletOfUserIdOfKitchen = _context.Wallets.Where(x => x.UserId == i.UserId).Select(X => X.WalletId).FirstOrDefault();
+                var priceToChef = getTotal - priceToAdmin;
+
+
+                var chefWallet = _context.Wallets.FirstOrDefault(w => w.UserId == i.UserId);
+
+                if (chefWallet != null)
+                {
+                    // Update the existing wallet
+                    chefWallet.Balance += (int?)priceToChef;
+                    _context.Wallets.Update(chefWallet);
+                }
+
+                // Save to transaction for admin
+                var transactionToAdmin = new Transaction
+                {
+                    WalletId = adminWallet.UserId,
+                    Date = GetDateTimeTimeZoneVietNam(),
+                    Amount = (decimal?)priceToAdmin,
+                    Description = "DONE WITH REVENUE AFTER FINISH SESSION",
+                    Status = "SUCCEED",
+                    TransactionType = "REVENUE",
+                    UserId = admin.UserId,
+                };
+
+                _context.Transactions.Add(transactionToAdmin);
+
+                //// Save to transaction for chef
+
                 var saveToTransaction = new Transaction
                 {
                     OrderId = null,
                     WalletId = null,
                     Date = GetDateTimeTimeZoneVietNam(),
-                    Amount = await getTotal - ((await getTotal * 10) / 100),
+                    Amount = priceToChef,
                     Description = "MONEY TRANSFER TO CHEF: " + i.Name,
                     Status = "SUCCEED",
-                    TransactionType = "TT",
+                    TransactionType = "REVENUE",
                     UserId = i.UserId,
                 };
                 _context.Transactions.Add(saveToTransaction);
@@ -217,8 +309,7 @@ namespace HomeMealTaste.Services.Implement
 
             return responseModels;
         }
-
-        public async Task<List<GetAllTransactionsResponseModel>> GetAllTransaction()
+            public async Task<List<GetAllTransactionsResponseModel>> GetAllTransaction()
         {
             var result = _context.Transactions.Select(x => new GetAllTransactionsResponseModel
             {
