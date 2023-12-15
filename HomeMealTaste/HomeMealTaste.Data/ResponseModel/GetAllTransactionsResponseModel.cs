@@ -6,24 +6,25 @@ using System.Threading.Tasks;
 
 namespace HomeMealTaste.Data.ResponseModel
 {
-    public class GetAllTransactionByTransactionTypeRECHARGED
+    public class GetAllTransactionsResponseModel
     {
-        public int TransactionId { get; set; }
-        public int? OrderId { get; set; }
-        public WalletDtoGetAllTransactionRECHARGED? WalletDtoGetAllTransactionRECHARGED { get; set; }
+        public int? TransactionId { get; set; }
+        public OrderDtoGetAllTransactions? OrderDtoGetAllTransactions { get; set; }
+        public WalletDtoGetAllTransactions? WalletDtoGetAllTransactions { get; set; }
         public string? Date { get; set; }
         public decimal? Amount { get; set; }
         public string? Description { get; set; }
         public string? Status { get; set; }
         public string? TransactionType { get; set; }
+        public UserDtoGetAllTransactions? UserDtoGetAllTransactions { get; set; }
     }
-    public class WalletDtoGetAllTransactionRECHARGED
+    public class WalletDtoGetAllTransactions
     {
         public int? WalletId { get; set; }
-        public UserDtoGetAllTransactionRECHARGED? UserDtoGetAllTransactionRECHARGED { get; set; }
+        public int? UserId { get; set; }
         public int? Balance { get; set; }
     }
-    public class UserDtoGetAllTransactionRECHARGED
+    public class UserDtoGetAllTransactions
     {
         public int? UserId { get; set; }
         public string? Name { get; set; }
@@ -33,7 +34,17 @@ namespace HomeMealTaste.Data.ResponseModel
         public string? Address { get; set; }
         public int? DistrictId { get; set; }
         public int? RoleId { get; set; }
-        public bool? Status { get; set; }
         public int? AreaId { get; set; }
+    }
+
+    public class OrderDtoGetAllTransactions
+    {
+        public int? OrderId { get; set; }
+        public int? CustomerId { get; set; }
+        public string? Status { get; set; }
+        public int? MealSessionId { get; set; }
+        public int? TotalPrice { get; set; }
+        public string? Time { get; set; }
+        public int? Quantity { get; set; }
     }
 }

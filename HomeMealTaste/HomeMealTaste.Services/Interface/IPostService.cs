@@ -8,9 +8,8 @@ using System.Threading.Tasks;
 
 namespace HomeMealTaste.Services.Interface
 {
-    public interface IPostService
+    public interface IPostService 
     {
-        Task<PostResponseModel> CreatePostStatusAfterOrder(PostRequestModel createPostRequest);
-        Task<string> getMealNameByOrderId(int OrderId);
+        Task PostForAllCustomerWithOrderId(PostRequestModel request);
     }
 }

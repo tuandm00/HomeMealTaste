@@ -5,12 +5,14 @@ using HomeMealTaste.Data.ResponseModel;
 using HomeMealTaste.Response;
 using HomeMealTaste.Services.Helper;
 using HomeMealTaste.Services.Interface;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace HomeMealTaste.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    
     public class MealSessionController : ControllerBase
     {
         private readonly IMealSessionService _mealSessionService;
@@ -68,6 +70,12 @@ namespace HomeMealTaste.Controllers
             var result = _mealSessionService.UpdateStatusMeallSession(mealSessionid, status);
             return result;
         }
+        [HttpGet("get-all-meal-session-by-session-id-IN-DAY")]
+        public async Task<IActionResult> GetAllMeallSessionBySessionIdINDAY(int sessionid)
+        {
+            var result = await _mealSessionService.GetAllMeallSessionBySessionIdINDAY(sessionid);
+            return Ok(result);
+        }
         [HttpGet("get-all-meal-session-by-session-id")]
         public async Task<IActionResult> GetAllMeallSessionBySessionId(int sessionid)
         {
@@ -81,10 +89,28 @@ namespace HomeMealTaste.Controllers
             var result = await _mealSessionService.GetAllMeallSessionByKitchenId(kitchenId);
             return Ok(result);
         }
-        [HttpGet("get-all-meal-session-with-status-APPROVED-and-REMAINQUANTITY->-0")]
-        public async Task<IActionResult> GetAllMeallSessionWithStatusAPPROVEDandREMAINQUANTITYhigherthan0()
+        [HttpGet("get-all-meal-session-with-status-APPROVED-and-REMAINQUANTITY->-0-IN-DAY")]
+        public async Task<IActionResult> GetAllMeallSessionWithStatusAPPROVEDandREMAINQUANTITYhigherthan0InDay()
         {
-            var result = await _mealSessionService.GetAllMeallSessionWithStatusAPPROVEDandREMAINQUANTITYhigherthan0();
+            var result = await _mealSessionService.GetAllMeallSessionWithStatusAPPROVEDandREMAINQUANTITYhigherthan0InDay();
+            return Ok(result);
+        }
+        [HttpGet("get-all-meal-session-by-kitchen-id-in-session")]
+        public async Task<IActionResult> GetAllMeallSessionByKitchenIdInSession(int kitchenid, int sessionid)
+        {
+            var result = await _mealSessionService.GetAllMeallSessionByKitchenIdInSession(kitchenid, sessionid);
+            return Ok(result);
+        }
+        [HttpGet("get-all-meal-session-by-session-id-with-status-approved-and-remain-quantity->0-IN-DAY")]
+        public async Task<IActionResult> GetAllMeallSessionBySessionIdWithStatusApprovedandREMAINQUANTITYhigherthan0InDay(int sessionid)
+        {
+            var result = await _mealSessionService.GetAllMeallSessionBySessionIdWithStatusApprovedandREMAINQUANTITYhigherthan0InDay(sessionid);
+            return Ok(result);
+        } 
+        [HttpGet("get-all-meal-session-by-kitchen-id-with-status-approved-and-remain-quantity->0-IN-DAY")]
+        public async Task<IActionResult> GetAllMeallSessionByKitchenIdWithStatusApprovedandREMAINQUANTITYhigherthan0InDay(int kitchenid)
+        {
+            var result = await _mealSessionService.GetAllMeallSessionByKitchenIdWithStatusApprovedandREMAINQUANTITYhigherthan0InDay(kitchenid);
             return Ok(result);
         }
     }

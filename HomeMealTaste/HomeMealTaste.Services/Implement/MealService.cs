@@ -75,14 +75,18 @@ namespace HomeMealTaste.Services.Implement
             entity.Description = mealRequest.Description;
             var result = await _mealRepository.Create(entity, true);
 
-            if (result != null)
+            if (result != null && mealRequest.DishIds != null)
             {
-                var mealdish = new MealDish
+                foreach (var dishId in mealRequest.DishIds)
                 {
-                    MealId = result.MealId,
-                    DishId = mealRequest.DishId
-                };
-                await _context.AddAsync(mealdish);
+                    var mealdish = new MealDish
+                    {
+                        MealId = result.MealId,
+                        DishId = dishId
+                    };
+                    await _context.AddAsync(mealdish);
+                }
+
                 await _context.SaveChangesAsync();
             }
             var response = _mapper.Map<MealResponseModel>(result);
@@ -111,11 +115,11 @@ namespace HomeMealTaste.Services.Implement
         .Include(x => x.Dish)
         .ThenInclude(x => x.Kitchen)
         .Where(x => x.Dish.Kitchen.KitchenId == id)
-        .GroupBy(x => x.Meal.MealId) 
+        .GroupBy(x => x.Meal.MealId)
         .Select(group => new GetAllMealByKitchenIdResponseModel
         {
             MealId = group.Key,
-            Name = group.First().Meal.Name, 
+            Name = group.First().Meal.Name,
             Image = group.First().Meal.Image,
             Description = group.First().Meal.Description,
             KitchenDtoReponseMeal = new KitchenDtoReponseMeal
@@ -131,7 +135,12 @@ namespace HomeMealTaste.Services.Implement
                 DishId = md.Dish.DishId,
                 Name = md.Dish.Name,
                 Image = md.Dish.Image,
-                DishTypeId = md.Dish.DishTypeId,
+                DishTypeDto = new DishTypeDto
+                {
+                    DishTypeId = md.Dish.DishType.DishTypeId,
+                    Name = md.Dish.DishType.Name,
+                    Description = md.Dish.DishType.Description,
+                },
                 KitchenId = md.Dish.KitchenId
             }).ToList()
 
@@ -140,7 +149,7 @@ namespace HomeMealTaste.Services.Implement
             return result;
         }
 
-        public  Task<GetMealByMealIdResponseModel> GetMealByMealId(int mealid)
+        public Task<GetMealByMealIdResponseModel> GetMealByMealId(int mealid)
         {
             var result = _context.Meals
                 .Include(x => x.MealDishes)
@@ -192,36 +201,48 @@ namespace HomeMealTaste.Services.Implement
                     Address = meal.Kitchen.Address,
                     AreaId = meal.Kitchen.AreaId,
                 };
-                response.CreateDate = meal.CreateDate.ToString();
+                response.CreateDate = ((DateTime)meal.CreateDate).ToString("dd-MM-yyyy");
                 response.Description = meal.Description;
 
                 return response;
             }).ToList();
 
-             return mapped;
+            return mapped;
         }
 
-        public async Task DeleteMealIdNotExistInSessionByMealId(int mealid)
+        public async Task DeleteMealNotExistInSessionByMealId(int mealid)
         {
-            var mealsessionExisted = _context.MealSessions.Where(x => x.MealId == mealid).FirstOrDefault();
-            if(mealsessionExisted != null)
+            var mealsessionExisted = await _context.MealSessions.Where(x => x.MealId == mealid).FirstOrDefaultAsync();
+            if (mealsessionExisted != null)
             {
                 throw new Exception("Meal is EXISTED in Session");
-            }else
+            }
+            else
             {
                 var result = await _context.MealDishes.Where(x => x.MealId == mealid).FirstOrDefaultAsync();
-                if (result != null)
+                if (result == null)
                 {
-                    _context.MealDishes.Remove(result);
+                    var meal = _context.Meals.Where(x => x.MealId == mealid).FirstOrDefault();
+                    _context.Meals.Remove(meal);
+                }
+                else
+                {
+                    var mealdish = await _context.MealDishes.Where(x => x.MealId == mealid).ToListAsync();
+                    foreach (var i in mealdish)
+                    {
+                        _context.MealDishes.Remove(i);
+
+                    }
                     var meal = _context.Meals.Where(x => x.MealId == result.MealId).FirstOrDefault();
                     _context.Meals.Remove(meal);
+
                 }
             }
             await _context.SaveChangesAsync();
 
         }
 
-        public async Task<UpdateMealIdNotExistInSessionByMealIdResponseModel> UpdateMealIdNotExistInSessionByMealId(UpdateMealIdNotExistInSessionByMealIdRequestModel request)
+        public async Task<UpdateMealIdNotExistInSessionByMealIdResponseModel> UpdateMealNotExistInSession(UpdateMealIdNotExistInSessionByMealIdRequestModel request)
         {
             var entity = _mapper.Map<Meal>(request);
             var mealsessionExisted = _context.MealSessions.Where(x => x.MealId == entity.MealId).FirstOrDefault();
@@ -233,7 +254,7 @@ namespace HomeMealTaste.Services.Implement
             {
                 var imagePath = await _blobService.UploadQuestImgAndReturnImgPathAsync(request.Image, "meal-image");
                 var result = _context.Meals.Where(x => x.MealId == entity.MealId).FirstOrDefault();
-                if (result != null)
+                if (result != null && request.DishIds != null)
                 {
                     result.MealId = entity.MealId;
                     result.Name = entity.Name;
@@ -243,6 +264,24 @@ namespace HomeMealTaste.Services.Implement
                     result.KitchenId = entity.KitchenId;
 
                     await _mealRepository.Update(result);
+
+                    var mealdish = await _context.MealDishes.Where(x => x.MealId == request.MealId).ToListAsync();
+                    foreach (var i in mealdish)
+                    {
+                        _context.MealDishes.Remove(i);
+                    }
+
+
+                    foreach (var dishId in request.DishIds)
+                    {
+                        var mealdishs = new MealDish
+                        {
+                            MealId = result.MealId,
+                            DishId = dishId
+                        };
+                        await _context.AddAsync(mealdishs);
+                    }
+
                 }
                 else
                 {

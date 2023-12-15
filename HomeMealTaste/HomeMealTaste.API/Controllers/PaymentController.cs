@@ -4,12 +4,14 @@ using HomeMealTaste.Data.ResponseModel;
 using HomeMealTaste.Services.Implement;
 using HomeMealTaste.Services.Interface;
 using HomeMealTaste.Services.Library;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace HomeMealTaste.API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    
     public class PaymentController : ControllerBase
     {
         //private readonly VnPayApiService _vnPayApiService;

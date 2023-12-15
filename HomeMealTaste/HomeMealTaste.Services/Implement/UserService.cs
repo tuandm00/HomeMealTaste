@@ -43,7 +43,7 @@ namespace HomeMealTaste.Services.Implement
             var claims = new List<Claim>
             {
                 new Claim(ClaimTypes.NameIdentifier, users.UserId.ToString()),
-                new Claim(ClaimTypes.Name, users.Email),
+                //new Claim(ClaimTypes.Name, users.Email),
                 new Claim("RoleId", users.RoleId.ToString()),
                 new Claim("Phone", users.Phone.ToString()),
                 new Claim("Username", users.Username.ToString()),
@@ -58,15 +58,16 @@ namespace HomeMealTaste.Services.Implement
             return new JwtSecurityTokenHandler().WriteToken(token);
         }
 
-        public async Task<UserResponseModel> LoginAsync(UserRequestModel userRequest)
+        public async Task<UserResponseModel?> LoginAsync(UserRequestModel userRequest)
         {
             var existedUser = await _userRepository.GetFirstOrDefault(x => x.Phone == userRequest.Phone);
             var chekhash = BCrypt.Net.BCrypt.Verify(userRequest.Password, existedUser?.Password);
             if (!chekhash) throw new Exception("Username or Password not match!");
             var result = await _userRepository.GetUsernamePassword(userRequest);
             var customerIds = _context.Customers.Where(x => x.Phone == existedUser.Phone).Select(x => x.CustomerId).FirstOrDefault();
+            var userIdOfCustomer = _context.Customers.Where(x => x.CustomerId == customerIds).Select(x => x.UserId).FirstOrDefault();
             var kitchenIds = _context.Kitchens.Where(x => x.UserId == existedUser.UserId).Select(x => x.KitchenId).FirstOrDefault();
-
+            var userIdOfKitchen = _context.Kitchens.Where(x => x.KitchenId == kitchenIds).Select(x => x.UserId).FirstOrDefault();
             switch (result.RoleId)
             {
                 case 1:
@@ -88,16 +89,24 @@ namespace HomeMealTaste.Services.Implement
                         Phone = result.Phone,
                         Status = result.Status,
                         RoleId = result.RoleId,
+                        AreaId = result.AreaId,
                         Token = GenerateToken(result),
-                        WalletDtoAdminResponse = new WalletDtoAdminResponse
+                        WalletDtoResponse = new WalletDtoResponse
                         {
                             WalletId = adminWalletId,
                             UserId = result.UserId,
                             Balance = adminBalance,
                         }
-
-                    };
+                    };  
                 case 2:
+                    var CustomerWalletId = _context.Wallets
+                        .Where(x => x.UserId == userIdOfCustomer)
+                        .Select(x => x.WalletId)
+                        .FirstOrDefault();
+                    var CustomerBalance = _context.Wallets
+                        .Where(x => x.UserId == userIdOfCustomer)
+                        .Select(x => x.Balance)
+                        .FirstOrDefault();
                     return new UserResponseModel
                     {
                         Name = result.Name,
@@ -108,22 +117,44 @@ namespace HomeMealTaste.Services.Implement
                         Phone = result.Phone,
                         Status = result.Status,
                         RoleId = result.RoleId,
+                        AreaId = result.AreaId,
                         Token = GenerateToken(result),
                         CustomerId = customerIds,
+                        WalletDtoResponse = new WalletDtoResponse
+                        {
+                            WalletId = CustomerWalletId,
+                            UserId = userIdOfCustomer,
+                            Balance = CustomerBalance,
+                        }
                     };
                 case 3:
+                    var kitchenWalletId = _context.Wallets
+                        .Where(x => x.UserId == userIdOfKitchen)
+                        .Select(x => x.WalletId)
+                        .FirstOrDefault();
+                    var chefBalance = _context.Wallets
+                        .Where(x => x.UserId == userIdOfKitchen)
+                        .Select(x => x.Balance)
+                        .FirstOrDefault();
                     return new UserResponseModel
                     {
                         Name = result.Name,
                         UserId = result.UserId,
                         Address = result.Address,
                         DistrictId = result.DistrictId,
-                        Email = result.Email,
+                        AreaId = result.AreaId,
                         Phone = result.Phone,
+                        Email = result.Email,
                         Status = result.Status,
                         RoleId = result.RoleId,
                         Token = GenerateToken(result),
                         KitchenId = kitchenIds,
+                        WalletDtoResponse = new WalletDtoResponse
+                        {
+                            WalletId = kitchenWalletId,
+                            UserId = userIdOfKitchen,
+                            Balance = chefBalance,
+                        }
                     };
             }
             return null;
@@ -132,8 +163,8 @@ namespace HomeMealTaste.Services.Implement
         public async Task<UserRegisterCustomerResponseModel> RegisterForCustomer(UserRegisterCustomerRequestModel userRegisterCustomerRequest)
         {
             var entity = _mapper.Map<User>(userRegisterCustomerRequest);
-            var existedUser = await _userRepository.GetByCondition(x => x.Username == entity.Username);
-            if (existedUser.Count() != 0) throw new Exception("existed Username");
+            var existedUser = await _userRepository.GetByCondition(x => x.Phone == entity.Phone);
+            if (existedUser.Count() != 0) throw new Exception("existed Phonenumber");
             entity.Password = BCrypt.Net.BCrypt.HashPassword(entity.Password);
             entity.RoleId = 2;
             entity.AreaId = userRegisterCustomerRequest.AreaId;
@@ -163,11 +194,13 @@ namespace HomeMealTaste.Services.Implement
         public async Task<UserRegisterChefResponseModel> RegisterForChef(UserRegisterChefRequestModel userRegisterChefRequest)
         {
             var entity = _mapper.Map<User>(userRegisterChefRequest);
-            var existedUser = await _userRepository.GetByCondition(x => x.Username == entity.Username);
-            if (existedUser.Count() != 0) throw new Exception("existed Username");
+            var existedUser = await _userRepository.GetByCondition(x => x.Phone == entity.Phone);
+            if (existedUser.Count() != 0) throw new Exception("existed Phone");
             entity.Password = BCrypt.Net.BCrypt.HashPassword(entity.Password);
             entity.RoleId = 3;
             entity.AreaId = userRegisterChefRequest.AreaId;
+            entity.DistrictId = userRegisterChefRequest.DistrictId;
+            entity.Status = true;
             var result = await _userRepository.Create(entity, true);
             if (result != null)
             {
@@ -177,6 +210,7 @@ namespace HomeMealTaste.Services.Implement
                     Name = result.Name,
                     Address = result.Address,
                     AreaId = result.AreaId,
+                    DistrictId = result.DistrictId,
                 };
                 var wallet = new Wallet
                 {
@@ -295,7 +329,11 @@ namespace HomeMealTaste.Services.Implement
             Email = x.Email,
             Phone = x.Phone,
             Address = x.Address,
-            DistrictId = x.DistrictId,
+            DistrictDto = new DistrictDto
+            {
+                DistrictId = x.District.DistrictId,
+                DistrictName = x.District.DistrictName,
+            },
             RoleId = x.RoleId,
             Status = x.Status,
             AreaId = x.AreaId,
@@ -304,10 +342,11 @@ namespace HomeMealTaste.Services.Implement
                 WalletId = w.WalletId,
                 UserId = w.UserId,
                 Balance = w.Balance,
-            }).FirstOrDefault(),
+            }).FirstOrDefault()
         }).FirstOrDefaultAsync();
-
-            return result;
+        
+            var mapped = _mapper.Map<GetUserByIdResponseModel>(result);
+            return mapped;
         }
 
         public Task<List<GetAllUserWithRoleCustomerAndChefResponseModel>> GetAllUserWithRoleCustomerAndChef()
@@ -335,6 +374,75 @@ namespace HomeMealTaste.Services.Implement
             int userCount = await _context.Users.CountAsync();
             return userCount;
 
+        }
+
+        public async Task<int> CountAllUserWithRoleId2()
+        {
+            int userCountWithRole2 = await _context.Users.Where(x => x.RoleId == 2).CountAsync();
+            return userCountWithRole2;
+        }
+
+        public async Task<UpdateUserResponseModel> UpdateProfileChef(UpdateUserRequestModel request)
+        {
+            var entity = _mapper.Map<User>(request);
+            var result = _context.Users.Where(x => x.UserId == request.UserId).FirstOrDefault();
+            var kitchenId = _context.Kitchens.Where(x => x.UserId == result.UserId).Select(x => x.KitchenId).FirstOrDefault();
+            if(result != null)
+            {
+                result.UserId = entity.UserId;
+                result.Name = entity.Name;
+                result.Username = entity.Username;
+                result.Email = entity.Email;
+                result.Address = entity.Address;
+                result.DistrictId = entity.DistrictId;
+
+                _context.Users.Update(result);
+
+                var kitchenTable = new Kitchen
+                {
+                    KitchenId = kitchenId,
+                    UserId = result.UserId,
+                    Name = result.Name,
+                    Address = result.Address,
+                    AreaId = result.AreaId,
+                    DistrictId = result.DistrictId,
+                };
+                _context.Kitchens.Update(kitchenTable);
+            }
+            await _context.SaveChangesAsync();
+            var mapped = _mapper.Map<UpdateUserResponseModel>(result);
+            mapped.KitchenId = kitchenId;
+            return mapped;
+        }
+        public async Task<UpdateUserResponseModel> UpdateProfileCustomer(UpdateUserRequestModel request)
+        {
+            var entity = _mapper.Map<User>(request);
+            var result = _context.Users.Where(x => x.UserId == request.UserId).FirstOrDefault();
+            var customerId = _context.Customers.Where(x => x.UserId == result.UserId).Select(x => x.CustomerId).FirstOrDefault();
+            if (result != null)
+            {
+                result.UserId = entity.UserId;
+                result.Name = entity.Name;
+                result.Username = entity.Username;
+                result.Email = entity.Email;
+                result.DistrictId = entity.DistrictId;
+
+                _context.Users.Update(result);
+
+                var customerTable = new Customer
+                {
+                    CustomerId = customerId,
+                    UserId = result.UserId,
+                    Name = result.Name,
+                    AreaId = result.AreaId,
+                    DistrictId = result.DistrictId,
+                };
+                _context.Customers.Update(customerTable);
+            }
+            await _context.SaveChangesAsync();
+            var mapped = _mapper.Map<UpdateUserResponseModel>(result);
+            mapped.KitchenId = customerId;
+            return mapped;
         }
     }
 }

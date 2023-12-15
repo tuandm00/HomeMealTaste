@@ -14,6 +14,5 @@ namespace HomeMealTaste.Data.ResponseModel
         public String? CreateDate { get; set; }
         public string? Description { get; set; }
 
-
     }
 }

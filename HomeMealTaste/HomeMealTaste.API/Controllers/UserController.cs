@@ -13,6 +13,7 @@ namespace HomeMealTaste.Controllers
     
     [Route("api/[controller]")]
     [ApiController]
+    
     public class UserController : ControllerBase
     {
 
@@ -104,6 +105,24 @@ namespace HomeMealTaste.Controllers
         public async Task<IActionResult> TotalAccountInSystem()
         {
              var result = await _userService.TotalAccountInSystem();
+            return Ok(result);
+        }
+        [HttpGet("count-all-user-with-roleid-2")]
+        public async Task<IActionResult> CountAllUserWithRoleId2()
+        {
+             var result = await _userService.CountAllUserWithRoleId2();
+            return Ok(result);
+        }
+        [HttpPut("update-profile-chef")]
+        public async Task<IActionResult> UpdateProfileChef(UpdateUserRequestModel request)
+        {
+             var result = await _userService.UpdateProfileChef(request);
+            return Ok(result);
+        }
+        [HttpPut("update-profile-customer")]
+        public async Task<IActionResult> UpdateProfileCustomer(UpdateUserRequestModel request)
+        {
+             var result = await _userService.UpdateProfileCustomer(request);
             return Ok(result);
         }
     }

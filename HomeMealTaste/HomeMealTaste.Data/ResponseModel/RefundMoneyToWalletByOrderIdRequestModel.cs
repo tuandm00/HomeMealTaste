@@ -8,7 +8,7 @@ namespace HomeMealTaste.Data.ResponseModel
 {
     public class RefundMoneyToWalletByOrderIdRequestModel
     {
-        public int? OrderId { get; set; }
+        public int? MealsessionId { get; set; }
 
     }
 }

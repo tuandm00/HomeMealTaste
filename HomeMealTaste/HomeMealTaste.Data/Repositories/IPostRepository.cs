@@ -9,5 +9,6 @@ namespace HomeMealTaste.Data.Repositories
 {
     public interface IPostRepository : IBaseRepository<Post>
     {
+
     }
 }

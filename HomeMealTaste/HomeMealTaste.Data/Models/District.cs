@@ -9,6 +9,7 @@ namespace HomeMealTaste.Data.Models
         {
             Areas = new HashSet<Area>();
             Customers = new HashSet<Customer>();
+            Kitchens = new HashSet<Kitchen>();
             Users = new HashSet<User>();
         }
 
@@ -17,6 +18,7 @@ namespace HomeMealTaste.Data.Models
 
         public virtual ICollection<Area> Areas { get; set; }
         public virtual ICollection<Customer> Customers { get; set; }
+        public virtual ICollection<Kitchen> Kitchens { get; set; }
         public virtual ICollection<User> Users { get; set; }
     }
 }

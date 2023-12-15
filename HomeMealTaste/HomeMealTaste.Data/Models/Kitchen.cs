@@ -18,8 +18,10 @@ namespace HomeMealTaste.Data.Models
         public string? Name { get; set; }
         public string? Address { get; set; }
         public int? AreaId { get; set; }
+        public int? DistrictId { get; set; }
 
         public virtual Area? Area { get; set; }
+        public virtual District? District { get; set; }
         public virtual User? User { get; set; }
         public virtual ICollection<Dish> Dishes { get; set; }
         public virtual ICollection<Feedback> Feedbacks { get; set; }

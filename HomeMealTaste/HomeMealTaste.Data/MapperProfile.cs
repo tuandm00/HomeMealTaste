@@ -49,14 +49,26 @@ namespace HomeMealTaste.Data.RequestModel
             CreateMap<GetUserByIdResponseModel, User>().ReverseMap();
             CreateMap<GetAllTransactionByUserIdResponseModel, Transaction>().ReverseMap();
             CreateMap<GetDishByKitchenIdResponseModel, Dish>().ReverseMap();
-            CreateMap<RefundMoneyToWalletByOrderIdRequestModel, Order>().ReverseMap();
-            CreateMap<RefundMoneyToWalletByOrderIdResponseModel, Order>().ReverseMap();
+            CreateMap<RefundMoneyToWalletByOrderIdRequestModel, Transaction>().ReverseMap();
+            CreateMap<RefundMoneyToWalletByOrderIdResponseModel, Transaction>().ReverseMap();
             CreateMap<TransactionByUserIdRequestModel, Transaction>().ReverseMap();
             CreateMap<ChangeStatusOrderToCompletedResponseModel, Order>().ReverseMap();
             CreateMap<UpdateMealIdNotExistInSessionByMealIdResponseModel, Meal>().ReverseMap();
             CreateMap<UpdateMealIdNotExistInSessionByMealIdRequestModel, Meal>().ReverseMap();
             CreateMap<UpdateDishResponseModel, Dish>().ReverseMap();
             CreateMap<UpdateDishRequestModel, Dish>().ReverseMap();
+            CreateMap<GetAllOrderByMealSessionIdResponseModel, Order>().ReverseMap();
+            CreateMap<PostRequestModel, Post>().ReverseMap();
+            CreateMap<PostResponseModel, Post>().ReverseMap();
+            CreateMap<GetAllKitchenBySessionIdResponseModel, Kitchen>().ReverseMap();
+            CreateMap<GetSingleSessionBySessionIdResponseModel, Session>().ReverseMap();
+            CreateMap<GetTotalPriceWithMealSessionByMealSessionIdResponseModel, Order>().ReverseMap();
+            CreateMap<GetAllTransactionsResponseModel, Transaction>().ReverseMap();
+            CreateMap<TotalPriceOfOrderInSystemWithEveryMonthResponseModel, Order>().ReverseMap();
+            CreateMap<UpdateUserRequestModel, User>().ReverseMap();
+            CreateMap<UpdateUserResponseModel, User>().ReverseMap();
+            CreateMap<TotalPriceOfOrderInSystemWithEveryMonthResponseModel, Order>().ReverseMap();
+            CreateMap<GetSingleMealSessionByIdResponseModel, MealSession>().ReverseMap();
 
 
 

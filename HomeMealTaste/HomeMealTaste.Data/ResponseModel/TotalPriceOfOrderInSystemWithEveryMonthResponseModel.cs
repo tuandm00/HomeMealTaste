@@ -6,10 +6,9 @@ using System.Threading.Tasks;
 
 namespace HomeMealTaste.Data.ResponseModel
 {
-    public class PostResponseModel
+    public class TotalPriceOfOrderInSystemWithEveryMonthResponseModel
     {
-        public int PostId { get; set; }
-        public int? OrderId { get; set; }
-        public string? Status { get; set; }
+        public int? Month { get; set; }
+        public int? TotalPrice { get; set; }
     }
 }

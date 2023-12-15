@@ -13,14 +13,18 @@ namespace HomeMealTaste.Services.Interface
         Task<MealSessionResponseModel> CreateMealSession(MealSessionRequestModel mealSessionRequest);
         //Task<PagedList<GetAllMealInCurrentSessionResponseModel>> GetAllMealSession(GetAllMealRequest pagingParams);
         Task<List<MealSessionResponseModel>> GetAllMealSession();
-        Task<MealSessionResponseModel> GetSingleMealSessionById(int mealsessionid);
+        Task<GetSingleMealSessionByIdResponseModel> GetSingleMealSessionById(int mealsessionid);
 
         Task<List<MealSessionResponseModel>> GetAllMealSessionByStatus(string status);
 
         Task UpdateStatusMeallSession (int mealsessionid, string status);
 
+        Task<List<MealSessionResponseModel>> GetAllMeallSessionBySessionIdINDAY(int sessionid);
         Task<List<MealSessionResponseModel>> GetAllMeallSessionBySessionId(int sessionid);
+        Task<List<MealSessionResponseModel>> GetAllMeallSessionBySessionIdWithStatusApprovedandREMAINQUANTITYhigherthan0InDay(int sessionid);
+        Task<List<MealSessionResponseModel>> GetAllMeallSessionByKitchenIdWithStatusApprovedandREMAINQUANTITYhigherthan0InDay(int kitchenid);
         Task<List<MealSessionResponseModel>> GetAllMeallSessionByKitchenId(int kitchenid);
-        Task<List<MealSessionResponseModel>> GetAllMeallSessionWithStatusAPPROVEDandREMAINQUANTITYhigherthan0();
+        Task<List<MealSessionResponseModel>> GetAllMeallSessionByKitchenIdInSession(int kitchenid, int sessionid);
+        Task<List<MealSessionResponseModel>> GetAllMeallSessionWithStatusAPPROVEDandREMAINQUANTITYhigherthan0InDay();
     }
 }

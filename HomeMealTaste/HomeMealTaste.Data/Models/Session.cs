@@ -19,6 +19,7 @@ namespace HomeMealTaste.Data.Models
         public bool? Status { get; set; }
         public string? SessionType { get; set; }
         public int? AreaId { get; set; }
+        public string? SessionName { get; set; }
 
         public virtual Area? Area { get; set; }
         public virtual User? User { get; set; }

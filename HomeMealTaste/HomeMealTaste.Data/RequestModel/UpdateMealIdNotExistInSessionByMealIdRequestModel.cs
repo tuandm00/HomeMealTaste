@@ -15,6 +15,6 @@ namespace HomeMealTaste.Data.RequestModel
         public int? KitchenId { get; set; }
         public string? CreateDate { get; set; }
         public string? Description { get; set; }
-
+        public List<int>? DishIds { get; set; }
     }
 }

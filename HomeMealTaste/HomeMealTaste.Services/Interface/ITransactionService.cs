@@ -10,7 +10,9 @@ namespace HomeMealTaste.Services.Interface
     public interface ITransactionService
     {
         Task<List<GetAllTransactionByUserIdResponseModel>> GetAllTransactionByUserId(int userid);
-        Task<List<GetAllTransactionByTransactionTypeORDERED>> GetAllTransactionByTransactionTypeORDERED();
-        Task<List<GetAllTransactionByTransactionTypeRECHARGED>> GetAllTransactionByTransactionTypeRECHARGED();
+        Task<List<GetAllTransactionsResponseModel>> GetAllTransaction();
+        Task<List<GetAllTransactionByTransactionTypeORDERED>> GetAllTransactionByTransactionTypeWithOrderId();
+        Task<List<GetAllTransactionByTransactionTypeRECHARGED>> GetAllTransactionByTransactionTypeWithOutOrderId();
+        Task<List<SaveTotalPriceAfterFinishSessionResponseModel>> SaveTotalPriceAfterFinishSession(int sessionId);
     }
 }

@@ -147,6 +147,11 @@ namespace HomeMealTaste.Data.Models
                     .HasForeignKey(d => d.AreaId)
                     .HasConstraintName("FK_Kitchen_Area");
 
+                entity.HasOne(d => d.District)
+                    .WithMany(p => p.Kitchens)
+                    .HasForeignKey(d => d.DistrictId)
+                    .HasConstraintName("FK_Kitchen_District");
+
                 entity.HasOne(d => d.User)
                     .WithMany(p => p.Kitchens)
                     .HasForeignKey(d => d.UserId)
@@ -266,6 +271,10 @@ namespace HomeMealTaste.Data.Models
 
                 entity.Property(e => e.EndDate).HasColumnType("date");
 
+                entity.Property(e => e.EndTime).HasColumnType("smalldatetime");
+
+                entity.Property(e => e.SessionName).HasMaxLength(50);
+
                 entity.Property(e => e.SessionType).HasMaxLength(50);
 
                 entity.HasOne(d => d.Area)
@@ -285,7 +294,7 @@ namespace HomeMealTaste.Data.Models
 
                 entity.Property(e => e.Amount).HasColumnType("money");
 
-                entity.Property(e => e.Date).HasColumnType("date");
+                entity.Property(e => e.Date).HasColumnType("datetime");
 
                 entity.Property(e => e.Description).HasMaxLength(50);
 

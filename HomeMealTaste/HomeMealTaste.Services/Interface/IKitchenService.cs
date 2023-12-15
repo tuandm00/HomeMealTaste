@@ -1,4 +1,5 @@
 ﻿using HomeMealTaste.Data.Helper;
+using HomeMealTaste.Data.RequestModel;
 using HomeMealTaste.Data.ResponseModel;
 using HomeMealTaste.Services.Helper;
 using System;
@@ -12,6 +13,8 @@ namespace HomeMealTaste.Services.Interface
     public interface IKitchenService
     {
         Task<List<KitchenResponseModel>> GetAllKitchen();
-        Task<KitchenResponseModel> GetAllKitchenByKitchenId(int id);
+        Task<KitchenResponseModel> GetSingleKitchenByKitchenId(int id);
+        Task<KitchenResponseModel> GetSingleKitchenByUserId(int userid);
+        Task<List<GetAllKitchenBySessionIdResponseModel>> GetAllKitchenBySessionId(int sessionid);
     }
 }

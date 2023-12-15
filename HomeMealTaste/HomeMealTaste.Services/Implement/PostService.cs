@@ -9,6 +9,8 @@ using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
+using System.Net.Mail;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -17,57 +19,60 @@ namespace HomeMealTaste.Services.Implement
     public class PostService : IPostService
     {
         private readonly IPostRepository _postRepository;
+        private readonly HomeMealTasteContext _context;
         private readonly IMapper _mapper;
         private HomeMealTasteContext _context;
 
-        public PostService(IPostRepository postRepository, IMapper mapper, HomeMealTasteContext context)
+        public PostService(IPostRepository postRepository, HomeMealTasteContext context, IMapper mapper)
         {
             _postRepository = postRepository;
+            _context = context;
             _mapper = mapper;
             _context = context;
         }
 
-
-        public async Task<PostResponseModel> CreatePostStatusAfterOrder(PostRequestModel createPostRequest)
+        public Task PostForAllCustomerWithOrderId(PostRequestModel request)
         {
-            var entity = _mapper.Map<Post>(createPostRequest);
-            //var paidOrderID = await _context.Orders
-            //    .Where(x => x.Status == "Paid")
-            //    .Select(x => x.OrderId)
-            //    .FirstOrDefaultAsync();
-            //entity.OrderId = paidOrderID;
-            //var nameOfMeal = await _context.Orders
-            //    .Where(x=> x.OrderId==paidOrderID)
-            //    .Select(x=>x.MealSession.Meal.Name)
-            //    .FirstOrDefaultAsync();
-            switch (createPostRequest.Status)
+            var entity = _mapper.Map<Post>(request);
+            var result = _context.Posts.Where(x => x.OrderId == entity.OrderId).ToList();
+            var orderId = request.OrderId;
+            var customerId = _context.Orders.Where(x => x.OrderId == orderId).Select(x => x.CustomerId).SingleOrDefault();
+            var userId = _context.Customers.Where(x => x.CustomerId == customerId).Select(x => x.UserId).SingleOrDefault();
+            var userEmail = _context.Users.Where(x => x.UserId == userId).Select(x => x.Email).SingleOrDefault();
+
+            if (userEmail != null)
             {
-                case "Processing":
-                case "Ready":
-                case "Done":
-                    entity.Status = createPostRequest.Status; break;
-                default:
-                    entity.Status = "Processing";
-                    break;
+                SendNotificationEmail(userEmail, "Order Post", "A new Order for you is available. Check it out!");
+                var add = new Post
+                {
+                    OrderId = orderId,
+                    Status = "PUSHED",
+                };
+                _context.Posts.Add(add);
+                _context.SaveChanges();
             }
             entity.OrderId = createPostRequest.OrderId;
 
-            await _context.Posts.AddAsync(entity);
-            await _context.SaveChangesAsync();
-            var mapper = _mapper.Map<PostResponseModel>(entity);
-            return mapper;
+            return Task.FromResult(result);
         }
-        public async Task<string> getMealNameByOrderId(int orderId)
+    private void SendNotificationEmail(string toEmail, string subject, string body)
+    {
+        using (var client = new SmtpClient("smtp.gmail.com"))
         {
-            var order = await _context.Orders
-                .Include(o => o.MealSession)
-                .ThenInclude(x => x.Meal)
-                .FirstOrDefaultAsync(o => o.OrderId==orderId);
-            if (order != null && order.MealSession != null && order.MealSession.Meal != null)
+            client.UseDefaultCredentials = false;
+            client.Credentials = new NetworkCredential("dominhtuan23102000@gmail.com", "djmr tgxz wfao upwq");
+            client.EnableSsl = true;
+
+            var message = new MailMessage("dominhtuan23102000@gmail.com", toEmail)
             {
-                return order.MealSession.Meal.Name;
-            }
-            return null;
+                Subject = subject,
+                Body = body,
+                IsBodyHtml = true
+            };
+
+            client.Send(message);
         }
+            return null;
     }
+}
 }

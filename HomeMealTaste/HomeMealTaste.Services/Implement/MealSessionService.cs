@@ -128,7 +128,7 @@ namespace HomeMealTaste.Services.Implement
                     Name = mealsession.Meal.Name,
                     Image = mealsession.Meal.Image,
                     KitchenId = mealsession.KitchenId,
-                    CreateDate = ((DateTime)mealsession.CreateDate).ToString("dd-MM-yyyy"),
+                    CreateDate = ((DateTime)mealsession.Meal.CreateDate).ToString("dd-MM-yyyy"),
                     Description = mealsession.Meal?.Description,
                 };
                 response.SessionDtoForMealSession = new SessionDtoForMealSession
@@ -186,7 +186,7 @@ namespace HomeMealTaste.Services.Implement
                     Name = mealsession.Meal.Name,
                     Image = mealsession.Meal.Image,
                     KitchenId = mealsession.KitchenId,
-                    CreateDate = ((DateTime)mealsession.CreateDate).ToString("dd-MM-yyyy"),
+                    CreateDate = ((DateTime)mealsession.Meal.CreateDate).ToString("dd-MM-yyyy"),
                     Description = mealsession.Meal?.Description,
                 };
                 response.SessionDtoForMealSession = new SessionDtoForMealSession
@@ -221,100 +221,127 @@ namespace HomeMealTaste.Services.Implement
             return mapped;
         }
 
-        public async Task<MealSessionResponseModel> GetSingleMealSessionById(int mealsessionid)
+        public async Task<GetSingleMealSessionByIdResponseModel> GetSingleMealSessionById(int mealsessionid)
         {
+
             var result = _context.MealSessions
-                .Include(x => x.Meal)
-                .Include(x => x.Session).ThenInclude(x => x.Area).ThenInclude(x => x.District)
-                .Include(x => x.Kitchen)
-                .Where(x => x.MealSessionId == mealsessionid)
-                .FirstOrDefault();
-            var mapped = _mapper.Map<MealSessionResponseModel>(result);
-            mapped.MealSessionId = result.MealSessionId;
-            mapped.MealDtoForMealSession = new MealDtoForMealSession
-            {
-                MealId = result.Meal.MealId,
-                Name = result.Meal.Name,
-                Image = result.Meal.Image,
-                KitchenId = result.KitchenId,
-                CreateDate = ((DateTime)result.CreateDate).ToString("dd-MM-yyyy"),
-                Description = result.Meal?.Description,
-            };
-            mapped.SessionDtoForMealSession = new SessionDtoForMealSession
-            {
-                SessionId = result.Session.SessionId,
-                CreateDate = ((DateTime)result.Session.CreateDate).ToString("dd-MM-yyyy"),
-                StartTime = ((DateTime)result.Session.StartTime).ToString("HH:mm"),
-                EndTime = ((DateTime)result.Session.EndTime).ToString("HH:mm"),
-                EndDate = ((DateTime)result.Session.EndDate).ToString("dd-MM-yyyy"),
-                UserId = result.Session?.UserId,
-                Status = result.Session.Status,
-                SessionType = result.Session.SessionType,
-                AreaDtoForMealSession = new AreaDtoForMealSession
+    .Include(x => x.Meal).ThenInclude(x => x.MealDishes).ThenInclude(x => x.Dish)
+    .Include(x => x.Session).ThenInclude(x => x.Area).ThenInclude(x => x.District)
+    .Include(x => x.Kitchen)
+    .Where(x => x.MealSessionId == mealsessionid)
+    .Select(gr => new GetSingleMealSessionByIdResponseModel
+    {
+        MealSessionId = gr.MealSessionId,
+        Price = (decimal?)gr.Price,
+        Quantity = gr.Quantity,
+        RemainQuantity = gr.RemainQuantity,
+        Status = gr.Status,
+        CreateDate = ((DateTime)gr.CreateDate).ToString("dd-MM-yyyy"),
+        MealDtoForMealSessions = new MealDtoForMealSessions
+        {
+            MealId = gr.Meal.MealId,
+            Name = gr.Meal.Name,
+            Image = gr.Meal.Image,
+            KitchenId = gr.Meal.KitchenId,
+            CreateDate = ((DateTime)gr.Meal.CreateDate).ToString("dd-MM-yyyy"),
+            Description = gr.Meal.Description,
+            DishesDtoMealSession = gr.Meal.MealDishes
+                .Select(md => new DishesDtoMealSession
                 {
-                    AreaId = result.Session.Area.AreaId,
-                    Address = result.Session.Area.Address,
-                    AreaName = result.Session.Area.AreaName,
-                    DistrictDtoForMealSession = new DistrictDtoForMealSession
+                    DishId = md.Dish.DishId,
+                    Name = md.Dish.Name,
+                    Image = md.Dish.Image,
+                    DishTypeDtoMealSession = new DishTypeDtoMealSession
                     {
-                        DistrictId = (int)result.Session.Area.District.DistrictId,
-                        DistrictName = result.Session.Area.District.DistrictName,
-                    }
-                },
-            };
-            mapped.KitchenDtoForMealSession = new KitchenDtoForMealSession
+                        DishTypeId = md.Dish.DishType.DishTypeId,
+                        Description = md.Dish.DishType.Description,
+                        Name = md.Dish.DishType.Name,
+                    },
+                    KitchenId = md.Dish.KitchenId
+                })
+                .ToList(),
+        },
+        SessionDtoForMealSessions = new SessionDtoForMealSessions
+        {
+            SessionId = gr.Session.SessionId,
+            CreateDate = ((DateTime)gr.Session.CreateDate).ToString("dd-MM-yyyy"),
+            StartTime = ((DateTime)gr.Session.StartTime).ToString("HH:mm"),
+            EndTime = ((DateTime)gr.Session.EndTime).ToString("HH:mm"),
+            EndDate = ((DateTime)gr.Session.EndDate).ToString("dd-MM-yyyy"),
+            UserId = gr.Session.UserId,
+            Status = gr.Session.Status,
+            SessionType = gr.Session.SessionType,
+            AreaDtoForMealSessions = new AreaDtoForMealSessions
             {
-                KitchenId = result.Meal.Kitchen.KitchenId,
-                UserId = result.Meal.Kitchen.KitchenId,
-                Name = result.Meal.Kitchen?.Name,
-                Address = result.Meal.Kitchen.Address,
-            };
-            mapped.Price = (decimal?)result.Price;
-            mapped.Quantity = result.Quantity;
-            mapped.RemainQuantity = result.RemainQuantity;
-            mapped.Status = result.Status;
-            mapped.CreateDate = ((DateTime)result.CreateDate).ToString("dd-MM-yyyy");
+                AreaId = gr.Session.Area.AreaId,
+                Address = gr.Session.Area.Address,
+                AreaName = gr.Session.Area.AreaName,
+                DistrictDtoForMealSessions = new DistrictDtoForMealSessions
+                {
+                    DistrictId = (int)gr.Session.Area.District.DistrictId,
+                    DistrictName = gr.Session.Area.District.DistrictName,
+                }
+            },
+        },
+        KitchenDtoForMealSessions = new KitchenDtoForMealSessions
+        {
 
+            KitchenId = gr.Meal.Kitchen.KitchenId,
+            UserId = gr.Meal.Kitchen.KitchenId,
+            Name = gr.Meal.Kitchen.Name,
+            Address = gr.Meal.Kitchen.Address,
+        }
+    })
+    .FirstOrDefault();
+
+            var mapped = _mapper.Map<GetSingleMealSessionByIdResponseModel>(result);
             return mapped;
-
         }
 
         public async Task UpdateStatusMeallSession(int mealsessionid, string status)
         {
+            var datenow = GetDateTimeTimeZoneVietNam();
+            var sessionId = _context.MealSessions.Where(x => x.MealSessionId == mealsessionid).Select(x => x.SessionId).FirstOrDefault();
+            var sesstioStatus = _context.Sessions.Where(x => x.SessionId == sessionId).Select(x => x.Status).FirstOrDefault();
             var result = await _context.MealSessions.SingleOrDefaultAsync(x => x.MealSessionId == mealsessionid);
-
-            if (result != null && result.Status.Equals("PROCESSING", StringComparison.OrdinalIgnoreCase))
+            if (result.CreateDate.Value.Date != datenow.Date)
             {
-                if (string.Equals("APPROVED", status, StringComparison.OrdinalIgnoreCase))
-                {
-                    result.Status = "APPROVED";
-                }
-                else if (string.Equals("REJECTED", status, StringComparison.OrdinalIgnoreCase))
-                {
-                    result.Status = "REJECTED";
-                }
+                throw new Exception("Can not Update Because Not In Day");
             }
-            await _context.SaveChangesAsync();
-            if (result != null && result.Status.Equals("APPROVED", StringComparison.OrdinalIgnoreCase))
+            else
             {
-                if (string.Equals("APPROVED", status, StringComparison.OrdinalIgnoreCase))
+                if (result != null && result.Status.Equals("PROCESSING", StringComparison.OrdinalIgnoreCase) && sesstioStatus == true)
                 {
-                    result.Status = "APPROVED";
+                    if (string.Equals("APPROVED", status, StringComparison.OrdinalIgnoreCase))
+                    {
+                        result.Status = "APPROVED";
+                    }
+                    else if (string.Equals("REJECTED", status, StringComparison.OrdinalIgnoreCase))
+                    {
+                        result.Status = "REJECTED";
+                    }
                 }
-                else result.Status = "REJECTED";
-            }
-            await _context.SaveChangesAsync();
-
-            if (result != null && result.Status.Equals("REJECTED", StringComparison.OrdinalIgnoreCase))
-            {
-                if (string.Equals("REJECTED", status, StringComparison.OrdinalIgnoreCase))
+                else if (result != null && result.Status.Equals("APPROVED", StringComparison.OrdinalIgnoreCase) && sesstioStatus == true)
                 {
-                    result.Status = "REJECTED";
+                    if (string.Equals("APPROVED", status, StringComparison.OrdinalIgnoreCase))
+                    {
+                        result.Status = "APPROVED";
+                    }
+                    else result.Status = "REJECTED";
                 }
-                else result.Status = "APPROVED";
+
+                else if (result != null && result.Status.Equals("REJECTED", StringComparison.OrdinalIgnoreCase) && sesstioStatus == true)
+                {
+                    if (string.Equals("REJECTED", status, StringComparison.OrdinalIgnoreCase))
+                    {
+                        result.Status = "REJECTED";
+                    }
+                    else result.Status = "APPROVED";
+                }
+                else throw new Exception("Session is OFF");
+
             }
 
-            await _context.SaveChangesAsync();
             //public async Task<PagedList<GetAllMealInCurrentSessionResponseModel>> GetAllMealSession(
             //    GetAllMealRequest pagingParams)
             //{
@@ -352,11 +379,77 @@ namespace HomeMealTaste.Services.Implement
             //    return result;
             //}
 
+            await _context.SaveChangesAsync();
+
 
         }
 
+        public Task<List<MealSessionResponseModel>> GetAllMeallSessionBySessionIdINDAY(int sessionid)
+        {
+            var datenow = GetDateTimeTimeZoneVietNam();
+            var result = _context.MealSessions
+                .Include(x => x.Meal)
+                .Include(x => x.Session).ThenInclude(x => x.Area).ThenInclude(x => x.District)
+                .Include(x => x.Kitchen)
+                .Where(x => x.SessionId == sessionid && x.CreateDate == datenow)
+                .ToList();
+            var mapped = result.Select(mealsession =>
+            {
+                var response = _mapper.Map<MealSessionResponseModel>(mealsession);
+                response.MealSessionId = mealsession.MealSessionId;
+                response.MealDtoForMealSession = new MealDtoForMealSession
+                {
+                    MealId = mealsession.Meal.MealId,
+                    Name = mealsession.Meal.Name,
+                    Image = mealsession.Meal.Image,
+                    KitchenId = mealsession.KitchenId,
+                    CreateDate = ((DateTime)mealsession.Meal.CreateDate).ToString("dd-MM-yyyy"),
+                    Description = mealsession.Meal?.Description,
+                };
+                response.SessionDtoForMealSession = new SessionDtoForMealSession
+                {
+                    SessionId = mealsession.Session.SessionId,
+                    CreateDate = ((DateTime)mealsession.Session.CreateDate).ToString("dd-MM-yyyy"),
+                    StartTime = ((DateTime)mealsession.Session.StartTime).ToString("HH:mm"),
+                    EndTime = ((DateTime)mealsession.Session.EndTime).ToString("HH:mm"),
+                    EndDate = ((DateTime)mealsession.Session.EndDate).ToString("dd-MM-yyyy"),
+                    UserId = mealsession.Session?.UserId,
+                    Status = mealsession.Session.Status,
+                    SessionType = mealsession.Session.SessionType,
+                    AreaDtoForMealSession = new AreaDtoForMealSession
+                    {
+                        AreaId = mealsession.Session.Area.AreaId,
+                        AreaName = mealsession.Session.Area.AreaName,
+                        Address = mealsession.Session.Area.Address,
+                        DistrictDtoForMealSession = new DistrictDtoForMealSession
+                        {
+                            DistrictId = mealsession.Session.Area.District.DistrictId,
+                            DistrictName = mealsession.Session.Area.District.DistrictName
+                        },
+                    },
+
+                };
+                response.KitchenDtoForMealSession = new KitchenDtoForMealSession
+                {
+                    KitchenId = mealsession.Meal.Kitchen.KitchenId,
+                    UserId = mealsession.Meal.Kitchen.KitchenId,
+                    Name = mealsession.Meal.Kitchen?.Name,
+                    Address = mealsession.Meal.Kitchen.Address,
+                };
+                response.Price = (decimal?)mealsession.Price;
+                response.Quantity = mealsession.Quantity;
+                response.RemainQuantity = mealsession.RemainQuantity;
+                response.Status = mealsession.Status;
+                response.CreateDate = ((DateTime)mealsession.CreateDate).ToString("dd-MM-yyyy");
+
+                return response;
+            }).ToList();
+
+            return Task.FromResult(mapped);
+        }
         public Task<List<MealSessionResponseModel>> GetAllMeallSessionBySessionId(int sessionid)
         {
+            var datenow = GetDateTimeTimeZoneVietNam();
             var result = _context.MealSessions
                 .Include(x => x.Meal)
                 .Include(x => x.Session).ThenInclude(x => x.Area).ThenInclude(x => x.District)
@@ -373,7 +466,7 @@ namespace HomeMealTaste.Services.Implement
                     Name = mealsession.Meal.Name,
                     Image = mealsession.Meal.Image,
                     KitchenId = mealsession.KitchenId,
-                    CreateDate = ((DateTime)mealsession.CreateDate).ToString("dd-MM-yyyy"),
+                    CreateDate = ((DateTime)mealsession.Meal.CreateDate).ToString("dd-MM-yyyy"),
                     Description = mealsession.Meal?.Description,
                 };
                 response.SessionDtoForMealSession = new SessionDtoForMealSession
@@ -436,7 +529,7 @@ namespace HomeMealTaste.Services.Implement
                     Name = mealsession.Meal.Name,
                     Image = mealsession.Meal.Image,
                     KitchenId = mealsession.KitchenId,
-                    CreateDate = ((DateTime)mealsession.CreateDate).ToString("dd-MM-yyyy"),
+                    CreateDate = ((DateTime)mealsession.Meal.CreateDate).ToString("dd-MM-yyyy"),
                     Description = mealsession.Meal?.Description,
                 };
                 response.SessionDtoForMealSession = new SessionDtoForMealSession
@@ -481,14 +574,15 @@ namespace HomeMealTaste.Services.Implement
             return Task.FromResult(mapped);
         }
 
-        public async Task<List<MealSessionResponseModel>> GetAllMeallSessionWithStatusAPPROVEDandREMAINQUANTITYhigherthan0()
+        public async Task<List<MealSessionResponseModel>> GetAllMeallSessionWithStatusAPPROVEDandREMAINQUANTITYhigherthan0InDay()
         {
+            var datenow = GetDateTimeTimeZoneVietNam();
             var result = await _context.MealSessions
-        .Include(x => x.Meal)
-        .Include(x => x.Session).ThenInclude(x => x.Area)
-        .Include(x => x.Kitchen)
-        .Where(x => x.Status == "APPROVED" && x.RemainQuantity > 0)
-        .ToListAsync();
+                .Include(x => x.Meal)
+                .Include(x => x.Session).ThenInclude(x => x.Area)
+                .Include(x => x.Kitchen)
+                .Where(x => x.Status == "APPROVED" && x.RemainQuantity > 0 && x.CreateDate == datenow)
+                .ToListAsync();
 
             var mapped = result.Select(mealsession =>
             {
@@ -500,7 +594,7 @@ namespace HomeMealTaste.Services.Implement
                     Name = mealsession.Meal.Name,
                     Image = mealsession.Meal.Image,
                     KitchenId = mealsession.KitchenId,
-                    CreateDate = ((DateTime)mealsession.CreateDate).ToString("dd-MM-yyyy"),
+                    CreateDate = ((DateTime)mealsession.Meal.CreateDate).ToString("dd-MM-yyyy"),
                     Description = mealsession.Meal?.Description,
                 };
                 response.SessionDtoForMealSession = new SessionDtoForMealSession
@@ -538,6 +632,197 @@ namespace HomeMealTaste.Services.Implement
 
             return mapped;
 
+        }
+
+        public Task<List<MealSessionResponseModel>> GetAllMeallSessionByKitchenIdInSession(int kitchenid, int sessionid)
+        {
+            var result = _context.MealSessions
+                .Include(x => x.Meal)
+                .Include(x => x.Session).ThenInclude(x => x.Area).ThenInclude(x => x.District)
+                .Include(x => x.Kitchen)
+                .Where(x => x.KitchenId == kitchenid && x.SessionId == sessionid)
+                .ToList();
+            var mapped = result.Select(mealsession =>
+            {
+                var response = _mapper.Map<MealSessionResponseModel>(mealsession);
+                response.MealSessionId = mealsession.MealSessionId;
+                response.MealDtoForMealSession = new MealDtoForMealSession
+                {
+                    MealId = mealsession.Meal.MealId,
+                    Name = mealsession.Meal.Name,
+                    Image = mealsession.Meal.Image,
+                    KitchenId = mealsession.KitchenId,
+                    CreateDate = ((DateTime)mealsession.Meal.CreateDate).ToString("dd-MM-yyyy"),
+                    Description = mealsession.Meal?.Description,
+                };
+                response.SessionDtoForMealSession = new SessionDtoForMealSession
+                {
+                    SessionId = mealsession.Session.SessionId,
+                    CreateDate = ((DateTime)mealsession.Session.CreateDate).ToString("dd-MM-yyyy"),
+                    StartTime = ((DateTime)mealsession.Session.StartTime).ToString("HH:mm"),
+                    EndTime = ((DateTime)mealsession.Session.EndTime).ToString("HH:mm"),
+                    EndDate = ((DateTime)mealsession.Session.EndDate).ToString("dd-MM-yyyy"),
+                    UserId = mealsession.Session?.UserId,
+                    Status = mealsession.Session.Status,
+                    SessionType = mealsession.Session.SessionType,
+                    AreaDtoForMealSession = new AreaDtoForMealSession
+                    {
+                        AreaId = mealsession.Session.Area.AreaId,
+                        AreaName = mealsession.Session.Area.AreaName,
+                        Address = mealsession.Session.Area.Address,
+                        DistrictDtoForMealSession = new DistrictDtoForMealSession
+                        {
+                            DistrictId = mealsession.Session.Area.District.DistrictId,
+                            DistrictName = mealsession.Session.Area.District.DistrictName
+                        },
+                    },
+
+                };
+                response.KitchenDtoForMealSession = new KitchenDtoForMealSession
+                {
+                    KitchenId = mealsession.Meal.Kitchen.KitchenId,
+                    UserId = mealsession.Meal.Kitchen.KitchenId,
+                    Name = mealsession.Meal.Kitchen?.Name,
+                    Address = mealsession.Meal.Kitchen.Address,
+                };
+                response.Price = (decimal?)mealsession.Price;
+                response.Quantity = mealsession.Quantity;
+                response.RemainQuantity = mealsession.RemainQuantity;
+                response.Status = mealsession.Status;
+                response.CreateDate = ((DateTime)mealsession.CreateDate).ToString("dd-MM-yyyy");
+
+                return response;
+            }).ToList();
+
+            return Task.FromResult(mapped);
+        }
+
+        public Task<List<MealSessionResponseModel>> GetAllMeallSessionBySessionIdWithStatusApprovedandREMAINQUANTITYhigherthan0InDay(int sessionid)
+        {
+            var datenow = GetDateTimeTimeZoneVietNam();
+            var result = _context.MealSessions
+                .Include(x => x.Meal)
+                .Include(x => x.Session).ThenInclude(x => x.Area).ThenInclude(x => x.District)
+                .Include(x => x.Kitchen)
+                .Where(x => x.SessionId == sessionid && x.Status.Equals("APPROVED") && x.CreateDate == datenow && x.RemainQuantity > 0)
+                .ToList();
+            var mapped = result.Select(mealsession =>
+            {
+                var response = _mapper.Map<MealSessionResponseModel>(mealsession);
+                response.MealSessionId = mealsession.MealSessionId;
+                response.MealDtoForMealSession = new MealDtoForMealSession
+                {
+                    MealId = mealsession.Meal.MealId,
+                    Name = mealsession.Meal.Name,
+                    Image = mealsession.Meal.Image,
+                    KitchenId = mealsession.KitchenId,
+                    CreateDate = ((DateTime)mealsession.Meal.CreateDate).ToString("dd-MM-yyyy"),
+                    Description = mealsession.Meal?.Description,
+                };
+                response.SessionDtoForMealSession = new SessionDtoForMealSession
+                {
+                    SessionId = mealsession.Session.SessionId,
+                    CreateDate = ((DateTime)mealsession.Session.CreateDate).ToString("dd-MM-yyyy"),
+                    StartTime = ((DateTime)mealsession.Session.StartTime).ToString("HH:mm"),
+                    EndTime = ((DateTime)mealsession.Session.EndTime).ToString("HH:mm"),
+                    EndDate = ((DateTime)mealsession.Session.EndDate).ToString("dd-MM-yyyy"),
+                    UserId = mealsession.Session?.UserId,
+                    Status = mealsession.Session.Status,
+                    SessionType = mealsession.Session.SessionType,
+                    AreaDtoForMealSession = new AreaDtoForMealSession
+                    {
+                        AreaId = mealsession.Session.Area.AreaId,
+                        AreaName = mealsession.Session.Area.AreaName,
+                        Address = mealsession.Session.Area.Address,
+                        DistrictDtoForMealSession = new DistrictDtoForMealSession
+                        {
+                            DistrictId = mealsession.Session.Area.District.DistrictId,
+                            DistrictName = mealsession.Session.Area.District.DistrictName
+                        },
+                    },
+
+                };
+                response.KitchenDtoForMealSession = new KitchenDtoForMealSession
+                {
+                    KitchenId = mealsession.Meal.Kitchen.KitchenId,
+                    UserId = mealsession.Meal.Kitchen.KitchenId,
+                    Name = mealsession.Meal.Kitchen?.Name,
+                    Address = mealsession.Meal.Kitchen.Address,
+                };
+                response.Price = (decimal?)mealsession.Price;
+                response.Quantity = mealsession.Quantity;
+                response.RemainQuantity = mealsession.RemainQuantity;
+                response.Status = mealsession.Status;
+                response.CreateDate = ((DateTime)mealsession.CreateDate).ToString("dd-MM-yyyy");
+
+                return response;
+            }).ToList();
+
+            return Task.FromResult(mapped);
+        }
+
+        public Task<List<MealSessionResponseModel>> GetAllMeallSessionByKitchenIdWithStatusApprovedandREMAINQUANTITYhigherthan0InDay(int kitchenid)
+        {
+            var datenow = GetDateTimeTimeZoneVietNam();
+            var result = _context.MealSessions
+                .Include(x => x.Meal)
+                .Include(x => x.Session).ThenInclude(x => x.Area).ThenInclude(x => x.District)
+                .Include(x => x.Kitchen)
+                .Where(x => x.KitchenId == kitchenid && x.Status.Equals("APPROVED") && x.CreateDate == datenow && x.RemainQuantity > 0)
+                .ToList();
+            var mapped = result.Select(mealsession =>
+            {
+                var response = _mapper.Map<MealSessionResponseModel>(mealsession);
+                response.MealSessionId = mealsession.MealSessionId;
+                response.MealDtoForMealSession = new MealDtoForMealSession
+                {
+                    MealId = mealsession.Meal.MealId,
+                    Name = mealsession.Meal.Name,
+                    Image = mealsession.Meal.Image,
+                    KitchenId = mealsession.KitchenId,
+                    CreateDate = ((DateTime)mealsession.Meal.CreateDate).ToString("dd-MM-yyyy"),
+                    Description = mealsession.Meal?.Description,
+                };
+                response.SessionDtoForMealSession = new SessionDtoForMealSession
+                {
+                    SessionId = mealsession.Session.SessionId,
+                    CreateDate = ((DateTime)mealsession.Session.CreateDate).ToString("dd-MM-yyyy"),
+                    StartTime = ((DateTime)mealsession.Session.StartTime).ToString("HH:mm"),
+                    EndTime = ((DateTime)mealsession.Session.EndTime).ToString("HH:mm"),
+                    EndDate = ((DateTime)mealsession.Session.EndDate).ToString("dd-MM-yyyy"),
+                    UserId = mealsession.Session?.UserId,
+                    Status = mealsession.Session.Status,
+                    SessionType = mealsession.Session.SessionType,
+                    AreaDtoForMealSession = new AreaDtoForMealSession
+                    {
+                        AreaId = mealsession.Session.Area.AreaId,
+                        AreaName = mealsession.Session.Area.AreaName,
+                        Address = mealsession.Session.Area.Address,
+                        DistrictDtoForMealSession = new DistrictDtoForMealSession
+                        {
+                            DistrictId = mealsession.Session.Area.District.DistrictId,
+                            DistrictName = mealsession.Session.Area.District.DistrictName
+                        },
+                    },
+
+                };
+                response.KitchenDtoForMealSession = new KitchenDtoForMealSession
+                {
+                    KitchenId = mealsession.Meal.Kitchen.KitchenId,
+                    UserId = mealsession.Meal.Kitchen.KitchenId,
+                    Name = mealsession.Meal.Kitchen?.Name,
+                    Address = mealsession.Meal.Kitchen.Address,
+                };
+                response.Price = (decimal?)mealsession.Price;
+                response.Quantity = mealsession.Quantity;
+                response.RemainQuantity = mealsession.RemainQuantity;
+                response.Status = mealsession.Status;
+                response.CreateDate = ((DateTime)mealsession.CreateDate).ToString("dd-MM-yyyy");
+
+                return response;
+            }).ToList();
+
+            return Task.FromResult(mapped);
         }
     }
 }

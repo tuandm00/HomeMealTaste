@@ -4,12 +4,14 @@ using HomeMealTaste.Data.RequestModel;
 using HomeMealTaste.Response;
 using HomeMealTaste.Services.Helper;
 using HomeMealTaste.Services.Interface;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace HomeMealTaste.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    
     public class DishController : ControllerBase
     {
         private readonly IDishService _dishService;
@@ -21,7 +23,7 @@ namespace HomeMealTaste.Controllers
 
         //[Authorize]
         [HttpPost]
-        public async Task<IActionResult> CreateDishAsync(DishRequestModel dishRequest)
+        public async Task<IActionResult> CreateDishAsync([FromForm] DishRequestModel dishRequest)
         {
             var result = await _dishService.CreateDishAsync(dishRequest);
             return Ok(result);
@@ -43,10 +45,10 @@ namespace HomeMealTaste.Controllers
             return ApiResponse<List<Dish>>.Success(result, metadata);
         } 
 
-        [HttpDelete]
-        public async Task<IActionResult> DeleteSingleDishById(int dishid)
+        [HttpDelete("delete-dish-not-exist-in-session-by-dish-id")]
+        public async Task<IActionResult> DeleteDishNotExistInSessionByDishId(int dishid)
         {
-            await _dishService.DeleteSingleDishById(dishid);
+            await _dishService.DeleteDishNotExistInSessionByDishId(dishid);
             return NoContent();
         }
 
@@ -70,7 +72,7 @@ namespace HomeMealTaste.Controllers
             var result = await _dishService.GetDishByKitchenId(kitchenid);
             return Ok(result);
         }
-        [HttpPut("update-dish")]
+        [HttpPut("update-dish-not-exist-in-session")]
         public async Task<IActionResult> UpdateDishNotExistInMealSession([FromForm]UpdateDishRequestModel request)
         {
             var result = await _dishService.UpdateDishNotExistInMealSession(request);

@@ -4,6 +4,7 @@ using HomeMealTaste.Response;
 using HomeMealTaste.Services.Helper;
 using HomeMealTaste.Services.Interface;
 using HomeMealTaste.Services.ResponseModel;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -11,6 +12,7 @@ namespace HomeMealTaste.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    
     public class SessionController : ControllerBase
     {
         private readonly ISessionService _sessionService;
@@ -63,16 +65,16 @@ namespace HomeMealTaste.Controllers
             var result = await _sessionService.GetAllSession();
             return Ok(result);
         }
-        [HttpGet("get-all-session-by-area-id-and-in-day")]
-        public async Task<IActionResult> GetAllSessionByAreaIdAndInDay(int areaid)
+        [HttpGet("get-all-session-by-area-id")]
+        public async Task<IActionResult> GetAllSessionByAreaId(int areaid)
         {
-            var result = await _sessionService.GetAllSessionByAreaIdAndInDay(areaid);
+            var result = await _sessionService.GetAllSessionByAreaId(areaid);
             return Ok(result);
         }
-        [HttpGet("get-all-session-by-area-id-with-status-true-and-in-day")]
-        public async Task<IActionResult> GetAllSessionByAreaIdWithStatusTrueAndInDay(int areaid)
+        [HttpGet("get-all-session-by-area-id-with-status-true")]
+        public async Task<IActionResult> GetAllSessionByAreaIdWithStatusTrue(int areaid)
         {
-            var result = await _sessionService.GetAllSessionByAreaIdWithStatusTrueAndInDay(areaid);
+            var result = await _sessionService.GetAllSessionByAreaIdWithStatusTrue(areaid);
             return Ok(result);
         }
 
@@ -80,6 +82,12 @@ namespace HomeMealTaste.Controllers
         public async Task<IActionResult> DeleteSession(int sessionid)
         {
             var result =  _sessionService.DeleteSession(sessionid);
+            return Ok(result);
+        }
+        [HttpGet("get-single-session-by-session-id")]
+        public async Task<IActionResult> GetSingleSessionBySessionId(int sessionid)
+        {
+            var result =  _sessionService.GetSingleSessionBySessionId(sessionid);
             return Ok(result);
         }
     }

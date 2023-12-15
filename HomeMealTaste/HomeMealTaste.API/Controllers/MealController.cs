@@ -3,6 +3,7 @@ using HomeMealTaste.Data.RequestModel;
 using HomeMealTaste.Response;
 using HomeMealTaste.Services.Helper;
 using HomeMealTaste.Services.Interface;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -10,6 +11,7 @@ namespace HomeMealTaste.API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    
     public class MealController : ControllerBase
     {
         private readonly IMealService _mealService;
@@ -61,15 +63,15 @@ namespace HomeMealTaste.API.Controllers
             var result = await _mealService.GetMealByMealId(mealid);
             return Ok(result);
         }
-        [HttpDelete("delete-meal-id")]
-        public async Task DeleteMealIdNotExistInSessionByMealId(int mealid)
+        [HttpDelete("delete-meal-id-not-exist-in-session")]
+        public async Task DeleteMealNotExistInSessionByMealId(int mealid)
         {
-            await _mealService.DeleteMealIdNotExistInSessionByMealId(mealid);
+            await _mealService.DeleteMealNotExistInSessionByMealId(mealid);
         }
-        [HttpPut("update-meal-id")]
-        public async Task<IActionResult> UpdateMealIdNotExistInSessionByMealId([FromForm] UpdateMealIdNotExistInSessionByMealIdRequestModel request)
+        [HttpPut("update-meal-not-exist-in-session")]
+        public async Task<IActionResult> UpdateMealNotExistInSession([FromForm] UpdateMealIdNotExistInSessionByMealIdRequestModel request)
         {
-           var result =  await _mealService.UpdateMealIdNotExistInSessionByMealId(request);
+           var result =  await _mealService.UpdateMealNotExistInSession(request);
             return Ok(result);
         }
 

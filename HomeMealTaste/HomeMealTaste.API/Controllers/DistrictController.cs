@@ -1,5 +1,6 @@
 ﻿using HomeMealTaste.Data.RequestModel;
 using HomeMealTaste.Services.Interface;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -7,6 +8,7 @@ namespace HomeMealTaste.API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    
     public class DistrictController : ControllerBase
     {
         private readonly IDistrictService _districtService;

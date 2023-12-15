@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace HomeMealTaste.Data.Implement
 {
-    public class PostRepository : BaseRepository<Post> ,IPostRepository
+    public class PostRepository : BaseRepository<Post>, IPostRepository
     {
         public PostRepository(HomeMealTasteContext context) : base(context)
         {
