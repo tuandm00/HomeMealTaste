@@ -77,14 +77,19 @@ namespace HomeMealTaste.Services.Implement
 
             if (result != null && mealRequest.DishIds != null)
             {
+                var uniqueDishIds = new HashSet<int>();
+
                 foreach (var dishId in mealRequest.DishIds)
                 {
-                    var mealdish = new MealDish
+                    if (uniqueDishIds.Add(dishId))
                     {
-                        MealId = result.MealId,
-                        DishId = dishId
-                    };
-                    await _context.AddAsync(mealdish);
+                        var mealdish = new MealDish
+                        {
+                            MealId = result.MealId,
+                            DishId = dishId
+                        };
+                        await _context.AddAsync(mealdish);
+                    }
                 }
 
                 await _context.SaveChangesAsync();
@@ -271,15 +276,19 @@ namespace HomeMealTaste.Services.Implement
                         _context.MealDishes.Remove(i);
                     }
 
+                    var uniqueDishIds = new HashSet<int>();
 
                     foreach (var dishId in request.DishIds)
                     {
-                        var mealdishs = new MealDish
+                        if (uniqueDishIds.Add(dishId))
                         {
-                            MealId = result.MealId,
-                            DishId = dishId
-                        };
-                        await _context.AddAsync(mealdishs);
+                            var mealdishs = new MealDish
+                            {
+                                MealId = result.MealId,
+                                DishId = dishId
+                            };
+                            await _context.AddAsync(mealdishs);
+                        }
                     }
 
                 }
