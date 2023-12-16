@@ -856,6 +856,7 @@ namespace HomeMealTaste.Services.Implement
                     {
                         list.Status = "DONE";
                     }
+                    else list.Status = "CANCELLED";
                     
                     _context.Orders.Update(list);
                     await _context.SaveChangesAsync();
