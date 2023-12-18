@@ -298,5 +298,31 @@ namespace HomeMealTaste.Services.Implement
 
             return _mapper.Map<GetSingleSessionBySessionIdResponseModel>(result);
         }
+
+        public async Task<List<GetAllSessionByAreaIdResponseModel>> GetAllSessionByAreaIdWithStatusTrueInDay(int areaid)
+        {
+            var datenow = GetDateTimeTimeZoneVietNam();
+            var result = _context.Sessions.Where(x => x.AreaId == areaid && x.Status == true && x.CreateDate.Value.Date == datenow).Select(x => new GetAllSessionByAreaIdResponseModel
+            {
+                SessionId = x.SessionId,
+                CreateDate = ((DateTime)x.CreateDate).ToString("dd-MM-yyyy"),
+                StartTime = ((DateTime)x.StartTime).ToString("HH:mm"),
+                EndTime = ((DateTime)x.EndTime).ToString("HH:mm"),
+                EndDate = ((DateTime)x.EndDate).ToString("dd-MM-yyyy"),
+                UserId = x.UserId,
+                SessionType = x.SessionType,
+                SessionName = x.SessionName,
+                AreaDto = new AreaDto
+                {
+                    AreaId = areaid,
+                    Address = x.Area.Address,
+                    DistrictId = x.Area.DistrictId,
+                },
+                Status = x.Status,
+            });
+
+            var mappedResults = result.Select(session => _mapper.Map<GetAllSessionByAreaIdResponseModel>(session)).ToList();
+            return mappedResults;
+        }
     }
 }
