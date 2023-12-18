@@ -319,7 +319,7 @@ namespace HomeMealTaste.Services.Implement
                     DistrictId = x.Area.DistrictId,
                 },
                 Status = x.Status,
-            });
+            }).ToList();
 
             var mappedResults = result.Select(session => _mapper.Map<GetAllSessionByAreaIdResponseModel>(session)).ToList();
             return mappedResults;

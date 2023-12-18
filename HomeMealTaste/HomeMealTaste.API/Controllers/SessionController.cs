@@ -94,7 +94,7 @@ namespace HomeMealTaste.Controllers
         [HttpGet("get-all-session-by-area-id-with-status-true-in-day")]
         public async Task<IActionResult> GetAllSessionByAreaIdWithStatusTrueInDay(int areaid)
         {
-            var result =  _sessionService.GetAllSessionByAreaIdWithStatusTrueInDay(areaid);
+            var result = await  _sessionService.GetAllSessionByAreaIdWithStatusTrueInDay(areaid);
             return Ok(result);
         }
     }
