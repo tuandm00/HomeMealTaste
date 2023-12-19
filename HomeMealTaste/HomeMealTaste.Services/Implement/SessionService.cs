@@ -83,7 +83,7 @@ namespace HomeMealTaste.Services.Implement
             var entity = _mapper.Map<Session>(sessionRequest);
             var sessionTypeLower = entity.SessionType.ToLower();
             var sessionName = sessionRequest.SessionName;
-            var areaId = _context.Sessions.Where(x => x.AreaId == entity.AreaId).Select(x => x.AreaId).FirstOrDefault();
+            var areaId = _context.Areas.Where(x => x.AreaId == entity.AreaId).Select(x => x.AreaId).FirstOrDefault();
             if (areaId != null)
             {
 
