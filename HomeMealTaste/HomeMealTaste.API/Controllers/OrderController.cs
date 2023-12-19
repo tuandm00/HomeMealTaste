@@ -19,11 +19,9 @@ namespace HomeMealTaste.API.Controllers
     {
         private readonly IOrderService _orderService;
         private readonly HomeMealTasteContext _context;
-        private readonly IHubContext<OrderNotificationHub> _hubContext;
-        public OrderController(IOrderService orderService, IHubContext<OrderNotificationHub> hubContext, HomeMealTasteContext context)
+        public OrderController(IOrderService orderService, HomeMealTasteContext context)
         {
             _orderService = orderService;
-            _hubContext = hubContext;
             _context = context;
         }
 
