@@ -84,6 +84,12 @@ namespace HomeMealTaste.Controllers
             var result =  _dishService.DeleteDishInMealDish(dishid, mealid);
             return result;
         }
+        [HttpGet("get-all-dish-in-meal-session-by-kitchen-id")]
+        public async Task<IActionResult> GetAllDishInMealSessionByKitchenId(int kitchenid)
+        {
+            var result = await  _dishService.GetAllDishInMealSessionByKitchenId(kitchenid);
+            return Ok(result);
+        }
 
     }
 }

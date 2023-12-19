@@ -22,5 +22,6 @@ namespace HomeMealTaste.Services.Interface
         Task<UpdateDishResponseModel> UpdateDishNotExistInMealSession(UpdateDishRequestModel request);
         Task<List<GetDishIdByMealIdResponseModel>> GetDishIdByMealId(int mealid);
         Task<List<GetDishByKitchenIdResponseModel>> GetDishByKitchenId(int kitchenid);
+        Task<List<GetAllDishInMealSessionByKitchenIdResponseModel>> GetAllDishInMealSessionByKitchenId(int kitchenid);
     }
 }

@@ -202,5 +202,42 @@ namespace HomeMealTaste.Services.Implement
             }
 
         }
+
+        public async Task<List<GetAllDishInMealSessionByKitchenIdResponseModel>> GetAllDishInMealSessionByKitchenId(int kitchenid)
+        {
+            var listMealId = _context.MealSessions.Where(x => x.KitchenId == kitchenid).Select(x => x.MealId).ToList();
+            var listMealDish = _context.MealDishes.Where(x => listMealId.Contains(x.MealId)).ToList();
+
+            if(listMealDish.Count > 0)
+            {
+                var result = new List<GetAllDishInMealSessionByKitchenIdResponseModel>();
+
+                foreach (var dish in listMealDish)
+                {
+                    var dishEntity = _context.Dishes.Where(x => x.DishId == dish.DishId).Select(x => new GetAllDishInMealSessionByKitchenIdResponseModel
+                    {
+                        DishId = x.DishId,
+                        DishTypeId = x.DishTypeId,
+                        Image = x.Image,
+                        KitchenId = x.KitchenId,
+                        Name = x.Name,
+                    }).FirstOrDefault();
+
+                    if (dishEntity != null)
+                    {
+                        var mapped = _mapper.Map<GetAllDishInMealSessionByKitchenIdResponseModel>(dishEntity);
+                        result.Add(mapped);
+                    }
+                }
+                return result;
+
+            }
+            else
+            {
+                throw new Exception("No Dish In Meal Session");
+            }
+
+            return null;
+        }
     }
 }
