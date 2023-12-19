@@ -21,7 +21,7 @@ namespace HomeMealTaste.Services.Interface
         Task<List<GetAllMealResponseModelNew>> GetAllMeal();
         Task DeleteMealNotExistInSessionByMealId(int mealid);
         Task<UpdateMealIdNotExistInSessionByMealIdResponseModel> UpdateMealNotExistInSession(UpdateMealIdNotExistInSessionByMealIdRequestModel request);
-
+        Task<List<GetAllMealInMealSessionByKitchenIdResponseModel>> GetAllMealInMealSessionByKitchenId(int kitchenid);
 
     }
 }

@@ -75,6 +75,13 @@ namespace HomeMealTaste.API.Controllers
             return Ok(result);
         }
 
+        [HttpGet("get-all-meal-in-meal-session-by-kitchen-id")]
+        public async Task<IActionResult> GetAllMealInMealSessionByKitchenId(int kitchenid)
+        {
+           var result =  await _mealService.GetAllMealInMealSessionByKitchenId(kitchenid);
+           return Ok(result);
+        }
+
 
     }
 }
