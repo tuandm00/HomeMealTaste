@@ -83,7 +83,7 @@ namespace HomeMealTaste.Services.Implement
             var entity = _mapper.Map<Session>(sessionRequest);
             var sessionTypeLower = entity.SessionType.ToLower();
             var sessionName = sessionRequest.SessionName;
-            var areaId = _context.Areas.Where(x => x.AreaId == entity.AreaId).Select(x => x.AreaId).FirstOrDefault();
+            var areaId = _context.Areas.SingleOrDefault(x => x.AreaId == entity.AreaId)?.AreaId;
             if (areaId != null)
             {
 
@@ -137,7 +137,7 @@ namespace HomeMealTaste.Services.Implement
             }
             else
             {
-                throw new Exception("Not Exist Area to Create Session");
+                throw new InvalidOperationException("Not Exist Area to Create Session");
             }
             var result = await _sessionRepository.Create(entity, true);
 

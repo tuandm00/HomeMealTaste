@@ -23,10 +23,10 @@ namespace HomeMealTaste.Controllers
         }
 
         [HttpPost]
-        public async Task<SessionResponseModel> CreateSession(SessionRequestModel sessionRequest)
+        public async Task<IActionResult> CreateSession(SessionRequestModel sessionRequest)
         {
             var result = await _sessionService.CreateSession(sessionRequest);
-            return result;
+            return Ok(result);
         }
 
         [HttpPatch("update-end-time-session")]
@@ -96,6 +96,7 @@ namespace HomeMealTaste.Controllers
         {
             var result = await  _sessionService.GetAllSessionByAreaIdWithStatusTrueInDay(areaid);
             return Ok(result);
+            
         }
     }
 }
