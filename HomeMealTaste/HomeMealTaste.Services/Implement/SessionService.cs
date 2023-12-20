@@ -16,6 +16,7 @@ using HomeMealTaste.Data.Helper;
 using HomeMealTaste.Data.ResponseModel;
 using HomeMealTaste.Services.Helper;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 
 namespace HomeMealTaste.Services.Implement
 {
@@ -25,13 +26,14 @@ namespace HomeMealTaste.Services.Implement
         private readonly ITransactionService _transactionService;
         private readonly HomeMealTasteContext _context;
         private readonly IMapper _mapper;
-
-        public SessionService(HomeMealTasteContext context, ISessionRepository sessionRepository, IMapper mapper, ITransactionService transactionService)
+        private readonly ILogger<SessionService> _logger;
+        public SessionService(HomeMealTasteContext context, ISessionRepository sessionRepository, IMapper mapper, ITransactionService transactionService, ILogger<SessionService> logger)
         {
             _context = context;
             _sessionRepository = sessionRepository;
             _mapper = mapper;
             _transactionService = transactionService;
+            _logger = logger;
         }
         public static DateTime TranferDateTimeByTimeZone(DateTime dateTime, string timezoneArea)
         {
@@ -80,76 +82,82 @@ namespace HomeMealTaste.Services.Implement
         }
         public async Task<SessionResponseModel> CreateSession(SessionRequestModel sessionRequest)
         {
-            var entity = _mapper.Map<Session>(sessionRequest);
-            var sessionTypeLower = entity.SessionType.ToLower();
-            var sessionName = sessionRequest.SessionName;
-            var areaId = _context.Areas.SingleOrDefault(x => x.AreaId == entity.AreaId)?.AreaId;
-            if (areaId != null)
+            var responseModel = new SessionResponseModel(); // Initialize the response model
+
+            try
             {
+                var entity = _mapper.Map<Session>(sessionRequest);
+                var sessionTypeLower = entity.SessionType.ToLower();
+                var sessionName = sessionRequest.SessionName;
+                var areaId = _context.Areas.SingleOrDefault(x => x.AreaId == entity.AreaId)?.AreaId;
 
-                if (await SessionTypeExistsInAreaInDayNow((int)areaId, sessionTypeLower))
+                if (areaId != null)
                 {
-                    if (string.Equals(sessionTypeLower, "lunch", StringComparison.OrdinalIgnoreCase))
+                    if (await SessionTypeExistsInAreaInDayNow((int)areaId, sessionTypeLower))
                     {
-                        entity.CreateDate = GetDateTimeTimeZoneVietNam();
-                        entity.StartTime = GetDateTimeTimeZoneVietNam().Date.AddHours(10);
-                        entity.EndTime = entity.StartTime.Value.AddHours(2);
-                        entity.EndDate = GetDateTimeTimeZoneVietNam();
-                        entity.Status = true;
-                        entity.UserId = 1;
-                        entity.SessionType = "Lunch";
-                        entity.AreaId = areaId;
-                        entity.SessionName = sessionName;
+                        SetSessionProperties(entity, sessionTypeLower, (int)areaId, sessionName);
 
+                        var result = await _sessionRepository.Create(entity, true);
+                        responseModel = _mapper.Map<SessionResponseModel>(result);
+
+                        responseModel.StartTime = result.StartTime?.ToString("HH:mm");
+                        responseModel.EndTime = result.EndTime?.ToString("HH:mm");
+                        responseModel.CreateDate = result.CreateDate?.ToString("dd-MM-yyyy");
+                        responseModel.EndDate = result.EndDate?.ToString("dd-MM-yyyy");
+
+                        responseModel.Message = "Success";
                     }
-                    else if (string.Equals(sessionTypeLower, "evening", StringComparison.OrdinalIgnoreCase))
+                    else
                     {
-                        entity.CreateDate = GetDateTimeTimeZoneVietNam();
-                        entity.StartTime = GetDateTimeTimeZoneVietNam().Date.AddHours(16);
-                        entity.EndTime = entity.StartTime.Value.AddHours(4);
-                        entity.EndDate = GetDateTimeTimeZoneVietNam();
-                        entity.Status = true;
-                        entity.UserId = 1;
-                        entity.SessionType = "Evening";
-                        entity.AreaId = areaId;
-                        entity.SessionName = sessionName;
-
-
-                    }
-                    else if (string.Equals(sessionTypeLower, "dinner", StringComparison.OrdinalIgnoreCase))
-                    {
-                        entity.CreateDate = GetDateTimeTimeZoneVietNam();
-                        entity.StartTime = GetDateTimeTimeZoneVietNam().Date.AddHours(17);
-                        entity.EndTime = entity.StartTime.Value.AddHours(2);
-                        entity.EndDate = GetDateTimeTimeZoneVietNam();
-                        entity.Status = true;
-                        entity.UserId = 1;
-                        entity.SessionType = "Dinner";
-                        entity.AreaId = areaId;
-                        entity.SessionName = sessionName;
-
+                        responseModel.Message = "Error: sessionType is EXISTED";
                     }
                 }
                 else
                 {
-                    throw new Exception("sessionType is EXISTED");
+                    responseModel.Message = "Error: Not Exist Area to Create Session";
                 }
+
+                return responseModel;
             }
-            else
+            catch (Exception ex)
             {
-                throw new InvalidOperationException("Not Exist Area to Create Session");
+                _logger.LogError(ex, "An error occurred in CreateSession: {Message}", ex.Message);
+
+                responseModel.Message = "Error: " + ex.Message;
+                return responseModel;
             }
-            var result = await _sessionRepository.Create(entity, true);
-
-            var responseModel = _mapper.Map<SessionResponseModel>(result);
-
-            responseModel.StartTime = result.StartTime?.ToString("HH:mm");
-            responseModel.EndTime = result.EndTime?.ToString("HH:mm");
-            responseModel.CreateDate = result.CreateDate?.ToString("dd-MM-yyyy");
-            responseModel.EndDate = result.EndDate?.ToString("dd-MM-yyyy");
-
-            return responseModel;
         }
+
+        private void SetSessionProperties(Session entity, string sessionTypeLower, int areaId, string sessionName)
+        {
+            entity.CreateDate = GetDateTimeTimeZoneVietNam();
+
+            if (string.Equals(sessionTypeLower, "lunch", StringComparison.OrdinalIgnoreCase))
+            {
+                entity.StartTime = entity.CreateDate?.Date.AddHours(10);
+                entity.EndTime = entity.StartTime?.AddHours(2);
+                entity.SessionType = "Lunch";
+            }
+            else if (string.Equals(sessionTypeLower, "evening", StringComparison.OrdinalIgnoreCase))
+            {
+                entity.StartTime = entity.CreateDate?.Date.AddHours(16);
+                entity.EndTime = entity.StartTime?.AddHours(4);
+                entity.SessionType = "Evening";
+            }
+            else if (string.Equals(sessionTypeLower, "dinner", StringComparison.OrdinalIgnoreCase))
+            {
+                entity.StartTime = entity.CreateDate?.Date.AddHours(17);
+                entity.EndTime = entity.StartTime?.AddHours(2);
+                entity.SessionType = "Dinner";
+            }
+
+            entity.EndDate = entity.CreateDate;
+            entity.Status = true;
+            entity.UserId = 1;
+            entity.AreaId = areaId;
+            entity.SessionName = sessionName;
+        }
+
 
         public async Task<SessionResponseModel> UpdateEndTime(int sessionId, DateTime endTime)
         {
