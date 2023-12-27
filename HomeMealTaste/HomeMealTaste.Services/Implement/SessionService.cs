@@ -240,9 +240,9 @@ namespace HomeMealTaste.Services.Implement
             await _context.SaveChangesAsync();
         }
 
-        public async Task<List<SessionResponseModel>> GetAllSession()
+        public async Task<List<GetAllSessionResponseModel>> GetAllSession()
         {
-            var result = _context.Sessions.Include(x => x.SessionAreas).Select(x => new SessionResponseModel
+            var result = _context.Sessions.Include(x => x.SessionAreas).ThenInclude(a => a.Area).Select(x => new GetAllSessionResponseModel
             {
                 SessionId = x.SessionId,
                 CreateDate = ((DateTime)x.CreateDate).ToString("dd-MM-yyyy"),
@@ -250,14 +250,22 @@ namespace HomeMealTaste.Services.Implement
                 EndTime = ((DateTime)x.EndTime).ToString("HH:mm"),
                 EndDate = ((DateTime)x.EndDate).ToString("dd-MM-yyyy"),
                 UserId = x.UserId,
+                BookingSlotStatus = x.BookingSlotStatus,
+                RegisterForMealStatus = x.RegisterForMealStatus,
+                AreaDtoGetAllSession = x.SessionAreas.Select(a => new AreaDtoGetAllSession
+                {
+                    AreaId = a.Area.AreaId,
+                    AreaName = a.Area.AreaName,
+                    Address = a.Area.Address,
+                }).ToList(),
                 SessionType = x.SessionType,
                 SessionName = x.SessionName,
-                AreaId = x.SessionAreas.FirstOrDefault().Area.AreaId,
+
                 Status = x.Status,
                 Message = "Success",
             });
 
-            var mapped = result.Select(r => _mapper.Map<SessionResponseModel>(r)).ToList();
+            var mapped = result.Select(r => _mapper.Map<GetAllSessionResponseModel>(r)).ToList();
             return mapped;
         }
 
@@ -275,13 +283,15 @@ namespace HomeMealTaste.Services.Implement
                 UserId = s.UserId,
                 SessionType = s.SessionType,
                 SessionName = s.SessionName,
-                AreaDto = new AreaDto
+                AreaDto = s.SessionAreas.Select(s => new AreaDto
                 {
-                    AreaId = areaid,
-                    Address = s.SessionAreas.FirstOrDefault(sa => sa.AreaId == areaid).Area.Address,
-                    DistrictId = s.SessionAreas.FirstOrDefault(sa => sa.AreaId == areaid).Area.DistrictId,
-                },
+                    AreaId = s.Area.AreaId,
+                    Address = s.Area.Address,
+                    DistrictId = s.Area.DistrictId,
+                }).ToList(),
                 Status = s.Status,
+                RegisterForMealStatus = s.RegisterForMealStatus,
+                BookingSlotStatus = s.BookingSlotStatus,
             }).ToListAsync();
 
             var mappedResults = sessions.Select(s => _mapper.Map<GetAllSessionByAreaIdResponseModel>(s)).ToList();
@@ -301,13 +311,15 @@ namespace HomeMealTaste.Services.Implement
                 UserId = x.Session.UserId,
                 SessionType = x.Session.SessionType,
                 SessionName = x.Session.SessionName,
-                AreaDto = new AreaDto
+                AreaDto = x.Session.SessionAreas.Select(s => new AreaDto
                 {
-                    AreaId = areaid,
-                    Address = x.Session.SessionAreas.FirstOrDefault(sa => sa.AreaId == areaid).Area.Address,
-                    DistrictId = x.Session.SessionAreas.FirstOrDefault(sa => sa.AreaId == areaid).Area.DistrictId,
-                },
+                    AreaId = s.Area.AreaId,
+                    Address = s.Area.Address,
+                    DistrictId = s.Area.DistrictId,
+                }).ToList(),
                 Status = x.Session.Status,
+                RegisterForMealStatus = x.Session.RegisterForMealStatus,
+                BookingSlotStatus = x.Session.BookingSlotStatus,
             });
 
             var mappedResults = result.Select(session => _mapper.Map<GetAllSessionByAreaIdResponseModel>(session)).ToList();
@@ -332,6 +344,8 @@ namespace HomeMealTaste.Services.Implement
                 Status = x.Status,
                 SessionType = x.SessionType,
                 SessionName = x.SessionName,
+                BookingSlotStatus = x.BookingSlotStatus,
+                RegisterForMealStatus = x.RegisterForMealStatus,
                 UserDtoGetSingleSessionBySessionId = new UserDtoGetSingleSessionBySessionId
                 {
                     UserId = x.User.UserId,

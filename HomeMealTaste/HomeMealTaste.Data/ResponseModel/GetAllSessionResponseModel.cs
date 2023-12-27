@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace HomeMealTaste.Data.ResponseModel
 {
-    public class GetAllSessionByAreaIdResponseModel
+    public class GetAllSessionResponseModel
     {
         public int SessionId { get; set; }
         public string? CreateDate { get; set; }
@@ -14,19 +14,18 @@ namespace HomeMealTaste.Data.ResponseModel
         public string? EndTime { get; set; }
         public string? EndDate { get; set; }
         public int? UserId { get; set; }
-        public string? SessionType { get; set; }
-        public string? SessionName { get; set; }
-        public List<AreaDto>? AreaDto { get; set; }
         public bool? Status { get; set; }
         public bool? RegisterForMealStatus { get; set; }
         public bool? BookingSlotStatus { get; set; }
+        public string? SessionType { get; set; }
+        public string? SessionName { get; set; }
+        public string? Message { get; set; }
+        public List<AreaDtoGetAllSession>? AreaDtoGetAllSession { get; set; }
     }
-
-    public class AreaDto
+    public class AreaDtoGetAllSession
     {
         public int AreaId { get; set; }
         public string? Address { get; set; }
-        public int? DistrictId { get; set; }
-
+        public string? AreaName { get; set; }
     }
 }

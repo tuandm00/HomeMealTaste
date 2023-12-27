@@ -16,7 +16,7 @@ namespace HomeMealTaste.Services.Interface
         //Task<SessionResponseModel> UpdateEndTime(int sessionId, DateTime dateTime);
         //Task<PagedList<GetAllMealInCurrentSessionResponseModel>> GetAllMealInCurrentSession(GetAllMealRequest pagingParams);
         Task ChangeStatusSession(int sessionid);
-        Task<List<SessionResponseModel>> GetAllSession();
+        Task<List<GetAllSessionResponseModel>> GetAllSession();
         Task<List<GetAllSessionByAreaIdResponseModel>> GetAllSessionByAreaId(int areaid);
         Task<List<GetAllSessionByAreaIdResponseModel>> GetAllSessionByAreaIdWithStatusTrue(int areaid);
         //Task<List<GetAllSessionByAreaIdResponseModel>> GetAllSessionByAreaIdWithStatusTrueInDay(int areaid);

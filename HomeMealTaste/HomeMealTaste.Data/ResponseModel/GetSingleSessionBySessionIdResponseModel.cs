@@ -15,6 +15,8 @@ namespace HomeMealTaste.Data.ResponseModel
         public string? EndDate { get; set; }
         public UserDtoGetSingleSessionBySessionId? UserDtoGetSingleSessionBySessionId { get; set; }
         public bool? Status { get; set; }
+        public bool? RegisterForMealStatus { get; set; }
+        public bool? BookingSlotStatus { get; set; }
         public string? SessionType { get; set; }
         public string? SessionName { get; set; }
         public List<AreaDtoGetSingleSessionBySessionId>? AreaDtoGetSingleSessionBySessionId { get; set; }
