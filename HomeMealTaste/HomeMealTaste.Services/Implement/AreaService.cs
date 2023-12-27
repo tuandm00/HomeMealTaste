@@ -113,6 +113,24 @@ namespace HomeMealTaste.Services.Implement
             return mapped;
         }
 
+        public async Task<GetSingleAreaByAreaIdResponseModel> GetSingleAreaByAreaId(int areaid)
+        {
+            var result = _context.Areas.Where(a => a.AreaId == areaid).Select(a => new GetSingleAreaByAreaIdResponseModel
+            {
+                AreaName = a.AreaName,
+                AreaId = a.AreaId,
+                Address = a.Address,
+                DistrictDtoGetSingleAreaByAreaId = new DistrictDtoGetSingleAreaByAreaId
+                {
+                    DistrictId = a.District.DistrictId,
+                    DistrictName = a.District.DistrictName,
+                }
+            }).FirstOrDefault();
+
+            var mapped = _mapper.Map<GetSingleAreaByAreaIdResponseModel>(result);
+            return mapped;
+        }
+
         public Task<UpdateAreaResponseModel> UpdateArea(UpdateAreaRequestModel areaRequestModel)
         {
             var result = _context.Areas.Where(x => x.AreaId == areaRequestModel.AreaId).FirstOrDefault();

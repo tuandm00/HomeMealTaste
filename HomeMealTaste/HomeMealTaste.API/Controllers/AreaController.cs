@@ -53,6 +53,12 @@ namespace HomeMealTaste.API.Controllers
             var result = await _areaService.GetAllAreaByDistrictId(districtid);
             return Ok(result);
         }
+        [HttpGet("get-single-area-by-area-id")]
+        public async Task<IActionResult> GetSingleAreaByAreaId(int areaid)
+        {
+            var result = await _areaService.GetSingleAreaByAreaId(areaid);
+            return Ok(result);
+        }
 
     }
 }
