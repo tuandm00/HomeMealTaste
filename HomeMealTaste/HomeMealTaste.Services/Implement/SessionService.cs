@@ -322,7 +322,7 @@ namespace HomeMealTaste.Services.Implement
 
         public async Task<GetSingleSessionBySessionIdResponseModel> GetSingleSessionBySessionId(int sessionid)
         {
-            var result = _context.Sessions.Include(x => x.SessionAreas).ThenInclude(x => x.Area).Where(x => x.SessionId == sessionid).Select(x => new GetSingleSessionBySessionIdResponseModel
+            var result = _context.Sessions.Include(x => x.SessionAreas).ThenInclude(a => a.Area).Where(x => x.SessionId == sessionid).Select(x => new GetSingleSessionBySessionIdResponseModel
             {
                 SessionId = x.SessionId,
                 CreateDate = ((DateTime)x.CreateDate).ToString("dd-MM-yyyy"),
@@ -342,12 +342,12 @@ namespace HomeMealTaste.Services.Implement
                     Name = x.User.Name,
                     Phone = x.User.Phone,
                 },
-                AreaDtoGetSingleSessionBySessionId = new AreaDtoGetSingleSessionBySessionId
+                AreaDtoGetSingleSessionBySessionId = x.SessionAreas.Select(a => new AreaDtoGetSingleSessionBySessionId
                 {
-                    AreaId = x.SessionAreas.FirstOrDefault(sa => sa.SessionId == sessionid).Area.AreaId,
-                    Address = x.SessionAreas.FirstOrDefault(sa => sa.SessionId == sessionid).Area.Address,
-                    AreaName = x.SessionAreas.FirstOrDefault(sa => sa.SessionId == sessionid).Area.AreaName,
-                },
+                    AreaId = a.Area.AreaId,
+                    AreaName = a.Area.AreaName,
+                    Address = a.Area.Address,
+                }).ToList()
             }).FirstOrDefault();
 
             var mapped = _mapper.Map<GetSingleSessionBySessionIdResponseModel>(result);

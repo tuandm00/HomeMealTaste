@@ -17,7 +17,7 @@ namespace HomeMealTaste.Data.ResponseModel
         public bool? Status { get; set; }
         public string? SessionType { get; set; }
         public string? SessionName { get; set; }
-        public AreaDtoGetSingleSessionBySessionId? AreaDtoGetSingleSessionBySessionId { get; set; }
+        public List<AreaDtoGetSingleSessionBySessionId>? AreaDtoGetSingleSessionBySessionId { get; set; }
     }
 
     public class UserDtoGetSingleSessionBySessionId
