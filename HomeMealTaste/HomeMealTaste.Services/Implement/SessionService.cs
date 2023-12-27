@@ -180,7 +180,7 @@ namespace HomeMealTaste.Services.Implement
                 entity.SessionType = "Dinner";
             }
 
-            entity.Status = "ON";
+            entity.Status = true;
             entity.UserId = 2;
             entity.BookingSlotStatus = true;
             entity.RegisterForMealStatus = true;
@@ -218,9 +218,9 @@ namespace HomeMealTaste.Services.Implement
         {
             var result = await _context.Sessions.FindAsync(sessionid);
 
-            if (result != null && result.Status == "ON")
+            if (result != null && result.Status == true)
             {
-                result.Status = "OFF";
+                result.Status = false;
                 await _transactionService.SaveTotalPriceAfterFinishSession(sessionid);
 
                 var areas = await _context.SessionAreas.Where(a => a.SessionId == sessionid).Select(a => a.AreaId).ToListAsync();
@@ -235,7 +235,7 @@ namespace HomeMealTaste.Services.Implement
                 
                 await _context.SaveChangesAsync();
             }
-            else result.Status = "ON";
+            else result.Status = true;
 
             await _context.SaveChangesAsync();
         }
@@ -291,7 +291,7 @@ namespace HomeMealTaste.Services.Implement
         public Task<List<GetAllSessionByAreaIdResponseModel>> GetAllSessionByAreaIdWithStatusTrue(int areaid)
         {
 
-            var result = _context.SessionAreas.Include(x => x.Area).Include(x => x.Session).Where(x => x.AreaId == areaid && x.Session.Status == "ON").Select(x => new GetAllSessionByAreaIdResponseModel
+            var result = _context.SessionAreas.Include(x => x.Area).Include(x => x.Session).Where(x => x.AreaId == areaid && x.Session.Status == true).Select(x => new GetAllSessionByAreaIdResponseModel
             {
                 SessionId = x.Session.SessionId,
                 CreateDate = ((DateTime)x.Session.CreateDate).ToString("dd-MM-yyyy"),

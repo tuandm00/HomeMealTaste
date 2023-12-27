@@ -49,7 +49,7 @@ namespace HomeMealTaste.Data.ResponseModel
         public string? EndTime { get; set; }
         public string? EndDate { get; set; }
         public int? UserId { get; set; }
-        public string? Status { get; set; }
+        public bool? Status { get; set; }
         public string? SessionType { get; set; }
         public AreaDtoOrderResponse? AreaDtoOrderResponse { get; set; }
 

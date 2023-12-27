@@ -270,8 +270,6 @@ namespace HomeMealTaste.Data.Models
 
                 entity.Property(e => e.StartTime).HasColumnType("smalldatetime");
 
-                entity.Property(e => e.Status).HasMaxLength(50);
-
                 entity.HasOne(d => d.User)
                     .WithMany(p => p.Sessions)
                     .HasForeignKey(d => d.UserId)

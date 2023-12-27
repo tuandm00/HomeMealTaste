@@ -17,7 +17,7 @@ namespace HomeMealTaste.Data.Models
         public DateTime? EndTime { get; set; }
         public DateTime? EndDate { get; set; }
         public int? UserId { get; set; }
-        public string? Status { get; set; }
+        public bool? Status { get; set; }
         public string? SessionType { get; set; }
         public string? SessionName { get; set; }
         public bool? RegisterForMealStatus { get; set; }
