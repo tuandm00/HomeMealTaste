@@ -9,8 +9,7 @@ namespace HomeMealTaste.Data.RequestModel
     public class SessionRequestModel
     {
         public string? SessionType { get; set; }
-        public string? SessionName { get; set; }
-        public int? AreaId { get; set; }
+        public List<int>? AreaIds { get; set; }
 
     }
 }

@@ -8,6 +8,7 @@ namespace HomeMealTaste.Data.Models
         public Session()
         {
             MealSessions = new HashSet<MealSession>();
+            SessionAreas = new HashSet<SessionArea>();
         }
 
         public int SessionId { get; set; }
@@ -16,13 +17,14 @@ namespace HomeMealTaste.Data.Models
         public DateTime? EndTime { get; set; }
         public DateTime? EndDate { get; set; }
         public int? UserId { get; set; }
-        public bool? Status { get; set; }
+        public string? Status { get; set; }
         public string? SessionType { get; set; }
-        public int? AreaId { get; set; }
         public string? SessionName { get; set; }
+        public bool? RegisterForMealStatus { get; set; }
+        public bool? BookingSlotStatus { get; set; }
 
-        public virtual Area? Area { get; set; }
         public virtual User? User { get; set; }
         public virtual ICollection<MealSession> MealSessions { get; set; }
+        public virtual ICollection<SessionArea> SessionAreas { get; set; }
     }
 }

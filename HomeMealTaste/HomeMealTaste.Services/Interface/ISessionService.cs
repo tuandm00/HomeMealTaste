@@ -12,14 +12,15 @@ namespace HomeMealTaste.Services.Interface
     public interface ISessionService
     {
         Task<SessionResponseModel> CreateSession(SessionRequestModel sessionRequest);
-        Task<SessionResponseModel> UpdateEndTime(int sessionId, DateTime dateTime);
+        Task<SessionResponseModel> CreateSessionForNextDay(SessionRequestModel sessionRequest);
+        //Task<SessionResponseModel> UpdateEndTime(int sessionId, DateTime dateTime);
         //Task<PagedList<GetAllMealInCurrentSessionResponseModel>> GetAllMealInCurrentSession(GetAllMealRequest pagingParams);
         Task ChangeStatusSession(int sessionid);
         Task<List<SessionResponseModel>> GetAllSession();
         Task<List<GetAllSessionByAreaIdResponseModel>> GetAllSessionByAreaId(int areaid);
         Task<List<GetAllSessionByAreaIdResponseModel>> GetAllSessionByAreaIdWithStatusTrue(int areaid);
-        Task<List<GetAllSessionByAreaIdResponseModel>> GetAllSessionByAreaIdWithStatusTrueInDay(int areaid);
-        Task DeleteSession (int sessionId);
+        //Task<List<GetAllSessionByAreaIdResponseModel>> GetAllSessionByAreaIdWithStatusTrueInDay(int areaid);
+        //Task DeleteSession(int sessionId);
         Task<GetSingleSessionBySessionIdResponseModel> GetSingleSessionBySessionId(int sessionid);
 
     }

@@ -62,7 +62,7 @@ namespace HomeMealTaste.Services.Implement
         {
             var result = _context.Orders
                 .Include(x => x.MealSession.Meal.Kitchen)
-                .Include(x => x.MealSession)
+                .Include(x => x.MealSession).ThenInclude(x => x.Session).ThenInclude(x => x.SessionAreas).ThenInclude(x => x.Area)
                 .Select(x => new OrderResponseModel
                 {
                     OrderId = x.OrderId,
@@ -107,7 +107,7 @@ namespace HomeMealTaste.Services.Implement
                             UserId = x.MealSession.Session.UserId,
                             Status = x.MealSession.Session.Status,
                             SessionType = x.MealSession.Session.SessionType,
-                            AreaId = x.MealSession.Session.AreaId,
+                            AreaId = x.MealSession.Session.SessionAreas.FirstOrDefault().Area.AreaId,
                         },
                         Price = x.MealSession.Price,
                         Quantity = x.MealSession.Quantity,
@@ -171,7 +171,7 @@ namespace HomeMealTaste.Services.Implement
                             UserId = x.MealSession.Session.UserId,
                             Status = x.MealSession.Session.Status,
                             SessionType = x.MealSession.Session.SessionType,
-                            AreaId = x.MealSession.Session.AreaId,
+                            AreaId = x.MealSession.Session.SessionAreas.FirstOrDefault().Area.AreaId,
                         },
                         Price = x.MealSession.Price,
                         Quantity = x.MealSession.Quantity,
@@ -233,7 +233,7 @@ namespace HomeMealTaste.Services.Implement
                         UserId = x.MealSession.Session.UserId,
                         Status = x.MealSession.Session.Status,
                         SessionType = x.MealSession.Session.SessionType,
-                        AreaId = x.MealSession.Session.AreaId,
+                        AreaId = x.MealSession.Session.SessionAreas.FirstOrDefault().Area.AreaId,
                     },
                     Price = x.MealSession.Price,
                     Quantity = x.MealSession.Quantity,
@@ -294,13 +294,13 @@ namespace HomeMealTaste.Services.Implement
                             UserId = x.MealSession.Session.UserId,
                             AreaDtoOrderResponse = new AreaDtoOrderResponse
                             {
-                                AreaId = x.MealSession.Session.Area.AreaId,
-                                Address = x.MealSession.Session.Area.Address,
-                                AreaName = x.MealSession.Session.Area.AreaName,
+                                AreaId = x.MealSession.Session.SessionAreas.FirstOrDefault().Area.AreaId,
+                                Address = x.MealSession.Session.SessionAreas.FirstOrDefault().Area.Address,
+                                AreaName = x.MealSession.Session.SessionAreas.FirstOrDefault().Area.AreaName,
                                 DistrictDtoOrderResponse = new DistrictDtoOrderResponse
                                 {
-                                    DistrictId = x.MealSession.Session.Area.District.DistrictId,
-                                    DistrictName = x.MealSession.Session.Area.District.DistrictName,
+                                    DistrictId = x.MealSession.Session.SessionAreas.FirstOrDefault().Area.District.DistrictId,
+                                    DistrictName = x.MealSession.Session.SessionAreas.FirstOrDefault().Area.District.DistrictName,
                                 }
                             }
                         },
@@ -783,7 +783,7 @@ namespace HomeMealTaste.Services.Implement
             //}
 
             _context.MealSessions.Update(mealsessionid);
-             _context.Wallets.Update(walletid);
+            _context.Wallets.Update(walletid);
 
             var orderEntity = _mapper.Map<Order>(createOrder);
             await _context.AddAsync(orderEntity);
@@ -857,7 +857,7 @@ namespace HomeMealTaste.Services.Implement
                         list.Status = "DONE";
                     }
                     else list.Status = "CANCELLED";
-                    
+
                     _context.Orders.Update(list);
                     await _context.SaveChangesAsync();
 
@@ -952,7 +952,7 @@ namespace HomeMealTaste.Services.Implement
             var getListOrder = await GetAllOrderByMealSessionId(mealsessionId);
             var sessionid = _context.MealSessions.Where(x => x.MealSessionId == mealsessionId).Select(x => x.SessionId).FirstOrDefault();
             var sessionStatus = _context.Sessions.Where(x => x.SessionId == sessionid).Select(x => x.Status).FirstOrDefault();
-            if (sessionStatus == null || sessionStatus == false)
+            if (sessionStatus == null || sessionStatus == "OFF")
             {
                 throw new Exception("Can not CANCEL");
             }
@@ -1230,7 +1230,7 @@ namespace HomeMealTaste.Services.Implement
                         UserId = x.MealSession.Session.UserId,
                         Status = x.MealSession.Session.Status,
                         SessionType = x.MealSession.Session.SessionType,
-                        AreaId = x.MealSession.Session.AreaId,
+                        AreaId = x.MealSession.Session.SessionAreas.FirstOrDefault().Area.AreaId,
                     },
                     Price = x.MealSession.Price,
                     Quantity = x.MealSession.Quantity,

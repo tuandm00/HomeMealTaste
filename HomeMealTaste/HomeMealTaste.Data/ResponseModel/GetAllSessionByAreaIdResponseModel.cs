@@ -17,7 +17,7 @@ namespace HomeMealTaste.Data.ResponseModel
         public string? SessionType { get; set; }
         public string? SessionName { get; set; }
         public AreaDto? AreaDto { get; set; }
-        public bool? Status { get; set; }
+        public string? Status { get; set; }
     }
 
     public class AreaDto

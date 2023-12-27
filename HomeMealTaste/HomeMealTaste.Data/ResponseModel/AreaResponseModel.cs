@@ -13,6 +13,8 @@ namespace HomeMealTaste.Data.ResponseModel
         public string? Address { get; set; }
         public DistrictDtoAreaResponseModel? DistrictDtoAreaResponseModel { get; set; }
         public string? AreaName { get; set; }
+        public string? Message { get; set; }
+
 
     }
     public class DistrictDtoAreaResponseModel

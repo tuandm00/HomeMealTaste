@@ -106,7 +106,7 @@ namespace HomeMealTaste.Controllers
         {
             var result = await _mealSessionService.GetAllMeallSessionBySessionIdWithStatusApprovedandREMAINQUANTITYhigherthan0InDay(sessionid);
             return Ok(result);
-        } 
+        }
         [HttpGet("get-all-meal-session-by-kitchen-id-with-status-approved-and-remain-quantity->0-IN-DAY")]
         public async Task<IActionResult> GetAllMeallSessionByKitchenIdWithStatusApprovedandREMAINQUANTITYhigherthan0InDay(int kitchenid)
         {

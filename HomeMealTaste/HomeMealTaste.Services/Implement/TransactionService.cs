@@ -139,9 +139,9 @@ namespace HomeMealTaste.Services.Implement
         {
             var userids = _context.Users.Where(u => u.UserId == userid).Select(u => u.UserId).FirstOrDefault();
             var result = _context.Transactions
-        //.Include(x => x.Wallet)
-        //.ThenInclude(x => x.User)
-        //.Include(x => x.Order)
+        .Include(x => x.Wallet)
+        .ThenInclude(x => x.User)
+        .Include(x => x.Order)
         .Where(x => x.UserId == userids).Select(x => new GetAllTransactionByUserIdResponseModel
         {
             TransactionId = x.TransactionId,
@@ -153,21 +153,21 @@ namespace HomeMealTaste.Services.Implement
             TransactionType = x.TransactionType,
             OrderDtoTransactionResponse = new OrderDtoTransactionResponse
             {
-                 OrderId = x.Order.OrderId,
-                 CustomerDtoTransaction = new CustomerDtoTransaction
-                 {
-                     CustomerId = x.Order.Customer.CustomerId,
-                     AreaId = x.Order.Customer.AreaId,
-                     DistrictId = x.Order.Customer.DistrictId,
-                     Name = x.Order.Customer.Name,
-                     Phone = x.Order.Customer.Phone,
-                     UserId = x.Order.Customer.UserId,
-                 },
-                 MealSessionId = x.Order.MealSessionId,
-                 Quantity = x.Order.Quantity,
-                 Time = ((DateTime)x.Date).ToString("HH:mm"),
-                 TotalPrice = x.Order.TotalPrice,
-                 Status = x.Order.Status,
+                OrderId = x.Order.OrderId,
+                CustomerDtoTransaction = new CustomerDtoTransaction
+                {
+                    CustomerId = x.Order.Customer.CustomerId,
+                    AreaId = x.Order.Customer.AreaId,
+                    DistrictId = x.Order.Customer.DistrictId,
+                    Name = x.Order.Customer.Name,
+                    Phone = x.Order.Customer.Phone,
+                    UserId = x.Order.Customer.UserId,
+                },
+                MealSessionId = x.Order.MealSessionId,
+                Quantity = x.Order.Quantity,
+                Time = ((DateTime)x.Date).ToString("HH:mm"),
+                TotalPrice = x.Order.TotalPrice,
+                Status = x.Order.Status,
             },
             WalletDtoTransactionResponse = new WalletDtoTransactionResponse
             {
@@ -177,8 +177,8 @@ namespace HomeMealTaste.Services.Implement
             }
         })
         .ToList();
-        var mapped = result.Select(r => _mapper.Map<GetAllTransactionByUserIdResponseModel>(r)).ToList();
-        return mapped;
+            var mapped = result.Select(r => _mapper.Map<GetAllTransactionByUserIdResponseModel>(r)).ToList();
+            return mapped;
 
         }
 
@@ -189,30 +189,34 @@ namespace HomeMealTaste.Services.Implement
         //    foreach (var i in getAllKitchenBySession)
         //    {
         //        var getTotal = _orderService.GetTotalPriceWithMealSessionBySessionIdAndKitchenId(sessionId, i.KitchenId);
-        //        //var kitchen = await _context.Kitchens.Where(x => x.KitchenId == i.KitchenId).FirstOrDefaultAsync();
-        //        var saveToTransaction = new Transaction
+        //        var user = await _context.Users.Where(u => u.UserId == i.UserId).Include(u => u.Wallets).FirstOrDefaultAsync();
+        //        if (user != null && user.Wallets.Any())
         //        {
-        //            OrderId = null,
-        //            WalletId = null,
-        //            Date = GetDateTimeTimeZoneVietNam(),
-        //            Amount = await getTotal - ((await getTotal * 10) / 100),
-        //            Description = "MONEY TRANSFER TO CHEF: " + i.Name,
-        //            Status = "SUCCEED",
-        //            TransactionType = "TT",
-        //            UserId = i.UserId,
-        //        };
-        //        _context.Transactions.Add(saveToTransaction);
-        //        savedTransactions.Add(saveToTransaction);
+        //            var firstWallet = user.Wallets.First();
+
+        //            var saveToTransaction = new Transaction
+        //            {
+        //                OrderId = null,
+        //                WalletId = firstWallet.WalletId,
+        //                Date = GetDateTimeTimeZoneVietNam(),
+        //                Amount = await getTotal - ((await getTotal * 10) / 100),
+        //                Description = "MONEY TRANSFER TO CHEF: " + i.Name,
+        //                Status = "SUCCEED",
+        //                TransactionType = "TT",
+        //                UserId = i.UserId,
+        //            };
+
+        //            _context.Transactions.Add(saveToTransaction);
+        //            savedTransactions.Add(saveToTransaction);
+        //        }
         //    }
         //    await _context.SaveChangesAsync();
         //    var responseModels = savedTransactions.Select(transaction => new SaveTotalPriceAfterFinishSessionResponseModel
         //    {
-        //        // Map properties from the transaction to the response model
         //        TransactionId = transaction.TransactionId,
         //        Amount = transaction.Amount,
-        //        Date = transaction.Date.ToString(),
+        //        Date = ((DateTime)transaction.Date).ToString("dd-MM-yyyy"),
         //        Description = transaction.Description,
-        //        // Map other properties as needed
         //    }).ToList();
 
         //    return responseModels;
@@ -281,16 +285,17 @@ namespace HomeMealTaste.Services.Implement
                 _context.Transactions.Add(transactionToAdmin);
 
                 //// Save to transaction for chef
-
+                var user = await _context.Users.Where(u => u.UserId == i.UserId).Include(u => u.Wallets).FirstOrDefaultAsync();
+                var firstWallet = user.Wallets.First();
                 var saveToTransaction = new Transaction
                 {
                     OrderId = null,
-                    WalletId = null,
+                    WalletId = firstWallet.WalletId,
                     Date = GetDateTimeTimeZoneVietNam(),
                     Amount = priceToChef,
                     Description = "MONEY TRANSFER TO CHEF: " + i.Name,
                     Status = "SUCCEED",
-                    TransactionType = "REVENUE",
+                    TransactionType = "TT",
                     UserId = i.UserId,
                 };
                 _context.Transactions.Add(saveToTransaction);
@@ -353,6 +358,6 @@ namespace HomeMealTaste.Services.Implement
             return mapped;
         }
 
-        
+
     }
 }

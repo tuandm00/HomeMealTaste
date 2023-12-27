@@ -12,7 +12,7 @@ namespace HomeMealTaste.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    
+
     public class SessionController : ControllerBase
     {
         private readonly ISessionService _sessionService;
@@ -29,13 +29,13 @@ namespace HomeMealTaste.Controllers
             return Ok(result);
         }
 
-        [HttpPatch("update-end-time-session")]
-        public async Task<SessionResponseModel> UpdateEndTime(int sessionId, DateTime endTime)
-        {
-            var result = await _sessionService.UpdateEndTime(sessionId, endTime);
-            return result;
-        }
-        
+        //[HttpPatch("update-end-time-session")]
+        //public async Task<SessionResponseModel> UpdateEndTime(int sessionId, DateTime endTime)
+        //{
+        //    var result = await _sessionService.UpdateEndTime(sessionId, endTime);
+        //    return result;
+        //}
+
         //[HttpGet("get-all")]
         //public async Task<IActionResult> GetAllMealInSession([FromQuery] GetAllMealRequest pagingParams)
         //{
@@ -56,7 +56,7 @@ namespace HomeMealTaste.Controllers
         [HttpPatch("change-status-session")]
         public async Task ChangeStatusSession(int sessionid)
         {
-             await _sessionService.ChangeStatusSession(sessionid);
+            await _sessionService.ChangeStatusSession(sessionid);
         }
 
         [HttpGet("get-all-session")]
@@ -78,25 +78,25 @@ namespace HomeMealTaste.Controllers
             return Ok(result);
         }
 
-        [HttpDelete]
-        public async Task<IActionResult> DeleteSession(int sessionid)
-        {
-            var result =  _sessionService.DeleteSession(sessionid);
-            return Ok(result);
-        }
+        //[HttpDelete]
+        //public async Task<IActionResult> DeleteSession(int sessionid)
+        //{
+        //    var result = _sessionService.DeleteSession(sessionid);
+        //    return Ok(result);
+        //}
         [HttpGet("get-single-session-by-session-id")]
         public async Task<IActionResult> GetSingleSessionBySessionId(int sessionid)
         {
-            var result =  _sessionService.GetSingleSessionBySessionId(sessionid);
+            var result = await _sessionService.GetSingleSessionBySessionId(sessionid);
             return Ok(result);
         }
-        
-        [HttpGet("get-all-session-by-area-id-with-status-true-in-day")]
-        public async Task<IActionResult> GetAllSessionByAreaIdWithStatusTrueInDay(int areaid)
-        {
-            var result = await  _sessionService.GetAllSessionByAreaIdWithStatusTrueInDay(areaid);
-            return Ok(result);
-            
-        }
+
+        //[HttpGet("get-all-session-by-area-id-with-status-true-in-day")]
+        //public async Task<IActionResult> GetAllSessionByAreaIdWithStatusTrueInDay(int areaid)
+        //{
+        //    var result = await _sessionService.GetAllSessionByAreaIdWithStatusTrueInDay(areaid);
+        //    return Ok(result);
+
+        //}
     }
 }

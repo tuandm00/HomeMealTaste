@@ -7,6 +7,7 @@ using HomeMealTaste.Data.ResponseModel;
 using HomeMealTaste.Services.Helper;
 using HomeMealTaste.Services.Interface;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -19,45 +20,60 @@ namespace HomeMealTaste.Services.Implement
     {
         private readonly IAreaRepository _areaRepository;
         private readonly IMapper _mapper;
+        private readonly ILogger<AreaService> _logger;
         private readonly HomeMealTasteContext _context;
 
-        public AreaService(IAreaRepository areaRepository, IMapper mapper, HomeMealTasteContext context)
+        public AreaService(IAreaRepository areaRepository, IMapper mapper, HomeMealTasteContext context, ILogger<AreaService> logger)
         {
             _areaRepository = areaRepository;
             _mapper = mapper;
             _context = context;
+            _logger = logger;
         }
 
-            public async Task<AreaResponseModel> CreateArea(AreaRequestModel areaRequest)
+        public async Task<AreaResponseModel> CreateArea(AreaRequestModel areaRequest)
+        {
+            var mapped = new AreaResponseModel();
+            try
             {
-                //var entity = _mapper.Map<Area>(areaRequest);
-                //var result = await _areaRepository.Create(entity, true);
-                //var mapped = _mapper.Map<AreaResponseModel>(result);
-                //mapped.DistrictDtoAreaResponseModel = new DistrictDtoAreaResponseModel
-                //{
-                //    DistrictId = result.District.DistrictId,
-                //    DistrictName = result.District.DistrictName
-                //};
+                var entity = _mapper.Map<Area>(areaRequest);
+                entity.Address = areaRequest.Address;
+                entity.DistrictId = areaRequest.DistrictId;
+                entity.AreaName = areaRequest.AreaName;
 
-                //return mapped;
+                _context.Areas.Add(entity);
+                await _context.SaveChangesAsync();
 
-                var areaEntity = _mapper.Map<Area>(areaRequest);
+                mapped = _mapper.Map<AreaResponseModel>(entity);
 
-                areaEntity.DistrictId = areaRequest.DistrictId;
+                if (mapped != null && areaRequest.SessionIds != null)
+                {
+                    foreach (var i in areaRequest.SessionIds)
+                    {
+                        var addToSessionArea = new SessionArea
+                        {
+                            AreaId = mapped.AreaId,
+                            SessionId = i,
+                        };
+                        _context.SessionAreas.Add(addToSessionArea);
+                    }
 
-                var createdArea = await _areaRepository.Create(areaEntity, true);
+                    await _context.SaveChangesAsync();
+                    mapped.Message = "Success";
+                }
 
-                var areaWithDistrict = await _context.Areas
-                    .Include(x => x.District)
-                    .FirstOrDefaultAsync(x => x.AreaId == createdArea.AreaId);
-
-                var mapped = _mapper.Map<AreaResponseModel>(areaWithDistrict);
-                return mapped;
             }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "An error occurred in Create Area: {Message}", ex.Message);
+                mapped.Message = "Error: " + ex.Message;
+            }
+            return mapped;
+        }
 
         public Task DeleteArea(int areaid)
         {
-            var result =  _areaRepository.Delete(areaid);
+            var result = _areaRepository.Delete(areaid);
             return result;
         }
 
@@ -85,11 +101,11 @@ namespace HomeMealTaste.Services.Implement
             {
                 AreaId = x.AreaId,
                 Address = x.Address,
-                AreaName= x.AreaName,
+                AreaName = x.AreaName,
                 DistrictDtoResponse = new DistrictDtoResponse
                 {
-                    DistrictId= x.District.DistrictId,
-                    DistrictName= x.District.DistrictName,
+                    DistrictId = x.District.DistrictId,
+                    DistrictName = x.District.DistrictName,
                 }
             }).ToList();
 
@@ -100,7 +116,7 @@ namespace HomeMealTaste.Services.Implement
         public Task<UpdateAreaResponseModel> UpdateArea(UpdateAreaRequestModel areaRequestModel)
         {
             var result = _context.Areas.Where(x => x.AreaId == areaRequestModel.AreaId).FirstOrDefault();
-            if(result != null)
+            if (result != null)
             {
                 result.AreaId = areaRequestModel.AreaId;
                 result.Address = areaRequestModel.Address;

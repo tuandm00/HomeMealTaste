@@ -11,6 +11,8 @@ using System.Text;
 using HomeMealTaste.Data;
 using HomeMealTaste.Data.RequestModel;
 using Azure.Storage.Blobs;
+using CorePush.Google;
+using CorePush.Apple;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -96,6 +98,10 @@ builder.Services.AddSingleton(_ =>
 builder.Services.AddSignalR();
 builder.Services.AddAutoMapper(typeof(MapperProfile).Assembly);
 
+builder.Services.AddControllers();
+builder.Services.AddTransient<INotificationService, NotificationSerivce>();
+builder.Services.AddHttpClient<FcmSender>();
+builder.Services.AddHttpClient<ApnSender>();
 
 
 builder.Services.AddCors(p => p.AddPolicy("MyCors", build =>

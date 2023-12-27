@@ -11,6 +11,7 @@ namespace HomeMealTaste.Data.RequestModel
         public string? Address { get; set; }
         public int? DistrictId { get; set; }
         public string? AreaName { get; set; }
+        public List<int>? SessionIds { get; set; }
 
     }
 }

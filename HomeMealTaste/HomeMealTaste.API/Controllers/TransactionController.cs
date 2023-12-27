@@ -35,13 +35,13 @@ namespace HomeMealTaste.API.Controllers
         {
             var result = await _transactionService.GetAllTransactionByTransactionTypeWithOutOrderId();
             return Ok(result);
-        } 
-        [HttpGet("save-total-price-after-finish-session")]
-        public async Task<IActionResult> SaveTotalPriceAfterFinishSession(int sessionid)
-        {
-            var result = await _transactionService.SaveTotalPriceAfterFinishSession(sessionid);
-            return Ok(result);
         }
+        //[HttpGet("save-total-price-after-finish-session")]
+        //public async Task<IActionResult> SaveTotalPriceAfterFinishSession(int sessionid)
+        //{
+        //    var result = await _transactionService.SaveTotalPriceAfterFinishSession(sessionid);
+        //    return Ok(result);
+        //}
         [HttpGet("get-all-transaction")]
         public async Task<IActionResult> GetAllTransaction()
         {

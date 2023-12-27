@@ -65,20 +65,27 @@ namespace HomeMealTaste.Services.Implement
                             );
             return isValid ? date : null;
         }
-        private async Task<bool> SessionTypeExistsInAreaInDayNow(int areaId, string sessionType)
+        private async Task<bool> SessionTypeExistsInAreaInDayNow(List<int> areaId, string sessionType)
         {
-            var date = GetDateTimeTimeZoneVietNam();
-            var sessiontype = _context.Sessions.Where(x => x.AreaId == areaId && x.SessionType == sessionType && x.CreateDate == date).Select(x => x.SessionType).ToList();
-            
-            foreach(var type in sessiontype)
+            var date = GetDateTimeTimeZoneVietNam().AddDays(1);
+            foreach (var area in areaId)
             {
-                if ((type.ToLower()).Equals(sessionType))
+                var sessionId = _context.SessionAreas.Where(x => x.AreaId == area).Select(x => x.SessionId).ToList();
+                foreach (var session in sessionId)
                 {
-                    return false;
+                    var sessionTypes = _context.Sessions.Where(x => x.SessionId == session && x.EndDate == date).Select(x => x.SessionType).ToList();
+                    foreach (var type in sessionTypes)
+                    {
+                        if ((type.ToLower()).Equals(sessionType))
+                        {
+                            return false;
+                        }
+                    }
                 }
+
             }
             return true;
-            
+
         }
         public async Task<SessionResponseModel> CreateSession(SessionRequestModel sessionRequest)
         {
@@ -88,16 +95,37 @@ namespace HomeMealTaste.Services.Implement
             {
                 var entity = _mapper.Map<Session>(sessionRequest);
                 var sessionTypeLower = entity.SessionType.ToLower();
-                var sessionName = sessionRequest.SessionName;
-                var areaId = _context.Areas.SingleOrDefault(x => x.AreaId == entity.AreaId)?.AreaId;
 
-                if (areaId != null)
+
+                if (sessionRequest.AreaIds != null)
                 {
-                    if (await SessionTypeExistsInAreaInDayNow((int)areaId, sessionTypeLower))
+                    if (await SessionTypeExistsInAreaInDayNow(sessionRequest.AreaIds, sessionTypeLower))
                     {
-                        SetSessionProperties(entity, sessionTypeLower, (int)areaId, sessionName);
+                        SetSessionProperties(entity, sessionTypeLower, sessionRequest.AreaIds);
+                        entity.EndDate = GetDateTimeTimeZoneVietNam();
+                        entity.SessionName = $"Session: {entity.SessionType} , In: {((DateTime)entity.EndDate).ToString("dd-MM-yyyy")}";
 
                         var result = await _sessionRepository.Create(entity, true);
+
+                        if (result != null && sessionRequest.AreaIds != null)
+                        {
+                            var uniqueAreaIds = new HashSet<int>();
+
+                            foreach (var areaId in sessionRequest.AreaIds)
+                            {
+                                if (uniqueAreaIds.Add(areaId))
+                                {
+                                    var sessionArea = new SessionArea
+                                    {
+                                        SessionId = result.SessionId,
+                                        AreaId = areaId,
+                                    };
+                                    await _context.AddAsync(sessionArea);
+                                }
+                                await _context.SaveChangesAsync();
+                            }
+
+                        }
                         responseModel = _mapper.Map<SessionResponseModel>(result);
 
                         responseModel.StartTime = result.StartTime?.ToString("HH:mm");
@@ -128,7 +156,7 @@ namespace HomeMealTaste.Services.Implement
             }
         }
 
-        private void SetSessionProperties(Session entity, string sessionTypeLower, int areaId, string sessionName)
+        private void SetSessionProperties(Session entity, string sessionTypeLower, List<int> areaId)
         {
             entity.CreateDate = GetDateTimeTimeZoneVietNam();
 
@@ -137,6 +165,7 @@ namespace HomeMealTaste.Services.Implement
                 entity.StartTime = entity.CreateDate?.Date.AddHours(10);
                 entity.EndTime = entity.StartTime?.AddHours(2);
                 entity.SessionType = "Lunch";
+
             }
             else if (string.Equals(sessionTypeLower, "evening", StringComparison.OrdinalIgnoreCase))
             {
@@ -151,24 +180,24 @@ namespace HomeMealTaste.Services.Implement
                 entity.SessionType = "Dinner";
             }
 
-            entity.EndDate = entity.CreateDate;
-            entity.Status = true;
-            entity.UserId = 1;
-            entity.AreaId = areaId;
-            entity.SessionName = sessionName;
+            entity.Status = "ON";
+            entity.UserId = 2;
+            entity.BookingSlotStatus = true;
+            entity.RegisterForMealStatus = true;
+            
         }
 
 
-        public async Task<SessionResponseModel> UpdateEndTime(int sessionId, DateTime endTime)
-        {
-            var entity = await _sessionRepository.GetFirstOrDefault(x => x.SessionId == sessionId);
-            entity.EndTime = endTime;
+        //public async Task<SessionResponseModel> UpdateEndTime(int sessionId, DateTime endTime)
+        //{
+        //    var entity = await _sessionRepository.GetFirstOrDefault(x => x.SessionId == sessionId);
+        //    entity.EndTime = endTime;
 
-            var response = await _sessionRepository.Update(entity);
+        //    var response = await _sessionRepository.Update(entity);
 
-            return _mapper.Map<SessionResponseModel>(response);
+        //    return _mapper.Map<SessionResponseModel>(response);
 
-        }
+        //}
 
         //public async Task<PagedList<GetAllMealInCurrentSessionResponseModel>> GetAllMealInCurrentSession(GetAllMealRequest pagingParams)
         //{
@@ -188,38 +217,32 @@ namespace HomeMealTaste.Services.Implement
         public async Task ChangeStatusSession(int sessionid)
         {
             var result = await _context.Sessions.FindAsync(sessionid);
-            if (result != null && result.Status == true)
+
+            if (result != null && result.Status == "ON")
             {
-                result.Status = false;
+                result.Status = "OFF";
                 await _transactionService.SaveTotalPriceAfterFinishSession(sessionid);
+
+                var areas = await _context.SessionAreas.Where(a => a.SessionId == sessionid).Select(a => a.AreaId).ToListAsync();
+                var areaIds = areas.Where(a => a.HasValue).Select(a => a.Value).ToList();
+
+                var sessionR = new SessionRequestModel
+                    {
+                        SessionType = result.SessionType,
+                        AreaIds = areaIds,
+                    };
+                   await CreateSessionForNextDay(sessionR);
+                
+                await _context.SaveChangesAsync();
             }
-            else result.Status = true;
+            else result.Status = "ON";
 
             await _context.SaveChangesAsync();
         }
 
         public async Task<List<SessionResponseModel>> GetAllSession()
         {
-            var result = _context.Sessions.ToList();
-            var mapped = result.Select(session =>
-            {
-                var responseModel = _mapper.Map<SessionResponseModel>(session);
-
-                responseModel.CreateDate = session.CreateDate?.ToString("dd-MM-yyyy");
-                responseModel.EndDate = session.EndDate?.ToString("dd-MM-yyyy");
-                responseModel.StartTime = session.StartTime?.ToString("HH:mm");
-                responseModel.EndTime = session.EndTime?.ToString("HH:mm");
-
-                return responseModel;
-            }).ToList();
-
-            return mapped;
-        }
-
-        public Task<List<GetAllSessionByAreaIdResponseModel>> GetAllSessionByAreaId(int areaid)
-        {
-
-            var result = _context.Sessions.Where(x => x.AreaId == areaid).Select(x => new GetAllSessionByAreaIdResponseModel
+            var result = _context.Sessions.Include(x => x.SessionAreas).Select(x => new SessionResponseModel
             {
                 SessionId = x.SessionId,
                 CreateDate = ((DateTime)x.CreateDate).ToString("dd-MM-yyyy"),
@@ -229,60 +252,83 @@ namespace HomeMealTaste.Services.Implement
                 UserId = x.UserId,
                 SessionType = x.SessionType,
                 SessionName = x.SessionName,
+                AreaId = x.SessionAreas.FirstOrDefault().Area.AreaId,
+                Status = x.Status,
+                Message = "Success",
+            });
+
+            var mapped = result.Select(r => _mapper.Map<SessionResponseModel>(r)).ToList();
+            return mapped;
+        }
+
+        public async Task<List<GetAllSessionByAreaIdResponseModel>> GetAllSessionByAreaId(int areaid)
+        {
+
+            var listSessionIds = await _context.SessionAreas.Where(x => x.AreaId == areaid).Select(x => x.SessionId).ToListAsync();
+            var sessions = await _context.Sessions.Include(s => s.SessionAreas).ThenInclude(s => s.Area).Where(s => listSessionIds.Contains(s.SessionId)).Select(s => new GetAllSessionByAreaIdResponseModel
+            {
+                SessionId = s.SessionId,
+                CreateDate = ((DateTime)s.CreateDate).ToString("dd-MM-yyyy"),
+                StartTime = ((DateTime)s.StartTime).ToString("HH:mm"),
+                EndTime = ((DateTime)s.EndTime).ToString("HH:mm"),
+                EndDate = ((DateTime)s.EndDate).ToString("dd-MM-yyyy"),
+                UserId = s.UserId,
+                SessionType = s.SessionType,
+                SessionName = s.SessionName,
                 AreaDto = new AreaDto
                 {
                     AreaId = areaid,
-                    Address = x.Area.Address,
-                    DistrictId = x.Area.DistrictId,
+                    Address = s.SessionAreas.FirstOrDefault(sa => sa.AreaId == areaid).Area.Address,
+                    DistrictId = s.SessionAreas.FirstOrDefault(sa => sa.AreaId == areaid).Area.DistrictId,
                 },
-                Status = x.Status,
+                Status = s.Status,
+            }).ToListAsync();
+
+            var mappedResults = sessions.Select(s => _mapper.Map<GetAllSessionByAreaIdResponseModel>(s)).ToList();
+            return mappedResults;
+        }
+
+        public Task<List<GetAllSessionByAreaIdResponseModel>> GetAllSessionByAreaIdWithStatusTrue(int areaid)
+        {
+
+            var result = _context.SessionAreas.Include(x => x.Area).Include(x => x.Session).Where(x => x.AreaId == areaid && x.Session.Status == "ON").Select(x => new GetAllSessionByAreaIdResponseModel
+            {
+                SessionId = x.Session.SessionId,
+                CreateDate = ((DateTime)x.Session.CreateDate).ToString("dd-MM-yyyy"),
+                StartTime = ((DateTime)x.Session.StartTime).ToString("HH:mm"),
+                EndTime = ((DateTime)x.Session.EndTime).ToString("HH:mm"),
+                EndDate = ((DateTime)x.Session.EndDate).ToString("dd-MM-yyyy"),
+                UserId = x.Session.UserId,
+                SessionType = x.Session.SessionType,
+                SessionName = x.Session.SessionName,
+                AreaDto = new AreaDto
+                {
+                    AreaId = areaid,
+                    Address = x.Session.SessionAreas.FirstOrDefault(sa => sa.AreaId == areaid).Area.Address,
+                    DistrictId = x.Session.SessionAreas.FirstOrDefault(sa => sa.AreaId == areaid).Area.DistrictId,
+                },
+                Status = x.Session.Status,
             });
 
             var mappedResults = result.Select(session => _mapper.Map<GetAllSessionByAreaIdResponseModel>(session)).ToList();
             return Task.FromResult(mappedResults);
         }
-        
-        public Task<List<GetAllSessionByAreaIdResponseModel>> GetAllSessionByAreaIdWithStatusTrue(int areaid)
-        {
 
-            var result = _context.Sessions.Where(x => x.AreaId == areaid && x.Status == true).Select(x => new GetAllSessionByAreaIdResponseModel
+        //public Task DeleteSession(int sessionId)
+        //{
+        //    var result = _sessionRepository.Delete(sessionId);
+        //    return result;
+        //}
+
+        public async Task<GetSingleSessionBySessionIdResponseModel> GetSingleSessionBySessionId(int sessionid)
+        {
+            var result = _context.Sessions.Include(x => x.SessionAreas).ThenInclude(x => x.Area).Where(x => x.SessionId == sessionid).Select(x => new GetSingleSessionBySessionIdResponseModel
             {
                 SessionId = x.SessionId,
                 CreateDate = ((DateTime)x.CreateDate).ToString("dd-MM-yyyy"),
                 StartTime = ((DateTime)x.StartTime).ToString("HH:mm"),
                 EndTime = ((DateTime)x.EndTime).ToString("HH:mm"),
                 EndDate = ((DateTime)x.EndDate).ToString("dd-MM-yyyy"),
-                UserId = x.UserId,
-                SessionType = x.SessionType,
-                SessionName= x.SessionName,
-                AreaDto = new AreaDto
-                {
-                    AreaId = areaid,
-                    Address = x.Area.Address,
-                    DistrictId = x.Area.DistrictId,
-                },
-                Status = x.Status,
-            });
-
-            var mappedResults = result.Select(session => _mapper.Map<GetAllSessionByAreaIdResponseModel>(session)).ToList();
-            return Task.FromResult(mappedResults);
-        }
-
-        public Task DeleteSession(int sessionId)
-        {
-            var result = _sessionRepository.Delete(sessionId);
-            return result;
-        }
-
-        public async Task<GetSingleSessionBySessionIdResponseModel> GetSingleSessionBySessionId(int sessionid)
-        {
-            var result = _context.Sessions.Where(x => x.SessionId == sessionid).Select(x => new GetSingleSessionBySessionIdResponseModel
-            {
-                SessionId = x.SessionId,
-                CreateDate = ((DateTime)x.CreateDate).ToString("dd-MM-yyyy"),
-                StartTime = ((DateTime)x.StartTime).ToString("HH:mm"),
-                EndTime = ((DateTime)x.EndTime).ToString("HH:mm"),
-                EndDate = ((DateTime)x.EndDate).ToString("HH:mm"),
                 Status = x.Status,
                 SessionType = x.SessionType,
                 SessionName = x.SessionName,
@@ -293,44 +339,109 @@ namespace HomeMealTaste.Services.Implement
                     Address = x.User.Address,
                     DistrictId = x.User.DistrictId,
                     Email = x.User.Email,
-                    Name = x.User.Name, 
+                    Name = x.User.Name,
                     Phone = x.User.Phone,
                 },
                 AreaDtoGetSingleSessionBySessionId = new AreaDtoGetSingleSessionBySessionId
                 {
-                    AreaId = x.Area.AreaId,
-                    Address = x.Area.Address,
-                    AreaName = x.Area.AreaName,
+                    AreaId = x.SessionAreas.FirstOrDefault(sa => sa.SessionId == sessionid).Area.AreaId,
+                    Address = x.SessionAreas.FirstOrDefault(sa => sa.SessionId == sessionid).Area.Address,
+                    AreaName = x.SessionAreas.FirstOrDefault(sa => sa.SessionId == sessionid).Area.AreaName,
                 },
             }).FirstOrDefault();
 
-            return _mapper.Map<GetSingleSessionBySessionIdResponseModel>(result);
+            var mapped = _mapper.Map<GetSingleSessionBySessionIdResponseModel>(result);
+            return mapped;
         }
 
-        public async Task<List<GetAllSessionByAreaIdResponseModel>> GetAllSessionByAreaIdWithStatusTrueInDay(int areaid)
+        public async Task<SessionResponseModel> CreateSessionForNextDay(SessionRequestModel sessionRequest)
         {
-            var datenow = GetDateTimeTimeZoneVietNam();
-            var result = _context.Sessions.Where(x => x.AreaId == areaid && x.Status == true && x.CreateDate.Value.Date == datenow).Select(x => new GetAllSessionByAreaIdResponseModel
-            {
-                SessionId = x.SessionId,
-                CreateDate = ((DateTime)x.CreateDate).ToString("dd-MM-yyyy"),
-                StartTime = ((DateTime)x.StartTime).ToString("HH:mm"),
-                EndTime = ((DateTime)x.EndTime).ToString("HH:mm"),
-                EndDate = ((DateTime)x.EndDate).ToString("dd-MM-yyyy"),
-                UserId = x.UserId,
-                SessionType = x.SessionType,
-                SessionName = x.SessionName,
-                AreaDto = new AreaDto
-                {
-                    AreaId = areaid,
-                    Address = x.Area.Address,
-                    DistrictId = x.Area.DistrictId,
-                },
-                Status = x.Status,
-            }).ToList();
+            var responseModel = new SessionResponseModel(); // Initialize the response model
 
-            var mappedResults = result.Select(session => _mapper.Map<GetAllSessionByAreaIdResponseModel>(session)).ToList();
-            return mappedResults;
+            try
+            {
+                var entity = _mapper.Map<Session>(sessionRequest);
+                var sessionTypeLower = entity.SessionType.ToLower();
+
+
+                if (sessionRequest.AreaIds != null)
+                {
+                        SetSessionProperties(entity, sessionTypeLower, sessionRequest.AreaIds);
+                        entity.EndDate = GetDateTimeTimeZoneVietNam().AddDays(1);
+                        entity.SessionName = $"Session: {entity.SessionType} , In: {((DateTime)entity.EndDate).ToString("dd-MM-yyyy")}";
+                        
+                        var result = await _sessionRepository.Create(entity, true);
+
+                        if (result != null && sessionRequest.AreaIds != null)
+                        {
+                            var uniqueAreaIds = new HashSet<int>();
+
+                            foreach (var areaId in sessionRequest.AreaIds)
+                            {
+                                if (uniqueAreaIds.Add(areaId))
+                                {
+                                    var sessionArea = new SessionArea
+                                    {
+                                        SessionId = result.SessionId,
+                                        AreaId = areaId,
+                                    };
+                                    await _context.AddAsync(sessionArea);
+                                }
+                                await _context.SaveChangesAsync();
+                            }
+
+                        }
+                        responseModel = _mapper.Map<SessionResponseModel>(result);
+
+                        responseModel.StartTime = result.StartTime?.ToString("HH:mm");
+                        responseModel.EndTime = result.EndTime?.ToString("HH:mm");
+                        responseModel.CreateDate = result.CreateDate?.ToString("dd-MM-yyyy");
+                        responseModel.EndDate = result.EndDate?.AddDays(1).ToString("dd-MM-yyyy");
+
+                        responseModel.Message = "Success";
+
+                    
+                }
+                else
+                {
+                    responseModel.Message = "Error: Not Exist Area to Create Session";
+                }
+
+                return responseModel;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "An error occurred in CreateSession: {Message}", ex.Message);
+
+                responseModel.Message = "Error: " + ex.Message;
+                return responseModel;
+            }
         }
+
+        //public async Task<List<GetAllSessionByAreaIdResponseModel>> GetAllSessionByAreaIdWithStatusTrueInDay(int areaid)
+        //{
+        //    var datenow = GetDateTimeTimeZoneVietNam();
+        //    var result = _context.SessionAreas.Include(x => x.Session).Include(x => x.Area).Where(x => x.AreaId == areaid && x.Session.Status == "ON" && x.Session.CreateDate.Value.Date == datenow).Select(x => new GetAllSessionByAreaIdResponseModel
+        //    {
+        //        SessionId = x.Session.SessionId,
+        //        CreateDate = ((DateTime)x.Session.CreateDate).ToString("dd-MM-yyyy"),
+        //        StartTime = ((DateTime)x.Session.StartTime).ToString("HH:mm"),
+        //        EndTime = ((DateTime)x.Session.EndTime).ToString("HH:mm"),
+        //        EndDate = ((DateTime)x.Session.EndDate).ToString("dd-MM-yyyy"),
+        //        UserId = x.Session.UserId,
+        //        SessionType = x.Session.SessionType,
+        //        SessionName = x.Session.SessionName,
+        //        AreaDto = new AreaDto
+        //        {
+        //            AreaId = x.Session.SessionAreas.FirstOrDefault(sa => sa.AreaId == areaid).Area.AreaId,
+        //            Address = x.Session.SessionAreas.FirstOrDefault(sa => sa.AreaId == areaid).Area.Address,
+        //            DistrictId = x.Session.SessionAreas.FirstOrDefault(sa => sa.AreaId == areaid).Area.DistrictId,
+        //        },
+        //        Status = x.Session.Status,
+        //    }).ToList();
+
+        //    var mappedResults = result.Select(session => _mapper.Map<GetAllSessionByAreaIdResponseModel>(session)).ToList();
+        //    return mappedResults;
+        //}
     }
 }

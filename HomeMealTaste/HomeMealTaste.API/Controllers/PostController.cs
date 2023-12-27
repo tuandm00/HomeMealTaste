@@ -1,4 +1,5 @@
 ﻿using HomeMealTaste.Data.RequestModel;
+using HomeMealTaste.Data.ResponseModel;
 using HomeMealTaste.Services.Interface;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
@@ -12,10 +13,13 @@ namespace HomeMealTaste.API.Controllers
     public class PostController : ControllerBase
     {
         private readonly IPostService _postService;
+        private readonly INotificationService _notificationService;
 
-        public PostController(IPostService postService)
+
+        public PostController(IPostService postService, INotificationService notificationService)
         {
             _postService = postService;
+            _notificationService = notificationService;
         }
 
         [HttpPost("post-a-notification-by-email")]
@@ -23,6 +27,12 @@ namespace HomeMealTaste.API.Controllers
         {
             var result = _postService.PostForAllCustomerWithOrderId(mealsessionId);
            
+        }
+        [HttpPost("send")]
+        public async Task<IActionResult> SendNotification(NotificationModel notificationModel)
+        {
+            var result = await _notificationService.SendNotification(notificationModel);
+            return Ok(result);
         }
     }
 }

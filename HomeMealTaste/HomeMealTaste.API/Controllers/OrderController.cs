@@ -89,17 +89,17 @@ namespace HomeMealTaste.API.Controllers
             return Ok(result);
         }
         [HttpGet("get-total-price-of-mealsession-by-session-id-and-kitchen-id")]
-        public async Task<IActionResult> GetTotalPriceWithMealSessionBySessionIdAndKitchenId(int sessionId , int kitchenId)
+        public async Task<IActionResult> GetTotalPriceWithMealSessionBySessionIdAndKitchenId(int sessionId, int kitchenId)
         {
             var result = await _orderService.GetTotalPriceWithMealSessionBySessionIdAndKitchenId(sessionId, kitchenId);
             return Ok(result);
         }
-        //[HttpGet("total-price-of-order-in-system-in-every-month")]
-        //public async Task<IActionResult> TotalPriceOfOrderInSystemInEveryMonth(int month)
-        //{
-        //    var result = await _orderService.TotalPriceOfOrderInSystemInEveryMonth(month);
-        //    return Ok(result);
-        //}
+        [HttpGet("total-price-of-order-in-system-in-every-month")]
+        public async Task<IActionResult> TotalPriceOfOrderInSystemInEveryMonth(int month)
+        {
+            var result = await _orderService.TotalPriceOfOrderInSystemInEveryMonth(month);
+            return Ok(result);
+        }
         [HttpGet("total-price-of-order-in-system")]
         public async Task<IActionResult> TotalPriceOfOrderInSystemWithEveryMonth()
         {

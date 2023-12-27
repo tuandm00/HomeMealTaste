@@ -30,6 +30,7 @@ namespace HomeMealTaste.Data.Models
         public virtual DbSet<Post> Posts { get; set; } = null!;
         public virtual DbSet<Role> Roles { get; set; } = null!;
         public virtual DbSet<Session> Sessions { get; set; } = null!;
+        public virtual DbSet<SessionArea> SessionAreas { get; set; } = null!;
         public virtual DbSet<Transaction> Transactions { get; set; } = null!;
         public virtual DbSet<User> Users { get; set; } = null!;
         public virtual DbSet<Wallet> Wallets { get; set; } = null!;
@@ -269,15 +270,29 @@ namespace HomeMealTaste.Data.Models
 
                 entity.Property(e => e.StartTime).HasColumnType("smalldatetime");
 
-                entity.HasOne(d => d.Area)
-                    .WithMany(p => p.Sessions)
-                    .HasForeignKey(d => d.AreaId)
-                    .HasConstraintName("FK_Session_Area");
+                entity.Property(e => e.Status).HasMaxLength(50);
 
                 entity.HasOne(d => d.User)
                     .WithMany(p => p.Sessions)
                     .HasForeignKey(d => d.UserId)
                     .HasConstraintName("FK_Session_User");
+            });
+
+            modelBuilder.Entity<SessionArea>(entity =>
+            {
+                entity.ToTable("Session_Area");
+
+                entity.Property(e => e.SessionAreaId).HasColumnName("Session_AreaId");
+
+                entity.HasOne(d => d.Area)
+                    .WithMany(p => p.SessionAreas)
+                    .HasForeignKey(d => d.AreaId)
+                    .HasConstraintName("FK_Session_Area_Area");
+
+                entity.HasOne(d => d.Session)
+                    .WithMany(p => p.SessionAreas)
+                    .HasForeignKey(d => d.SessionId)
+                    .HasConstraintName("FK_Session_Area_Session");
             });
 
             modelBuilder.Entity<Transaction>(entity =>
