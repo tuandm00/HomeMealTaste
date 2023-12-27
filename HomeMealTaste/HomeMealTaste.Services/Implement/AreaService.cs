@@ -45,22 +45,22 @@ namespace HomeMealTaste.Services.Implement
                 await _context.SaveChangesAsync();
 
                 mapped = _mapper.Map<AreaResponseModel>(entity);
+                mapped.Message = "Success";
+                //if (mapped != null && areaRequest.SessionIds != null)
+                //{
+                //    foreach (var i in areaRequest.SessionIds)
+                //    {
+                //        var addToSessionArea = new SessionArea
+                //        {
+                //            AreaId = mapped.AreaId,
+                //            SessionId = i,
+                //        };
+                //        _context.SessionAreas.Add(addToSessionArea);
+                //    }
 
-                if (mapped != null && areaRequest.SessionIds != null)
-                {
-                    foreach (var i in areaRequest.SessionIds)
-                    {
-                        var addToSessionArea = new SessionArea
-                        {
-                            AreaId = mapped.AreaId,
-                            SessionId = i,
-                        };
-                        _context.SessionAreas.Add(addToSessionArea);
-                    }
-
-                    await _context.SaveChangesAsync();
-                    mapped.Message = "Success";
-                }
+                //    await _context.SaveChangesAsync();
+                //    mapped.Message = "Success";
+                //}
 
             }
             catch (Exception ex)
