@@ -90,6 +90,16 @@ namespace HomeMealTaste.Controllers
             var result = await _sessionService.GetSingleSessionBySessionId(sessionid);
             return Ok(result);
         }
+        [HttpPatch("change-status-register-for-meal")]
+        public async Task ChangeStatusRegisterForMeal(int sessionid)
+        {
+            await _sessionService.ChangeStatusRegisterForMeal(sessionid);
+        }
+        [HttpPatch("change-status-booking-slot")]
+        public async Task ChangeStatusBookingSlot(int sessionid)
+        {
+            await _sessionService.ChangeStatusBookingSlot(sessionid);
+        }
 
         //[HttpGet("get-all-session-by-area-id-with-status-true-in-day")]
         //public async Task<IActionResult> GetAllSessionByAreaIdWithStatusTrueInDay(int areaid)

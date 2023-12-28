@@ -438,6 +438,30 @@ namespace HomeMealTaste.Services.Implement
             }
         }
 
+        public async Task ChangeStatusRegisterForMeal(int sessionid)
+        {
+            var result = _context.Sessions.Where(x => x.SessionId == sessionid).FirstOrDefault();
+            if (result != null && result.RegisterForMealStatus == true)
+            {
+                result.RegisterForMealStatus = false;
+            }
+            else result.RegisterForMealStatus = true;
+            await _context.SaveChangesAsync();
+
+        }
+
+        public async Task ChangeStatusBookingSlot(int sessionid)
+        {
+            var result = _context.Sessions.Where(x => x.SessionId == sessionid).FirstOrDefault();
+            if (result != null && result.BookingSlotStatus == true)
+            {
+                result.BookingSlotStatus = false;
+            }
+            else result.BookingSlotStatus = true;
+            await _context.SaveChangesAsync();
+
+        }
+
         //public async Task<List<GetAllSessionByAreaIdResponseModel>> GetAllSessionByAreaIdWithStatusTrueInDay(int areaid)
         //{
         //    var datenow = GetDateTimeTimeZoneVietNam();
