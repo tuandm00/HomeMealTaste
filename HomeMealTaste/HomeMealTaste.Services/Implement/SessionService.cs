@@ -87,7 +87,7 @@ namespace HomeMealTaste.Services.Implement
             return true;
 
         }
-        public async Task<SessionResponseModel> CreateSession(SessionRequestModel sessionRequest)
+        public async Task<SessionResponseModel> CreateSession(SessionRequestModel sessionRequest, string date)
         {
             var responseModel = new SessionResponseModel(); // Initialize the response model
 
@@ -103,7 +103,11 @@ namespace HomeMealTaste.Services.Implement
                     {
                         SetSessionProperties(entity, sessionTypeLower, sessionRequest.AreaIds);
                         entity.EndDate = GetDateTimeTimeZoneVietNam();
-                        entity.SessionName = $"Session: {entity.SessionType} , In: {((DateTime)entity.EndDate).ToString("dd-MM-yyyy")}";
+                        if(DateTime.TryParseExact(date, "dd-MM-yyyy",CultureInfo.InvariantCulture,DateTimeStyles.None,out DateTime parsedDate))
+                        {
+                            entity.SessionName = $"Session: {entity.SessionType} , In: {parsedDate.ToString("dd-MM-yyyy")}";
+
+                        }
 
                         var result = await _sessionRepository.Create(entity, true);
 

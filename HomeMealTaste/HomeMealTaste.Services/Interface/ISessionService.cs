@@ -11,7 +11,7 @@ namespace HomeMealTaste.Services.Interface
 {
     public interface ISessionService
     {
-        Task<SessionResponseModel> CreateSession(SessionRequestModel sessionRequest);
+        Task<SessionResponseModel> CreateSession(SessionRequestModel sessionRequest, string date);
         Task<SessionResponseModel> CreateSessionForNextDay(SessionRequestModel sessionRequest);
         //Task<SessionResponseModel> UpdateEndTime(int sessionId, DateTime dateTime);
         //Task<PagedList<GetAllMealInCurrentSessionResponseModel>> GetAllMealInCurrentSession(GetAllMealRequest pagingParams);

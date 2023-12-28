@@ -23,9 +23,9 @@ namespace HomeMealTaste.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> CreateSession(SessionRequestModel sessionRequest)
+        public async Task<IActionResult> CreateSession(SessionRequestModel sessionRequest, string date)
         {
-            var result = await _sessionService.CreateSession(sessionRequest);
+            var result = await _sessionService.CreateSession(sessionRequest, date);
             return Ok(result);
         }
 
