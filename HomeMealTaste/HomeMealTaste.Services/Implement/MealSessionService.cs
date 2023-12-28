@@ -890,9 +890,20 @@ namespace HomeMealTaste.Services.Implement
         public Task<List<MealSessionResponseModel>> GetAllMealSessionByAreaIdAndSessionIdAndKitchenId(int areaId, int sessionId, int kitchenId)
         {
             var getAreaId = _context.SessionAreas.Where(x => x.SessionId == sessionId && x.AreaId == areaId).Select(x => x.AreaId).FirstOrDefault();
+
             if(getAreaId != null)
             {
-                var result = _context.MealSessions.Where(x => x.SessionId == sessionId && x.KitchenId == kitchenId).Select(x => new MealSessionResponseModel
+                var getListKitchen = _context.Kitchens.Where(x => x.AreaId == areaId).Select(x => x.KitchenId).ToList();
+                foreach(var item in getListKitchen)
+                {
+                    if(item != kitchenId)
+                    {
+                        throw new Exception("Can not find kitchen");
+                    }
+                };
+                var result = _context.MealSessions
+                    .Where(x => x.SessionId == sessionId && x.KitchenId == kitchenId)
+                    .Select(x => new MealSessionResponseModel
                 {
                     MealSessionId = x.MealSessionId,
                     CreateDate = ((DateTime)x.CreateDate).ToString("dd-MM-yyyy"),
@@ -918,17 +929,17 @@ namespace HomeMealTaste.Services.Implement
                         Status = x.Session.Status,
                         SessionType = x.Session.SessionType,
                         SessionName = x.Session.SessionName,
-                        AreaDtoForMealSession = new AreaDtoForMealSession
-                        {
-                            AreaId = areaId,
-                            Address = x.Session.SessionAreas.FirstOrDefault(sa => sa.SessionId == sessionId).Area.Address,
-                            AreaName = x.Session.SessionAreas.FirstOrDefault(sa => sa.SessionId == sessionId).Area.AreaName,
-                            DistrictDtoForMealSession = new DistrictDtoForMealSession
-                            {
-                                DistrictId = x.Session.SessionAreas.FirstOrDefault(sa => sa.SessionId == sessionId).Area.District.DistrictId,
-                                DistrictName = x.Session.SessionAreas.FirstOrDefault(sa => sa.SessionId == sessionId).Area.District.DistrictName,
-                            },
-                        },
+                        //AreaDtoForMealSession = new AreaDtoForMealSession
+                        //{
+                        //    AreaId = areaId,
+                        //    Address = x.Session.SessionAreas.SingleOrDefault(sa => sa.SessionId == sessionId).Area.Address,
+                        //    AreaName = x.Session.SessionAreas.SingleOrDefault(sa => sa.SessionId == sessionId).Area.AreaName,
+                        //    DistrictDtoForMealSession = new DistrictDtoForMealSession
+                        //    {
+                        //        DistrictId = x.Session.SessionAreas.SingleOrDefault(sa => sa.SessionId == sessionId).Area.District.DistrictId,
+                        //        DistrictName = x.Session.SessionAreas.SingleOrDefault(sa => sa.SessionId == sessionId).Area.District.DistrictName,
+                        //    },
+                        //},
                     },
                     MealDtoForMealSession = new MealDtoForMealSession
                     {
