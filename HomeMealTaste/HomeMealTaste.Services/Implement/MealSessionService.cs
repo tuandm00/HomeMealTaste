@@ -887,7 +887,69 @@ namespace HomeMealTaste.Services.Implement
             return Task.FromResult(mapped);
         }
 
+        public Task<List<MealSessionResponseModel>> GetAllMealSessionByAreaIdAndSessionIdAndKitchenId(int areaId, int sessionId, int kitchenId)
+        {
+            var getAreaId = _context.SessionAreas.Where(x => x.SessionId == sessionId && x.AreaId == areaId).Select(x => x.AreaId).FirstOrDefault();
+            if(getAreaId != null)
+            {
+                var result = _context.MealSessions.Where(x => x.SessionId == sessionId && x.KitchenId == kitchenId).Select(x => new MealSessionResponseModel
+                {
+                    MealSessionId = x.MealSessionId,
+                    CreateDate = ((DateTime)x.CreateDate).ToString("dd-MM-yyyy"),
+                    Price = (decimal?)x.Price,
+                    Quantity = x.Quantity,
+                    RemainQuantity = x.RemainQuantity,
+                    Status = x.Status,
+                    KitchenDtoForMealSession = new KitchenDtoForMealSession
+                    {
+                        KitchenId = kitchenId,
+                        UserId = x.Meal.Kitchen.KitchenId,
+                        Name = x.Meal.Kitchen.Name,
+                        Address = x.Meal.Kitchen.Address,
+                    },
+                    SessionDtoForMealSession = new SessionDtoForMealSession
+                    {
+                        SessionId = sessionId,
+                        CreateDate = ((DateTime)x.Session.CreateDate).ToString("dd-MM-yyyy"),
+                        StartTime = ((DateTime)x.Session.StartTime).ToString("HH:mm"),
+                        EndTime = ((DateTime)x.Session.EndTime).ToString("HH:mm"),
+                        EndDate = ((DateTime)x.Session.EndDate).ToString("dd-MM-yyyy"),
+                        UserId = x.Session.UserId,
+                        Status = x.Session.Status,
+                        SessionType = x.Session.SessionType,
+                        SessionName = x.Session.SessionName,
+                        AreaDtoForMealSession = new AreaDtoForMealSession
+                        {
+                            AreaId = areaId,
+                            Address = x.Session.SessionAreas.FirstOrDefault(sa => sa.SessionId == x.Session.SessionId).Area.Address,
+                            AreaName = x.Session.SessionAreas.FirstOrDefault(sa => sa.SessionId == x.Session.SessionId).Area.AreaName,
+                            DistrictDtoForMealSession = new DistrictDtoForMealSession
+                            {
+                                DistrictId = x.Session.SessionAreas.FirstOrDefault(sa => sa.SessionId == x.Session.SessionId).Area.District.DistrictId,
+                                DistrictName = x.Session.SessionAreas.FirstOrDefault(sa => sa.SessionId == x.Session.SessionId).Area.District.DistrictName,
+                            },
+                        },
+                    },
+                    MealDtoForMealSession = new MealDtoForMealSession
+                    {
+                        MealId = x.Meal.MealId,
+                        Name = x.Meal.Name,
+                        Image = x.Meal.Image,
+                        KitchenId = x.KitchenId,
+                        CreateDate = ((DateTime)x.Meal.CreateDate).ToString("dd-MM-yyyy"),
+                        Description = x.Meal.Description,
+                    },
+                }).ToList();
+                var mapped = result.Select(r => _mapper.Map<MealSessionResponseModel>(r)).ToList();
+                return Task.FromResult(mapped);
+            }
+            else
+            {
+                throw new Exception("Area is Null");
+            }
+            return null;
 
+        }
     }
 }
 
