@@ -86,8 +86,29 @@ namespace HomeMealTaste.Services.Implement
             }
             return true;
 
+        }private async Task<bool> SessionTypeExistsInAreaInNextDay(List<int> areaId, string sessionType)
+        {
+            var date = GetDateTimeTimeZoneVietNam();
+            foreach (var area in areaId)
+            {
+                var sessionId = _context.SessionAreas.Where(x => x.AreaId == area).Select(x => x.SessionId).ToList();
+                foreach (var session in sessionId)
+                {
+                    var sessionTypes = _context.Sessions.Where(x => x.SessionId == session && x.EndDate == date).Select(x => x.SessionType).ToList();
+                    foreach (var type in sessionTypes)
+                    {
+                        if ((type.ToLower()).Equals(sessionType))
+                        {
+                            return false;
+                        }
+                    }
+                }
+
+            }
+            return true;
+
         }
-        public async Task<SessionResponseModel> CreateSession(SessionRequestModel sessionRequest, string date)
+        public async Task<SessionResponseModel> CreateSession(SessionRequestModel sessionRequest)
         {
             var responseModel = new SessionResponseModel(); // Initialize the response model
 
@@ -99,11 +120,11 @@ namespace HomeMealTaste.Services.Implement
 
                 if (sessionRequest.AreaIds != null)
                 {
-                    if (await SessionTypeExistsInAreaInDayNow(sessionRequest.AreaIds, sessionTypeLower))
+                    if (await SessionTypeExistsInAreaInNextDay(sessionRequest.AreaIds, sessionTypeLower))
                     {
                         SetSessionProperties(entity, sessionTypeLower, sessionRequest.AreaIds);
                         entity.EndDate = GetDateTimeTimeZoneVietNam();
-                        if(DateTime.TryParseExact(date, "dd-MM-yyyy",CultureInfo.InvariantCulture,DateTimeStyles.None,out DateTime parsedDate))
+                        if(DateTime.TryParseExact(sessionRequest.Date, "dd-MM-yyyy",CultureInfo.InvariantCulture,DateTimeStyles.None,out DateTime parsedDate))
                         {
                             entity.SessionName = $"Session: {entity.SessionType} , In: {parsedDate.ToString("dd-MM-yyyy")}";
 

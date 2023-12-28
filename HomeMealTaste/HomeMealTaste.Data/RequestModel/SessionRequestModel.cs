@@ -10,6 +10,7 @@ namespace HomeMealTaste.Data.RequestModel
     {
         public string? SessionType { get; set; }
         public List<int>? AreaIds { get; set; }
+        public string? Date { get; set; }
 
     }
 }
