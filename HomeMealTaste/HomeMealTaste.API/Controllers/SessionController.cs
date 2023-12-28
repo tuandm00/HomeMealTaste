@@ -23,9 +23,9 @@ namespace HomeMealTaste.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> CreateSession(SessionRequestModel sessionRequest)
+        public async Task<IActionResult> CreateSessionWithDay(SessionRequestModel sessionRequest)
         {
-            var result = await _sessionService.CreateSession(sessionRequest);
+            var result = await _sessionService.CreateSessionWithDay(sessionRequest);
             return Ok(result);
         }
 
@@ -57,6 +57,7 @@ namespace HomeMealTaste.Controllers
         public async Task ChangeStatusSession(int sessionid, bool status)
         {
             await _sessionService.ChangeStatusSession(sessionid, status);
+            
         }
 
         [HttpGet("get-all-session")]

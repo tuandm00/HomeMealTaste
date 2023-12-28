@@ -65,30 +65,10 @@ namespace HomeMealTaste.Services.Implement
                             );
             return isValid ? date : null;
         }
-        private async Task<bool> SessionTypeExistsInAreaInDayNow(List<int> areaId, string sessionType)
+        private async Task<bool> SessionTypeExistsInAreaInDayNow(List<int> areaId, string sessionType, DateTime date)
         {
-            var date = GetDateTimeTimeZoneVietNam().AddDays(1);
-            foreach (var area in areaId)
-            {
-                var sessionId = _context.SessionAreas.Where(x => x.AreaId == area).Select(x => x.SessionId).ToList();
-                foreach (var session in sessionId)
-                {
-                    var sessionTypes = _context.Sessions.Where(x => x.SessionId == session && x.EndDate == date).Select(x => x.SessionType).ToList();
-                    foreach (var type in sessionTypes)
-                    {
-                        if ((type.ToLower()).Equals(sessionType))
-                        {
-                            return false;
-                        }
-                    }
-                }
+            //var date = GetDateTimeTimeZoneVietNam();
 
-            }
-            return true;
-
-        }private async Task<bool> SessionTypeExistsInAreaInNextDay(List<int> areaId, string sessionType)
-        {
-            var date = GetDateTimeTimeZoneVietNam();
             foreach (var area in areaId)
             {
                 var sessionId = _context.SessionAreas.Where(x => x.AreaId == area).Select(x => x.SessionId).ToList();
@@ -108,30 +88,155 @@ namespace HomeMealTaste.Services.Implement
             return true;
 
         }
-        public async Task<SessionResponseModel> CreateSession(SessionRequestModel sessionRequest)
+
+        private async Task<bool> SessionTypeExistsInAreaInNextDay(List<int> areaId, string sessionType, DateTime date)
         {
+            //var date = GetDateTimeTimeZoneVietNam().AddDays(1);
+
+            foreach (var area in areaId)
+            {
+                var sessionId = _context.SessionAreas.Where(x => x.AreaId == area).Select(x => x.SessionId).ToList();
+                foreach (var session in sessionId)
+                {
+                    var sessionTypes = _context.Sessions.Where(x => x.SessionId == session && x.EndDate == date).Select(x => x.SessionType).ToList();
+                    foreach (var type in sessionTypes)
+                    {
+                        if ((type.ToLower()).Equals(sessionType))
+                        {
+                            return false;
+                        }
+                    }
+                }
+
+            }
+            return true;
+
+        }
+        //public async Task<SessionResponseModel> CreateSession(SessionRequestModel sessionRequest)
+        //{
+
+        //    var responseModel = new SessionResponseModel(); // Initialize the response model
+
+        //    try
+        //    {
+        //        var entity = _mapper.Map<Session>(sessionRequest);
+        //        var sessionTypeLower = entity.SessionType.ToLower();
+
+
+        //        if (sessionRequest.AreaIds != null)
+        //        {
+        //            if (await SessionTypeExistsInAreaInDayNow(sessionRequest.AreaIds, sessionTypeLower))
+        //            {
+        //                SetSessionProperties(entity, sessionTypeLower, sessionRequest.AreaIds);
+        //                entity.EndDate = GetDateTimeTimeZoneVietNam();
+        //                entity.SessionName = $"Session: {entity.SessionType} , In: {((DateTime)entity.CreateDate).ToString("dd-MM-yyyy")}";
+
+        //                var result = await _sessionRepository.Create(entity, true);
+        //                if (result != null && sessionRequest.AreaIds != null)
+        //                {
+        //                    var uniqueAreaIds = new HashSet<int>();
+
+        //                    foreach (var areaId in sessionRequest.AreaIds)
+        //                    {
+        //                        if (uniqueAreaIds.Add(areaId))
+        //                        {
+        //                            var sessionArea = new SessionArea
+        //                            {
+        //                                SessionId = result.SessionId,
+        //                                AreaId = areaId,
+        //                            };
+        //                            await _context.AddAsync(sessionArea);
+        //                        }
+        //                        await _context.SaveChangesAsync();
+        //                    }
+
+        //                }
+        //                responseModel = _mapper.Map<SessionResponseModel>(result);
+
+        //                responseModel.StartTime = result.StartTime?.ToString("HH:mm");
+        //                responseModel.EndTime = result.EndTime?.ToString("HH:mm");
+        //                responseModel.CreateDate = result.CreateDate?.ToString("dd-MM-yyyy");
+        //                responseModel.EndDate = result.EndDate?.ToString("dd-MM-yyyy");
+
+        //                responseModel.Message = "Success";
+        //            }
+        //            else
+        //            {
+        //                responseModel.Message = "Error: sessionType is EXISTED";
+        //            }
+        //        }
+        //        else
+        //        {
+        //            responseModel.Message = "Error: Not Exist Area to Create Session";
+        //        }
+
+        //        return responseModel;
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        _logger.LogError(ex, "An error occurred in CreateSession: {Message}", ex.Message);
+
+        //        responseModel.Message = "Error: " + ex.Message;
+        //        return responseModel;
+        //    }
+        //}
+
+        private void SetSessionProperties(Session entity, string sessionTypeLower, List<int> areaId)
+        {
+            //entity.CreateDate = GetDateTimeTimeZoneVietNam();
+
+            if (string.Equals(sessionTypeLower, "lunch", StringComparison.OrdinalIgnoreCase))
+            {
+                entity.StartTime = entity.CreateDate?.Date.AddHours(10);
+                entity.EndTime = entity.StartTime?.AddHours(2);
+                entity.SessionType = "Lunch";
+
+            }
+            else if (string.Equals(sessionTypeLower, "evening", StringComparison.OrdinalIgnoreCase))
+            {
+                entity.StartTime = entity.CreateDate?.Date.AddHours(16);
+                entity.EndTime = entity.StartTime?.AddHours(4);
+                entity.SessionType = "Evening";
+            }
+            else if (string.Equals(sessionTypeLower, "dinner", StringComparison.OrdinalIgnoreCase))
+            {
+                entity.StartTime = entity.CreateDate?.Date.AddHours(17);
+                entity.EndTime = entity.StartTime?.AddHours(2);
+                entity.SessionType = "Dinner";
+            }
+
+            entity.Status = true;
+            entity.UserId = 2;
+            entity.BookingSlotStatus = false;
+            entity.RegisterForMealStatus = true;
+
+        }
+        public async Task<SessionResponseModel> CreateSessionWithDay(SessionRequestModel sessionRequest)
+        {
+
             var responseModel = new SessionResponseModel(); // Initialize the response model
 
             try
             {
                 var entity = _mapper.Map<Session>(sessionRequest);
                 var sessionTypeLower = entity.SessionType.ToLower();
-
+                entity.CreateDate = DateTime.ParseExact(sessionRequest.Date, "dd-MM-yyyy", CultureInfo.InvariantCulture);
+                entity.EndDate = DateTime.ParseExact(sessionRequest.Date, "dd-MM-yyyy", CultureInfo.InvariantCulture);
 
                 if (sessionRequest.AreaIds != null)
                 {
-                    if (await SessionTypeExistsInAreaInNextDay(sessionRequest.AreaIds, sessionTypeLower))
+                    if (await SessionTypeExistsInAreaInDayNow(sessionRequest.AreaIds, sessionTypeLower, (DateTime)entity.EndDate))
                     {
                         SetSessionProperties(entity, sessionTypeLower, sessionRequest.AreaIds);
-                        entity.EndDate = GetDateTimeTimeZoneVietNam();
-                        if(DateTime.TryParseExact(sessionRequest.Date, "dd-MM-yyyy",CultureInfo.InvariantCulture,DateTimeStyles.None,out DateTime parsedDate))
+                        //entity.EndDate = GetDateTimeTimeZoneVietNam();
+                        if (DateTime.TryParseExact(sessionRequest.Date, "dd-MM-yyyy", CultureInfo.InvariantCulture, DateTimeStyles.None, out DateTime parsedDate))
                         {
                             entity.SessionName = $"Session: {entity.SessionType} , In: {parsedDate.ToString("dd-MM-yyyy")}";
 
                         }
 
-                        var result = await _sessionRepository.Create(entity, true);
 
+                        var result = await _sessionRepository.Create(entity, true);
                         if (result != null && sessionRequest.AreaIds != null)
                         {
                             var uniqueAreaIds = new HashSet<int>();
@@ -181,38 +286,6 @@ namespace HomeMealTaste.Services.Implement
             }
         }
 
-        private void SetSessionProperties(Session entity, string sessionTypeLower, List<int> areaId)
-        {
-            entity.CreateDate = GetDateTimeTimeZoneVietNam();
-
-            if (string.Equals(sessionTypeLower, "lunch", StringComparison.OrdinalIgnoreCase))
-            {
-                entity.StartTime = entity.CreateDate?.Date.AddHours(10);
-                entity.EndTime = entity.StartTime?.AddHours(2);
-                entity.SessionType = "Lunch";
-
-            }
-            else if (string.Equals(sessionTypeLower, "evening", StringComparison.OrdinalIgnoreCase))
-            {
-                entity.StartTime = entity.CreateDate?.Date.AddHours(16);
-                entity.EndTime = entity.StartTime?.AddHours(4);
-                entity.SessionType = "Evening";
-            }
-            else if (string.Equals(sessionTypeLower, "dinner", StringComparison.OrdinalIgnoreCase))
-            {
-                entity.StartTime = entity.CreateDate?.Date.AddHours(17);
-                entity.EndTime = entity.StartTime?.AddHours(2);
-                entity.SessionType = "Dinner";
-            }
-
-            entity.Status = true;
-            entity.UserId = 2;
-            entity.BookingSlotStatus = false;
-            entity.RegisterForMealStatus = true;
-            
-        }
-
-
         //public async Task<SessionResponseModel> UpdateEndTime(int sessionId, DateTime endTime)
         //{
         //    var entity = await _sessionRepository.GetFirstOrDefault(x => x.SessionId == sessionId);
@@ -245,7 +318,7 @@ namespace HomeMealTaste.Services.Implement
 
             if (result != null && result.Status == true)
             {
-                if(autoCreatingstatus == true)
+                if (autoCreatingstatus == true)
                 {
                     result.Status = false;
                     await _transactionService.SaveTotalPriceAfterFinishSession(sessionid);
@@ -253,16 +326,18 @@ namespace HomeMealTaste.Services.Implement
                     var areas = await _context.SessionAreas.Where(a => a.SessionId == sessionid).Select(a => a.AreaId).ToListAsync();
                     var areaIds = areas.Where(a => a.HasValue).Select(a => a.Value).ToList();
 
-                    var sessionR = new SessionRequestModel
+                    var sessionR = new SessionForChangeStatusRequestModel
                     {
                         SessionType = result.SessionType,
                         AreaIds = areaIds,
+                        CreateDate = ((DateTime)result.CreateDate).ToString("dd-MM-yyyy"),
+                        EndDate = ((DateTime)result.EndDate).ToString("dd-MM-yyyy"),
                     };
                     await CreateSessionForNextDay(sessionR);
                 }
                 else
                 {
-                     result.Status = false;
+                    result.Status = false;
                 }
             }
 
@@ -397,7 +472,7 @@ namespace HomeMealTaste.Services.Implement
             return mapped;
         }
 
-        public async Task<SessionResponseModel> CreateSessionForNextDay(SessionRequestModel sessionRequest)
+        public async Task<SessionResponseModel> CreateSessionForNextDay(SessionForChangeStatusRequestModel sessionRequest)
         {
             var responseModel = new SessionResponseModel(); // Initialize the response model
 
@@ -405,14 +480,20 @@ namespace HomeMealTaste.Services.Implement
             {
                 var entity = _mapper.Map<Session>(sessionRequest);
                 var sessionTypeLower = entity.SessionType.ToLower();
-
+                entity.CreateDate = DateTime.ParseExact(sessionRequest.CreateDate, "dd-MM-yyyy", CultureInfo.InvariantCulture);
+                entity.EndDate = (DateTime.ParseExact(sessionRequest.EndDate, "dd-MM-yyyy", CultureInfo.InvariantCulture)).AddDays(1);
 
                 if (sessionRequest.AreaIds != null)
                 {
+                    if (await SessionTypeExistsInAreaInNextDay(sessionRequest.AreaIds, sessionTypeLower, (DateTime)entity.EndDate))
+                    {
                         SetSessionProperties(entity, sessionTypeLower, sessionRequest.AreaIds);
-                        entity.EndDate = GetDateTimeTimeZoneVietNam().AddDays(1);
-                        entity.SessionName = $"Session: {entity.SessionType} , In: {((DateTime)entity.EndDate).ToString("dd-MM-yyyy")}";
+                        //entity.EndDate = GetDateTimeTimeZoneVietNam().AddDays(1);
+                        if (DateTime.TryParseExact(sessionRequest.EndDate, "dd-MM-yyyy", CultureInfo.InvariantCulture, DateTimeStyles.None, out DateTime parsedDate))
+                        {
+                            entity.SessionName = $"Session: {entity.SessionType} , In: {parsedDate.AddDays(1).ToString("dd-MM-yyyy")}";
 
+                        }
                         var result = await _sessionRepository.Create(entity, true);
 
                         if (result != null && sessionRequest.AreaIds != null)
@@ -442,6 +523,12 @@ namespace HomeMealTaste.Services.Implement
                         responseModel.EndDate = result.EndDate?.AddDays(1).ToString("dd-MM-yyyy");
 
                         responseModel.Message = "Success";
+                    }
+                    else
+                    {
+                        responseModel.Message = "Error: sessionType is EXISTED";
+                    }
+
                 }
                 else
                 {
