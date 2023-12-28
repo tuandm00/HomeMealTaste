@@ -357,7 +357,7 @@ namespace HomeMealTaste.Services.Implement
             }
             else
             {
-                if (result != null && result.Status.Equals("PROCESSING", StringComparison.OrdinalIgnoreCase) && sesstioStatus.Equals("ON"))
+                if (result != null && result.Status.Equals("PROCESSING", StringComparison.OrdinalIgnoreCase) && sesstioStatus == true)
                 {
                     if (string.Equals("APPROVED", status, StringComparison.OrdinalIgnoreCase))
                     {
@@ -368,7 +368,7 @@ namespace HomeMealTaste.Services.Implement
                         result.Status = "REJECTED";
                     }
                 }
-                else if (result != null && result.Status.Equals("APPROVED", StringComparison.OrdinalIgnoreCase) && sesstioStatus.Equals("ON"))
+                else if (result != null && result.Status.Equals("APPROVED", StringComparison.OrdinalIgnoreCase) && sesstioStatus == true)
                 {
                     if (string.Equals("APPROVED", status, StringComparison.OrdinalIgnoreCase))
                     {
@@ -377,7 +377,7 @@ namespace HomeMealTaste.Services.Implement
                     else result.Status = "REJECTED";
                 }
 
-                else if (result != null && result.Status.Equals("REJECTED", StringComparison.OrdinalIgnoreCase) && sesstioStatus.Equals("ON"))
+                else if (result != null && result.Status.Equals("REJECTED", StringComparison.OrdinalIgnoreCase) && sesstioStatus == true)
                 {
                     if (string.Equals("REJECTED", status, StringComparison.OrdinalIgnoreCase))
                     {
