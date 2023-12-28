@@ -921,12 +921,12 @@ namespace HomeMealTaste.Services.Implement
                         AreaDtoForMealSession = new AreaDtoForMealSession
                         {
                             AreaId = areaId,
-                            Address = x.Session.SessionAreas.FirstOrDefault(sa => sa.SessionId == x.Session.SessionId).Area.Address,
-                            AreaName = x.Session.SessionAreas.FirstOrDefault(sa => sa.SessionId == x.Session.SessionId).Area.AreaName,
+                            Address = x.Session.SessionAreas.FirstOrDefault(sa => sa.SessionId == sessionId).Area.Address,
+                            AreaName = x.Session.SessionAreas.FirstOrDefault(sa => sa.SessionId == sessionId).Area.AreaName,
                             DistrictDtoForMealSession = new DistrictDtoForMealSession
                             {
-                                DistrictId = x.Session.SessionAreas.FirstOrDefault(sa => sa.SessionId == x.Session.SessionId).Area.District.DistrictId,
-                                DistrictName = x.Session.SessionAreas.FirstOrDefault(sa => sa.SessionId == x.Session.SessionId).Area.District.DistrictName,
+                                DistrictId = x.Session.SessionAreas.FirstOrDefault(sa => sa.SessionId == sessionId).Area.District.DistrictId,
+                                DistrictName = x.Session.SessionAreas.FirstOrDefault(sa => sa.SessionId == sessionId).Area.District.DistrictName,
                             },
                         },
                     },
