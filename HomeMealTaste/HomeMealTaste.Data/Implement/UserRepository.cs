@@ -47,7 +47,8 @@ namespace HomeMealTaste.Data.Implement
                     Address = result.Address,
                     DistrictId = result.DistrictId,
                     Status = result.Status,
-                    RoleId = result.RoleId
+                    RoleId = result.RoleId,
+                    AreaId = result.AreaId,
                 };
             }
             return null;
