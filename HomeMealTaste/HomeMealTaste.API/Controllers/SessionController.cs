@@ -54,9 +54,9 @@ namespace HomeMealTaste.Controllers
         //}
 
         [HttpPatch("change-status-session")]
-        public async Task ChangeStatusSession(int sessionid)
+        public async Task ChangeStatusSession(int sessionid, bool status)
         {
-            await _sessionService.ChangeStatusSession(sessionid);
+            await _sessionService.ChangeStatusSession(sessionid, status);
         }
 
         [HttpGet("get-all-session")]

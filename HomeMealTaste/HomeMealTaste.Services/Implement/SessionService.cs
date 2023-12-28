@@ -214,11 +214,11 @@ namespace HomeMealTaste.Services.Implement
         //    return result;
         //}
 
-        public async Task ChangeStatusSession(int sessionid)
+        public async Task ChangeStatusSession(int sessionid, bool status)
         {
             var result = await _context.Sessions.FindAsync(sessionid);
 
-            if (result != null && result.Status == true)
+            if (result != null && result.Status == true && status == true)
             {
                 result.Status = false;
                 await _transactionService.SaveTotalPriceAfterFinishSession(sessionid);
@@ -380,10 +380,11 @@ namespace HomeMealTaste.Services.Implement
 
                 if (sessionRequest.AreaIds != null)
                 {
+                    
                         SetSessionProperties(entity, sessionTypeLower, sessionRequest.AreaIds);
                         entity.EndDate = GetDateTimeTimeZoneVietNam().AddDays(1);
                         entity.SessionName = $"Session: {entity.SessionType} , In: {((DateTime)entity.EndDate).ToString("dd-MM-yyyy")}";
-                        
+
                         var result = await _sessionRepository.Create(entity, true);
 
                         if (result != null && sessionRequest.AreaIds != null)
@@ -415,6 +416,7 @@ namespace HomeMealTaste.Services.Implement
                         responseModel.Message = "Success";
 
                     
+
                 }
                 else
                 {
