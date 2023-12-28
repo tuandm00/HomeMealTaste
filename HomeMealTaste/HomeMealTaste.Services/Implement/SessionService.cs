@@ -182,7 +182,7 @@ namespace HomeMealTaste.Services.Implement
 
             entity.Status = true;
             entity.UserId = 2;
-            entity.BookingSlotStatus = true;
+            entity.BookingSlotStatus = false;
             entity.RegisterForMealStatus = true;
             
         }
@@ -384,7 +384,6 @@ namespace HomeMealTaste.Services.Implement
 
                 if (sessionRequest.AreaIds != null)
                 {
-                    
                         SetSessionProperties(entity, sessionTypeLower, sessionRequest.AreaIds);
                         entity.EndDate = GetDateTimeTimeZoneVietNam().AddDays(1);
                         entity.SessionName = $"Session: {entity.SessionType} , In: {((DateTime)entity.EndDate).ToString("dd-MM-yyyy")}";
@@ -418,9 +417,6 @@ namespace HomeMealTaste.Services.Implement
                         responseModel.EndDate = result.EndDate?.AddDays(1).ToString("dd-MM-yyyy");
 
                         responseModel.Message = "Success";
-
-                    
-
                 }
                 else
                 {
