@@ -214,28 +214,32 @@ namespace HomeMealTaste.Services.Implement
         //    return result;
         //}
 
-        public async Task ChangeStatusSession(int sessionid, bool status)
+        public async Task ChangeStatusSession(int sessionid, bool autoCreatingstatus)
         {
             var result = await _context.Sessions.FindAsync(sessionid);
 
-            if (result != null && result.Status == true && status == true)
+            if (result != null && result.Status == true)
             {
-                result.Status = false;
-                await _transactionService.SaveTotalPriceAfterFinishSession(sessionid);
+                if(autoCreatingstatus == true)
+                {
+                    result.Status = false;
+                    await _transactionService.SaveTotalPriceAfterFinishSession(sessionid);
 
-                var areas = await _context.SessionAreas.Where(a => a.SessionId == sessionid).Select(a => a.AreaId).ToListAsync();
-                var areaIds = areas.Where(a => a.HasValue).Select(a => a.Value).ToList();
+                    var areas = await _context.SessionAreas.Where(a => a.SessionId == sessionid).Select(a => a.AreaId).ToListAsync();
+                    var areaIds = areas.Where(a => a.HasValue).Select(a => a.Value).ToList();
 
-                var sessionR = new SessionRequestModel
+                    var sessionR = new SessionRequestModel
                     {
                         SessionType = result.SessionType,
                         AreaIds = areaIds,
                     };
-                   await CreateSessionForNextDay(sessionR);
-                
-                await _context.SaveChangesAsync();
+                    await CreateSessionForNextDay(sessionR);
+                }
+                else
+                {
+                     result.Status = false;
+                }
             }
-            else result.Status = true;
 
             await _context.SaveChangesAsync();
         }
