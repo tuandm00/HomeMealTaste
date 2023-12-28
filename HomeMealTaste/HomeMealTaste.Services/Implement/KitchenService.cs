@@ -163,7 +163,15 @@ namespace HomeMealTaste.Services.Implement
                     Balance = x.User.Wallets.FirstOrDefault().Balance,
                     WalletId = x.User.Wallets.FirstOrDefault().WalletId,
                 }
+            },
+            AreaDtoGetKitchen = new AreaDtoGetKitchen
+            {
+                AreaId = x.Area.AreaId,
+                Address = x.Area.Address,
+                AreaName = x.Area.AreaName,
+                DistrictId = x.Area.DistrictId,
             }
+            
         })
         .FirstOrDefaultAsync();
 
