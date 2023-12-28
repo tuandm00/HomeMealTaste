@@ -424,6 +424,7 @@ namespace HomeMealTaste.Services.Implement
                 result.Username = entity.Username;
                 result.Email = entity.Email;
                 result.Address = entity.Address;
+                result.AreaId = entity.AreaId;
                 result.DistrictId = entity.DistrictId;
 
                 _context.Users.Update(result);
