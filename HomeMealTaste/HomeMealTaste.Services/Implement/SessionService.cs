@@ -83,9 +83,25 @@ namespace HomeMealTaste.Services.Implement
                         }
                     }
                 }
-
             }
             return true;
+
+            //foreach (var areaid in areaId)
+            //{
+            //    var sessionIds = _context.SessionAreas
+            //        .Where(sa => sa.AreaId == areaId)
+            //        .Select(sa => sa.SessionId);
+
+            //    var sessionTypeExists = _context.Sessions
+            //        .Any(s => sessionIds.Contains(s.SessionId) && s.EndDate == date && s.SessionType.ToLower() == sessionType.ToLower());
+
+            //    if (sessionTypeExists)
+            //    {
+            //        return false;
+            //    }
+            //}
+
+            //return true;
 
         }
 
@@ -478,7 +494,8 @@ namespace HomeMealTaste.Services.Implement
 
             if (sessionRequest.AreaIds != null)
             {
-                if (await SessionTypeExistsInAreaInNextDay(sessionRequest.AreaIds, sessionTypeLower, (DateTime)entity.EndDate))
+                var check = await SessionTypeExistsInAreaInNextDay(sessionRequest.AreaIds, sessionTypeLower, (DateTime)entity.EndDate);
+                if (check)
                 {
                     SetSessionProperties(entity, sessionTypeLower, sessionRequest.AreaIds);
                     //entity.EndDate = GetDateTimeTimeZoneVietNam().AddDays(1);
@@ -508,7 +525,6 @@ namespace HomeMealTaste.Services.Implement
                             }
                             await _context.SaveChangesAsync();
                         }
-
                     }
                     responseModel = _mapper.Map<SessionResponseModel>(result);
 
