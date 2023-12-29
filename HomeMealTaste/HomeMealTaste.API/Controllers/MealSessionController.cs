@@ -65,7 +65,7 @@ namespace HomeMealTaste.Controllers
             return Ok(result);
         }
         [HttpPatch("update-status-meal-session")]
-        public Task UpdateStatusMeallSession(int mealSessionid, string status)
+        public Task UpdateStatusMeallSession(List<int> mealSessionid, string status)
         {
             var result = _mealSessionService.UpdateStatusMeallSession(mealSessionid, status);
             return result;

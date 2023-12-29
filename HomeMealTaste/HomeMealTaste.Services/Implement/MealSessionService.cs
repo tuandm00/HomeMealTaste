@@ -345,49 +345,63 @@ namespace HomeMealTaste.Services.Implement
             return mapped;
         }
 
-        public async Task UpdateStatusMeallSession(int mealsessionid, string status)
+        public async Task UpdateStatusMeallSession(List<int> mealsessionid, string status)
         {
             var datenow = GetDateTimeTimeZoneVietNam();
-            var sessionId = _context.MealSessions.Where(x => x.MealSessionId == mealsessionid).Select(x => x.SessionId).FirstOrDefault();
-            var sesstioStatus = _context.Sessions.Where(x => x.SessionId == sessionId).Select(x => x.Status).FirstOrDefault();
-            var result = await _context.MealSessions.SingleOrDefaultAsync(x => x.MealSessionId == mealsessionid);
-            if (result.CreateDate.Value.Date != datenow.Date)
-            {
-                throw new Exception("Can not Update Because Not In Day");
-            }
-            else
-            {
-                if (result != null && result.Status.Equals("PROCESSING", StringComparison.OrdinalIgnoreCase) && sesstioStatus == true)
-                {
-                    if (string.Equals("APPROVED", status, StringComparison.OrdinalIgnoreCase))
-                    {
-                        result.Status = "APPROVED";
-                    }
-                    else if (string.Equals("REJECTED", status, StringComparison.OrdinalIgnoreCase))
-                    {
-                        result.Status = "REJECTED";
-                    }
-                }
-                else if (result != null && result.Status.Equals("APPROVED", StringComparison.OrdinalIgnoreCase) && sesstioStatus == true)
-                {
-                    if (string.Equals("APPROVED", status, StringComparison.OrdinalIgnoreCase))
-                    {
-                        result.Status = "APPROVED";
-                    }
-                    else result.Status = "REJECTED";
-                }
 
-                else if (result != null && result.Status.Equals("REJECTED", StringComparison.OrdinalIgnoreCase) && sesstioStatus == true)
-                {
-                    if (string.Equals("REJECTED", status, StringComparison.OrdinalIgnoreCase))
-                    {
-                        result.Status = "REJECTED";
-                    }
-                    else result.Status = "APPROVED";
-                }
-                else throw new Exception("Session is OFF");
+            var results = await _context.MealSessions
+                .Where(x => mealsessionid.Contains(x.MealSessionId))
+                .ToListAsync();
 
+            foreach (var result in results)
+            {
+                var sessionId = _context.MealSessions
+                    .Where(x => x.MealSessionId == result.MealSessionId)
+                    .Select(x => x.SessionId)
+                    .FirstOrDefault();
+
+                var sessionStatus = _context.Sessions
+                    .Where(x => x.SessionId == sessionId)
+                    .Select(x => x.Status)
+                    .FirstOrDefault();
+
+                if (result.CreateDate.Value.Date != datenow.Date)
+                {
+                    throw new Exception("Can not Update Because Not In Day");
+                }
+                else
+                {
+                    if (result != null && result.Status.Equals("PROCESSING", StringComparison.OrdinalIgnoreCase) && sessionStatus == true)
+                    {
+                        if (string.Equals("APPROVED", status, StringComparison.OrdinalIgnoreCase))
+                        {
+                            result.Status = "APPROVED";
+                        }
+                        else if (string.Equals("REJECTED", status, StringComparison.OrdinalIgnoreCase))
+                        {
+                            result.Status = "REJECTED";
+                        }
+                    }
+                    else if (result != null && result.Status.Equals("APPROVED", StringComparison.OrdinalIgnoreCase) && sessionStatus == true)
+                    {
+                        if (string.Equals("APPROVED", status, StringComparison.OrdinalIgnoreCase))
+                        {
+                            result.Status = "APPROVED";
+                        }
+                        else result.Status = "REJECTED";
+                    }
+                    else if (result != null && result.Status.Equals("REJECTED", StringComparison.OrdinalIgnoreCase) && sessionStatus == true)
+                    {
+                        if (string.Equals("REJECTED", status, StringComparison.OrdinalIgnoreCase))
+                        {
+                            result.Status = "REJECTED";
+                        }
+                        else result.Status = "APPROVED";
+                    }
+                    else throw new Exception("Session is OFF");
+                }
             }
+
             await _context.SaveChangesAsync();
         }
 
