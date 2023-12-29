@@ -330,8 +330,8 @@ namespace HomeMealTaste.Services.Implement
                     {
                         SessionType = result.SessionType,
                         AreaIds = areaIds,
-                        CreateDate = ((DateTime)result.CreateDate).ToString("dd-MM-yyyy"),
-                        EndDate = ((DateTime)result.EndDate).ToString("dd-MM-yyyy"),
+                        CreateDate = result.CreateDate,
+                        EndDate = result.EndDate,
                     };
                     await CreateSessionForNextDay(sessionR);
                 }
@@ -480,8 +480,14 @@ namespace HomeMealTaste.Services.Implement
             {
                 var entity = _mapper.Map<Session>(sessionRequest);
                 var sessionTypeLower = entity.SessionType.ToLower();
-                entity.CreateDate = DateTime.ParseExact(sessionRequest.CreateDate, @"d-M-yyyy", System.Globalization.CultureInfo.InvariantCulture);
-                entity.EndDate = (DateTime.ParseExact(sessionRequest.EndDate, "dd-MM-yyyy", CultureInfo.CurrentCulture)).AddDays(1);
+
+                //string createDateString = sessionRequest.CreateDate.ToString();
+                //entity.CreateDate = DateTime.ParseExact(createDateString, "dd-MM-yyyy", CultureInfo.InvariantCulture);
+                //string endDateString = sessionRequest.EndDate.ToString(); 
+                //entity.EndDate = DateTime.ParseExact(endDateString, "dd-MM-yyyy", CultureInfo.InvariantCulture).AddDays(1);
+
+                entity.CreateDate = sessionRequest.CreateDate;
+                entity.EndDate = sessionRequest.EndDate.Value.AddDays(1);
 
                 if (sessionRequest.AreaIds != null)
                 {
@@ -489,11 +495,13 @@ namespace HomeMealTaste.Services.Implement
                     {
                         SetSessionProperties(entity, sessionTypeLower, sessionRequest.AreaIds);
                         //entity.EndDate = GetDateTimeTimeZoneVietNam().AddDays(1);
-                        if (DateTime.TryParseExact(sessionRequest.EndDate, "dd-MM-yyyy", CultureInfo.InvariantCulture, DateTimeStyles.None, out DateTime parsedDate))
-                        {
-                            entity.SessionName = $"Session: {entity.SessionType} , In: {parsedDate.AddDays(1).ToString("dd-MM-yyyy")}";
+                        //if (DateTime.TryParseExact(endDateString, "dd-MM-yyyy", CultureInfo.InvariantCulture, DateTimeStyles.None, out DateTime parsedDate))
+                        //{
+                        //    entity.SessionName = $"Session: {entity.SessionType} , In: {parsedDate.AddDays(1).ToString("dd-MM-yyyy")}";
 
-                        }
+                        //}
+                        entity.SessionName = $"Session: {entity.SessionType} , In: {((DateTime)entity.EndDate).ToString("dd-MM-yyyy")}";
+
                         var result = await _sessionRepository.Create(entity, true);
 
                         if (result != null && sessionRequest.AreaIds != null)

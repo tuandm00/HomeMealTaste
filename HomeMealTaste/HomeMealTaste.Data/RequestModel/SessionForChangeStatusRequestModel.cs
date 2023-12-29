@@ -10,7 +10,7 @@ namespace HomeMealTaste.Data.RequestModel
     {
         public string? SessionType { get; set; }
         public List<int>? AreaIds { get; set; }
-        public string? CreateDate { get; set; }
-        public string? EndDate { get; set; }
+        public DateTime? CreateDate { get; set; }
+        public DateTime? EndDate { get; set; }
     }
 }
