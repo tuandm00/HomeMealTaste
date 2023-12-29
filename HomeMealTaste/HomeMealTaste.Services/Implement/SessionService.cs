@@ -216,74 +216,62 @@ namespace HomeMealTaste.Services.Implement
 
             var responseModel = new SessionResponseModel(); // Initialize the response model
 
-            try
+
+            var entity = _mapper.Map<Session>(sessionRequest);
+            var sessionTypeLower = entity.SessionType.ToLower();
+            entity.CreateDate = DateTime.ParseExact(sessionRequest.Date, "dd-MM-yyyy", CultureInfo.InvariantCulture);
+            entity.EndDate = DateTime.ParseExact(sessionRequest.Date, "dd-MM-yyyy", CultureInfo.InvariantCulture);
+
+            if (sessionRequest.AreaIds != null)
             {
-                var entity = _mapper.Map<Session>(sessionRequest);
-                var sessionTypeLower = entity.SessionType.ToLower();
-                entity.CreateDate = DateTime.ParseExact(sessionRequest.Date, "dd-MM-yyyy", CultureInfo.InvariantCulture);
-                entity.EndDate = DateTime.ParseExact(sessionRequest.Date, "dd-MM-yyyy", CultureInfo.InvariantCulture);
-
-                if (sessionRequest.AreaIds != null)
+                if (await SessionTypeExistsInAreaInDayNow(sessionRequest.AreaIds, sessionTypeLower, (DateTime)entity.EndDate))
                 {
-                    if (await SessionTypeExistsInAreaInDayNow(sessionRequest.AreaIds, sessionTypeLower, (DateTime)entity.EndDate))
+                    SetSessionProperties(entity, sessionTypeLower, sessionRequest.AreaIds);
+                    //entity.EndDate = GetDateTimeTimeZoneVietNam();
+                    if (DateTime.TryParseExact(sessionRequest.Date, "dd-MM-yyyy", CultureInfo.InvariantCulture, DateTimeStyles.None, out DateTime parsedDate))
                     {
-                        SetSessionProperties(entity, sessionTypeLower, sessionRequest.AreaIds);
-                        //entity.EndDate = GetDateTimeTimeZoneVietNam();
-                        if (DateTime.TryParseExact(sessionRequest.Date, "dd-MM-yyyy", CultureInfo.InvariantCulture, DateTimeStyles.None, out DateTime parsedDate))
+                        entity.SessionName = $"Session: {entity.SessionType} , In: {parsedDate.ToString("dd-MM-yyyy")}";
+
+                    }
+
+
+                    var result = await _sessionRepository.Create(entity, true);
+
+
+                    if (result != null && sessionRequest.AreaIds != null)
+                    {
+                        var uniqueAreaIds = new HashSet<int>();
+
+                        foreach (var areaId in sessionRequest.AreaIds)
                         {
-                            entity.SessionName = $"Session: {entity.SessionType} , In: {parsedDate.ToString("dd-MM-yyyy")}";
-
-                        }
-
-
-                        var result = await _sessionRepository.Create(entity, true);
-                        if (result != null && sessionRequest.AreaIds != null)
-                        {
-                            var uniqueAreaIds = new HashSet<int>();
-
-                            foreach (var areaId in sessionRequest.AreaIds)
+                            if (uniqueAreaIds.Add(areaId))
                             {
-                                if (uniqueAreaIds.Add(areaId))
+                                var sessionArea = new SessionArea
                                 {
-                                    var sessionArea = new SessionArea
-                                    {
-                                        SessionId = result.SessionId,
-                                        AreaId = areaId,
-                                    };
-                                    await _context.AddAsync(sessionArea);
-                                }
-                                await _context.SaveChangesAsync();
+                                    SessionId = result.SessionId,
+                                    AreaId = areaId,
+                                };
+                                await _context.AddAsync(sessionArea);
                             }
-
+                            await _context.SaveChangesAsync();
                         }
-                        responseModel = _mapper.Map<SessionResponseModel>(result);
 
-                        responseModel.StartTime = result.StartTime?.ToString("HH:mm");
-                        responseModel.EndTime = result.EndTime?.ToString("HH:mm");
-                        responseModel.CreateDate = result.CreateDate?.ToString("dd-MM-yyyy");
-                        responseModel.EndDate = result.EndDate?.ToString("dd-MM-yyyy");
-
-                        responseModel.Message = "Success";
                     }
-                    else
-                    {
-                        responseModel.Message = "Error: sessionType is EXISTED";
-                    }
-                }
-                else
-                {
-                    responseModel.Message = "Error: Not Exist Area to Create Session";
-                }
+                    responseModel = _mapper.Map<SessionResponseModel>(result);
 
-                return responseModel;
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "An error occurred in CreateSession: {Message}", ex.Message);
+                    responseModel.StartTime = result.StartTime?.ToString("HH:mm");
+                    responseModel.EndTime = result.EndTime?.ToString("HH:mm");
+                    responseModel.CreateDate = result.CreateDate?.ToString("dd-MM-yyyy");
+                    responseModel.EndDate = result.EndDate?.ToString("dd-MM-yyyy");
 
-                responseModel.Message = "Error: " + ex.Message;
-                return responseModel;
+                    return responseModel;
+
+                    //responseModel.Message = "Success";
+                }
+                else throw new Exception("Session Type is Existed");
             }
+            return null;
+
         }
 
         //public async Task<SessionResponseModel> UpdateEndTime(int sessionId, DateTime endTime)
@@ -476,82 +464,74 @@ namespace HomeMealTaste.Services.Implement
         {
             var responseModel = new SessionResponseModel(); // Initialize the response model
 
-            try
+
+            var entity = _mapper.Map<Session>(sessionRequest);
+            var sessionTypeLower = entity.SessionType.ToLower();
+
+            //string createDateString = sessionRequest.CreateDate.ToString();
+            //entity.CreateDate = DateTime.ParseExact(createDateString, "dd-MM-yyyy", CultureInfo.InvariantCulture);
+            //string endDateString = sessionRequest.EndDate.ToString(); 
+            //entity.EndDate = DateTime.ParseExact(endDateString, "dd-MM-yyyy", CultureInfo.InvariantCulture).AddDays(1);
+
+            entity.CreateDate = sessionRequest.CreateDate;
+            entity.EndDate = sessionRequest.EndDate.Value.AddDays(1);
+
+            if (sessionRequest.AreaIds != null)
             {
-                var entity = _mapper.Map<Session>(sessionRequest);
-                var sessionTypeLower = entity.SessionType.ToLower();
-
-                //string createDateString = sessionRequest.CreateDate.ToString();
-                //entity.CreateDate = DateTime.ParseExact(createDateString, "dd-MM-yyyy", CultureInfo.InvariantCulture);
-                //string endDateString = sessionRequest.EndDate.ToString(); 
-                //entity.EndDate = DateTime.ParseExact(endDateString, "dd-MM-yyyy", CultureInfo.InvariantCulture).AddDays(1);
-
-                entity.CreateDate = sessionRequest.CreateDate;
-                entity.EndDate = sessionRequest.EndDate.Value.AddDays(1);
-
-                if (sessionRequest.AreaIds != null)
+                if (await SessionTypeExistsInAreaInNextDay(sessionRequest.AreaIds, sessionTypeLower, (DateTime)entity.EndDate))
                 {
-                    if (await SessionTypeExistsInAreaInNextDay(sessionRequest.AreaIds, sessionTypeLower, (DateTime)entity.EndDate))
+                    SetSessionProperties(entity, sessionTypeLower, sessionRequest.AreaIds);
+                    //entity.EndDate = GetDateTimeTimeZoneVietNam().AddDays(1);
+                    //if (DateTime.TryParseExact(endDateString, "dd-MM-yyyy", CultureInfo.InvariantCulture, DateTimeStyles.None, out DateTime parsedDate))
+                    //{
+                    //    entity.SessionName = $"Session: {entity.SessionType} , In: {parsedDate.AddDays(1).ToString("dd-MM-yyyy")}";
+
+                    //}
+                    entity.SessionName = $"Session: {entity.SessionType} , In: {((DateTime)entity.EndDate).ToString("dd-MM-yyyy")}";
+
+                    var result = await _sessionRepository.Create(entity, true);
+
+                    if (result != null && sessionRequest.AreaIds != null)
                     {
-                        SetSessionProperties(entity, sessionTypeLower, sessionRequest.AreaIds);
-                        //entity.EndDate = GetDateTimeTimeZoneVietNam().AddDays(1);
-                        //if (DateTime.TryParseExact(endDateString, "dd-MM-yyyy", CultureInfo.InvariantCulture, DateTimeStyles.None, out DateTime parsedDate))
-                        //{
-                        //    entity.SessionName = $"Session: {entity.SessionType} , In: {parsedDate.AddDays(1).ToString("dd-MM-yyyy")}";
+                        var uniqueAreaIds = new HashSet<int>();
 
-                        //}
-                        entity.SessionName = $"Session: {entity.SessionType} , In: {((DateTime)entity.EndDate).ToString("dd-MM-yyyy")}";
-
-                        var result = await _sessionRepository.Create(entity, true);
-
-                        if (result != null && sessionRequest.AreaIds != null)
+                        foreach (var areaId in sessionRequest.AreaIds)
                         {
-                            var uniqueAreaIds = new HashSet<int>();
-
-                            foreach (var areaId in sessionRequest.AreaIds)
+                            if (uniqueAreaIds.Add(areaId))
                             {
-                                if (uniqueAreaIds.Add(areaId))
+                                var sessionArea = new SessionArea
                                 {
-                                    var sessionArea = new SessionArea
-                                    {
-                                        SessionId = result.SessionId,
-                                        AreaId = areaId,
-                                    };
-                                    await _context.AddAsync(sessionArea);
-                                }
-                                await _context.SaveChangesAsync();
+                                    SessionId = result.SessionId,
+                                    AreaId = areaId,
+                                };
+                                await _context.AddAsync(sessionArea);
                             }
-
+                            await _context.SaveChangesAsync();
                         }
-                        responseModel = _mapper.Map<SessionResponseModel>(result);
 
-                        responseModel.StartTime = result.StartTime?.ToString("HH:mm");
-                        responseModel.EndTime = result.EndTime?.ToString("HH:mm");
-                        responseModel.CreateDate = result.CreateDate?.ToString("dd-MM-yyyy");
-                        responseModel.EndDate = result.EndDate?.AddDays(1).ToString("dd-MM-yyyy");
-
-                        responseModel.Message = "Success";
                     }
-                    else
-                    {
-                        responseModel.Message = "Error: sessionType is EXISTED";
-                    }
+                    responseModel = _mapper.Map<SessionResponseModel>(result);
 
+                    responseModel.StartTime = result.StartTime?.ToString("HH:mm");
+                    responseModel.EndTime = result.EndTime?.ToString("HH:mm");
+                    responseModel.CreateDate = result.CreateDate?.ToString("dd-MM-yyyy");
+                    responseModel.EndDate = result.EndDate?.AddDays(1).ToString("dd-MM-yyyy");
+
+                    //responseModel.Message = "Success";
                 }
                 else
                 {
-                    responseModel.Message = "Error: Not Exist Area to Create Session";
+                    //responseModel.Message = "Error: sessionType is EXISTED";
                 }
 
-                return responseModel;
             }
-            catch (Exception ex)
+            else
             {
-                _logger.LogError(ex, "An error occurred in CreateSession: {Message}", ex.Message);
-
-                responseModel.Message = "Error: " + ex.Message;
-                return responseModel;
+                //responseModel.Message = "Error: Not Exist Area to Create Session";
             }
+
+            return responseModel;
+
         }
 
         public async Task ChangeStatusRegisterForMeal(int sessionid)
