@@ -345,12 +345,12 @@ namespace HomeMealTaste.Services.Implement
             return mapped;
         }
 
-        public async Task UpdateStatusMeallSession(List<int> mealsessionid, string status)
+        public async Task UpdateStatusMeallSession(UpdateStatusMeallSessionRequestModel request)
         {
             var datenow = GetDateTimeTimeZoneVietNam();
 
             var results = await _context.MealSessions
-                .Where(x => mealsessionid.Contains(x.MealSessionId))
+                .Where(x => request.MealSessionIds.Contains(x.MealSessionId))
                 .ToListAsync();
 
             foreach (var result in results)
@@ -365,34 +365,52 @@ namespace HomeMealTaste.Services.Implement
                     .Select(x => x.Status)
                     .FirstOrDefault();
 
-                if (result.CreateDate.Value.Date != datenow.Date)
+                if (result.Status.Equals("COMPLETED"))
                 {
-                    throw new Exception("Can not Update Because Not In Day");
+                    throw new Exception("Can not Update Because Meal Session is COMPLETED");
                 }
                 else
                 {
                     if (result != null && result.Status.Equals("PROCESSING", StringComparison.OrdinalIgnoreCase) && sessionStatus == true)
                     {
-                        if (string.Equals("APPROVED", status, StringComparison.OrdinalIgnoreCase))
+                        if (string.Equals("APPROVED", request.status, StringComparison.OrdinalIgnoreCase))
                         {
                             result.Status = "APPROVED";
                         }
-                        else if (string.Equals("REJECTED", status, StringComparison.OrdinalIgnoreCase))
+                        else if (string.Equals("REJECTED", request.status, StringComparison.OrdinalIgnoreCase))
                         {
                             result.Status = "REJECTED";
                         }
                     }
                     else if (result != null && result.Status.Equals("APPROVED", StringComparison.OrdinalIgnoreCase) && sessionStatus == true)
                     {
-                        if (string.Equals("APPROVED", status, StringComparison.OrdinalIgnoreCase))
+                        if (string.Equals("APPROVED", request.status, StringComparison.OrdinalIgnoreCase))
                         {
                             result.Status = "APPROVED";
                         }
                         else result.Status = "REJECTED";
+                    }else if(result != null && result.Status.Equals("APPROVED", StringComparison.OrdinalIgnoreCase) && sessionStatus == true)
+                    {
+                        if (string.Equals("COMPLETED", request.status, StringComparison.OrdinalIgnoreCase))
+                        {
+                            result.Status = "COMPLETED";
+                        }
+                    }else if(result != null && result.Status.Equals("PROCESSING", StringComparison.OrdinalIgnoreCase) && sessionStatus == true)
+                    {
+                        if (string.Equals("COMPLETED", request.status, StringComparison.OrdinalIgnoreCase))
+                        {
+                            result.Status = "COMPLETED";
+                        }
+                    }else if(result != null && result.Status.Equals("REJECTED", StringComparison.OrdinalIgnoreCase) && sessionStatus == true)
+                    {
+                        if (string.Equals("COMPLETED", request.status, StringComparison.OrdinalIgnoreCase))
+                        {
+                            result.Status = "COMPLETED";
+                        }
                     }
                     else if (result != null && result.Status.Equals("REJECTED", StringComparison.OrdinalIgnoreCase) && sessionStatus == true)
                     {
-                        if (string.Equals("REJECTED", status, StringComparison.OrdinalIgnoreCase))
+                        if (string.Equals("REJECTED", request.status, StringComparison.OrdinalIgnoreCase))
                         {
                             result.Status = "REJECTED";
                         }
@@ -401,7 +419,6 @@ namespace HomeMealTaste.Services.Implement
                     else throw new Exception("Session is OFF");
                 }
             }
-
             await _context.SaveChangesAsync();
         }
 
