@@ -480,7 +480,7 @@ namespace HomeMealTaste.Services.Implement
             {
                 var entity = _mapper.Map<Session>(sessionRequest);
                 var sessionTypeLower = entity.SessionType.ToLower();
-                entity.CreateDate = DateTime.ParseExact(sessionRequest.CreateDate, "dd-MM-yyyy", CultureInfo.CurrentCulture);
+                entity.CreateDate = DateTime.ParseExact(sessionRequest.CreateDate, @"d-M-yyyy", System.Globalization.CultureInfo.InvariantCulture);
                 entity.EndDate = (DateTime.ParseExact(sessionRequest.EndDate, "dd-MM-yyyy", CultureInfo.CurrentCulture)).AddDays(1);
 
                 if (sessionRequest.AreaIds != null)
