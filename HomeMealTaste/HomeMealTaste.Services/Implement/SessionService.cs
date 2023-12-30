@@ -581,14 +581,26 @@ namespace HomeMealTaste.Services.Implement
             if (sessionId != null)
             {
 
-                entity.CreateDate = request.CreateDate;
-                entity.EndDate = request.EndDate;
-                entity.StartTime = request.StartTime;
-                entity.EndTime = request.EndTime;
+                if (DateTime.TryParseExact(request.CreateDate, "dd-MM-yyyy", CultureInfo.InvariantCulture, DateTimeStyles.None, out DateTime parsedCreateDate))
+                {
+                    entity.CreateDate = parsedCreateDate;
+                }
+                if (DateTime.TryParseExact(request.EndDate, "dd-MM-yyyy", CultureInfo.InvariantCulture, DateTimeStyles.None, out DateTime parsedEndDate))
+                {
+                    entity.EndDate = parsedEndDate;
+                }
+                if (DateTime.TryParseExact(request.StartTime, "dd-MM-yyyy", CultureInfo.InvariantCulture, DateTimeStyles.None, out DateTime parsedStartTime))
+                {
+                    entity.StartTime = parsedStartTime;
+                }
+                if (DateTime.TryParseExact(request.EndTime, "dd-MM-yyyy", CultureInfo.InvariantCulture, DateTimeStyles.None, out DateTime parsedEndTime))
+                {
+                    entity.EndTime = parsedEndTime;
+                }
                 entity.UserId = request.UserId;
                 entity.Status = request.Status;
                 entity.SessionType = request.SessionType?.ToLowerInvariant();
-                entity.SessionName = $"Session: {request.SessionType}, In: {((DateTime)request.EndDate).ToString("dd-MM-yyyy")}";
+                entity.SessionName = $"Session: {request.SessionType}, In: {((DateTime)parsedEndDate).ToString("dd-MM-yyyy")}";
                 entity.RegisterForMealStatus = request.RegisterForMealStatus;
                 entity.BookingSlotStatus = request.BookingSlotStatus;
 
