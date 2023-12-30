@@ -379,6 +379,10 @@ namespace HomeMealTaste.Services.Implement
                         {
                             result.Status = "REJECTED";
                         }
+                        else if(string.Equals("COMPLETED", request.status, StringComparison.OrdinalIgnoreCase))
+                        {
+                            result.Status = "COMPLETED";
+                        }
                     }
                     else if (result != null && result.Status.Equals("APPROVED", StringComparison.OrdinalIgnoreCase) && sessionStatus == true)
                     {
@@ -390,22 +394,7 @@ namespace HomeMealTaste.Services.Implement
                         {
                             result.Status = "REJECTED";
                         }
-                    }
-                    else if(result != null && result.Status.Equals("APPROVED", StringComparison.OrdinalIgnoreCase) && sessionStatus == true)
-                    {
-                        if (string.Equals("COMPLETED", request.status, StringComparison.OrdinalIgnoreCase))
-                        {
-                            result.Status = "COMPLETED";
-                        }
-                    }else if(result != null && result.Status.Equals("PROCESSING", StringComparison.OrdinalIgnoreCase) && sessionStatus == true)
-                    {
-                        if (string.Equals("COMPLETED", request.status, StringComparison.OrdinalIgnoreCase))
-                        {
-                            result.Status = "COMPLETED";
-                        }
-                    }else if(result != null && result.Status.Equals("REJECTED", StringComparison.OrdinalIgnoreCase) && sessionStatus == true)
-                    {
-                        if (string.Equals("COMPLETED", request.status, StringComparison.OrdinalIgnoreCase))
+                        else if (string.Equals("COMPLETED", request.status, StringComparison.OrdinalIgnoreCase))
                         {
                             result.Status = "COMPLETED";
                         }
@@ -416,7 +405,14 @@ namespace HomeMealTaste.Services.Implement
                         {
                             result.Status = "REJECTED";
                         }
-                        else result.Status = "APPROVED";
+                        else if (string.Equals("APPROVED", request.status, StringComparison.OrdinalIgnoreCase))
+                        {
+                            result.Status = "APPROVED";
+                        }
+                        else if (string.Equals("COMPLETED", request.status, StringComparison.OrdinalIgnoreCase))
+                        {
+                            result.Status = "COMPLETED";
+                        }
                     }
                     else throw new Exception("Session is OFF");
                 }
