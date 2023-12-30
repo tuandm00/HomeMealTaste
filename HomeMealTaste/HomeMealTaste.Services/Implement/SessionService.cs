@@ -580,27 +580,15 @@ namespace HomeMealTaste.Services.Implement
             var sessionId = _context.SessionAreas.Where(x => x.SessionId == request.SessionId).Select(x => x.SessionId).FirstOrDefault();
             if (sessionId != null)
             {
-                if (DateTime.TryParseExact(request.CreateDate, "dd-MM-yyyy", CultureInfo.InvariantCulture, DateTimeStyles.None, out var createDate))
-                {
-                    entity.CreateDate = createDate;
-                }
-                if (DateTime.TryParseExact(request.EndDate, "dd-MM-yyyy", CultureInfo.InvariantCulture, DateTimeStyles.None, out var endDate))
-                {
-                    entity.EndDate = endDate;
-                }
-                if (DateTime.TryParseExact(request.StartTime, "HH:mm", CultureInfo.InvariantCulture, DateTimeStyles.None, out var startTime))
-                {
-                    entity.StartTime = startTime;
-                }
-                if (DateTime.TryParseExact(request.EndTime, "HH:mm", CultureInfo.InvariantCulture, DateTimeStyles.None, out var endTime))
-                {
-                    entity.EndTime = endTime;
-                }
 
+                entity.CreateDate = request.CreateDate;
+                entity.EndDate = request.EndDate;
+                entity.StartTime = request.StartTime;
+                entity.EndTime = request.EndTime;
                 entity.UserId = request.UserId;
                 entity.Status = request.Status;
                 entity.SessionType = request.SessionType?.ToLowerInvariant();
-                entity.SessionName = $"Session: {request.SessionType}, In: {((DateTime)endDate).ToString("dd-MM-yyyy")}";
+                entity.SessionName = $"Session: {request.SessionType}, In: {((DateTime)request.EndDate).ToString("dd-MM-yyyy")}";
                 entity.RegisterForMealStatus = request.RegisterForMealStatus;
                 entity.BookingSlotStatus = request.BookingSlotStatus;
 
