@@ -347,8 +347,6 @@ namespace HomeMealTaste.Services.Implement
 
         public async Task UpdateStatusMeallSession(UpdateStatusMeallSessionRequestModel request)
         {
-            var datenow = GetDateTimeTimeZoneVietNam();
-
             var results = await _context.MealSessions
                 .Where(x => request.MealSessionIds.Contains(x.MealSessionId))
                 .ToListAsync();
@@ -388,8 +386,12 @@ namespace HomeMealTaste.Services.Implement
                         {
                             result.Status = "APPROVED";
                         }
-                        else result.Status = "REJECTED";
-                    }else if(result != null && result.Status.Equals("APPROVED", StringComparison.OrdinalIgnoreCase) && sessionStatus == true)
+                        else if (string.Equals("REJECTED", request.status, StringComparison.OrdinalIgnoreCase))
+                        {
+                            result.Status = "REJECTED";
+                        }
+                    }
+                    else if(result != null && result.Status.Equals("APPROVED", StringComparison.OrdinalIgnoreCase) && sessionStatus == true)
                     {
                         if (string.Equals("COMPLETED", request.status, StringComparison.OrdinalIgnoreCase))
                         {
