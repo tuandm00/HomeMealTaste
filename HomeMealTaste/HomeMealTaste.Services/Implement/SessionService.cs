@@ -574,6 +574,56 @@ namespace HomeMealTaste.Services.Implement
 
         }
 
+        public async Task<UpdateSessionAndAreaInSessionResponseModel> UpdateSessionAndAreaInSession(UpdateSessionAndAreaInSessionRequestModel request)
+        {
+            var entity = _mapper.Map<Session>(request);
+            var sessionId = _context.SessionAreas.Where(x => x.SessionId == request.SessionId).Select(x => x.SessionId).FirstOrDefault();
+            if (sessionId != null)
+            {
+                if (DateTime.TryParseExact(request.CreateDate, "dd-MM-yyyy", CultureInfo.InvariantCulture, DateTimeStyles.None, out var createDate))
+                {
+                    entity.CreateDate = createDate;
+                }
+                if (DateTime.TryParseExact(request.EndDate, "dd-MM-yyyy", CultureInfo.InvariantCulture, DateTimeStyles.None, out var endDate))
+                {
+                    entity.EndDate = endDate;
+                }
+                if (DateTime.TryParseExact(request.StartTime, "HH:mm", CultureInfo.InvariantCulture, DateTimeStyles.None, out var startTime))
+                {
+                    entity.StartTime = startTime;
+                }
+                if (DateTime.TryParseExact(request.EndTime, "HH:mm", CultureInfo.InvariantCulture, DateTimeStyles.None, out var endTime))
+                {
+                    entity.EndTime = endTime;
+                }
+
+                entity.UserId = request.UserId;
+                entity.Status = request.Status;
+                entity.SessionType = request.SessionType?.ToLowerInvariant();
+                entity.SessionName = $"Session: {request.SessionType}, In: {((DateTime)endDate).ToString("dd-MM-yyyy")}";
+                entity.RegisterForMealStatus = request.RegisterForMealStatus;
+                entity.BookingSlotStatus = request.BookingSlotStatus;
+
+                _context.Sessions.Update(entity);
+                await _context.SaveChangesAsync();
+
+                //find list areaIds among with sessionId inputed and update
+                var listAreaId = _context.SessionAreas.Where(x => x.SessionId == sessionId).ToList();
+                if (listAreaId.Count > 0)
+                {
+                    for (int i = 0; i < listAreaId.Count && i < request.AreaIds.Count; i++)
+                    {
+                        listAreaId[i].AreaId = request.AreaIds[i];
+                        _context.SessionAreas.Update(listAreaId[i]);
+                    }
+
+                    await _context.SaveChangesAsync();
+                }
+            }
+            var mapped = _mapper.Map<UpdateSessionAndAreaInSessionResponseModel>(entity);
+            return mapped;
+        }
+
         //public async Task<List<GetAllSessionByAreaIdResponseModel>> GetAllSessionByAreaIdWithStatusTrueInDay(int areaid)
         //{
         //    var datenow = GetDateTimeTimeZoneVietNam();

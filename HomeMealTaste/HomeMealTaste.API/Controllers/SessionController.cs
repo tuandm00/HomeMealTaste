@@ -101,6 +101,12 @@ namespace HomeMealTaste.Controllers
         {
             await _sessionService.ChangeStatusBookingSlot(sessionid);
         }
+        [HttpPatch("update-session-and-area-in-session")]
+        public async Task<IActionResult> UpdateSessionAndAreaInSession(UpdateSessionAndAreaInSessionRequestModel request)
+        {
+            var result =  _sessionService.UpdateSessionAndAreaInSession(request);
+            return Ok(result);
+        }
 
         //[HttpGet("get-all-session-by-area-id-with-status-true-in-day")]
         //public async Task<IActionResult> GetAllSessionByAreaIdWithStatusTrueInDay(int areaid)
