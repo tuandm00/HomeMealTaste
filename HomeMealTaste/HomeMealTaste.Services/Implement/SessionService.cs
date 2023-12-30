@@ -609,10 +609,6 @@ namespace HomeMealTaste.Services.Implement
                 }
             }
             var mapped = _mapper.Map<UpdateSessionAndAreaInSessionResponseModel>(entity);
-            mapped.StartTime = entity.StartTime?.ToString("HH:mm");
-            mapped.EndTime = entity.EndTime?.ToString("HH:mm");
-            mapped.CreateDate = entity.CreateDate?.ToString("dd-MM-yyyy");
-            mapped.EndDate = entity.EndDate?.ToString("dd-MM-yyyy");
             return mapped;
         }
 
