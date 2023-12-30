@@ -576,6 +576,8 @@ namespace HomeMealTaste.Services.Implement
 
         public async Task<UpdateSessionAndAreaInSessionResponseModel> UpdateSessionAndAreaInSession(UpdateSessionAndAreaInSessionRequestModel request)
         {
+            var responseModel = new UpdateSessionAndAreaInSessionResponseModel();
+
             var entity = _mapper.Map<Session>(request);
             var sessionId = _context.SessionAreas.Where(x => x.SessionId == request.SessionId).Select(x => x.SessionId).FirstOrDefault();
             if (sessionId != null)
@@ -624,12 +626,12 @@ namespace HomeMealTaste.Services.Implement
                     await _context.SaveChangesAsync();
                 }
             }
-            var mapped = _mapper.Map<UpdateSessionAndAreaInSessionResponseModel>(entity);
-            mapped.StartTime = entity.StartTime?.ToString("HH:mm");
-            mapped.EndTime = entity.EndTime?.ToString("HH:mm");
-            mapped.CreateDate = entity.CreateDate?.ToString("dd-MM-yyyy");
-            mapped.EndDate = entity.EndDate?.ToString("dd-MM-yyyy");
-            return mapped;
+            responseModel = _mapper.Map<UpdateSessionAndAreaInSessionResponseModel>(sessionId);
+            responseModel.StartTime = entity.StartTime?.ToString("HH:mm");
+            responseModel.EndTime = entity.EndTime?.ToString("HH:mm");
+            responseModel.CreateDate = entity.CreateDate?.ToString("dd-MM-yyyy");
+            responseModel.EndDate = entity.EndDate?.ToString("dd-MM-yyyy");
+            return responseModel;
         }
 
         //public async Task<List<GetAllSessionByAreaIdResponseModel>> GetAllSessionByAreaIdWithStatusTrueInDay(int areaid)
