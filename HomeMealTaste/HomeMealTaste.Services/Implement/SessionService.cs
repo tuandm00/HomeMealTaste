@@ -606,7 +606,7 @@ namespace HomeMealTaste.Services.Implement
                 entity.UserId = request.UserId;
                 entity.Status = request.Status;
                 entity.SessionType = request.SessionType?.ToLowerInvariant();
-                entity.SessionName = $"Session: {request.SessionType}, In: {((DateTime)parsedEndTime).ToString("dd-MM-yyyy")}";
+                entity.SessionName = $"Session: {request.SessionType}, In: {((DateTime)parsedEndDate).ToString("dd-MM-yyyy")}";
                 entity.RegisterForMealStatus = request.RegisterForMealStatus;
                 entity.BookingSlotStatus = request.BookingSlotStatus;
 
