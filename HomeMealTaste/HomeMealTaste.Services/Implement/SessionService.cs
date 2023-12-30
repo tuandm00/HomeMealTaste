@@ -626,11 +626,12 @@ namespace HomeMealTaste.Services.Implement
                     await _context.SaveChangesAsync();
                 }
             }
-            responseModel = _mapper.Map<UpdateSessionAndAreaInSessionResponseModel>(sessionId);
+            responseModel = _mapper.Map<UpdateSessionAndAreaInSessionResponseModel>(entity);
             responseModel.StartTime = entity.StartTime?.ToString("HH:mm");
             responseModel.EndTime = entity.EndTime?.ToString("HH:mm");
             responseModel.CreateDate = entity.CreateDate?.ToString("dd-MM-yyyy");
             responseModel.EndDate = entity.EndDate?.ToString("dd-MM-yyyy");
+
             return responseModel;
         }
 
