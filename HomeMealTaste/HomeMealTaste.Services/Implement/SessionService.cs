@@ -230,9 +230,15 @@ namespace HomeMealTaste.Services.Implement
         public async Task<SessionResponseModel> CreateSessionWithDay(SessionRequestModel sessionRequest)
         {
 
-            var responseModel = new SessionResponseModel(); // Initialize the response model
+            var responseModel = new SessionResponseModel(); 
+            var currentDate = DateTime.UtcNow; 
+            var sessionDate = DateTime.ParseExact(sessionRequest.Date, "dd-MM-yyyy", CultureInfo.InvariantCulture);
 
-
+            if (sessionDate < currentDate)
+            {
+                
+                throw new Exception("Cannot create a session with a date in the past.");
+            }
             var entity = _mapper.Map<Session>(sessionRequest);
             var sessionTypeLower = entity.SessionType.ToLower();
             entity.CreateDate = DateTime.ParseExact(sessionRequest.Date, "dd-MM-yyyy", CultureInfo.InvariantCulture);
