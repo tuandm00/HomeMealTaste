@@ -624,6 +624,7 @@ namespace HomeMealTaste.Services.Implement
                     result.StartTime = entity.CreateDate?.Date.AddHours(16);
                     result.EndTime = result.StartTime?.AddHours(4);
                     result.SessionType = "Evening";
+
                 }
                 else if (string.Equals(result.SessionType, "dinner", StringComparison.OrdinalIgnoreCase))
                 {
