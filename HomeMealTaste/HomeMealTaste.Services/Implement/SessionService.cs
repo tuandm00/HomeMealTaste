@@ -590,14 +590,14 @@ namespace HomeMealTaste.Services.Implement
             if (result != null)
             {
 
-                if (DateTime.TryParseExact(request.CreateDate, "dd-MM-yyyy", CultureInfo.InvariantCulture, DateTimeStyles.None, out DateTime parsedCreateDate))
-                {
-                    result.CreateDate = parsedCreateDate;
-                }
-                if (DateTime.TryParseExact(request.EndDate, "dd-MM-yyyy", CultureInfo.InvariantCulture, DateTimeStyles.None, out DateTime parsedEndDate))
-                {
-                    result.EndDate = parsedEndDate;
-                }
+                //if (DateTime.TryParseExact(request.CreateDate, "dd-MM-yyyy", CultureInfo.InvariantCulture, DateTimeStyles.None, out DateTime parsedCreateDate))
+                //{
+                //    result.CreateDate = parsedCreateDate;
+                //}
+                //if (DateTime.TryParseExact(request.EndDate, "dd-MM-yyyy", CultureInfo.InvariantCulture, DateTimeStyles.None, out DateTime parsedEndDate))
+                //{
+                //    result.EndDate = parsedEndDate;
+                //}
                 //if (DateTime.TryParseExact(request.StartTime, "HH:mm", CultureInfo.InvariantCulture, DateTimeStyles.None, out DateTime parsedStartTime))
                 //{
                 //    entity.StartTime = parsedStartTime;
@@ -606,9 +606,9 @@ namespace HomeMealTaste.Services.Implement
                 //{
                 //    entity.EndTime = parsedEndTime;
                 //}
-                //result.CreateDate = entity.CreateDate;
-                //result.EndDate = entity.EndDate;
 
+                result.CreateDate = entity.CreateDate;
+                result.EndDate = entity.EndDate;
                 result.SessionType = entity.SessionType;
                 if (string.Equals(result.SessionType, "lunch", StringComparison.OrdinalIgnoreCase))
                 {
@@ -630,11 +630,11 @@ namespace HomeMealTaste.Services.Implement
                     result.EndTime = result.StartTime?.AddHours(2);
                     result.SessionType = "Dinner";
                 }
-                result.SessionName = $"Session: {result.SessionType}, In: {((DateTime)entity.EndDate).ToString("dd-MM-yyyy")}";
+                result.SessionName = $"Session: {result.SessionType}, In: {((DateTime)result.EndDate).ToString("dd-MM-yyyy")}";
                 result.UserId = 2;
-                result.Status = entity.Status;
-                result.RegisterForMealStatus = entity.RegisterForMealStatus;
-                result.BookingSlotStatus = entity.BookingSlotStatus;
+                result.Status = result.Status;
+                result.RegisterForMealStatus = result.RegisterForMealStatus;
+                result.BookingSlotStatus = result.BookingSlotStatus;
 
                 _context.Sessions.Update(result);
                 await _context.SaveChangesAsync();
