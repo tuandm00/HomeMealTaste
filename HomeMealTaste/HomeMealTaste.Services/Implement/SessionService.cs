@@ -590,14 +590,14 @@ namespace HomeMealTaste.Services.Implement
             if (result != null)
             {
 
-                //if (DateTime.TryParseExact(request.CreateDate, "yyyy-MM-dd", CultureInfo.InvariantCulture, DateTimeStyles.None, out DateTime parsedCreateDate))
-                //{
-                //    entity.CreateDate = parsedCreateDate;
-                //}
-                //if (DateTime.TryParseExact(entity.EndDate, "dd-MM-yyyy", CultureInfo.InvariantCulture, DateTimeStyles.None, out DateTime parsedEndDate))
-                //{
-                //    result.EndDate = parsedEndDate;
-                //}
+                if (DateTime.TryParseExact(request.CreateDate, "dd-MM-yyyy", CultureInfo.InvariantCulture, DateTimeStyles.None, out DateTime parsedCreateDate))
+                {
+                    result.CreateDate = parsedCreateDate;
+                }
+                if (DateTime.TryParseExact(request.EndDate, "dd-MM-yyyy", CultureInfo.InvariantCulture, DateTimeStyles.None, out DateTime parsedEndDate))
+                {
+                    result.EndDate = parsedEndDate;
+                }
                 //if (DateTime.TryParseExact(request.StartTime, "HH:mm", CultureInfo.InvariantCulture, DateTimeStyles.None, out DateTime parsedStartTime))
                 //{
                 //    entity.StartTime = parsedStartTime;
@@ -606,8 +606,8 @@ namespace HomeMealTaste.Services.Implement
                 //{
                 //    entity.EndTime = parsedEndTime;
                 //}
-                result.CreateDate = entity.CreateDate;
-                result.EndDate = entity.EndDate;
+                //result.CreateDate = entity.CreateDate;
+                //result.EndDate = entity.EndDate;
 
                 result.SessionType = entity.SessionType;
                 if (string.Equals(result.SessionType, "lunch", StringComparison.OrdinalIgnoreCase))
@@ -653,6 +653,10 @@ namespace HomeMealTaste.Services.Implement
                 }
             }
             responseModel = _mapper.Map<UpdateSessionAndAreaInSessionResponseModel>(result);
+            responseModel.StartTime = result.StartTime?.ToString("HH:mm");
+            responseModel.EndTime = result.EndTime?.ToString("HH:mm");
+            responseModel.CreateDate = result.CreateDate?.ToString("dd-MM-yyyy");
+            responseModel.EndDate = result.EndDate?.ToString("dd-MM-yyyy");
 
             return responseModel;
         }
