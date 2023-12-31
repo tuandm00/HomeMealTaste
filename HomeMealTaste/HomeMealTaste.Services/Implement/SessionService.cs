@@ -234,7 +234,7 @@ namespace HomeMealTaste.Services.Implement
             var currentDate = DateTime.UtcNow; 
             var sessionDate = DateTime.ParseExact(sessionRequest.Date, "dd-MM-yyyy", CultureInfo.InvariantCulture);
 
-            if (sessionDate < currentDate)
+            if (sessionDate.Date < currentDate.Date)
             {
                 
                 throw new Exception("Cannot create a session with a date in the past.");

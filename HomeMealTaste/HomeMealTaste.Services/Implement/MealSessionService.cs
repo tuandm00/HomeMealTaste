@@ -923,13 +923,12 @@ namespace HomeMealTaste.Services.Implement
             if(getAreaId != null)
             {
                 var getListKitchen = _context.Kitchens.Where(x => x.AreaId == areaId).Select(x => x.KitchenId).ToList();
-                foreach(var item in getListKitchen)
-                {
-                    if(item != kitchenId)
+                
+                    if(getListKitchen.Count == 0)
                     {
                         throw new Exception("Can not find kitchen");
                     }
-                };
+                
                 var result = _context.MealSessions
                     .Where(x => x.SessionId == sessionId && x.KitchenId == kitchenId)
                     .Select(x => new MealSessionResponseModel
