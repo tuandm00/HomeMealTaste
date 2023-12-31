@@ -3,6 +3,7 @@ using HomeMealTaste.Data.Helper;
 using HomeMealTaste.Data.Models;
 using HomeMealTaste.Data.Repositories;
 using HomeMealTaste.Data.RequestModel;
+using HomeMealTaste.Data.ResponseModel;
 using HomeMealTaste.Services.Helper;
 using HomeMealTaste.Services.Interface;
 using HomeMealTaste.Services.ResponseModel;
@@ -41,6 +42,23 @@ namespace HomeMealTaste.Services.Implement
                 return result;
             }
             return null;
+        }
+
+        public async Task<UpdateDishTypeResponseModel> UpdateDishType(UpdateDishTypeRequestModel request)
+        {
+            var entity = _mapper.Map<DishType>(request);
+            var result = _context.DishTypes.Where(x => x.DishTypeId == request.DishTypeId).FirstOrDefault();
+            if(result != null)
+            {
+                result.Name = request.Name;
+                result.Description = request.Description;
+
+                _context.DishTypes.Update(result);
+            }
+            await _context.SaveChangesAsync();
+
+            var mapped = _mapper.Map<UpdateDishTypeResponseModel>(result);
+            return mapped;
         }
     }
 }

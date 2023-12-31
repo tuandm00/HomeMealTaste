@@ -53,5 +53,11 @@ namespace HomeMealTaste.Controllers
             var result = _dishTypeServices.DeleteDishTypeById(id);
             return result;
         }
+        [HttpPut("update-dishtype")]
+        public async Task<IActionResult> UpdateDishType(UpdateDishTypeRequestModel request)
+        {
+            var result = await _dishTypeServices.UpdateDishType(request);
+            return Ok(result);
+        }
     }
 }

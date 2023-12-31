@@ -78,6 +78,8 @@ namespace HomeMealTaste.Data.RequestModel
             CreateMap<UpdateStatusMeallSessionRequestModel, MealSession>().ReverseMap();
             CreateMap<UpdateSessionAndAreaInSessionRequestModel, Session>().ReverseMap();
             CreateMap<UpdateSessionAndAreaInSessionResponseModel, Session>().ReverseMap();
+            CreateMap<UpdateDishTypeRequestModel, DishType>().ReverseMap();
+            CreateMap<UpdateDishTypeResponseModel, DishType>().ReverseMap();
 
             
 
