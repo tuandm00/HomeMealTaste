@@ -101,10 +101,10 @@ namespace HomeMealTaste.Controllers
         {
             await _sessionService.ChangeStatusBookingSlot(sessionid);
         }
-        [HttpPatch("update-session-and-area-in-session")]
+        [HttpPut("update-session-and-area-in-session")]
         public async Task<IActionResult> UpdateSessionAndAreaInSession(UpdateSessionAndAreaInSessionRequestModel request)
         {
-            var result =  _sessionService.UpdateSessionAndAreaInSession(request);
+            var result = await _sessionService.UpdateSessionAndAreaInSession(request);
             return Ok(result);
         }
 
