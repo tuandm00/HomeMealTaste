@@ -48,6 +48,12 @@ namespace HomeMealTaste.API.Controllers
             var result = await _transactionService.GetAllTransaction();
             return Ok(result);
         }
+        [HttpGet("get-all-transaction-by-user-id-with-recharged")]
+        public async Task<IActionResult> GetAllTransactionByUserIdWithRecharged(int userId)
+        {
+            var result = await _transactionService.GetAllTransactionByUserIdWithRecharged(userId);
+            return Ok(result);
+        }
 
     }
 }

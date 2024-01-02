@@ -358,6 +358,47 @@ namespace HomeMealTaste.Services.Implement
             return mapped;
         }
 
-
+        public async Task<List<GetAllTransactionsResponseModel>> GetAllTransactionByUserIdWithRecharged(int userId)
+        {
+            var result = _context.Transactions.Where(x => x.UserId == userId && x.TransactionType.Equals("RECHARGED")).Select(x => new GetAllTransactionsResponseModel
+            {
+                TransactionId = x.TransactionId,
+                Amount = x.Amount,
+                Date = ((DateTime)x.Date).ToString("dd-MM-yyyy"),
+                Description = x.Description,
+                Status = x.Status,
+                TransactionType = x.TransactionType,
+                OrderDtoGetAllTransactions = new OrderDtoGetAllTransactions
+                {
+                    OrderId = x.Order.OrderId,
+                    Status = x.Order.Status,
+                    CustomerId = x.Order.CustomerId,
+                    MealSessionId = x.Order.MealSessionId,
+                    Quantity = x.Order.Quantity,
+                    Time = ((DateTime)x.Order.Time).ToString("HH:mm"),
+                    TotalPrice = x.Order.TotalPrice,
+                },
+                UserDtoGetAllTransactions = new UserDtoGetAllTransactions
+                {
+                    UserId = x.User.UserId,
+                    Name = x.User.Name,
+                    Address = x.User.Address,
+                    AreaId = x.User.AreaId,
+                    DistrictId = x.User.DistrictId,
+                    Email = x.User.Email,
+                    Phone = x.User.Phone,
+                    Username = x.User.Username,
+                    RoleId = x.User.RoleId,
+                },
+                WalletDtoGetAllTransactions = new WalletDtoGetAllTransactions
+                {
+                    Balance = x.Wallet.Balance,
+                    UserId = x.Wallet.UserId,
+                    WalletId = x.Wallet.WalletId,
+                },
+            }).ToList();
+            var mapped = result.Select(r => _mapper.Map<GetAllTransactionsResponseModel>(r)).ToList();
+            return mapped;
+        }
     }
 }
