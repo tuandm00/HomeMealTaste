@@ -599,8 +599,8 @@ namespace HomeMealTaste.Services.Implement
                 //    result.EndDate = parsedEndDate;
                 //}
 
-                result.CreateDate = entity.CreateDate.Value.Date;
-                result.EndDate = entity.EndDate.Value.Date;
+                result.CreateDate = entity.CreateDate;
+                result.EndDate = entity.EndDate;
                 result.SessionType = entity.SessionType;
                 if (string.Equals(result.SessionType, "lunch", StringComparison.OrdinalIgnoreCase))
                 {
