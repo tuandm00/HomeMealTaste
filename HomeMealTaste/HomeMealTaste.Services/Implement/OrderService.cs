@@ -846,18 +846,24 @@ namespace HomeMealTaste.Services.Implement
         public async Task<List<ChangeStatusOrderToCompletedResponseModel>> ChangeStatusOrder(int mealsessionid, string status)
         {
             var listOrder = await _context.Orders.Where(x => x.MealSessionId == mealsessionid).ToListAsync();
-
+            var mealSession = await _context.MealSessions.Where(x => x.MealSessionId == mealsessionid).FirstOrDefaultAsync();
             if (listOrder != null)
             {
 
                 foreach (var list in listOrder)
                 {
-                    if (status.Equals("DONE", StringComparison.OrdinalIgnoreCase) && list.Status.Equals("PAID", StringComparison.OrdinalIgnoreCase))
+                    if (status.Equals("COMPLETED", StringComparison.OrdinalIgnoreCase) && list.Status.Equals("PAID", StringComparison.OrdinalIgnoreCase))
                     {
-                        list.Status = "DONE";
+                        list.Status = "COMPLETED";
+                        mealSession.Status = "COMPLETED";
                     }
-                    else list.Status = "CANCELLED";
+                    else
+                    {
+                        list.Status = "CANCELLED";
+                        mealSession.Status = "CANCELLED";
+                    };
 
+                    _context.MealSessions.Update(mealSession);
                     _context.Orders.Update(list);
                     await _context.SaveChangesAsync();
 

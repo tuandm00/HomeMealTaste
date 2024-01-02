@@ -363,10 +363,11 @@ namespace HomeMealTaste.Services.Implement
                     .Select(x => x.Status)
                     .FirstOrDefault();
 
-                if (result.Status.Equals("COMPLETED"))
+                if (result != null && result.Status.Equals("COMPLETED", StringComparison.OrdinalIgnoreCase) && sessionStatus == true)
                 {
                     throw new Exception("Can not Update Because Meal Session is COMPLETED");
                 }
+                else if (result != null && result.Status.Equals("CANCELLED", StringComparison.OrdinalIgnoreCase) && sessionStatus == true) throw new Exception("Can not Update Because Meal Session is CANCELLED");
                 else
                 {
                     if (result != null && result.Status.Equals("PROCESSING", StringComparison.OrdinalIgnoreCase) && sessionStatus == true)
@@ -379,10 +380,7 @@ namespace HomeMealTaste.Services.Implement
                         {
                             result.Status = "REJECTED";
                         }
-                        else if(string.Equals("COMPLETED", request.status, StringComparison.OrdinalIgnoreCase))
-                        {
-                            result.Status = "COMPLETED";
-                        }
+                        
                     }
                     else if (result != null && result.Status.Equals("APPROVED", StringComparison.OrdinalIgnoreCase) && sessionStatus == true)
                     {
@@ -394,10 +392,7 @@ namespace HomeMealTaste.Services.Implement
                         {
                             result.Status = "REJECTED";
                         }
-                        else if (string.Equals("COMPLETED", request.status, StringComparison.OrdinalIgnoreCase))
-                        {
-                            result.Status = "COMPLETED";
-                        }
+                        
                     }
                     else if (result != null && result.Status.Equals("REJECTED", StringComparison.OrdinalIgnoreCase) && sessionStatus == true)
                     {
@@ -409,10 +404,7 @@ namespace HomeMealTaste.Services.Implement
                         {
                             result.Status = "APPROVED";
                         }
-                        else if (string.Equals("COMPLETED", request.status, StringComparison.OrdinalIgnoreCase))
-                        {
-                            result.Status = "COMPLETED";
-                        }
+                        
                     }
                     else throw new Exception("Session is OFF");
                 }
