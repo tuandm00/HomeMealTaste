@@ -590,11 +590,11 @@ namespace HomeMealTaste.Services.Implement
             if (result != null)
             {
 
-                if (DateTime.TryParseExact(request.CreateDate, "dd-MM-yyyy", CultureInfo.InvariantCulture, DateTimeStyles.None, out DateTime parsedCreateDate))
+                if (DateTime.TryParseExact(request.CreateDate.ToString(), "dd-MM-yyyy", CultureInfo.InvariantCulture, DateTimeStyles.None, out DateTime parsedCreateDate))
                 {
                     result.CreateDate = parsedCreateDate;
                 }
-                if (DateTime.TryParseExact(request.EndDate, "dd-MM-yyyy", CultureInfo.InvariantCulture, DateTimeStyles.None, out DateTime parsedEndDate))
+                if (DateTime.TryParseExact(request.EndDate.ToString(), "dd-MM-yyyy", CultureInfo.InvariantCulture, DateTimeStyles.None, out DateTime parsedEndDate))
                 {
                     result.EndDate = parsedEndDate;
                 }
