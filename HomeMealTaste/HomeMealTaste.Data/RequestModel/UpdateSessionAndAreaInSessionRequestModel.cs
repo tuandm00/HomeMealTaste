@@ -9,8 +9,7 @@ namespace HomeMealTaste.Data.RequestModel
     public class UpdateSessionAndAreaInSessionRequestModel
     {
         public int SessionId { get; set; }
-        public DateTime? CreateDate { get; set; }
-        public DateTime? EndDate { get; set; }
+        public string? Date { get; set; }
         public bool? Status { get; set; }
         public string? SessionType { get; set; }
         public bool? RegisterForMealStatus { get; set; }

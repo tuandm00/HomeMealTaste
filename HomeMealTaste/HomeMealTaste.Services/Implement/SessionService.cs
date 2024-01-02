@@ -587,6 +587,7 @@ namespace HomeMealTaste.Services.Implement
             var entity = _mapper.Map<Session>(request);
             var sessionId = _context.SessionAreas.Where(x => x.SessionId == request.SessionId).Select(x => x.SessionId).FirstOrDefault();
             var result = _context.Sessions.Where(x => x.SessionId == sessionId).FirstOrDefault();
+            var sessionDate = DateTime.ParseExact(request.Date, "dd-MM-yyyy", CultureInfo.InvariantCulture);
             if (result != null)
             {
 
@@ -599,8 +600,8 @@ namespace HomeMealTaste.Services.Implement
                 //    result.EndDate = parsedEndDate;
                 //}
 
-                result.CreateDate = entity.CreateDate;
-                result.EndDate = entity.EndDate;
+                result.CreateDate = sessionDate;
+                result.EndDate = sessionDate;
                 result.SessionType = entity.SessionType;
                 if (string.Equals(result.SessionType, "lunch", StringComparison.OrdinalIgnoreCase))
                 {
@@ -645,10 +646,10 @@ namespace HomeMealTaste.Services.Implement
                 }
             }
             responseModel = _mapper.Map<UpdateSessionAndAreaInSessionResponseModel>(result);
-            //responseModel.StartTime = result.StartTime?.ToString("HH:mm");
-            //responseModel.EndTime = result.EndTime?.ToString("HH:mm");
-            //responseModel.CreateDate = result.CreateDate?.ToString("dd-MM-yyyy");
-            //responseModel.EndDate = result.EndDate?.ToString("dd-MM-yyyy");
+            responseModel.StartTime = result.StartTime?.ToString("HH:mm");
+            responseModel.EndTime = result.EndTime?.ToString("HH:mm");
+            responseModel.CreateDate = result.CreateDate?.ToString("dd-MM-yyyy");
+            responseModel.EndDate = result.EndDate?.ToString("dd-MM-yyyy");
 
             return responseModel;
         }
