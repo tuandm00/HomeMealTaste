@@ -658,7 +658,8 @@ namespace HomeMealTaste.Services.Implement
 
         public async Task<List<GetAllSessionResponseModel>> GetAllSessionWithRegisterForMealTrueAndStatusOn()
         {
-            var result = _context.Sessions.Include(x => x.SessionAreas).ThenInclude(a => a.Area).Where(x => x.Status == true && x.RegisterForMealStatus == true).Select(x => new GetAllSessionResponseModel
+            var result = _context.Sessions.Include(x => x.SessionAreas).ThenInclude(a => a.Area)
+                .Where(x => x.Status == true).Select(x => new GetAllSessionResponseModel
             {
                 SessionId = x.SessionId,
                 CreateDate = ((DateTime)x.CreateDate).ToString("dd-MM-yyyy"),
