@@ -241,7 +241,7 @@ namespace HomeMealTaste.Services.Implement
             }
             var entity = _mapper.Map<Session>(sessionRequest);
             var sessionTypeLower = entity.SessionType.ToLower();
-            entity.CreateDate = DateTime.ParseExact(sessionRequest.Date, "dd-MM-yyyy", CultureInfo.InvariantCulture);
+            entity.CreateDate = GetDateTimeTimeZoneVietNam();
             entity.EndDate = DateTime.ParseExact(sessionRequest.Date, "dd-MM-yyyy", CultureInfo.InvariantCulture);
 
             if (sessionRequest.AreaIds != null)
@@ -583,11 +583,12 @@ namespace HomeMealTaste.Services.Implement
         public async Task<UpdateSessionAndAreaInSessionResponseModel> UpdateSessionAndAreaInSession(UpdateSessionAndAreaInSessionRequestModel request)
         {
             var responseModel = new UpdateSessionAndAreaInSessionResponseModel();
-
+            var datenow = GetDateTimeTimeZoneVietNam();
             var entity = _mapper.Map<Session>(request);
             var sessionId = _context.SessionAreas.Where(x => x.SessionId == request.SessionId).Select(x => x.SessionId).FirstOrDefault();
-            var result = _context.Sessions.Where(x => x.SessionId == sessionId).FirstOrDefault();
-            var sessionDate = DateTime.ParseExact(request.Date, "dd-MM-yyyy", CultureInfo.InvariantCulture);
+            var result = _context.Sessions.Where(x => x.SessionId == sessionId && x.EndDate.Value.Date >= datenow.Date).FirstOrDefault();
+            var sessionCreateDate = GetDateTimeTimeZoneVietNam();
+            var sessionEndDate = DateTime.ParseExact(request.EndDate, "dd-MM-yyyy", CultureInfo.InvariantCulture);
             if (result != null)
             {
 
@@ -600,8 +601,8 @@ namespace HomeMealTaste.Services.Implement
                 //    result.EndDate = parsedEndDate;
                 //}
 
-                result.CreateDate = sessionDate;
-                result.EndDate = sessionDate;
+                result.CreateDate = sessionCreateDate;
+                result.EndDate = sessionEndDate;
                 result.SessionType = entity.SessionType;
                 if (string.Equals(result.SessionType, "lunch", StringComparison.OrdinalIgnoreCase))
                 {
@@ -645,6 +646,7 @@ namespace HomeMealTaste.Services.Implement
                     await _context.SaveChangesAsync();
                 }
             }
+            else throw new Exception("Can not Update Session in the past");
             responseModel = _mapper.Map<UpdateSessionAndAreaInSessionResponseModel>(result);
             responseModel.StartTime = result.StartTime?.ToString("HH:mm");
             responseModel.EndTime = result.EndTime?.ToString("HH:mm");
