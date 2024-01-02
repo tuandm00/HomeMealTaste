@@ -590,22 +590,14 @@ namespace HomeMealTaste.Services.Implement
             if (result != null)
             {
 
-                if (DateTime.TryParseExact(request.CreateDate.ToString(), "dd-MM-yyyy", CultureInfo.InvariantCulture, DateTimeStyles.None, out DateTime parsedCreateDate))
+                if (request.EndDate.HasValue && DateTime.TryParseExact(request.EndDate.Value.ToString("dd-MM-yyyy"), "dd-MM-yyyy", CultureInfo.InvariantCulture, DateTimeStyles.None, out DateTime parsedCreateDate))
                 {
                     result.CreateDate = parsedCreateDate;
                 }
-                if (DateTime.TryParseExact(request.EndDate.ToString(), "dd-MM-yyyy", CultureInfo.InvariantCulture, DateTimeStyles.None, out DateTime parsedEndDate))
+                if (request.EndDate.HasValue && DateTime.TryParseExact(request.EndDate.Value.ToString("dd-MM-yyyy"), "dd-MM-yyyy", CultureInfo.InvariantCulture, DateTimeStyles.None, out DateTime parsedEndDate))
                 {
                     result.EndDate = parsedEndDate;
                 }
-                //if (DateTime.TryParseExact(request.StartTime, "HH:mm", CultureInfo.InvariantCulture, DateTimeStyles.None, out DateTime parsedStartTime))
-                //{
-                //    entity.StartTime = parsedStartTime;
-                //}
-                //if (DateTime.TryParseExact(request.EndTime, "HH:mm", CultureInfo.InvariantCulture, DateTimeStyles.None, out DateTime parsedEndTime))
-                //{
-                //    entity.EndTime = parsedEndTime;
-                //}
 
                 //result.CreateDate = entity.CreateDate;
                 //result.EndDate = entity.EndDate;
