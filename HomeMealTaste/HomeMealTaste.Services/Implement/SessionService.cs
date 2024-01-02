@@ -590,17 +590,17 @@ namespace HomeMealTaste.Services.Implement
             if (result != null)
             {
 
-                if (request.EndDate.HasValue && DateTime.TryParseExact(request.EndDate.Value.ToString("dd-MM-yyyy"), "dd-MM-yyyy", CultureInfo.InvariantCulture, DateTimeStyles.None, out DateTime parsedCreateDate))
-                {
-                    result.CreateDate = parsedCreateDate;
-                }
-                if (request.EndDate.HasValue && DateTime.TryParseExact(request.EndDate.Value.ToString("dd-MM-yyyy"), "dd-MM-yyyy", CultureInfo.InvariantCulture, DateTimeStyles.None, out DateTime parsedEndDate))
-                {
-                    result.EndDate = parsedEndDate;
-                }
+                //if (request.EndDate.HasValue && DateTime.TryParseExact(request.EndDate.Value.ToString("dd-MM-yyyy"), "dd-MM-yyyy", CultureInfo.InvariantCulture, DateTimeStyles.None, out DateTime parsedCreateDate))
+                //{
+                //    result.CreateDate = parsedCreateDate;
+                //}
+                //if (request.EndDate.HasValue && DateTime.TryParseExact(request.EndDate.Value.ToString("dd-MM-yyyy"), "dd-MM-yyyy", CultureInfo.InvariantCulture, DateTimeStyles.None, out DateTime parsedEndDate))
+                //{
+                //    result.EndDate = parsedEndDate;
+                //}
 
-                //result.CreateDate = entity.CreateDate;
-                //result.EndDate = entity.EndDate;
+                result.CreateDate = entity.CreateDate.Value.Date;
+                result.EndDate = entity.EndDate.Value.Date;
                 result.SessionType = entity.SessionType;
                 if (string.Equals(result.SessionType, "lunch", StringComparison.OrdinalIgnoreCase))
                 {
