@@ -661,6 +661,35 @@ namespace HomeMealTaste.Services.Implement
             return responseModel;
         }
 
+        public async Task<List<GetAllSessionResponseModel>> GetAllSessionWithRegisterForMealTrueAndStatusOn()
+        {
+            var result = _context.Sessions.Include(x => x.SessionAreas).ThenInclude(a => a.Area).Where(x => x.Status == true && x.RegisterForMealStatus == true).Select(x => new GetAllSessionResponseModel
+            {
+                SessionId = x.SessionId,
+                CreateDate = ((DateTime)x.CreateDate).ToString("dd-MM-yyyy"),
+                StartTime = ((DateTime)x.StartTime).ToString("HH:mm"),
+                EndTime = ((DateTime)x.EndTime).ToString("HH:mm"),
+                EndDate = ((DateTime)x.EndDate).ToString("dd-MM-yyyy"),
+                UserId = x.UserId,
+                BookingSlotStatus = x.BookingSlotStatus,
+                RegisterForMealStatus = x.RegisterForMealStatus,
+                AreaDtoGetAllSession = x.SessionAreas.Select(a => new AreaDtoGetAllSession
+                {
+                    AreaId = a.Area.AreaId,
+                    AreaName = a.Area.AreaName,
+                    Address = a.Area.Address,
+                }).ToList(),
+                SessionType = x.SessionType,
+                SessionName = x.SessionName,
+
+                Status = x.Status,
+                Message = "Success",
+            });
+
+            var mapped = result.Select(r => _mapper.Map<GetAllSessionResponseModel>(r)).ToList();
+            return mapped;
+        }
+
         //public async Task<List<GetAllSessionByAreaIdResponseModel>> GetAllSessionByAreaIdWithStatusTrueInDay(int areaid)
         //{
         //    var datenow = GetDateTimeTimeZoneVietNam();
