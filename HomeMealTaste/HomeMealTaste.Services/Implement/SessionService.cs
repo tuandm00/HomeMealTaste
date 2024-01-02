@@ -223,8 +223,6 @@ namespace HomeMealTaste.Services.Implement
 
             entity.Status = true;
             entity.UserId = 2;
-            entity.BookingSlotStatus = false;
-            entity.RegisterForMealStatus = true;
 
         }
         public async Task<SessionResponseModel> CreateSessionWithDay(SessionRequestModel sessionRequest)
@@ -243,7 +241,8 @@ namespace HomeMealTaste.Services.Implement
             var sessionTypeLower = entity.SessionType.ToLower();
             entity.CreateDate = GetDateTimeTimeZoneVietNam();
             entity.EndDate = DateTime.ParseExact(sessionRequest.Date, "dd-MM-yyyy", CultureInfo.InvariantCulture);
-
+            entity.BookingSlotStatus = sessionRequest.BookingSlotStatus;
+            entity.RegisterForMealStatus = sessionRequest.RegisterForMealStatus;
             if (sessionRequest.AreaIds != null)
             {
                 if (await SessionTypeExistsInAreaInDayNow(sessionRequest.AreaIds, sessionTypeLower, (DateTime)entity.EndDate))
@@ -497,7 +496,8 @@ namespace HomeMealTaste.Services.Implement
 
             entity.CreateDate = sessionRequest.CreateDate;
             entity.EndDate = sessionRequest.EndDate.Value.AddDays(1);
-
+            entity.BookingSlotStatus = sessionRequest.BookingSlotStatus;
+            entity.RegisterForMealStatus = sessionRequest.RegisterForMealStatus;
             if (sessionRequest.AreaIds != null)
             {
                 var check = await SessionTypeExistsInAreaInNextDay(sessionRequest.AreaIds, sessionTypeLower, (DateTime)entity.EndDate);
@@ -656,7 +656,7 @@ namespace HomeMealTaste.Services.Implement
             return responseModel;
         }
 
-        public async Task<List<GetAllSessionResponseModel>> GetAllSessionWithRegisterForMealTrueAndStatusOn()
+        public async Task<List<GetAllSessionResponseModel>> GetAllSessionStatusOn()
         {
             var result = _context.Sessions.Include(x => x.SessionAreas).ThenInclude(a => a.Area)
                 .Where(x => x.Status == true).Select(x => new GetAllSessionResponseModel

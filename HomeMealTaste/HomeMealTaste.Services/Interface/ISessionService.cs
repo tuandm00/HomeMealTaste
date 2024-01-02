@@ -20,7 +20,7 @@ namespace HomeMealTaste.Services.Interface
         Task ChangeStatusRegisterForMeal(int sessionid);
         Task ChangeStatusBookingSlot(int sessionid);
         Task<List<GetAllSessionResponseModel>> GetAllSession();
-        Task<List<GetAllSessionResponseModel>> GetAllSessionWithRegisterForMealTrueAndStatusOn();
+        Task<List<GetAllSessionResponseModel>> GetAllSessionStatusOn();
         Task<List<GetAllSessionByAreaIdResponseModel>> GetAllSessionByAreaId(int areaid);
         Task<List<GetAllSessionByAreaIdResponseModel>> GetAllSessionByAreaIdWithStatusTrue(int areaid);
         //Task<List<GetAllSessionByAreaIdResponseModel>> GetAllSessionByAreaIdWithStatusTrueInDay(int areaid);

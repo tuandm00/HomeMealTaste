@@ -12,5 +12,7 @@ namespace HomeMealTaste.Data.RequestModel
         public List<int>? AreaIds { get; set; }
         public DateTime? CreateDate { get; set; }
         public DateTime? EndDate { get; set; }
+        public bool? RegisterForMealStatus { get; set; }
+        public bool? BookingSlotStatus { get; set; }
     }
 }

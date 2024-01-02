@@ -91,10 +91,10 @@ namespace HomeMealTaste.Controllers
             var result = await _sessionService.GetSingleSessionBySessionId(sessionid);
             return Ok(result);
         }
-        [HttpGet("get-all-session-with-register-for-meal-true-and-status-on")]
-        public async Task<IActionResult> GetAllSessionWithRegisterForMealTrueAndStatusOn()
+        [HttpGet("get-all-session-with-status-on")]
+        public async Task<IActionResult> GetAllSessionStatusOn()
         {
-            var result = await _sessionService.GetAllSessionWithRegisterForMealTrueAndStatusOn();
+            var result = await _sessionService.GetAllSessionStatusOn();
             return Ok(result);
         }
         [HttpPatch("change-status-register-for-meal")]
