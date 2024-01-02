@@ -9,10 +9,10 @@ namespace HomeMealTaste.Data.ResponseModel
     public class UpdateSessionAndAreaInSessionResponseModel
     {
         public int SessionId { get; set; }
-        public string? CreateDate { get; set; }
-        public string? StartTime { get; set; }
-        public string? EndTime { get; set; }
-        public string? EndDate { get; set; }
+        public DateTime? CreateDate { get; set; }
+        public DateTime? StartTime { get; set; }
+        public DateTime? EndTime { get; set; }
+        public DateTime? EndDate { get; set; }
         public int? UserId { get; set; }
         public bool? Status { get; set; }
         public string? SessionType { get; set; }

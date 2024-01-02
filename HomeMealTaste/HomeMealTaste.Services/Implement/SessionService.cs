@@ -645,10 +645,10 @@ namespace HomeMealTaste.Services.Implement
                 }
             }
             responseModel = _mapper.Map<UpdateSessionAndAreaInSessionResponseModel>(result);
-            responseModel.StartTime = result.StartTime?.ToString("HH:mm");
-            responseModel.EndTime = result.EndTime?.ToString("HH:mm");
-            responseModel.CreateDate = result.CreateDate?.ToString("dd-MM-yyyy");
-            responseModel.EndDate = result.EndDate?.ToString("dd-MM-yyyy");
+            //responseModel.StartTime = result.StartTime?.ToString("HH:mm");
+            //responseModel.EndTime = result.EndTime?.ToString("HH:mm");
+            //responseModel.CreateDate = result.CreateDate?.ToString("dd-MM-yyyy");
+            //responseModel.EndDate = result.EndDate?.ToString("dd-MM-yyyy");
 
             return responseModel;
         }
