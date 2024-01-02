@@ -605,21 +605,21 @@ namespace HomeMealTaste.Services.Implement
                 result.SessionType = entity.SessionType;
                 if (string.Equals(result.SessionType, "lunch", StringComparison.OrdinalIgnoreCase))
                 {
-                    result.StartTime = entity.CreateDate?.Date.AddHours(10);
+                    result.StartTime = entity.StartTime?.AddHours(10);
                     result.EndTime = result.StartTime?.AddHours(2);
                     result.SessionType = "Lunch";
 
                 }
                 else if (string.Equals(result.SessionType, "evening", StringComparison.OrdinalIgnoreCase))
                 {
-                    result.StartTime = entity.CreateDate?.Date.AddHours(16);
+                    result.StartTime = entity.StartTime?.AddHours(16);
                     result.EndTime = result.StartTime?.AddHours(4);
                     result.SessionType = "Evening";
 
                 }
                 else if (string.Equals(result.SessionType, "dinner", StringComparison.OrdinalIgnoreCase))
                 {
-                    result.StartTime = entity.CreateDate?.Date.AddHours(17);
+                    result.StartTime = entity.StartTime?.AddHours(17);
                     result.EndTime = result.StartTime?.AddHours(2);
                     result.SessionType = "Dinner";
                 }
