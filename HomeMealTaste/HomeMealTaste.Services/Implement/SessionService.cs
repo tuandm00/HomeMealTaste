@@ -587,7 +587,7 @@ namespace HomeMealTaste.Services.Implement
             var entity = _mapper.Map<Session>(request);
             var sessionId = _context.SessionAreas.Where(x => x.SessionId == request.SessionId).Select(x => x.SessionId).FirstOrDefault();
             var result = _context.Sessions.Where(x => x.SessionId == sessionId && x.EndDate.Value.Date >= datenow.Date).FirstOrDefault();
-            var sessionCreateDate = GetDateTimeTimeZoneVietNam();
+            var sessionCreateDate = datenow;
             var sessionEndDate = DateTime.ParseExact(request.EndDate, "dd-MM-yyyy", CultureInfo.InvariantCulture);
             if (result != null)
             {
