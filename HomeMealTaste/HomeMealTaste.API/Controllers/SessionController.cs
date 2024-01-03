@@ -121,5 +121,13 @@ namespace HomeMealTaste.Controllers
         //    return Ok(result);
 
         //}
+
+        [HttpGet("get-all-session-with-status-true-and-booking-slot-true")]
+        public async Task<IActionResult> GetAllSessionWithStatusTrueAndBookingSlotTrue()
+        {
+            var result = await _sessionService.GetAllSessionWithStatusTrueAndBookingSlotTrue();
+            return Ok(result);
+
+        }
     }
 }

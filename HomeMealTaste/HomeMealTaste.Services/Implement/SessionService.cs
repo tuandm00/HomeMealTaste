@@ -686,6 +686,28 @@ namespace HomeMealTaste.Services.Implement
             return mapped;
         }
 
+        public async Task<List<SessionResponseModel>> GetAllSessionWithStatusTrueAndBookingSlotTrue()
+        {
+            var result = _context.Sessions.Include(x => x.SessionAreas).ThenInclude(x => x.Area).Where(x => x.Status == true && x.BookingSlotStatus == true).Select(x => new SessionResponseModel
+            {
+                SessionId = x.SessionId,
+                CreateDate = ((DateTime)x.CreateDate).ToString("dd-MM-yyyy"),
+                StartTime = ((DateTime)x.StartTime).ToString("HH:mm"),
+                EndTime = ((DateTime)x.EndTime).ToString("HH:mm"),
+                EndDate = ((DateTime)x.EndDate).ToString("dd-MM-yyyy"),
+                Status = x.Status,
+                SessionName = x.SessionName,
+                SessionType = x.SessionType,
+                BookingSlotStatus = x.BookingSlotStatus,
+                RegisterForMealStatus = x.RegisterForMealStatus,
+                UserId = x.UserId,
+                AreaId = x.SessionAreas.FirstOrDefault().Area.AreaId,
+            }).ToList();
+
+            var mapped = result.Select(r => _mapper.Map<SessionResponseModel>(r)).ToList();
+            return mapped;
+        }
+
         //public async Task<List<GetAllSessionByAreaIdResponseModel>> GetAllSessionByAreaIdWithStatusTrueInDay(int areaid)
         //{
         //    var datenow = GetDateTimeTimeZoneVietNam();
