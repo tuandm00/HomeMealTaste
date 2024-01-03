@@ -60,5 +60,17 @@ namespace HomeMealTaste.Services.Implement
             var mapped = _mapper.Map<UpdateDishTypeResponseModel>(result);
             return mapped;
         }
+
+        public async Task<DishTypeResponseModel> GetSingleDishTypeById(int dishtypeId)
+        {
+            var result = _context.DishTypes.Where(x => x.DishTypeId == dishtypeId).Select(x => new DishTypeResponseModel
+            {
+                Description = x.Description,
+                Name = x.Name
+                
+            }).FirstOrDefault();
+            var mapped = _mapper.Map<DishTypeResponseModel>(result);
+            return mapped;
+        }
     }
 }

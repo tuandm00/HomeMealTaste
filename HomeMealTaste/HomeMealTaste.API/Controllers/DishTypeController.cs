@@ -59,5 +59,11 @@ namespace HomeMealTaste.Controllers
             var result = await _dishTypeServices.UpdateDishType(request);
             return Ok(result);
         }
+        [HttpGet("get-single-dish-type")]
+        public async Task<IActionResult> GetSingleDishTypeById(int dishtypeId)
+        {
+            var result = await _dishTypeServices.GetSingleDishTypeById(dishtypeId);
+            return Ok(result);
+        }
     }
 }

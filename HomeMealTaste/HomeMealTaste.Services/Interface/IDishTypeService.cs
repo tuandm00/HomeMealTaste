@@ -14,6 +14,7 @@ namespace HomeMealTaste.Services.Interface
         Task<PagedList<DishType>> GetAllDishType(PagingParams pagingParams);
         Task DeleteDishTypeById(int id);
         Task<UpdateDishTypeResponseModel> UpdateDishType(UpdateDishTypeRequestModel request);
+        Task<DishTypeResponseModel> GetSingleDishTypeById(int dishtypeId);
         
     }
 }
