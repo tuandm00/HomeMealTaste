@@ -29,37 +29,42 @@ namespace HomeMealTaste.Services.Implement
 
         public async Task<List<KitchenResponseModel>> GetAllKitchen()
         {
-            var result = _context.Kitchens
-                .Include(x => x.User)
-                .ThenInclude(x => x.Wallets)
-                .ToList();
-            var mapped = result.Select(kitchen =>
+            var result = await _context.Kitchens
+        .Include(x => x.User.Wallets)
+        .Include(x => x.District)
+        .Include(x => x.User.Area)
+        .Select(x => new KitchenResponseModel
+        {
+            KitchenId = x.KitchenId,
+            Name = x.Name,
+            Address = x.Address,
+            UserDtoKitchenResponseModel = new UserDtoKitchenResponseModel
             {
-                var response = _mapper.Map<KitchenResponseModel>(kitchen);
-                response.KitchenId = kitchen.KitchenId;
-                response.UserDtoKitchenResponseModel = new UserDtoKitchenResponseModel
+                UserId = x.User.UserId,
+                Username = x.User.Username,
+                Email = x.User.Email,
+                Phone = x.User.Phone,
+                WalletDtoKitchenResponseModel = new WalletDtoKitchenResponseModel
                 {
-                    UserId = kitchen.User.UserId,
-                    Username = kitchen.User.Username,
-                    Email = kitchen.User.Email,
-                    Phone = kitchen.User.Phone,
-                    WalletDtoKitchenResponseModel = kitchen.User.Wallets
-                .OrderBy(wallet => wallet.WalletId)
-                .Select(wallet => new WalletDtoKitchenResponseModel
-                {
-                    WalletId = wallet.WalletId,
-                    UserId = wallet.UserId,
-                    Balance = wallet.Balance,
-                })
-                .FirstOrDefault(),
-                };
+                    WalletId = x.User.Wallets.FirstOrDefault().WalletId,
+                    Balance = x.User.Wallets.FirstOrDefault().Balance,
+                    UserId = x.User.Wallets.FirstOrDefault().UserId,
+                },
+            },
+            DistrictDtoGetKitchen = new DistrictDtoGetKitchen
+            {
+                DistrictId = x.District.DistrictId,
+                DistrictName = x.District.DistrictName,
+            },
+            AreaDtoGetKitchen = new AreaDtoGetKitchen
+            {
+                AreaId = x.User.Area.AreaId,
+                Address = x.User.Area.Address,
+                AreaName = x.User.Area.AreaName,
+            },
+        }).ToListAsync();
 
-                response.Name = kitchen.Name;
-                response.Address = kitchen.Address;
-
-                return response;
-            }).ToList();
-
+            var mapped = result.Select(results => _mapper.Map<KitchenResponseModel>(results)).ToList();
             return mapped;
         }
 
