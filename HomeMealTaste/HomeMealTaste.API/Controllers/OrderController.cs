@@ -130,6 +130,12 @@ namespace HomeMealTaste.API.Controllers
             var result = await _orderService.GetAllOrderByUserId(userid);
             return Ok(result);
         }
+        [HttpGet("get-all-order-with-status-paid-by-meal-session-id")]
+        public async Task<IActionResult> GetAllOrderWithStatusPaidByMealSessionId(int mealsessionId)
+        {
+            var result = await _orderService.GetAllOrderWithStatusPaidByMealSessionId(mealsessionId);
+            return Ok(result);
+        }
 
     }
 }

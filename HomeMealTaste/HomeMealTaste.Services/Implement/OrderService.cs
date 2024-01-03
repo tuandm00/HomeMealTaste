@@ -1253,6 +1253,23 @@ namespace HomeMealTaste.Services.Implement
             var mappedResults = results.Select(order => _mapper.Map<GetAllOrderByUserIdResponseModel>(order)).ToList();
             return mappedResults;
         }
+
+        public async Task<List<GetAllOrderWithStatusPaidByMealSessionIdResponseModel>> GetAllOrderWithStatusPaidByMealSessionId(int mealsessionId)
+        {
+            var result = _context.Orders.Where(x => x.MealSessionId == mealsessionId && x.Status.Equals("PAID")).Select(x => new GetAllOrderWithStatusPaidByMealSessionIdResponseModel
+            {
+                MealSessionId = x.MealSessionId,
+                CustomerId = x.CustomerId,
+                OrderId = x.OrderId,
+                Quantity = x.Quantity,
+                Status= x.Status,
+                Time = ((DateTime)x.Time).ToString("dd-MM-yyyy HH:mm"),
+                TotalPrice = x.TotalPrice,
+            }).ToList();
+
+            var mapped = result.Select(r => _mapper.Map<GetAllOrderWithStatusPaidByMealSessionIdResponseModel>(r)).ToList();
+            return mapped;
+        }
     }
 }
 

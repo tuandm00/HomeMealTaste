@@ -24,5 +24,7 @@ namespace HomeMealTaste.Services.Interface
         Task<List<GetAllOrderByMealSessionIdResponseModel>> GetAllOrderByMealSessionId(int mealsessionid);
         Task<int> GetTotalPriceWithMealSessionByMealSessionId(int mealsessionid);
         Task<int> GetTotalPriceWithMealSessionBySessionIdAndKitchenId(int sessionId, int kitchenId);
+        Task<List<GetAllOrderWithStatusPaidByMealSessionIdResponseModel>> GetAllOrderWithStatusPaidByMealSessionId(int mealsessionId);
+
     }
 }
