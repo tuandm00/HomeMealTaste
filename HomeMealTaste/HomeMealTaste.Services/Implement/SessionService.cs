@@ -626,9 +626,9 @@ namespace HomeMealTaste.Services.Implement
                 }
                 result.SessionName = $"Session: {result.SessionType}, In: {((DateTime)result.EndDate).ToString("dd-MM-yyyy")}";
                 result.UserId = 2;
-                result.Status = result.Status;
-                result.RegisterForMealStatus = result.RegisterForMealStatus;
-                result.BookingSlotStatus = result.BookingSlotStatus;
+                result.Status = request.Status;
+                result.RegisterForMealStatus = request.RegisterForMealStatus;
+                result.BookingSlotStatus = request.BookingSlotStatus;
 
                 _context.Sessions.Update(result);
                 await _context.SaveChangesAsync();
