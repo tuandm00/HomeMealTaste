@@ -42,6 +42,7 @@ namespace HomeMealTaste.Data.ResponseModel
         public string? SessionType { get; set; }
         public string? SessionName { get; set; }
         public AreaDtoForMealSession? AreaDtoForMealSession { get; set; }
+
     }
 
     public class KitchenDtoForMealSession
@@ -50,6 +51,7 @@ namespace HomeMealTaste.Data.ResponseModel
         public int? UserId { get; set; }
         public string? Name { get; set; }
         public string? Address { get; set; }
+        public AreaDtoForMealSession? AreaDtoForMealSession { get; set; }
     }
 
     public class AreaDtoForMealSession

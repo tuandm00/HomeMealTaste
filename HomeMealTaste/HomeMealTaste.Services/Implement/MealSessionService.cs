@@ -62,17 +62,23 @@ namespace HomeMealTaste.Services.Implement
         public async Task<MealSessionResponseModel> CreateMealSession(MealSessionRequestModel mealSessionRequest)
         {
             var entity = _mapper.Map<MealSession>(mealSessionRequest);
-            entity.Status = "PROCESSING";
-            entity.CreateDate = GetDateTimeTimeZoneVietNam();
+            entity.MealId = mealSessionRequest.MealId;
+            entity.SessionId = mealSessionRequest.SessionId;
             entity.Quantity = mealSessionRequest.Quantity;
             entity.RemainQuantity = entity.Quantity;
+            entity.KitchenId = mealSessionRequest.KitchenId;
+            entity.CreateDate = GetDateTimeTimeZoneVietNam();
+
             var result = await _mealSessionRepository.Create(entity, true);
+
 
             await _context.Entry(result).Reference(m => m.Meal).LoadAsync();
             await _context.Entry(result).Reference(m => m.Session).LoadAsync();
             await _context.Entry(result.Meal).Reference(s => s.Kitchen).LoadAsync();
+            await _context.Entry(result.Kitchen).Reference(a => a.Area).LoadAsync();
 
             var mapped = _mapper.Map<MealSessionResponseModel>(result);
+
             mapped.MealSessionId = result.MealSessionId;
             mapped.Price = (decimal?)result.Price;
             mapped.Quantity = entity.Quantity;
@@ -105,6 +111,12 @@ namespace HomeMealTaste.Services.Implement
                 UserId = result.Meal.Kitchen.UserId,
                 Name = result.Meal.Kitchen.Name,
                 Address = result.Meal.Kitchen.Address,
+                AreaDtoForMealSession = new AreaDtoForMealSession
+                {
+                    AreaId = result.Meal.Kitchen.Area.AreaId,
+                    Address = result.Meal.Kitchen.Area.Address,
+                    AreaName = result.Meal.Kitchen.Area.AreaName,
+                }
             };
             return mapped;
         }
