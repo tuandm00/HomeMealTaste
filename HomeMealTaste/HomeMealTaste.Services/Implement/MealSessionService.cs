@@ -67,6 +67,7 @@ namespace HomeMealTaste.Services.Implement
             entity.Quantity = mealSessionRequest.Quantity;
             entity.RemainQuantity = entity.Quantity;
             entity.KitchenId = mealSessionRequest.KitchenId;
+            entity.Status = "PROCESSING";
             entity.CreateDate = GetDateTimeTimeZoneVietNam();
 
             var result = await _mealSessionRepository.Create(entity, true);
