@@ -17,6 +17,7 @@ namespace HomeMealTaste.Services.Interface
         Task DeleteArea(int areaid);
         Task<UpdateAreaResponseModel> UpdateArea(UpdateAreaRequestModel updateAreaRequest);
         Task<List<GetAllAreaByDistrictIdReponseModel>> GetAllAreaByDistrictId(int districtid);
+        Task<List<GetAllAreaBySessionIdResponseModel>> GetAllAreaBySessionId(int sessionId);
         Task<GetSingleAreaByAreaIdResponseModel> GetSingleAreaByAreaId(int areaid);
     }
 }
