@@ -141,6 +141,12 @@ namespace HomeMealTaste.Services.Implement
                         UserId = x.Meal.Kitchen.KitchenId,
                         Name = x.Meal.Kitchen.Name,
                         Address = x.Meal.Kitchen.Address,
+                        AreaDtoForMealSession = new AreaDtoForMealSession
+                        {
+                            AreaId = x.Meal.Kitchen.Area.AreaId,
+                            Address = x.Meal.Kitchen.Area.Address,
+                            AreaName = x.Meal.Kitchen.Area.AreaName,
+                        },
                     },
                     SessionDtoForMealSession = new SessionDtoForMealSession
                     {
@@ -169,8 +175,6 @@ namespace HomeMealTaste.Services.Implement
                         CreateDate = ((DateTime)x.Meal.CreateDate).ToString("dd-MM-yyyy"),
                         Description = x.Meal.Description,
                     },
-
-
                 })
                 .ToList();
 
