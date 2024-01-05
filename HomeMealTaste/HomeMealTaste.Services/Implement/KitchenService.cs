@@ -9,7 +9,8 @@ using iText.Kernel.Pdf;
 using iText.Layout;
 using iText.Layout.Element;
 using Microsoft.EntityFrameworkCore;
-
+using System.Collections.ObjectModel;
+using System.Globalization;
 
 namespace HomeMealTaste.Services.Implement
 {
@@ -26,7 +27,36 @@ namespace HomeMealTaste.Services.Implement
             _mapper = mapper;
             _context = context;
         }
+        public static DateTime TranferDateTimeByTimeZone(DateTime dateTime, string timezoneArea)
+        {
 
+            ReadOnlyCollection<TimeZoneInfo> collection = TimeZoneInfo.GetSystemTimeZones();
+            var timeZone = collection.ToList().Where(x => x.DisplayName.ToLower().Contains(timezoneArea)).First();
+
+            var timeZoneLocal = TimeZoneInfo.Local;
+
+            var utcDateTime = TimeZoneInfo.ConvertTime(dateTime, timeZoneLocal, timeZone);
+
+            return utcDateTime;
+        }
+
+        public static DateTime GetDateTimeTimeZoneVietNam()
+        {
+
+            return TranferDateTimeByTimeZone(DateTime.Now, "hanoi");
+        }
+        public static DateTime? StringToDateTimeVN(string dateStr)
+        {
+
+            var isValid = System.DateTime.TryParseExact(
+                                dateStr,
+                                "d'/'M'/'yyyy",
+                                CultureInfo.InvariantCulture,
+                                DateTimeStyles.None,
+                                out var date
+                            );
+            return isValid ? date : null;
+        }
         public async Task<List<KitchenResponseModel>> GetAllKitchen()
         {
             var result = await _context.Kitchens
@@ -186,8 +216,8 @@ namespace HomeMealTaste.Services.Implement
 
         public async Task<List<GetAllKitchenByAreaIdResponseModel>> GetAllKitchenByAreaId(int areaId)
         {
-
-            var result = _context.Kitchens.Include(x => x.MealSessions).Where(x => x.AreaId == areaId && x.MealSessions.Any()).Select(x => new GetAllKitchenByAreaIdResponseModel
+            var datenow = GetDateTimeTimeZoneVietNam();
+            var result = _context.Kitchens.Include(x => x.MealSessions).Where(x => x.AreaId == areaId && x.MealSessions.Any(ms => ms.CreateDate.Value.Date == datenow.Date)).Select(x => new GetAllKitchenByAreaIdResponseModel
             {
                 KitchenId = x.KitchenId,
                 Address = x.Address,
