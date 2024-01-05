@@ -325,7 +325,7 @@ namespace HomeMealTaste.Services.Implement
         {
             var result = await _context.Sessions.FindAsync(sessionid);
             var datenow = GetDateTimeTimeZoneVietNam();
-            if (result != null && result.Status == true && result.EndDate.Value.Date == datenow)
+            if (result != null && result.Status == true && result.EndDate.Value.Date >= datenow)
             {
                 if (autoCreatingstatus == true)
                 {
