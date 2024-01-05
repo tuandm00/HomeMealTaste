@@ -23,10 +23,10 @@ namespace HomeMealTaste.Controllers
         }
 
         [HttpPost]
-        public async Task<MealSessionResponseModel> CreateMealSession(MealSessionRequestModel mealSessionRequest)
+        public async Task<IActionResult> CreateMealSession(MealSessionRequestModel mealSessionRequest)
         {
             var result = await _mealSessionService.CreateMealSession(mealSessionRequest);
-            return result;
+            return Ok(result);
         }
 
         //[HttpGet("get-all-meal-sessions")]

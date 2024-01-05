@@ -10,7 +10,7 @@ namespace HomeMealTaste.Services.Interface
 {
     public interface IMealSessionService
     {
-        Task<MealSessionResponseModel> CreateMealSession(MealSessionRequestModel mealSessionRequest);
+        Task<List<MealSessionResponseModel>> CreateMealSession(MealSessionRequestModel mealSessionRequest);
         ////Task<PagedList<GetAllMealInCurrentSessionResponseModel>> GetAllMealSession(GetAllMealRequest pagingParams);
         Task<List<MealSessionResponseModel>> GetAllMealSession();
         Task<GetSingleMealSessionByIdResponseModel> GetSingleMealSessionById(int mealsessionid);
