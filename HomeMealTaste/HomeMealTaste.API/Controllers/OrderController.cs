@@ -136,6 +136,12 @@ namespace HomeMealTaste.API.Controllers
             var result = await _orderService.GetAllOrderWithStatusPaidByMealSessionId(mealsessionId);
             return Ok(result);
         }
+        [HttpGet("get-all-order-with-status-completed")]
+        public async Task<IActionResult> GetAllOrderWithStatusCompleted()
+        {
+            var result = await _orderService.GetAllOrderWithStatusCompleted();
+            return Ok(result);
+        }
 
     }
 }
