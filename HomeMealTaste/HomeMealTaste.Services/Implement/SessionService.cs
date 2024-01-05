@@ -324,8 +324,8 @@ namespace HomeMealTaste.Services.Implement
         public async Task ChangeStatusSession(int sessionid, bool autoCreatingstatus)
         {
             var result = await _context.Sessions.FindAsync(sessionid);
-
-            if (result != null && result.Status == true)
+            var datenow = GetDateTimeTimeZoneVietNam();
+            if (result != null && result.Status == true && result.EndDate.Value.Date == datenow)
             {
                 if (autoCreatingstatus == true)
                 {
@@ -348,6 +348,10 @@ namespace HomeMealTaste.Services.Implement
                 {
                     result.Status = false;
                 }
+            }
+            else
+            {
+                throw new Exception("Session is not In Day");
             }
 
             await _context.SaveChangesAsync();
@@ -705,6 +709,38 @@ namespace HomeMealTaste.Services.Implement
             }).ToList();
 
             var mapped = result.Select(r => _mapper.Map<SessionResponseModel>(r)).ToList();
+            return mapped;
+        }
+
+        public async Task<List<GetAllSessionResponseModel>> GetAllSessionByMealId(int mealId)
+        {
+            var datenow = GetDateTimeTimeZoneVietNam();
+            var getListSessionId = _context.MealSessions.Where(x => x.MealId == mealId).Select(x => x.SessionId).ToList(); 
+            var result = _context.MealSessions.Include(x => x.Session).ThenInclude(x => x.SessionAreas).ThenInclude(a => a.Area)
+                .Where(x => getListSessionId.Contains(x.SessionId)).Select(x => new GetAllSessionResponseModel
+                {
+                    SessionId = x.Session.SessionId,
+                    CreateDate = ((DateTime)x.Session.CreateDate).ToString("dd-MM-yyyy"),
+                    StartTime = ((DateTime)x.Session.StartTime).ToString("HH:mm"),
+                    EndTime = ((DateTime)x.Session.EndTime).ToString("HH:mm"),
+                    EndDate = ((DateTime)x.Session.EndDate).ToString("dd-MM-yyyy"),
+                    UserId = x.Session.UserId,
+                    BookingSlotStatus = x.Session.BookingSlotStatus,
+                    RegisterForMealStatus = x.Session.RegisterForMealStatus,
+                    AreaDtoGetAllSession = x.Session.SessionAreas.Select(a => new AreaDtoGetAllSession
+                    {
+                        AreaId = a.Area.AreaId,
+                        AreaName = a.Area.AreaName,
+                        Address = a.Area.Address,
+                    }).ToList(),
+                    SessionType = x.Session.SessionType,
+                    SessionName = x.Session.SessionName,
+
+                    Status = x.Session.Status,
+                    Message = "Success",
+                });
+
+            var mapped = result.Select(r => _mapper.Map<GetAllSessionResponseModel>(r)).ToList();
             return mapped;
         }
 

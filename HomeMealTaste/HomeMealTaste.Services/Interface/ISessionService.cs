@@ -21,6 +21,7 @@ namespace HomeMealTaste.Services.Interface
         Task ChangeStatusBookingSlot(int sessionid);
         Task<List<GetAllSessionResponseModel>> GetAllSession();
         Task<List<GetAllSessionResponseModel>> GetAllSessionStatusOn();
+        Task<List<GetAllSessionResponseModel>> GetAllSessionByMealId(int mealId);
         Task<List<GetAllSessionByAreaIdResponseModel>> GetAllSessionByAreaId(int areaid);
         Task<List<GetAllSessionByAreaIdResponseModel>> GetAllSessionByAreaIdWithStatusTrue(int areaid);
         Task<List<SessionResponseModel>> GetAllSessionWithStatusTrueAndBookingSlotTrue();
