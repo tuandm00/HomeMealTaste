@@ -101,7 +101,7 @@ namespace HomeMealTaste.Services.Implement
         })
         .FirstOrDefaultAsync();
 
-            var mapped =  _mapper.Map<KitchenResponseModel>(result);
+            var mapped = _mapper.Map<KitchenResponseModel>(result);
             return mapped;
         }
 
@@ -176,7 +176,7 @@ namespace HomeMealTaste.Services.Implement
                 AreaName = x.Area.AreaName,
                 DistrictId = x.Area.DistrictId,
             }
-            
+
         })
         .FirstOrDefaultAsync();
 
@@ -186,7 +186,8 @@ namespace HomeMealTaste.Services.Implement
 
         public async Task<List<GetAllKitchenByAreaIdResponseModel>> GetAllKitchenByAreaId(int areaId)
         {
-            var result = _context.Kitchens.Include(x => x.MealSessions).Where(x => x.AreaId == areaId).Select(x => new GetAllKitchenByAreaIdResponseModel
+
+            var result = _context.Kitchens.Include(x => x.MealSessions).Where(x => x.AreaId == areaId && x.MealSessions.Any()).Select(x => new GetAllKitchenByAreaIdResponseModel
             {
                 KitchenId = x.KitchenId,
                 Address = x.Address,
@@ -200,20 +201,20 @@ namespace HomeMealTaste.Services.Implement
                     Address = x.Area.Address,
                 },
 
-                MealSessionDtoGetAllKitchenByAreaId = x.MealSessions != null && x.MealSessions.Any()
-            ? x.MealSessions.Select(x => new MealSessionDtoGetAllKitchenByAreaId
-            {
-                MealSessionId = x.MealSessionId,
-                MealId = x.MealId,
-                CreateDate = ((DateTime)x.CreateDate).ToString("dd-MM-yyyy"),
-                KitchenId = x.KitchenId,
-                Price = x.Price,
-                Quantity = x.Quantity,
-                RemainQuantity = x.RemainQuantity,
-                SessionId = x.SessionId,
-                Status = x.Status,
-            }).ToList()
-            : null
+                MealSessionDtoGetAllKitchenByAreaId = x.MealSessions
+                .Select(ms => new MealSessionDtoGetAllKitchenByAreaId
+                {
+                    MealSessionId = ms.MealSessionId,
+                    MealId = ms.MealId,
+                    CreateDate = ((DateTime)ms.CreateDate).ToString("dd-MM-yyyy"),
+                    KitchenId = ms.KitchenId,
+                    Price = ms.Price,
+                    Quantity = ms.Quantity,
+                    RemainQuantity = ms.RemainQuantity,
+                    SessionId = ms.SessionId,
+                    Status = ms.Status,
+                })
+                .ToList()
             }).ToList();
 
             var mapped = result.Select(r => _mapper.Map<GetAllKitchenByAreaIdResponseModel>(r)).ToList();
@@ -221,5 +222,5 @@ namespace HomeMealTaste.Services.Implement
 
         }
     }
-    
+
 }
