@@ -125,6 +125,12 @@ namespace HomeMealTaste.Controllers
             var result = await _mealSessionService.GetAllMealSessionByAreaIdAndSessionIdAndKitchenId(areaId, sessionId, kitchenId);
             return Ok(result);
         }
+        [HttpGet("get-all-meal-session-with-status-processing")]
+        public async Task<IActionResult> GetAllMealSessionWithStatusProcessing()
+        {
+            var result = await _mealSessionService.GetAllMealSessionWithStatusProcessing();
+            return Ok(result);
+        }
     }
 }
 
