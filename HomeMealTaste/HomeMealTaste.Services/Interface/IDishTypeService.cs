@@ -11,7 +11,7 @@ namespace HomeMealTaste.Services.Interface
     public interface IDishTypeService
     {
         Task<DishTypeResponseModel> CreateDishType(DishTypeRequestModel requestModel);
-        Task<PagedList<DishType>> GetAllDishType(PagingParams pagingParams);
+        Task<List<DishTypeResponseModel>> GetAllDishType();
         Task DeleteDishTypeById(int id);
         Task<UpdateDishTypeResponseModel> UpdateDishType(UpdateDishTypeRequestModel request);
         Task<DishTypeResponseModel> GetSingleDishTypeById(int dishtypeId);

@@ -8,6 +8,7 @@ namespace HomeMealTaste.Services.ResponseModel
 {
     public class DishTypeResponseModel
     {
+        public int DishTypeId { get; set; }
         public string? Name { get; set; }
         public string? Description { get; set; }
     }

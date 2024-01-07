@@ -29,10 +29,11 @@ namespace HomeMealTaste.Services.Implement
 
         }
 
-        public async Task<PagedList<DishType>> GetAllDishType(PagingParams pagingParams)
-        {
-            return await _dishTypeRepository.GetWithPaging(pagingParams);
-        }
+        //public async Task<PagedList<DishType>> GetAllDishType(PagingParams pagingParams)
+        //{
+        //    return await _dishTypeRepository.GetWithPaging(pagingParams);
+        //}
+
 
         public Task DeleteDishTypeById(int id)
         {
@@ -70,6 +71,18 @@ namespace HomeMealTaste.Services.Implement
                 
             }).FirstOrDefault();
             var mapped = _mapper.Map<DishTypeResponseModel>(result);
+            return mapped;
+        }
+
+        public async Task<List<DishTypeResponseModel>> GetAllDishType()
+        {
+            var result = _context.DishTypes.Select(x => new DishTypeResponseModel
+            {
+                DishTypeId= x.DishTypeId,
+                Description= x.Description,
+                Name= x.Name
+            }).ToList();
+            var mapped = result.Select(r => _mapper.Map<DishTypeResponseModel>(r)).ToList();
             return mapped;
         }
     }

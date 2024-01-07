@@ -32,19 +32,10 @@ namespace HomeMealTaste.Controllers
         }
 
         [HttpGet("get-all-dish-type")]
-        public async Task<ApiResponse<PagedList<DishType>>> GetAllDish([FromQuery] PagingParams pagingParams)
+        public async Task<IActionResult> GetAllDishType()
         {
-            var result = await _dishTypeServices.GetAllDishType(pagingParams);
-            var metadata = new
-            {
-                result.TotalCount,
-                result.TotalPages,
-                result.PageSize,
-                result.CurrentPage,
-                result.HasNext,
-                result.HasPrevious
-            };
-            return ApiResponse<List<DishType>>.Success(result, metadata);
+            var result = await _dishTypeServices.GetAllDishType();
+            return Ok(result);
         }   
         
         [HttpDelete]
