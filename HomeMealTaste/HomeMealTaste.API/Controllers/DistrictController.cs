@@ -32,5 +32,18 @@ namespace HomeMealTaste.API.Controllers
             var result =  _districtService.GetAllDistrict();
             return Ok(result);
         }     
+
+        [HttpPut("update-district")]
+        public async Task<IActionResult> UpdateDistrict(UpdateDistrictRequestModel districtRequest)
+        {
+            var result = await _districtService.UpdateDistrict(districtRequest);
+            return Ok(result);
+        }   
+        [HttpDelete("delete-district")]
+        public async Task<IActionResult> DeleteDistrict(int districtId)
+        {
+            var result = await _districtService.DeleteDistrict(districtId);
+            return Ok(result);
+        }     
     }
 }

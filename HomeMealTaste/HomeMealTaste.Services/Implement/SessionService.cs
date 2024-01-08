@@ -321,40 +321,89 @@ namespace HomeMealTaste.Services.Implement
         //    return result;
         //}
 
-        public async Task ChangeStatusSession(int sessionid, bool autoCreatingstatus)
+        public async Task ChangeStatusSession(ChangeStatusSessionRequestModel request, bool autoCreatingstatus)
         {
-            var result = await _context.Sessions.FindAsync(sessionid);
+            //var result = await _context.Sessions.FindAsync(sessionid);
+            //var datenow = GetDateTimeTimeZoneVietNam();
+            //if (result != null && result.Status == true && result.EndDate.Value.Date >= datenow.Date)
+            //{
+            //    if (autoCreatingstatus == true)
+            //    {
+            //        result.Status = false;
+            //        await _transactionService.SaveTotalPriceAfterFinishSession(sessionid);
+
+            //        var areas = await _context.SessionAreas.Where(a => a.SessionId == sessionid).Select(a => a.AreaId).ToListAsync();
+            //        var areaIds = areas.Where(a => a.HasValue).Select(a => a.Value).ToList();
+
+            //        var sessionR = new SessionForChangeStatusRequestModel
+            //        {
+            //            SessionType = result.SessionType,
+            //            AreaIds = areaIds,
+            //            CreateDate = result.CreateDate,
+            //            EndDate = result.EndDate,
+            //        };
+            //        await CreateSessionForNextDay(sessionR);
+            //    }
+            //    else
+            //    {
+            //        result.Status = false;
+            //    }
+            //}
+            //else
+            //{
+            //    throw new Exception("Session is not In Day");
+            //}
+
+            //await _context.SaveChangesAsync();
+
             var datenow = GetDateTimeTimeZoneVietNam();
-            if (result != null && result.Status == true && result.EndDate.Value.Date >= datenow.Date)
+
+            if (request.sessionIds != null && request.sessionIds.Any())
             {
-                if (autoCreatingstatus == true)
+                foreach (var sessionid in request.sessionIds)
                 {
-                    result.Status = false;
-                    await _transactionService.SaveTotalPriceAfterFinishSession(sessionid);
+                    var result = await _context.Sessions.FindAsync(sessionid);
 
-                    var areas = await _context.SessionAreas.Where(a => a.SessionId == sessionid).Select(a => a.AreaId).ToListAsync();
-                    var areaIds = areas.Where(a => a.HasValue).Select(a => a.Value).ToList();
-
-                    var sessionR = new SessionForChangeStatusRequestModel
+                    if (result != null && result.Status == true && result.EndDate.Value.Date >= datenow.Date)
                     {
-                        SessionType = result.SessionType,
-                        AreaIds = areaIds,
-                        CreateDate = result.CreateDate,
-                        EndDate = result.EndDate,
-                    };
-                    await CreateSessionForNextDay(sessionR);
+                        if (autoCreatingstatus)
+                        {
+                            result.Status = false;
+                            await _transactionService.SaveTotalPriceAfterFinishSession(sessionid);
+
+                            var areas = await _context.SessionAreas
+                                .Where(a => a.SessionId == sessionid)
+                                .Select(a => a.AreaId)
+                                .ToListAsync();
+
+                            var areaIds = areas.Where(a => a.HasValue).Select(a => a.Value).ToList();
+
+                            var sessionR = new SessionForChangeStatusRequestModel
+                            {
+                                SessionType = result.SessionType,
+                                AreaIds = areaIds,
+                                CreateDate = result.CreateDate,
+                                EndDate = result.EndDate,
+                            };
+                            await CreateSessionForNextDay(sessionR);
+                        }
+                        else
+                        {
+                            result.Status = false;
+                        }
+                    }
+                    else
+                    {
+                        throw new Exception($"Session with ID {sessionid} is not in the required state or within the specified date range.");
+                    }
                 }
-                else
-                {
-                    result.Status = false;
-                }
+
+                await _context.SaveChangesAsync();
             }
             else
             {
-                throw new Exception("Session is not In Day");
+                throw new Exception("No session IDs provided for status change.");
             }
-
-            await _context.SaveChangesAsync();
         }
 
         public async Task<List<GetAllSessionResponseModel>> GetAllSession()
@@ -500,8 +549,8 @@ namespace HomeMealTaste.Services.Implement
 
             entity.CreateDate = sessionRequest.CreateDate;
             entity.EndDate = sessionRequest.EndDate.Value.AddDays(1);
-            entity.BookingSlotStatus = sessionRequest.BookingSlotStatus;
-            entity.RegisterForMealStatus = sessionRequest.RegisterForMealStatus;
+            entity.BookingSlotStatus = false;
+            entity.RegisterForMealStatus = true;
             if (sessionRequest.AreaIds != null)
             {
                 var check = await SessionTypeExistsInAreaInNextDay(sessionRequest.AreaIds, sessionTypeLower, (DateTime)entity.EndDate);

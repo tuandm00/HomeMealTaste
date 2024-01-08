@@ -83,6 +83,8 @@ namespace HomeMealTaste.Data.RequestModel
             CreateMap<GetAllAreaBySessionIdResponseModel, Area>().ReverseMap();
             CreateMap<ChangeStatusRegisterForMealRequestModel, Session>().ReverseMap();
             CreateMap<ChangeStatusBookingSlotRequestModel, Session>().ReverseMap();
+            CreateMap<ChangeStatusSessionRequestModel, Session>().ReverseMap();
+            CreateMap<UpdateDistrictRequestModel, District>().ReverseMap();
 
             
 
