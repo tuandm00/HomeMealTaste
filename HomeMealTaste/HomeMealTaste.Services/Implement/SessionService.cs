@@ -228,13 +228,13 @@ namespace HomeMealTaste.Services.Implement
         public async Task<SessionResponseModel> CreateSessionWithDay(SessionRequestModel sessionRequest)
         {
 
-            var responseModel = new SessionResponseModel(); 
-            var currentDate = DateTime.UtcNow; 
+            var responseModel = new SessionResponseModel();
+            var currentDate = DateTime.UtcNow;
             var sessionDate = DateTime.ParseExact(sessionRequest.Date, "dd-MM-yyyy", CultureInfo.InvariantCulture);
 
             if (sessionDate.Date < currentDate.Date)
             {
-                
+
                 throw new Exception("Cannot create a session with a date in the past.");
             }
             var entity = _mapper.Map<Session>(sessionRequest);
@@ -560,26 +560,59 @@ namespace HomeMealTaste.Services.Implement
 
         }
 
-        public async Task ChangeStatusRegisterForMeal(int sessionid)
+        public async Task ChangeStatusRegisterForMeal(ChangeStatusRegisterForMealRequestModel request)
         {
-            var result = _context.Sessions.Where(x => x.SessionId == sessionid).FirstOrDefault();
-            if (result != null && result.RegisterForMealStatus == true)
-            {
-                result.RegisterForMealStatus = false;
-            }
-            else result.RegisterForMealStatus = true;
-            await _context.SaveChangesAsync();
+            var datenow = GetDateTimeTimeZoneVietNam();
 
+            var result = _context.Sessions
+                .Where(x => request.sessionIds.Contains(x.SessionId) && x.EndDate.Value.Date >= datenow.Date)
+                .ToList();
+            if(result.Count > 0)
+            {
+                foreach (var status in result)
+                {
+                    if (status != null && status.RegisterForMealStatus == true)
+                    {
+                        status.RegisterForMealStatus = false;
+                    }
+                    else
+                    {
+                        status.RegisterForMealStatus = true;
+                    }
+                }
+            }
+            else
+            {
+                throw new Exception("Can not update Register For Meal in the past");
+            }
+            await _context.SaveChangesAsync();
         }
 
-        public async Task ChangeStatusBookingSlot(int sessionid)
+        public async Task ChangeStatusBookingSlot(ChangeStatusBookingSlotRequestModel request)
         {
-            var result = _context.Sessions.Where(x => x.SessionId == sessionid).FirstOrDefault();
-            if (result != null && result.BookingSlotStatus == true)
+            var datenow = GetDateTimeTimeZoneVietNam();
+
+            var result = _context.Sessions
+                .Where(x => request.sessionIds.Contains(x.SessionId) && x.EndDate.Value.Date >= datenow.Date)
+                .ToList();
+            if (result.Count > 0)
             {
-                result.BookingSlotStatus = false;
+                foreach (var status in result)
+                {
+                    if (status != null && status.BookingSlotStatus == true)
+                    {
+                        status.BookingSlotStatus = false;
+                    }
+                    else
+                    {
+                        status.BookingSlotStatus = true;
+                    }
+                }
             }
-            else result.BookingSlotStatus = true;
+            else
+            {
+                throw new Exception("Can not update Booking Slot in the past");
+            }
             await _context.SaveChangesAsync();
 
         }
@@ -664,27 +697,27 @@ namespace HomeMealTaste.Services.Implement
         {
             var result = _context.Sessions.Include(x => x.SessionAreas).ThenInclude(a => a.Area)
                 .Where(x => x.Status == true).Select(x => new GetAllSessionResponseModel
-            {
-                SessionId = x.SessionId,
-                CreateDate = ((DateTime)x.CreateDate).ToString("dd-MM-yyyy"),
-                StartTime = ((DateTime)x.StartTime).ToString("HH:mm"),
-                EndTime = ((DateTime)x.EndTime).ToString("HH:mm"),
-                EndDate = ((DateTime)x.EndDate).ToString("dd-MM-yyyy"),
-                UserId = x.UserId,
-                BookingSlotStatus = x.BookingSlotStatus,
-                RegisterForMealStatus = x.RegisterForMealStatus,
-                AreaDtoGetAllSession = x.SessionAreas.Select(a => new AreaDtoGetAllSession
                 {
-                    AreaId = a.Area.AreaId,
-                    AreaName = a.Area.AreaName,
-                    Address = a.Area.Address,
-                }).ToList(),
-                SessionType = x.SessionType,
-                SessionName = x.SessionName,
+                    SessionId = x.SessionId,
+                    CreateDate = ((DateTime)x.CreateDate).ToString("dd-MM-yyyy"),
+                    StartTime = ((DateTime)x.StartTime).ToString("HH:mm"),
+                    EndTime = ((DateTime)x.EndTime).ToString("HH:mm"),
+                    EndDate = ((DateTime)x.EndDate).ToString("dd-MM-yyyy"),
+                    UserId = x.UserId,
+                    BookingSlotStatus = x.BookingSlotStatus,
+                    RegisterForMealStatus = x.RegisterForMealStatus,
+                    AreaDtoGetAllSession = x.SessionAreas.Select(a => new AreaDtoGetAllSession
+                    {
+                        AreaId = a.Area.AreaId,
+                        AreaName = a.Area.AreaName,
+                        Address = a.Area.Address,
+                    }).ToList(),
+                    SessionType = x.SessionType,
+                    SessionName = x.SessionName,
 
-                Status = x.Status,
-                Message = "Success",
-            });
+                    Status = x.Status,
+                    Message = "Success",
+                });
 
             var mapped = result.Select(r => _mapper.Map<GetAllSessionResponseModel>(r)).ToList();
             return mapped;
@@ -712,7 +745,7 @@ namespace HomeMealTaste.Services.Implement
             return mapped;
         }
 
-        
+
 
         //public async Task<List<GetAllSessionByAreaIdResponseModel>> GetAllSessionByAreaIdWithStatusTrueInDay(int areaid)
         //{
