@@ -7,6 +7,7 @@ using HomeMealTaste.Services.Interface;
 using Microsoft.EntityFrameworkCore;
 using System.Collections.ObjectModel;
 using System.Globalization;
+using System.Linq;
 
 namespace HomeMealTaste.Services.Implement
 {
@@ -62,35 +63,113 @@ namespace HomeMealTaste.Services.Implement
         public async Task<List<MealSessionResponseModel>> CreateMealSession(MealSessionRequestModel mealSessionRequest)
         {
             var mappedResults = new List<MealSessionResponseModel>();
-
+            var datenow = GetDateTimeTimeZoneVietNam();
             if (mealSessionRequest.SessionIds != null && mealSessionRequest.SessionIds.Any())
             {
-                foreach (var sessionId in mealSessionRequest.SessionIds)
+                var mealSessions = _context.MealSessions
+                    .Where(x => x.CreateDate.Value.Date == datenow.Date && x.KitchenId == mealSessionRequest.KitchenId).ToList();
+
+                foreach (var miu in mealSessions)
                 {
-                    var entityForSessionId = _mapper.Map<MealSession>(mealSessionRequest);
-
-                    entityForSessionId.MealId = mealSessionRequest.MealId;
-                    entityForSessionId.SessionId = sessionId;
-                    entityForSessionId.Quantity = mealSessionRequest.Quantity;
-                    entityForSessionId.RemainQuantity = entityForSessionId.Quantity;
-                    entityForSessionId.KitchenId = mealSessionRequest.KitchenId;
-                    entityForSessionId.Status = "PROCESSING";
-                    entityForSessionId.CreateDate = GetDateTimeTimeZoneVietNam();
-
-                    var resultForSessionId = await _mealSessionRepository.Create(entityForSessionId, true);
-
-                    await _context.Entry(resultForSessionId).Reference(m => m.Meal).LoadAsync();
-                    await _context.Entry(resultForSessionId).Reference(m => m.Session).LoadAsync();
-                    await _context.Entry(resultForSessionId.Meal).Reference(s => s.Kitchen).LoadAsync();
-                    await _context.Entry(resultForSessionId.Kitchen).Reference(a => a.Area).LoadAsync();
-
-                    var mappedForSessionId = _mapper.Map<MealSessionResponseModel>(resultForSessionId);
-
-                    mappedResults.Add(mappedForSessionId);
+                    foreach(var session in mealSessionRequest.SessionIds)
+                    {
+                        if(session == miu.SessionId && miu.Status.Equals("PROCESSING"))
+                        {
+                            throw new Exception("Can not Create Meal Session because Meal is Existed in this Session");
+                        }
+                    }
                 }
+                if(mealSessions.Count > 0)
+                {
+                    
+                        foreach (var session in mealSessionRequest.SessionIds)
+                        {
+                            //var statusExist = _context.MealSessions
+                            //    .Where(x => x.CreateDate.Value.Date == datenow.Date && x.KitchenId == mealSessionRequest.KitchenId && x.SessionId == session)
+                            //    .Select(x => x.Status)
+                            //    .ToList();
+
+                            //if (session == mealsession.SessionId && mealsession.Status.Equals("PROCESSING"))
+                            //{
+                            //    throw new Exception("");
+                            //}
+                            
+                                var entityForSessionId = _mapper.Map<MealSession>(mealSessionRequest);
+
+                                entityForSessionId.MealId = mealSessionRequest.MealId;
+                                entityForSessionId.SessionId = session;
+                                entityForSessionId.Quantity = mealSessionRequest.Quantity;
+                                entityForSessionId.RemainQuantity = entityForSessionId.Quantity;
+                                entityForSessionId.KitchenId = mealSessionRequest.KitchenId;
+                                entityForSessionId.Status = "PROCESSING";
+                                entityForSessionId.CreateDate = GetDateTimeTimeZoneVietNam();
+
+                                var resultForSessionId = await _mealSessionRepository.Create(entityForSessionId, true);
+
+                                await _context.Entry(resultForSessionId).Reference(m => m.Meal).LoadAsync();
+                                await _context.Entry(resultForSessionId).Reference(m => m.Session).LoadAsync();
+                                await _context.Entry(resultForSessionId.Meal).Reference(s => s.Kitchen).LoadAsync();
+                                await _context.Entry(resultForSessionId.Kitchen).Reference(a => a.Area).LoadAsync();
+
+                                var mappedForSessionId = _mapper.Map<MealSessionResponseModel>(resultForSessionId);
+
+                                mappedResults.Add(mappedForSessionId);
+                            
+                            //else if(sessio)
+                            //{
+                            //    var entityForSessionId = _mapper.Map<MealSession>(mealSessionRequest);
+
+                            //    entityForSessionId.MealId = mealSessionRequest.MealId;
+                            //    entityForSessionId.SessionId = session;
+                            //    entityForSessionId.Quantity = mealSessionRequest.Quantity;
+                            //    entityForSessionId.RemainQuantity = entityForSessionId.Quantity;
+                            //    entityForSessionId.KitchenId = mealSessionRequest.KitchenId;
+                            //    entityForSessionId.Status = "PROCESSING";
+                            //    entityForSessionId.CreateDate = GetDateTimeTimeZoneVietNam();
+
+                            //    var resultForSessionId = await _mealSessionRepository.Create(entityForSessionId, true);
+
+                            //    await _context.Entry(resultForSessionId).Reference(m => m.Meal).LoadAsync();
+                            //    await _context.Entry(resultForSessionId).Reference(m => m.Session).LoadAsync();
+                            //    await _context.Entry(resultForSessionId.Meal).Reference(s => s.Kitchen).LoadAsync();
+                            //    await _context.Entry(resultForSessionId.Kitchen).Reference(a => a.Area).LoadAsync();
+
+                            //    var mappedForSessionId = _mapper.Map<MealSessionResponseModel>(resultForSessionId);
+
+                            //    mappedResults.Add(mappedForSessionId);
+                            //}
+                        }
+                    
+                }
+                else
+                {
+                    foreach (var session in mealSessionRequest.SessionIds)
+                    {
+                        var entityForSessionId = _mapper.Map<MealSession>(mealSessionRequest);
+
+                        entityForSessionId.MealId = mealSessionRequest.MealId;
+                        entityForSessionId.SessionId = session;
+                        entityForSessionId.Quantity = mealSessionRequest.Quantity;
+                        entityForSessionId.RemainQuantity = entityForSessionId.Quantity;
+                        entityForSessionId.KitchenId = mealSessionRequest.KitchenId;
+                        entityForSessionId.Status = "PROCESSING";
+                        entityForSessionId.CreateDate = GetDateTimeTimeZoneVietNam();
+
+                        var resultForSessionId = await _mealSessionRepository.Create(entityForSessionId, true);
+
+                        await _context.Entry(resultForSessionId).Reference(m => m.Meal).LoadAsync();
+                        await _context.Entry(resultForSessionId).Reference(m => m.Session).LoadAsync();
+                        await _context.Entry(resultForSessionId.Meal).Reference(s => s.Kitchen).LoadAsync();
+                        await _context.Entry(resultForSessionId.Kitchen).Reference(a => a.Area).LoadAsync();
+
+                        var mappedForSessionId = _mapper.Map<MealSessionResponseModel>(resultForSessionId);
+
+                        mappedResults.Add(mappedForSessionId);
+                    }
+                       
+                }
+               
             }
-
-
             return mappedResults;
         }
 
