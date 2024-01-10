@@ -221,7 +221,7 @@ namespace HomeMealTaste.Services.Implement
                 entity.SessionType = "Dinner";
             }
 
-            entity.Status = true;
+            entity.Status = "OPEN";
             entity.UserId = 2;
 
         }
@@ -241,8 +241,6 @@ namespace HomeMealTaste.Services.Implement
             var sessionTypeLower = entity.SessionType.ToLower();
             entity.CreateDate = GetDateTimeTimeZoneVietNam();
             entity.EndDate = DateTime.ParseExact(sessionRequest.Date, "dd-MM-yyyy", CultureInfo.InvariantCulture);
-            entity.BookingSlotStatus = sessionRequest.BookingSlotStatus;
-            entity.RegisterForMealStatus = sessionRequest.RegisterForMealStatus;
             if (sessionRequest.AreaIds != null)
             {
                 if (await SessionTypeExistsInAreaInDayNow(sessionRequest.AreaIds, sessionTypeLower, (DateTime)entity.EndDate))
@@ -356,54 +354,54 @@ namespace HomeMealTaste.Services.Implement
 
             //await _context.SaveChangesAsync();
 
-            var datenow = GetDateTimeTimeZoneVietNam();
+            //var datenow = GetDateTimeTimeZoneVietNam();
 
-            if (request.sessionIds != null && request.sessionIds.Any())
-            {
-                foreach (var sessionid in request.sessionIds)
-                {
-                    var result = await _context.Sessions.FindAsync(sessionid);
+            //if (request.sessionIds != null && request.sessionIds.Any())
+            //{
+            //    foreach (var sessionid in request.sessionIds)
+            //    {
+            //        var result = await _context.Sessions.FindAsync(sessionid);
 
-                    if (result != null && result.Status == true && result.EndDate.Value.Date >= datenow.Date)
-                    {
-                        if (autoCreatingstatus)
-                        {
-                            result.Status = false;
-                            await _transactionService.SaveTotalPriceAfterFinishSession(sessionid);
+            //        if (result != null && result.Status.Equals("ONGOING") && result.EndDate.Value.Date >= datenow.Date)
+            //        {
+            //            if (autoCreatingstatus)
+            //            {
+            //                result.Status = false;
+            //                await _transactionService.SaveTotalPriceAfterFinishSession(sessionid);
 
-                            var areas = await _context.SessionAreas
-                                .Where(a => a.SessionId == sessionid)
-                                .Select(a => a.AreaId)
-                                .ToListAsync();
+            //                var areas = await _context.SessionAreas
+            //                    .Where(a => a.SessionId == sessionid)
+            //                    .Select(a => a.AreaId)
+            //                    .ToListAsync();
 
-                            var areaIds = areas.Where(a => a.HasValue).Select(a => a.Value).ToList();
+            //                var areaIds = areas.Where(a => a.HasValue).Select(a => a.Value).ToList();
 
-                            var sessionR = new SessionForChangeStatusRequestModel
-                            {
-                                SessionType = result.SessionType,
-                                AreaIds = areaIds,
-                                CreateDate = result.CreateDate,
-                                EndDate = result.EndDate,
-                            };
-                            await CreateSessionForNextDay(sessionR);
-                        }
-                        else
-                        {
-                            result.Status = false;
-                        }
-                    }
-                    else
-                    {
-                        throw new Exception($"Session with ID {sessionid} is not in the required state or within the specified date range.");
-                    }
-                }
+            //                var sessionR = new SessionForChangeStatusRequestModel
+            //                {
+            //                    SessionType = result.SessionType,
+            //                    AreaIds = areaIds,
+            //                    CreateDate = result.CreateDate,
+            //                    EndDate = result.EndDate,
+            //                };
+            //                await CreateSessionForNextDay(sessionR);
+            //            }
+            //            else
+            //            {
+            //                result.Status = false;
+            //            }
+            //        }
+            //        else
+            //        {
+            //            throw new Exception($"Session with ID {sessionid} is not in the required state or within the specified date range.");
+            //        }
+            //    }
 
-                await _context.SaveChangesAsync();
-            }
-            else
-            {
-                throw new Exception("No session IDs provided for status change.");
-            }
+            //    await _context.SaveChangesAsync();
+            //}
+            //else
+            //{
+            //    throw new Exception("No session IDs provided for status change.");
+            //}
         }
 
         public async Task<List<GetAllSessionResponseModel>> GetAllSession()
@@ -416,8 +414,6 @@ namespace HomeMealTaste.Services.Implement
                 EndTime = ((DateTime)x.EndTime).ToString("HH:mm"),
                 EndDate = ((DateTime)x.EndDate).ToString("dd-MM-yyyy"),
                 UserId = x.UserId,
-                BookingSlotStatus = x.BookingSlotStatus,
-                RegisterForMealStatus = x.RegisterForMealStatus,
                 AreaDtoGetAllSession = x.SessionAreas.Select(a => new AreaDtoGetAllSession
                 {
                     AreaId = a.Area.AreaId,
@@ -456,8 +452,6 @@ namespace HomeMealTaste.Services.Implement
                     DistrictId = s.Area.DistrictId,
                 }).ToList(),
                 Status = s.Status,
-                RegisterForMealStatus = s.RegisterForMealStatus,
-                BookingSlotStatus = s.BookingSlotStatus,
             }).ToListAsync();
 
             var mappedResults = sessions.Select(s => _mapper.Map<GetAllSessionByAreaIdResponseModel>(s)).ToList();
@@ -467,7 +461,7 @@ namespace HomeMealTaste.Services.Implement
         public Task<List<GetAllSessionByAreaIdResponseModel>> GetAllSessionByAreaIdWithStatusTrue(int areaid)
         {
 
-            var result = _context.SessionAreas.Include(x => x.Area).Include(x => x.Session).Where(x => x.AreaId == areaid && x.Session.Status == true).Select(x => new GetAllSessionByAreaIdResponseModel
+            var result = _context.SessionAreas.Include(x => x.Area).Include(x => x.Session).Where(x => x.AreaId == areaid && x.Session.Status.Equals("ONGOING")).Select(x => new GetAllSessionByAreaIdResponseModel
             {
                 SessionId = x.Session.SessionId,
                 CreateDate = ((DateTime)x.Session.CreateDate).ToString("dd-MM-yyyy"),
@@ -484,8 +478,6 @@ namespace HomeMealTaste.Services.Implement
                     DistrictId = s.Area.DistrictId,
                 }).ToList(),
                 Status = x.Session.Status,
-                RegisterForMealStatus = x.Session.RegisterForMealStatus,
-                BookingSlotStatus = x.Session.BookingSlotStatus,
             });
 
             var mappedResults = result.Select(session => _mapper.Map<GetAllSessionByAreaIdResponseModel>(session)).ToList();
@@ -510,8 +502,6 @@ namespace HomeMealTaste.Services.Implement
                 Status = x.Status,
                 SessionType = x.SessionType,
                 SessionName = x.SessionName,
-                BookingSlotStatus = x.BookingSlotStatus,
-                RegisterForMealStatus = x.RegisterForMealStatus,
                 UserDtoGetSingleSessionBySessionId = new UserDtoGetSingleSessionBySessionId
                 {
                     UserId = x.User.UserId,
@@ -549,8 +539,6 @@ namespace HomeMealTaste.Services.Implement
 
             entity.CreateDate = sessionRequest.CreateDate;
             entity.EndDate = sessionRequest.EndDate.Value.AddDays(1);
-            entity.BookingSlotStatus = false;
-            entity.RegisterForMealStatus = true;
             if (sessionRequest.AreaIds != null)
             {
                 var check = await SessionTypeExistsInAreaInNextDay(sessionRequest.AreaIds, sessionTypeLower, (DateTime)entity.EndDate);
@@ -609,62 +597,8 @@ namespace HomeMealTaste.Services.Implement
 
         }
 
-        public async Task ChangeStatusRegisterForMeal(ChangeStatusRegisterForMealRequestModel request)
-        {
-            var datenow = GetDateTimeTimeZoneVietNam();
+        
 
-            var result = _context.Sessions
-                .Where(x => request.sessionIds.Contains(x.SessionId) && x.EndDate.Value.Date >= datenow.Date)
-                .ToList();
-            if(result.Count > 0)
-            {
-                foreach (var status in result)
-                {
-                    if (status != null && status.RegisterForMealStatus == true)
-                    {
-                        status.RegisterForMealStatus = false;
-                    }
-                    else
-                    {
-                        status.RegisterForMealStatus = true;
-                    }
-                }
-            }
-            else
-            {
-                throw new Exception("Can not update Register For Meal in the past");
-            }
-            await _context.SaveChangesAsync();
-        }
-
-        public async Task ChangeStatusBookingSlot(ChangeStatusBookingSlotRequestModel request)
-        {
-            var datenow = GetDateTimeTimeZoneVietNam();
-
-            var result = _context.Sessions
-                .Where(x => request.sessionIds.Contains(x.SessionId) && x.EndDate.Value.Date >= datenow.Date)
-                .ToList();
-            if (result.Count > 0)
-            {
-                foreach (var status in result)
-                {
-                    if (status != null && status.BookingSlotStatus == true)
-                    {
-                        status.BookingSlotStatus = false;
-                    }
-                    else
-                    {
-                        status.BookingSlotStatus = true;
-                    }
-                }
-            }
-            else
-            {
-                throw new Exception("Can not update Booking Slot in the past");
-            }
-            await _context.SaveChangesAsync();
-
-        }
 
         public async Task<UpdateSessionAndAreaInSessionResponseModel> UpdateSessionAndAreaInSession(UpdateSessionAndAreaInSessionRequestModel request)
         {
@@ -713,8 +647,6 @@ namespace HomeMealTaste.Services.Implement
                 result.SessionName = $"Session: {result.SessionType}, In: {((DateTime)result.EndDate).ToString("dd-MM-yyyy")}";
                 result.UserId = 2;
                 result.Status = request.Status;
-                result.RegisterForMealStatus = request.RegisterForMealStatus;
-                result.BookingSlotStatus = request.BookingSlotStatus;
 
                 _context.Sessions.Update(result);
                 await _context.SaveChangesAsync();
@@ -745,7 +677,7 @@ namespace HomeMealTaste.Services.Implement
         public async Task<List<GetAllSessionResponseModel>> GetAllSessionStatusOn()
         {
             var result = _context.Sessions.Include(x => x.SessionAreas).ThenInclude(a => a.Area)
-                .Where(x => x.Status == true).Select(x => new GetAllSessionResponseModel
+                .Where(x => x.Status.Equals("ONGOING")).Select(x => new GetAllSessionResponseModel
                 {
                     SessionId = x.SessionId,
                     CreateDate = ((DateTime)x.CreateDate).ToString("dd-MM-yyyy"),
@@ -753,8 +685,6 @@ namespace HomeMealTaste.Services.Implement
                     EndTime = ((DateTime)x.EndTime).ToString("HH:mm"),
                     EndDate = ((DateTime)x.EndDate).ToString("dd-MM-yyyy"),
                     UserId = x.UserId,
-                    BookingSlotStatus = x.BookingSlotStatus,
-                    RegisterForMealStatus = x.RegisterForMealStatus,
                     AreaDtoGetAllSession = x.SessionAreas.Select(a => new AreaDtoGetAllSession
                     {
                         AreaId = a.Area.AreaId,
@@ -774,7 +704,7 @@ namespace HomeMealTaste.Services.Implement
 
         public async Task<List<SessionResponseModel>> GetAllSessionWithStatusTrueAndBookingSlotTrue()
         {
-            var result = _context.Sessions.Include(x => x.SessionAreas).ThenInclude(x => x.Area).Where(x => x.Status == true && x.BookingSlotStatus == true).Select(x => new SessionResponseModel
+            var result = _context.Sessions.Include(x => x.SessionAreas).ThenInclude(x => x.Area).Where(x => x.Status.Equals("ONGOING")).Select(x => new SessionResponseModel
             {
                 SessionId = x.SessionId,
                 CreateDate = ((DateTime)x.CreateDate).ToString("dd-MM-yyyy"),
@@ -784,8 +714,6 @@ namespace HomeMealTaste.Services.Implement
                 Status = x.Status,
                 SessionName = x.SessionName,
                 SessionType = x.SessionType,
-                BookingSlotStatus = x.BookingSlotStatus,
-                RegisterForMealStatus = x.RegisterForMealStatus,
                 UserId = x.UserId,
                 AreaId = x.SessionAreas.FirstOrDefault().Area.AreaId,
             }).ToList();

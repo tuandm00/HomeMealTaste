@@ -958,7 +958,7 @@ namespace HomeMealTaste.Services.Implement
             var getListOrder = await GetAllOrderByMealSessionId(mealsessionId);
             var sessionid = _context.MealSessions.Where(x => x.MealSessionId == mealsessionId).Select(x => x.SessionId).FirstOrDefault();
             var sessionStatus = _context.Sessions.Where(x => x.SessionId == sessionid).Select(x => x.Status).FirstOrDefault();
-            if (sessionStatus == null || sessionStatus == false)
+            if (sessionStatus == null || sessionStatus.Equals(""))
             {
                 throw new Exception("Can not CANCEL");
             }

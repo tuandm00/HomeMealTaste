@@ -97,16 +97,7 @@ namespace HomeMealTaste.Controllers
             var result = await _sessionService.GetAllSessionStatusOn();
             return Ok(result);
         }
-        [HttpPatch("change-status-register-for-meal")]
-        public async Task ChangeStatusRegisterForMeal(ChangeStatusRegisterForMealRequestModel request)
-        {
-            await _sessionService.ChangeStatusRegisterForMeal(request);
-        }
-        [HttpPatch("change-status-booking-slot")]
-        public async Task ChangeStatusBookingSlot(ChangeStatusBookingSlotRequestModel request)
-        {
-            await _sessionService.ChangeStatusBookingSlot(request);
-        }
+        
         [HttpPut("update-session-and-area-in-session")]
         public async Task<IActionResult> UpdateSessionAndAreaInSession(UpdateSessionAndAreaInSessionRequestModel request)
         {

@@ -6,8 +6,8 @@ using System.Threading.Tasks;
 
 namespace HomeMealTaste.Data.RequestModel
 {
-    //public class SaveTotalPriceAfterFinishSessionRequestModel
-    //{
-    //    public List<int>? sessionIds { get; set; }
-    //}
+    public class SaveTotalPriceAfterFinishSessionRequestModel
+    {
+        public List<int>? sessionIds { get; set; }
+    }
 }
