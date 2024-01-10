@@ -354,54 +354,54 @@ namespace HomeMealTaste.Services.Implement
 
             //await _context.SaveChangesAsync();
 
-            //var datenow = GetDateTimeTimeZoneVietNam();
+            var datenow = GetDateTimeTimeZoneVietNam();
 
-            //if (request.sessionIds != null && request.sessionIds.Any())
-            //{
-            //    foreach (var sessionid in request.sessionIds)
-            //    {
-            //        var result = await _context.Sessions.FindAsync(sessionid);
+            if (request.sessionIds != null && request.sessionIds.Any())
+            {
+                foreach (var sessionid in request.sessionIds)
+                {
+                    var result = await _context.Sessions.FindAsync(sessionid);
 
-            //        if (result != null && result.Status.Equals("ONGOING") && result.EndDate.Value.Date >= datenow.Date)
-            //        {
-            //            if (autoCreatingstatus)
-            //            {
-            //                result.Status = false;
-            //                await _transactionService.SaveTotalPriceAfterFinishSession(sessionid);
+                    if (result != null && result.Status.Equals("ONGOING") && result.EndDate.Value.Date >= datenow.Date)
+                    {
+                        if (autoCreatingstatus)
+                        {
+                            result.Status = "";
+                            await _transactionService.SaveTotalPriceAfterFinishSession(sessionid);
 
-            //                var areas = await _context.SessionAreas
-            //                    .Where(a => a.SessionId == sessionid)
-            //                    .Select(a => a.AreaId)
-            //                    .ToListAsync();
+                            var areas = await _context.SessionAreas
+                                .Where(a => a.SessionId == sessionid)
+                                .Select(a => a.AreaId)
+                                .ToListAsync();
 
-            //                var areaIds = areas.Where(a => a.HasValue).Select(a => a.Value).ToList();
+                            var areaIds = areas.Where(a => a.HasValue).Select(a => a.Value).ToList();
 
-            //                var sessionR = new SessionForChangeStatusRequestModel
-            //                {
-            //                    SessionType = result.SessionType,
-            //                    AreaIds = areaIds,
-            //                    CreateDate = result.CreateDate,
-            //                    EndDate = result.EndDate,
-            //                };
-            //                await CreateSessionForNextDay(sessionR);
-            //            }
-            //            else
-            //            {
-            //                result.Status = false;
-            //            }
-            //        }
-            //        else
-            //        {
-            //            throw new Exception($"Session with ID {sessionid} is not in the required state or within the specified date range.");
-            //        }
-            //    }
+                            var sessionR = new SessionForChangeStatusRequestModel
+                            {
+                                SessionType = result.SessionType,
+                                AreaIds = areaIds,
+                                CreateDate = result.CreateDate,
+                                EndDate = result.EndDate,
+                            };
+                            await CreateSessionForNextDay(sessionR);
+                        }
+                        else
+                        {
+                            result.Status = "";
+                        }
+                    }
+                    else
+                    {
+                        throw new Exception($"Session with ID {sessionid} is not in the required state or within the specified date range.");
+                    }
+                }
 
-            //    await _context.SaveChangesAsync();
-            //}
-            //else
-            //{
-            //    throw new Exception("No session IDs provided for status change.");
-            //}
+                await _context.SaveChangesAsync();
+            }
+            else
+            {
+                throw new Exception("No session IDs provided for status change.");
+            }
         }
 
         public async Task<List<GetAllSessionResponseModel>> GetAllSession()
