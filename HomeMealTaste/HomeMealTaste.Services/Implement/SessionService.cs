@@ -362,33 +362,33 @@ namespace HomeMealTaste.Services.Implement
                 {
                     var result = await _context.Sessions.FindAsync(sessionid);
 
-                    if (result != null && result.Status.Equals("ONGOING") && result.EndDate.Value.Date >= datenow.Date)
+                    if (result != null && result.Status.Equals("OPEN") && result.EndDate.Value.Date >= datenow.Date)
                     {
                         if (autoCreatingstatus)
                         {
-                            result.Status = "";
-                            await _transactionService.SaveTotalPriceAfterFinishSession(sessionid);
+                            result.Status = "ONGOING";
+                            //await _transactionService.SaveTotalPriceAfterFinishSession(sessionid);
 
-                            var areas = await _context.SessionAreas
-                                .Where(a => a.SessionId == sessionid)
-                                .Select(a => a.AreaId)
-                                .ToListAsync();
+                            //var areas = await _context.SessionAreas
+                            //    .Where(a => a.SessionId == sessionid)
+                            //    .Select(a => a.AreaId)
+                            //    .ToListAsync();
 
-                            var areaIds = areas.Where(a => a.HasValue).Select(a => a.Value).ToList();
+                            //var areaIds = areas.Where(a => a.HasValue).Select(a => a.Value).ToList();
 
-                            var sessionR = new SessionForChangeStatusRequestModel
-                            {
-                                SessionType = result.SessionType,
-                                AreaIds = areaIds,
-                                CreateDate = result.CreateDate,
-                                EndDate = result.EndDate,
-                            };
-                            await CreateSessionForNextDay(sessionR);
+                            //var sessionR = new SessionForChangeStatusRequestModel
+                            //{
+                            //    SessionType = result.SessionType,
+                            //    AreaIds = areaIds,
+                            //    CreateDate = result.CreateDate,
+                            //    EndDate = result.EndDate,
+                            //};
+                            //await CreateSessionForNextDay(sessionR);
                         }
-                        else
-                        {
-                            result.Status = "";
-                        }
+                        //else
+                        //{
+                        //    result.Status = "";
+                        //}
                     }
                     else
                     {
