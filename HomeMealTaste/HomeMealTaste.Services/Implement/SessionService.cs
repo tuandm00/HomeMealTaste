@@ -364,9 +364,9 @@ namespace HomeMealTaste.Services.Implement
 
                     if (result != null && result.Status.Equals("OPEN") && result.EndDate.Value.Date >= datenow.Date)
                     {
-                        if (autoCreatingstatus && request.status.Equals("ONGOING"))
+                        if (autoCreatingstatus && request.status.Equals("BOOKING"))
                         {
-                            result.Status = "ONGOING";
+                            result.Status = "BOOKING";
                             //await _transactionService.SaveTotalPriceAfterFinishSession(sessionid);
 
                             //var areas = await _context.SessionAreas
@@ -388,6 +388,13 @@ namespace HomeMealTaste.Services.Implement
                         else if (autoCreatingstatus && request.status.Equals("CANCELLED"))
                         {
                             result.Status = "CANCELLED";
+                        }
+                    }
+                    else if (result != null && result.Status.Equals("BOOKING") && result.EndDate.Value.Date >= datenow.Date)
+                    {
+                        if (autoCreatingstatus && request.status.Equals("ONGOING"))
+                        {
+                            result.Status = "ONGOING";
                         }
                     }
                     else if (result != null && result.Status.Equals("ONGOING") && result.EndDate.Value.Date >= datenow.Date)
