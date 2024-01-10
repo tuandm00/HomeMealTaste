@@ -364,7 +364,7 @@ namespace HomeMealTaste.Services.Implement
 
                     if (result != null && result.Status.Equals("OPEN") && result.EndDate.Value.Date >= datenow.Date)
                     {
-                        if (autoCreatingstatus)
+                        if (autoCreatingstatus && request.status.Equals("ONGOING"))
                         {
                             result.Status = "ONGOING";
                             //await _transactionService.SaveTotalPriceAfterFinishSession(sessionid);
@@ -385,10 +385,17 @@ namespace HomeMealTaste.Services.Implement
                             //};
                             //await CreateSessionForNextDay(sessionR);
                         }
-                        //else
-                        //{
-                        //    result.Status = "";
-                        //}
+                        else if (autoCreatingstatus && request.status.Equals("CANCELLED"))
+                        {
+                            result.Status = "CANCELLED";
+                        }
+                    }
+                    else if (result != null && result.Status.Equals("ONGOING") && result.EndDate.Value.Date >= datenow.Date)
+                    {
+                        if(autoCreatingstatus && request.status.Equals("CLOSED"))
+                        {
+                            result.Status = "CLOSED";
+                        }
                     }
                     else
                     {
