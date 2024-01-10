@@ -98,7 +98,7 @@ namespace HomeMealTaste.Data.Models
             {
                 entity.ToTable("DishType");
 
-                entity.Property(e => e.Description).HasMaxLength(50);
+                entity.Property(e => e.Description).HasMaxLength(1000);
 
                 entity.Property(e => e.Name).HasMaxLength(50);
             });
