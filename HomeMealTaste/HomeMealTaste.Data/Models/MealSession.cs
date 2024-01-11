@@ -19,7 +19,9 @@ namespace HomeMealTaste.Data.Models
         public string? Status { get; set; }
         public DateTime? CreateDate { get; set; }
         public int? KitchenId { get; set; }
+        public int? AreaId { get; set; }
 
+        public virtual Area? Area { get; set; }
         public virtual Kitchen? Kitchen { get; set; }
         public virtual Meal? Meal { get; set; }
         public virtual Session? Session { get; set; }

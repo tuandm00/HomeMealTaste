@@ -103,6 +103,7 @@ namespace HomeMealTaste.Services.Implement
                                 entityForSessionId.KitchenId = mealSessionRequest.KitchenId;
                                 entityForSessionId.Status = "PROCESSING";
                                 entityForSessionId.CreateDate = GetDateTimeTimeZoneVietNam();
+                                entityForSessionId.AreaId = mealSessionRequest.AreaId;
 
                                 var resultForSessionId = await _mealSessionRepository.Create(entityForSessionId, true);
 
@@ -154,6 +155,7 @@ namespace HomeMealTaste.Services.Implement
                         entityForSessionId.KitchenId = mealSessionRequest.KitchenId;
                         entityForSessionId.Status = "PROCESSING";
                         entityForSessionId.CreateDate = GetDateTimeTimeZoneVietNam();
+                        entityForSessionId.AreaId = mealSessionRequest.AreaId;
 
                         var resultForSessionId = await _mealSessionRepository.Create(entityForSessionId, true);
 

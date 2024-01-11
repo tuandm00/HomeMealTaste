@@ -198,6 +198,11 @@ namespace HomeMealTaste.Data.Models
 
                 entity.Property(e => e.Status).HasMaxLength(50);
 
+                entity.HasOne(d => d.Area)
+                    .WithMany(p => p.MealSessions)
+                    .HasForeignKey(d => d.AreaId)
+                    .HasConstraintName("FK_Meal_Session_Area");
+
                 entity.HasOne(d => d.Kitchen)
                     .WithMany(p => p.MealSessions)
                     .HasForeignKey(d => d.KitchenId)

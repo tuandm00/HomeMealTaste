@@ -8,6 +8,7 @@ namespace HomeMealTaste.Data.Models
         public Area()
         {
             Kitchens = new HashSet<Kitchen>();
+            MealSessions = new HashSet<MealSession>();
             SessionAreas = new HashSet<SessionArea>();
             Users = new HashSet<User>();
         }
@@ -19,6 +20,7 @@ namespace HomeMealTaste.Data.Models
 
         public virtual District? District { get; set; }
         public virtual ICollection<Kitchen> Kitchens { get; set; }
+        public virtual ICollection<MealSession> MealSessions { get; set; }
         public virtual ICollection<SessionArea> SessionAreas { get; set; }
         public virtual ICollection<User> Users { get; set; }
     }
