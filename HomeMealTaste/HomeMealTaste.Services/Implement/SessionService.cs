@@ -367,13 +367,14 @@ namespace HomeMealTaste.Services.Implement
                         if (autoCreatingstatus && request.status.Equals("BOOKING"))
                         {
                             result.Status = "BOOKING";
-                            //await _transactionService.SaveTotalPriceAfterFinishSession(sessionid);
 
                             
                         }
                         else if (autoCreatingstatus && request.status.Equals("CANCELLED"))
                         {
                             result.Status = "CANCELLED";
+                            //hoan tien cho nay
+                            
                         }
                     }
                     else if (result != null && result.Status.Equals("BOOKING") && result.EndDate.Value.Date >= datenow.Date)
@@ -403,6 +404,8 @@ namespace HomeMealTaste.Services.Implement
                                 EndDate = result.EndDate,
                             };
                             await CreateSessionForNextDay(sessionR);
+                            await _transactionService.SaveTotalPriceAfterFinishSession(sessionid);
+
                         }
                     }
                     else
@@ -611,9 +614,6 @@ namespace HomeMealTaste.Services.Implement
             return responseModel;
 
         }
-
-        
-
 
         public async Task<UpdateSessionAndAreaInSessionResponseModel> UpdateSessionAndAreaInSession(UpdateSessionAndAreaInSessionRequestModel request)
         {
