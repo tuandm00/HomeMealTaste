@@ -18,9 +18,9 @@ namespace HomeMealTaste.Services.Interface
         //Task<PagedList<GetAllMealInCurrentSessionResponseModel>> GetAllMealInCurrentSession(GetAllMealRequest pagingParams);
         Task ChangeStatusSession(ChangeStatusSessionRequestModel request , bool status);
         Task<List<GetAllSessionResponseModel>> GetAllSession();
-        Task<List<GetAllSessionResponseModel>> GetAllSessionStatusOn();
+        Task<List<GetAllSessionResponseModel>> GetAllSessionStatusBooking();
         Task<List<GetAllSessionByAreaIdResponseModel>> GetAllSessionByAreaId(int areaid);
-        Task<List<GetAllSessionByAreaIdResponseModel>> GetAllSessionByAreaIdWithStatusTrue(int areaid);
+        Task<List<GetAllSessionByAreaIdResponseModel>> GetAllSessionByAreaIdWithStatusOpen(int areaid);
         Task<List<SessionResponseModel>> GetAllSessionWithStatusTrueAndBookingSlotTrue();
         //Task<List<GetAllSessionByAreaIdResponseModel>> GetAllSessionByAreaIdWithStatusTrueInDay(int areaid);
         //Task DeleteSession(int sessionId);

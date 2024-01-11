@@ -425,14 +425,14 @@ namespace HomeMealTaste.Services.Implement
                     .Select(x => x.Status)
                     .FirstOrDefault();
 
-                if (result != null && result.Status.Equals("COMPLETED", StringComparison.OrdinalIgnoreCase) && sessionStatus.Equals("ONGOING"))
+                if (result != null && result.Status.Equals("COMPLETED", StringComparison.OrdinalIgnoreCase) && sessionStatus.Equals("OPEN"))
                 {
                     throw new Exception("Can not Update Because Meal Session is COMPLETED");
                 }
-                else if (result != null && result.Status.Equals("CANCELLED", StringComparison.OrdinalIgnoreCase) && sessionStatus.Equals("ONGOING")) throw new Exception("Can not Update Because Meal Session is CANCELLED");
+                else if (result != null && result.Status.Equals("CANCELLED", StringComparison.OrdinalIgnoreCase) && sessionStatus.Equals("OPEN")) throw new Exception("Can not Update Because Meal Session is CANCELLED");
                 else
                 {
-                    if (result != null && result.Status.Equals("PROCESSING", StringComparison.OrdinalIgnoreCase) && sessionStatus.Equals("ONGOING"))
+                    if (result != null && result.Status.Equals("PROCESSING", StringComparison.OrdinalIgnoreCase) && sessionStatus.Equals("OPEN"))
                     {
                         if (string.Equals("APPROVED", request.status, StringComparison.OrdinalIgnoreCase))
                         {
@@ -444,7 +444,7 @@ namespace HomeMealTaste.Services.Implement
                         }
                         
                     }
-                    else if (result != null && result.Status.Equals("APPROVED", StringComparison.OrdinalIgnoreCase) && sessionStatus.Equals("ONGOING"))
+                    else if (result != null && result.Status.Equals("APPROVED", StringComparison.OrdinalIgnoreCase) && sessionStatus.Equals("OPEN"))
                     {
                         if (string.Equals("APPROVED", request.status, StringComparison.OrdinalIgnoreCase))
                         {
@@ -456,7 +456,7 @@ namespace HomeMealTaste.Services.Implement
                         }
                         
                     }
-                    else if (result != null && result.Status.Equals("REJECTED", StringComparison.OrdinalIgnoreCase) && sessionStatus.Equals("ONGOING"))
+                    else if (result != null && result.Status.Equals("REJECTED", StringComparison.OrdinalIgnoreCase) && sessionStatus.Equals("OPEN"))
                     {
                         if (string.Equals("REJECTED", request.status, StringComparison.OrdinalIgnoreCase))
                         {

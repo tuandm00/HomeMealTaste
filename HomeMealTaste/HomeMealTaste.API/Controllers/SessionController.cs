@@ -72,10 +72,10 @@ namespace HomeMealTaste.Controllers
             var result = await _sessionService.GetAllSessionByAreaId(areaid);
             return Ok(result);
         }
-        [HttpGet("get-all-session-by-area-id-with-status-true")]
-        public async Task<IActionResult> GetAllSessionByAreaIdWithStatusTrue(int areaid)
+        [HttpGet("get-all-session-by-area-id-with-status-open")]
+        public async Task<IActionResult> GetAllSessionByAreaIdWithStatusOpen(int areaid)
         {
-            var result = await _sessionService.GetAllSessionByAreaIdWithStatusTrue(areaid);
+            var result = await _sessionService.GetAllSessionByAreaIdWithStatusOpen(areaid);
             return Ok(result);
         }
 
@@ -91,10 +91,10 @@ namespace HomeMealTaste.Controllers
             var result = await _sessionService.GetSingleSessionBySessionId(sessionid);
             return Ok(result);
         }
-        [HttpGet("get-all-session-with-status-on")]
-        public async Task<IActionResult> GetAllSessionStatusOn()
+        [HttpGet("get-all-session-with-status-booking")]
+        public async Task<IActionResult> GetAllSessionStatusBooking()
         {
-            var result = await _sessionService.GetAllSessionStatusOn();
+            var result = await _sessionService.GetAllSessionStatusBooking();
             return Ok(result);
         }
         

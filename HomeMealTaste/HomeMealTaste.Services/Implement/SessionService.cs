@@ -223,7 +223,6 @@ namespace HomeMealTaste.Services.Implement
 
             entity.Status = "OPEN";
             entity.UserId = 2;
-
         }
         public async Task<SessionResponseModel> CreateSessionWithDay(SessionRequestModel sessionRequest)
         {
@@ -269,6 +268,7 @@ namespace HomeMealTaste.Services.Implement
                                 {
                                     SessionId = result.SessionId,
                                     AreaId = areaId,
+                                    Status = true,
                                 };
                                 await _context.AddAsync(sessionArea);
                             }
@@ -369,21 +369,7 @@ namespace HomeMealTaste.Services.Implement
                             result.Status = "BOOKING";
                             //await _transactionService.SaveTotalPriceAfterFinishSession(sessionid);
 
-                            //var areas = await _context.SessionAreas
-                            //    .Where(a => a.SessionId == sessionid)
-                            //    .Select(a => a.AreaId)
-                            //    .ToListAsync();
-
-                            //var areaIds = areas.Where(a => a.HasValue).Select(a => a.Value).ToList();
-
-                            //var sessionR = new SessionForChangeStatusRequestModel
-                            //{
-                            //    SessionType = result.SessionType,
-                            //    AreaIds = areaIds,
-                            //    CreateDate = result.CreateDate,
-                            //    EndDate = result.EndDate,
-                            //};
-                            //await CreateSessionForNextDay(sessionR);
+                            
                         }
                         else if (autoCreatingstatus && request.status.Equals("CANCELLED"))
                         {
@@ -402,6 +388,21 @@ namespace HomeMealTaste.Services.Implement
                         if(autoCreatingstatus && request.status.Equals("CLOSED"))
                         {
                             result.Status = "CLOSED";
+                            var areas = await _context.SessionAreas
+                                .Where(a => a.SessionId == sessionid)
+                                .Select(a => a.AreaId)
+                                .ToListAsync();
+
+                            var areaIds = areas.Where(a => a.HasValue).Select(a => a.Value).ToList();
+
+                            var sessionR = new SessionForChangeStatusRequestModel
+                            {
+                                SessionType = result.SessionType,
+                                AreaIds = areaIds,
+                                CreateDate = result.CreateDate,
+                                EndDate = result.EndDate,
+                            };
+                            await CreateSessionForNextDay(sessionR);
                         }
                     }
                     else
@@ -472,10 +473,10 @@ namespace HomeMealTaste.Services.Implement
             return mappedResults;
         }
 
-        public Task<List<GetAllSessionByAreaIdResponseModel>> GetAllSessionByAreaIdWithStatusTrue(int areaid)
+        public Task<List<GetAllSessionByAreaIdResponseModel>> GetAllSessionByAreaIdWithStatusOpen(int areaid)
         {
 
-            var result = _context.SessionAreas.Include(x => x.Area).Include(x => x.Session).Where(x => x.AreaId == areaid && x.Session.Status.Equals("ONGOING")).Select(x => new GetAllSessionByAreaIdResponseModel
+            var result = _context.SessionAreas.Include(x => x.Area).Include(x => x.Session).Where(x => x.AreaId == areaid && x.Session.Status.Equals("OPEN")).Select(x => new GetAllSessionByAreaIdResponseModel
             {
                 SessionId = x.Session.SessionId,
                 CreateDate = ((DateTime)x.Session.CreateDate).ToString("dd-MM-yyyy"),
@@ -688,10 +689,10 @@ namespace HomeMealTaste.Services.Implement
             return responseModel;
         }
 
-        public async Task<List<GetAllSessionResponseModel>> GetAllSessionStatusOn()
+        public async Task<List<GetAllSessionResponseModel>> GetAllSessionStatusBooking()
         {
             var result = _context.Sessions.Include(x => x.SessionAreas).ThenInclude(a => a.Area)
-                .Where(x => x.Status.Equals("ONGOING")).Select(x => new GetAllSessionResponseModel
+                .Where(x => x.Status.Equals("BOOKING")).Select(x => new GetAllSessionResponseModel
                 {
                     SessionId = x.SessionId,
                     CreateDate = ((DateTime)x.CreateDate).ToString("dd-MM-yyyy"),
