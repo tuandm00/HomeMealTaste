@@ -54,9 +54,9 @@ namespace HomeMealTaste.API.Controllers
             return Ok(result);
         }
         [HttpGet("get-all-kitchen-by-area-id")]
-        public async Task<IActionResult> GetAllKitchenByAreaId(int areaId)
+        public async Task<IActionResult> GetAllKitchenByAreaId(int areaId, int sessionId)
         { 
-            var result = await _kitchenService.GetAllKitchenByAreaId(areaId);
+            var result = await _kitchenService.GetAllKitchenByAreaId(areaId, sessionId);
             return Ok(result);
         }
         public static DateTime TranferDateTimeByTimeZone(DateTime dateTime, string timezoneArea)

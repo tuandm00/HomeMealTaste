@@ -214,10 +214,11 @@ namespace HomeMealTaste.Services.Implement
             return mapped;
         }
 
-        public async Task<List<GetAllKitchenByAreaIdResponseModel>> GetAllKitchenByAreaId(int areaId)
+        public async Task<List<GetAllKitchenByAreaIdResponseModel>> GetAllKitchenByAreaId(int areaId, int sessionId)
         {
             var datenow = GetDateTimeTimeZoneVietNam();
-            var result = _context.Kitchens.Include(x => x.MealSessions).Where(x => x.AreaId == areaId && x.MealSessions.Any(ms => ms.CreateDate.Value.Date == datenow.Date)).Select(x => new GetAllKitchenByAreaIdResponseModel
+            var result = _context.Kitchens.Include(x => x.MealSessions).Where(x => x.AreaId == areaId && x.MealSessions.Any(ms => ms.CreateDate.Value.Date == datenow.Date && ms.SessionId == sessionId
+            )).Select(x => new GetAllKitchenByAreaIdResponseModel
             {
                 KitchenId = x.KitchenId,
                 Address = x.Address,
