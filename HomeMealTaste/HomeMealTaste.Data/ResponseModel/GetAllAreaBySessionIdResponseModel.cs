@@ -12,5 +12,22 @@ namespace HomeMealTaste.Data.ResponseModel
         public string? Address { get; set; }
         public string? AreaName { get; set; }
         public int? DistrictId { get; set; }
+        public int? TotalMealSessions { get; set; }
+        public int? TotalOrders { get; set; }
+        public int? TotalChefs { get; set; }
     }
+    public class GetAllAreaResponse
+    {
+        public List<GetAllAreaBySessionIdResponseModel>? AreaList { get; set; }
+        public int? TotalPriceOrders { get; set; }
+        public int? TotalOrdersWithStatusPaid { get; set; }
+        public int? TotalOrdersWithStatusAccepted { get; set; }
+        public int? TotalOrdersWithStatusCompleted { get; set; }
+        public int? TotalOrdersWithStatusCancelled { get; set; }
+        public int? TotalOrdersWithStatusNotEat { get; set; }
+        public int? SumTotalMealSessions { get; set; }
+        public int? SumTotalOrders { get; set; }
+        public int? SumTotalChefs { get; set; }
+    }
+
 }

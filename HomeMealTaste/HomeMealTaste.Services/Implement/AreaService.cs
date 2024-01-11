@@ -113,17 +113,75 @@ namespace HomeMealTaste.Services.Implement
             return mapped;
         }
 
-        public async Task<List<GetAllAreaBySessionIdResponseModel>> GetAllAreaBySessionId(int sessionId)
+        public async Task<GetAllAreaResponse> GetAllAreaBySessionId(int sessionId)
         {
-            var getListArea = _context.SessionAreas.Include(s => s.Area).Where(s => s.SessionId == sessionId).Select(s => new GetAllAreaBySessionIdResponseModel
+            var getListArea = _context.SessionAreas
+                .Include(s => s.Area)
+                .Include(s => s.Session)
+                .ThenInclude(s => s.MealSessions)
+                .ThenInclude(s => s.Orders)
+                .Where(s => s.SessionId == sessionId)
+                .Select(s => new GetAllAreaBySessionIdResponseModel
+                {
+                    AreaId = s.Area.AreaId,
+                    Address = s.Area.Address,
+                    AreaName = s.Area.AreaName,
+                    DistrictId = s.Area.DistrictId,
+                    TotalChefs = s.Session.MealSessions.Select(ms => ms.KitchenId).Distinct().Count(),
+                    TotalMealSessions = s.Session.MealSessions.Count(),
+                    TotalOrders = s.Session.MealSessions.SelectMany(ms => ms.Orders).Count(),
+                }).ToList();
+
+            var totalPriceOrders = _context.SessionAreas
+                .Where(s => s.SessionId == sessionId)
+                .SelectMany(s => s.Session.MealSessions.SelectMany(ms => ms.Orders))
+                .Select(x => x.TotalPrice)
+                .Distinct()
+                .Sum();
+            var totalOrdersWithStatusPaid = _context.SessionAreas
+    .Where(s => s.SessionId == sessionId)
+    .SelectMany(s => s.Session.MealSessions.SelectMany(ms => ms.Orders))
+    .Count(x => x.Status == "PAID");
+
+            var totalOrdersWithStatusAccepted = _context.SessionAreas
+    .Where(s => s.SessionId == sessionId)
+    .SelectMany(s => s.Session.MealSessions.SelectMany(ms => ms.Orders))
+    .Count(x => x.Status == "ACCEPTED");
+
+            var totalOrdersWithStatusCompleted = _context.SessionAreas
+    .Where(s => s.SessionId == sessionId)
+    .SelectMany(s => s.Session.MealSessions.SelectMany(ms => ms.Orders))
+    .Count(x => x.Status == "COMPLETED");
+
+            var totalOrdersWithStatusCancelled = _context.SessionAreas
+    .Where(s => s.SessionId == sessionId)
+    .SelectMany(s => s.Session.MealSessions.SelectMany(ms => ms.Orders))
+    .Count(x => x.Status == "CANCELLED");
+
+            var totalOrdersWithStatusNotEat = _context.SessionAreas
+    .Where(s => s.SessionId == sessionId)
+    .SelectMany(s => s.Session.MealSessions.SelectMany(ms => ms.Orders))
+    .Count(x => x.Status == "NOTEAT");
+
+            var sumTotalMealSessions = getListArea.Sum(a => a.TotalMealSessions) ?? 0;
+            var sumTotalOrders = getListArea.Sum(a => a.TotalOrders) ?? 0;
+            var sumTotalChefs = getListArea.Sum(a => a.TotalChefs) ?? 0;
+
+            var response = new GetAllAreaResponse
             {
-                AreaId= s.Area.AreaId,
-                Address = s.Area.Address,
-                AreaName = s.Area.AreaName,
-                DistrictId = s.Area.DistrictId,
-            }).ToList();
-            var mapped = getListArea.Select(g => _mapper.Map<GetAllAreaBySessionIdResponseModel>(g)).ToList();
-            return mapped;
+                AreaList = _mapper.Map<List<GetAllAreaBySessionIdResponseModel>>(getListArea),
+                TotalPriceOrders = totalPriceOrders,
+                TotalOrdersWithStatusPaid = totalOrdersWithStatusPaid,
+                TotalOrdersWithStatusAccepted = totalOrdersWithStatusAccepted,
+                TotalOrdersWithStatusCancelled = totalOrdersWithStatusCancelled,
+                TotalOrdersWithStatusCompleted = totalOrdersWithStatusCompleted,
+                TotalOrdersWithStatusNotEat = totalOrdersWithStatusNotEat,
+                SumTotalChefs = sumTotalChefs,
+                SumTotalMealSessions = sumTotalMealSessions,
+                SumTotalOrders = sumTotalOrders,
+            };
+
+            return response;
         }
 
         public async Task<GetSingleAreaByAreaIdResponseModel> GetSingleAreaByAreaId(int areaid)
