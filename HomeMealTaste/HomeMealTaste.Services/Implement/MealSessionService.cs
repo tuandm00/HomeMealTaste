@@ -1158,7 +1158,7 @@ namespace HomeMealTaste.Services.Implement
 
         public async Task UpdateAreaAndAllMealSessionWithStatusProcessing(UpdateAreaAndAllMealSessionWithStatusProcessingRequestModel request)
         {
-            var result = _context.MealSessions.Where(x => request.mealSessionIds.Contains(x.MealSessionId)).ToList();
+            var result = _context.MealSessions.Where(x => request.mealSessionIds.Contains(x.MealSessionId) && x.Status.Equals("PROCESSING")).ToList();
             if(result != null)
             {
                 foreach(var r in result)
