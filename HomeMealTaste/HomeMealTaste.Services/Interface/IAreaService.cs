@@ -18,6 +18,7 @@ namespace HomeMealTaste.Services.Interface
         Task<UpdateAreaResponseModel> UpdateArea(UpdateAreaRequestModel updateAreaRequest);
         Task<List<GetAllAreaByDistrictIdReponseModel>> GetAllAreaByDistrictId(int districtid);
         Task<GetAllAreaResponse> GetAllAreaBySessionId(int sessionId);
+        Task<List<GetAllAreaBySessionIdForCustomerResponseModel>> GetAllAreaBySessionIdForCustomer(int sessionId);
         Task<GetSingleAreaByAreaIdResponseModel> GetSingleAreaByAreaId(int areaid);
     }
 }

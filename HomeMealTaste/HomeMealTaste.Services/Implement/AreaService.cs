@@ -184,6 +184,19 @@ namespace HomeMealTaste.Services.Implement
             return response;
         }
 
+        public async Task<List<GetAllAreaBySessionIdForCustomerResponseModel>> GetAllAreaBySessionIdForCustomer(int sessionId)
+        {
+            var result = _context.SessionAreas.Include(x => x.Area).Where(x => x.SessionId == sessionId).Select(x => new GetAllAreaBySessionIdForCustomerResponseModel
+            {
+                AreaId = x.Area.AreaId,
+                Address = x.Area.Address,
+                AreaName = x.Area.AreaName,
+            }).ToList();
+
+            var mapped = result.Select(r => _mapper.Map<GetAllAreaBySessionIdForCustomerResponseModel>(r)).ToList();
+            return mapped;
+        }
+
         public async Task<GetSingleAreaByAreaIdResponseModel> GetSingleAreaByAreaId(int areaid)
         {
             var result = _context.Areas.Where(a => a.AreaId == areaid).Select(a => new GetSingleAreaByAreaIdResponseModel
