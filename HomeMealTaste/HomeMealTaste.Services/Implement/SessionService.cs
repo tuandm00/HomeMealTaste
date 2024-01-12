@@ -362,31 +362,29 @@ namespace HomeMealTaste.Services.Implement
                 {
                     var result = await _context.Sessions.FindAsync(sessionid);
 
-                    if (result != null && result.Status.Equals("OPEN") && result.EndDate.Value.Date >= datenow.Date)
+                    if (result != null && result.Status.Equals("OPEN", StringComparison.OrdinalIgnoreCase) && result.EndDate.Value.Date >= datenow.Date)
                     {
-                        if (autoCreatingstatus && request.status.Equals("BOOKING"))
+                        if (autoCreatingstatus && request.status.Equals("BOOKING", StringComparison.OrdinalIgnoreCase))
                         {
                             result.Status = "BOOKING";
-
-                            
                         }
-                        else if (autoCreatingstatus && request.status.Equals("CANCELLED"))
+                        else if (autoCreatingstatus && request.status.Equals("CANCELLED", StringComparison.OrdinalIgnoreCase))
                         {
                             result.Status = "CANCELLED";
                             //hoan tien cho nay
                             
                         }
                     }
-                    else if (result != null && result.Status.Equals("BOOKING") && result.EndDate.Value.Date >= datenow.Date)
+                    else if (result != null && result.Status.Equals("BOOKING", StringComparison.OrdinalIgnoreCase) && result.EndDate.Value.Date >= datenow.Date)
                     {
-                        if (autoCreatingstatus && request.status.Equals("ONGOING"))
+                        if (autoCreatingstatus && request.status.Equals("ONGOING", StringComparison.OrdinalIgnoreCase))
                         {
                             result.Status = "ONGOING";
                         }
                     }
-                    else if (result != null && result.Status.Equals("ONGOING") && result.EndDate.Value.Date >= datenow.Date)
+                    else if (result != null && result.Status.Equals("ONGOING", StringComparison.OrdinalIgnoreCase) && result.EndDate.Value.Date >= datenow.Date)
                     {
-                        if(autoCreatingstatus && request.status.Equals("CLOSED"))
+                        if(autoCreatingstatus && request.status.Equals("CLOSED", StringComparison.OrdinalIgnoreCase))
                         {
                             result.Status = "CLOSED";
                             var areas = await _context.SessionAreas

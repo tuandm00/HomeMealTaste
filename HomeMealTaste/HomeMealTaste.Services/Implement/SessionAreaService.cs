@@ -25,13 +25,51 @@ namespace HomeMealTaste.Services.Implement
             _sessionareaRepository = sessionAreaRepository;
         }
 
+        public async Task ChangeStatusSessionArea(int sessionId)
+        {
+            var getListArea = _context.SessionAreas.Where(x => x.SessionId == sessionId).Select(x => x.AreaId).ToList();
+            var result = _context.SessionAreas.Where(x => x.SessionId == sessionId).ToList();
+            foreach (var area in getListArea)
+            {
+                var getListMealSessionId = _context.MealSessions.Where(x => x.SessionId == sessionId && getListArea.Contains(x.AreaId)).Select(x => x.MealSessionId).ToList();
+                var getListStatusOfMealSession = _context.MealSessions.Where(x => x.SessionId == sessionId && getListArea.Contains(x.AreaId)).Select(x => x.Status).ToList();
+                var getListStatusOrder = _context.Orders.Where(x => getListMealSessionId.Contains((int)x.MealSessionId)).Select(x => x.Status).ToList();
+
+                foreach (var listStatusMealSession in getListStatusOfMealSession)
+                {
+                    if (listStatusMealSession.Equals("COMPLETED", StringComparison.OrdinalIgnoreCase) || listStatusMealSession.Equals("CANCELLED", StringComparison.OrdinalIgnoreCase))
+                    {
+                        foreach(var listStatusOrder in getListStatusOrder)
+                        {
+                            if (listStatusOrder.Equals("COMPLETED", StringComparison.OrdinalIgnoreCase) || listStatusOrder.Equals("CANCELLED", StringComparison.OrdinalIgnoreCase))
+                            {
+                                foreach(var r in result)
+                                {
+                                    r.Status = false;
+                                }
+                            }
+                            else
+                            {
+                                throw new Exception("Some Status Order is Not COMPLETED");
+                            }
+                        }
+                    }
+                    else
+                    {
+                        throw new Exception("Some Status Meal Session is Not COMPLETED");
+                    }
+                }
+                await _context.SaveChangesAsync();
+            }
+        }
+
         public async Task<List<GetAllSessionAreaResponseModel>> GetAllSessionArea()
         {
             var result = _context.SessionAreas.Select(x => new GetAllSessionAreaResponseModel
             {
-                SessionAreaId = x.SessionAreaId,   
+                SessionAreaId = x.SessionAreaId,
                 AreaId = x.AreaId,
-                SessionId = x.SessionId,    
+                SessionId = x.SessionId,
                 Status = x.Status,
             }).ToList();
 
@@ -39,16 +77,17 @@ namespace HomeMealTaste.Services.Implement
             return mapped;
         }
 
+
         public async Task<List<GetAllSessionAreaResponseModel>> UpdateStatusSessionArea(UpdateStatusSessionAreaRequestModel request)
         {
             var result = _context.SessionAreas.Where(x => request.SessionAreaIds.Contains(x.SessionAreaId)).ToList();
-            if(result == null)
+            if (result == null)
             {
                 throw new Exception("Can not find Session Area");
             }
             else
             {
-                foreach(var r in result)
+                foreach (var r in result)
                 {
                     r.Status = false;
                 }

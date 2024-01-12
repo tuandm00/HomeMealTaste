@@ -28,5 +28,12 @@ namespace HomeMealTaste.API.Controllers
             var result = await _sessionAreaService.UpdateStatusSessionArea(request);
             return Ok(result);
         }
+        [HttpPatch("change-status-session-area")]
+        public async Task ChangeStatusSessionArea(int sessionId)
+        {
+             await _sessionAreaService.ChangeStatusSessionArea(sessionId);
+            
+        }
+        
     }
 }
