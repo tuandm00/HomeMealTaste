@@ -17,6 +17,8 @@ namespace HomeMealTaste.Data.RequestModel
         public string? Status { get; set; }
         public string? CreateDate { get; set; }
         public KitchenDtoForMealSessions? KitchenDtoForMealSessions { get; set; }
+        public AreaDtoForMealSessions? AreaDtoForMealSessions { get; set; }
+
     }
 
     public class MealDtoForMealSessions
@@ -40,7 +42,6 @@ namespace HomeMealTaste.Data.RequestModel
         public int? UserId { get; set; }
         public string? Status { get; set; }
         public string? SessionType { get; set; }
-        public AreaDtoForMealSessions? AreaDtoForMealSessions { get; set; }
     }
 
     public class KitchenDtoForMealSessions

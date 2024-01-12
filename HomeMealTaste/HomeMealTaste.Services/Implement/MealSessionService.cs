@@ -354,6 +354,12 @@ namespace HomeMealTaste.Services.Implement
         RemainQuantity = gr.RemainQuantity,
         Status = gr.Status,
         CreateDate = ((DateTime)gr.CreateDate).ToString("dd-MM-yyyy"),
+        AreaDtoForMealSessions = new AreaDtoForMealSessions
+        {
+            AreaId = gr.Area.AreaId,
+            Address = gr.Area.Address,
+            AreaName = gr.Area.AreaName,
+        },
         MealDtoForMealSessions = new MealDtoForMealSessions
         {
             MealId = gr.Meal.MealId,
@@ -388,17 +394,6 @@ namespace HomeMealTaste.Services.Implement
             UserId = gr.Session.UserId,
             Status = gr.Session.Status,
             SessionType = gr.Session.SessionType,
-            AreaDtoForMealSessions = new AreaDtoForMealSessions
-            {
-                AreaId = (int)(gr.Session.SessionAreas.FirstOrDefault(sa => sa.SessionId == gr.Session.SessionId).Area.AreaId),
-                Address = gr.Session.SessionAreas.FirstOrDefault(sa => sa.SessionId == gr.Session.SessionId).Area.Address,
-                AreaName = gr.Session.SessionAreas.FirstOrDefault(sa => sa.SessionId == gr.Session.SessionId).Area.AreaName,
-                DistrictDtoForMealSessions = new DistrictDtoForMealSessions
-                {
-                    DistrictId = gr.Session.SessionAreas.FirstOrDefault(sa => sa.SessionId == gr.Session.SessionId).Area.District.DistrictId,
-                    DistrictName = gr.Session.SessionAreas.FirstOrDefault(sa => sa.SessionId == gr.Session.SessionId).Area.District.DistrictName,
-                },
-            },
         },
         KitchenDtoForMealSessions = new KitchenDtoForMealSessions
         {
