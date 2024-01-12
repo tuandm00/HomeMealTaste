@@ -1155,6 +1155,23 @@ namespace HomeMealTaste.Services.Implement
             var mapped = result.Select(r => _mapper.Map<MealSessionResponseModel>(r)).ToList();
             return mapped;
         }
+
+        public async Task UpdateAreaAndAllMealSessionWithStatusProcessing(UpdateAreaAndAllMealSessionWithStatusProcessingRequestModel request)
+        {
+            var result = _context.MealSessions.Where(x => request.mealSessionIds.Contains(x.MealSessionId)).ToList();
+            if(result != null)
+            {
+                foreach(var r in result)
+                {
+                    r.Status = "CANCELLED";
+                }
+            }
+            else
+            {
+                throw new Exception("Can not find meal session ID");
+            }
+            await _context.SaveChangesAsync();
+        }
     }
 }
 

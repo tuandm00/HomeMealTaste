@@ -145,6 +145,13 @@ namespace HomeMealTaste.Controllers
             return Ok(result);
 
         }
+        [HttpPatch("update-area-and-all-meal-session-with-status-processing")]
+        public async Task UpdateAreaAndAllMealSessionWithStatusProcessing(UpdateAreaAndAllMealSessionWithStatusProcessingRequestModel request)
+        {
+             await _mealSessionService.UpdateAreaAndAllMealSessionWithStatusProcessing(request);
+
+
+        }
     }
 }
 
