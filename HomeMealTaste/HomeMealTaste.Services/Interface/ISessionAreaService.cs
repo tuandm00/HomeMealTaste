@@ -11,7 +11,8 @@ namespace HomeMealTaste.Services.Interface
     public interface ISessionAreaService
     {
         public Task<List<GetAllSessionAreaResponseModel>> GetAllSessionArea();
-        public Task ChangeStatusSessionArea(int sessionId);
+        public Task<bool> ChangeStatusSessionArea(int sessionId);
+        public Task<bool> CheckChangeStatusSessionArea(int sessionId);
         public Task<List<GetAllSessionAreaResponseModel>> UpdateStatusSessionArea(UpdateStatusSessionAreaRequestModel request);
     }
 }

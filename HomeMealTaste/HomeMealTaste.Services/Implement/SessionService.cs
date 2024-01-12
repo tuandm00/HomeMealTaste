@@ -24,16 +24,18 @@ namespace HomeMealTaste.Services.Implement
     {
         private readonly ISessionRepository _sessionRepository;
         private readonly ITransactionService _transactionService;
+        private readonly ISessionAreaService _sessionAreaService;
         private readonly HomeMealTasteContext _context;
         private readonly IMapper _mapper;
         private readonly ILogger<SessionService> _logger;
-        public SessionService(HomeMealTasteContext context, ISessionRepository sessionRepository, IMapper mapper, ITransactionService transactionService, ILogger<SessionService> logger)
+        public SessionService(HomeMealTasteContext context, ISessionRepository sessionRepository, IMapper mapper, ITransactionService transactionService, ILogger<SessionService> logger, ISessionAreaService sessionAreaService)
         {
             _context = context;
             _sessionRepository = sessionRepository;
             _mapper = mapper;
             _transactionService = transactionService;
             _logger = logger;
+            _sessionAreaService = sessionAreaService;
         }
         public static DateTime TranferDateTimeByTimeZone(DateTime dateTime, string timezoneArea)
         {
@@ -386,24 +388,31 @@ namespace HomeMealTaste.Services.Implement
                     {
                         if(autoCreatingstatus && request.status.Equals("CLOSED", StringComparison.OrdinalIgnoreCase))
                         {
-                            result.Status = "CLOSED";
-                            var areas = await _context.SessionAreas
-                                .Where(a => a.SessionId == sessionid)
-                                .Select(a => a.AreaId)
-                                .ToListAsync();
-
-                            var areaIds = areas.Where(a => a.HasValue).Select(a => a.Value).ToList();
-
-                            var sessionR = new SessionForChangeStatusRequestModel
+                            var checkSessionAreaFinalStatus = await _sessionAreaService.CheckChangeStatusSessionArea(sessionid);
+                            if(checkSessionAreaFinalStatus ==  true)
                             {
-                                SessionType = result.SessionType,
-                                AreaIds = areaIds,
-                                CreateDate = result.CreateDate,
-                                EndDate = result.EndDate,
-                            };
-                            await CreateSessionForNextDay(sessionR);
-                            await _transactionService.SaveTotalPriceAfterFinishSession(sessionid);
+                                result.Status = "CLOSED";
+                                var areas = await _context.SessionAreas
+                                    .Where(a => a.SessionId == sessionid)
+                                    .Select(a => a.AreaId)
+                                    .ToListAsync();
 
+                                var areaIds = areas.Where(a => a.HasValue).Select(a => a.Value).ToList();
+
+                                var sessionR = new SessionForChangeStatusRequestModel
+                                {
+                                    SessionType = result.SessionType,
+                                    AreaIds = areaIds,
+                                    CreateDate = result.CreateDate,
+                                    EndDate = result.EndDate,
+                                };
+                                await CreateSessionForNextDay(sessionR);
+                                await _transactionService.SaveTotalPriceAfterFinishSession(sessionid);
+                            }
+                        }
+                        else
+                        {
+                            throw new Exception("Status Session Area is not the final status");
                         }
                     }
                     else

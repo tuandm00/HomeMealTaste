@@ -25,7 +25,7 @@ namespace HomeMealTaste.Services.Implement
             _sessionareaRepository = sessionAreaRepository;
         }
 
-        public async Task ChangeStatusSessionArea(int sessionId)
+        public async Task<bool> ChangeStatusSessionArea(int sessionId)
         {
             var getListArea = _context.SessionAreas.Where(x => x.SessionId == sessionId).Select(x => x.AreaId).ToList();
             var result = _context.SessionAreas.Where(x => x.SessionId == sessionId).ToList();
@@ -61,8 +61,26 @@ namespace HomeMealTaste.Services.Implement
                 }
                 await _context.SaveChangesAsync();
             }
+            return true;
         }
 
+        public async Task<bool> CheckChangeStatusSessionArea(int sessionId)
+        {
+            try
+            {
+                bool result = await ChangeStatusSessionArea(sessionId);
+
+                if (result)
+                {
+                    return true;
+                }
+            }
+            catch (Exception ex)
+            {
+
+            }
+            return false;
+        }
         public async Task<List<GetAllSessionAreaResponseModel>> GetAllSessionArea()
         {
             var result = _context.SessionAreas.Select(x => new GetAllSessionAreaResponseModel
