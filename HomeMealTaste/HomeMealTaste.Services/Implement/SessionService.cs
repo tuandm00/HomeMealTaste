@@ -223,7 +223,7 @@ namespace HomeMealTaste.Services.Implement
                 entity.SessionType = "Dinner";
             }
 
-            entity.Status = "OPEN";
+            //entity.Status = "OPEN";
             entity.UserId = 2;
         }
         public async Task<SessionResponseModel> CreateSessionWithDay(SessionRequestModel sessionRequest)
@@ -242,6 +242,11 @@ namespace HomeMealTaste.Services.Implement
             var sessionTypeLower = entity.SessionType.ToLower();
             entity.CreateDate = GetDateTimeTimeZoneVietNam();
             entity.EndDate = DateTime.ParseExact(sessionRequest.Date, "dd-MM-yyyy", CultureInfo.InvariantCulture);
+            entity.Status = sessionRequest.Status?.ToString().ToLower() ?? "OPEN";
+            if(entity.Status == null)
+            {
+                entity.Status = "OPEN";
+            }
             if (sessionRequest.AreaIds != null)
             {
                 if (await SessionTypeExistsInAreaInDayNow(sessionRequest.AreaIds, sessionTypeLower, (DateTime)entity.EndDate))
@@ -577,7 +582,7 @@ namespace HomeMealTaste.Services.Implement
 
                     //}
                     entity.SessionName = $"Session: {entity.SessionType} , In: {((DateTime)entity.EndDate).ToString("dd-MM-yyyy")}";
-
+                    entity.Status = "OPEN";
                     var result = await _sessionRepository.Create(entity, true);
 
                     if (result != null && sessionRequest.AreaIds != null)
