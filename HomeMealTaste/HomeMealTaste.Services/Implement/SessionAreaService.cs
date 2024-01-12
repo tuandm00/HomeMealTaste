@@ -95,6 +95,24 @@ namespace HomeMealTaste.Services.Implement
             return mapped;
         }
 
+        public async Task<List<GetAllSessionAreaBySessionIdResponseModel>> GetAllSessionAreaBySessionId(int sessionId)
+        {
+            var result = _context.SessionAreas.Where(x => x.SessionId == sessionId).Select(x => new GetAllSessionAreaBySessionIdResponseModel
+            {
+                SessionAreaId = x.SessionAreaId,
+                SessionId=x.SessionId,
+                Status=x.Status,
+                AreaDtoForSessionArea = new AreaDtoForSessionArea
+                {
+                    AreaId = x.Area.AreaId,
+                    Address = x.Area.Address,
+                    AreaName = x.Area.AreaName,
+                }
+            }).ToList();
+            var mapped = result.Select(r => _mapper.Map<GetAllSessionAreaBySessionIdResponseModel>(r)).ToList();
+            return mapped;
+
+        }
 
         public async Task<List<GetAllSessionAreaResponseModel>> UpdateStatusSessionArea(UpdateStatusSessionAreaRequestModel request)
         {

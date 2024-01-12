@@ -34,6 +34,13 @@ namespace HomeMealTaste.API.Controllers
              await _sessionAreaService.ChangeStatusSessionArea(sessionId);
             
         }
-        
+        [HttpGet("get-all-session-area-by-session-id")]
+        public async Task<IActionResult> GetAllSessionAreaBySessionId(int sessionId)
+        {
+            var result = await _sessionAreaService.GetAllSessionAreaBySessionId(sessionId);
+            return Ok(result);
+
+        }
+
     }
 }
