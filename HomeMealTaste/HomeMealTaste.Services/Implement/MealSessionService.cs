@@ -188,7 +188,12 @@ namespace HomeMealTaste.Services.Implement
                     Quantity = x.Quantity,
                     RemainQuantity = x.RemainQuantity,
                     Status = x.Status,
-                    AreaId = x.AreaId,
+                    AreaDtoForMealSession = new AreaDtoForMealSession
+                    {
+                        AreaId = x.Area.AreaId,
+                        Address = x.Area.Address,
+                        AreaName = x.Area.AreaName,
+                    },
                     KitchenDtoForMealSession = new KitchenDtoForMealSession
                     {
                         KitchenId = x.Meal.Kitchen.KitchenId,

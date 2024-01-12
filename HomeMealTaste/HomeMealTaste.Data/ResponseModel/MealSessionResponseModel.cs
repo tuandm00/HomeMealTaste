@@ -16,7 +16,7 @@ namespace HomeMealTaste.Data.ResponseModel
         public int? RemainQuantity { get; set; }
         public string? Status { get; set; }
         public string? CreateDate { get; set; }
-        public int? AreaId { get; set; }
+        public AreaDtoForMealSession? AreaDtoForMealSession { get; set; }
         public KitchenDtoForMealSession? KitchenDtoForMealSession { get; set; }
     }
 
