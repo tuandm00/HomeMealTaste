@@ -849,15 +849,24 @@ namespace HomeMealTaste.Services.Implement
             var mealSession = await _context.MealSessions.Where(x => x.MealSessionId == mealsessionid).FirstOrDefaultAsync();
             if (listOrder != null)
             {
-
                 foreach (var list in listOrder)
                 {
-                    if (status.Equals("COMPLETED", StringComparison.OrdinalIgnoreCase) && list.Status.Equals("PAID", StringComparison.OrdinalIgnoreCase))
+                    if (status.Equals("ACCEPTED", StringComparison.OrdinalIgnoreCase) && list.Status.Equals("PAID", StringComparison.OrdinalIgnoreCase))
+                    {
+                        list.Status = "ACCEPTED";
+                        mealSession.Status = "COMPLETED";
+                    }
+                    else if(status.Equals("COMPLETED", StringComparison.OrdinalIgnoreCase) && list.Status.Equals("ACCEPTED", StringComparison.OrdinalIgnoreCase))
                     {
                         list.Status = "COMPLETED";
                         mealSession.Status = "COMPLETED";
                     }
-                    else
+                    else if(status.Equals("NOTEAT", StringComparison.OrdinalIgnoreCase) && list.Status.Equals("ACCEPTED", StringComparison.OrdinalIgnoreCase))
+                    {
+                        list.Status = "NOTEAT";
+                        mealSession.Status = "COMPLETED";
+                    }
+                    else if(status.Equals("CANCELLED", StringComparison.OrdinalIgnoreCase) && list.Status.Equals("PAID", StringComparison.OrdinalIgnoreCase))
                     {
                         list.Status = "CANCELLED";
                         mealSession.Status = "CANCELLED";
