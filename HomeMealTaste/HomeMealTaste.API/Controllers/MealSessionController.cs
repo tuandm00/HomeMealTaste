@@ -138,6 +138,13 @@ namespace HomeMealTaste.Controllers
             return Ok(result);
 
         }
+        [HttpGet("get-all-meal-session-with-not-status-completed-and-cancelled")]
+        public async Task<IActionResult> GetAllMeallSessionWithNotStatusCompletedAndCancelled()
+        {
+            var result = await _mealSessionService.GetAllMeallSessionWithNotStatusCompletedAndCancelled();
+            return Ok(result);
+
+        }
     }
 }
 
