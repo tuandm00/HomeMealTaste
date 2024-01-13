@@ -152,6 +152,12 @@ namespace HomeMealTaste.Controllers
 
 
         }
+        [HttpGet("get-all-meal-session-with-status-completed-by-kitchen-id")]
+        public async Task<IActionResult> GetAllMeallSessionWithStatusCompletedByKitchenId(int kitchenId)
+        {
+            var result = await _mealSessionService.GetAllMeallSessionWithStatusCompletedByKitchenId(kitchenId);
+            return Ok(result);
+        }
     }
 }
 
