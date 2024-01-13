@@ -391,10 +391,10 @@ namespace HomeMealTaste.Services.Implement
                             result.Status = "ONGOING";
                         }
                     }
-                    else if (datenow.Hour == result.StartTime?.Hour && result.Status.Equals("BOOKING"))
-                    {
-                        result.Status = "ONGOING";
-                    }
+                    //else if (datenow.Hour == result.StartTime?.Hour && result.Status.Equals("BOOKING"))
+                    //{
+                    //    result.Status = "ONGOING";
+                    //}
                     else if (result != null && result.Status.Equals("ONGOING", StringComparison.OrdinalIgnoreCase) && result.EndDate.Value.Date >= datenow.Date)
                     {
                         if(autoCreatingstatus && request.status.Equals("CLOSED", StringComparison.OrdinalIgnoreCase))
