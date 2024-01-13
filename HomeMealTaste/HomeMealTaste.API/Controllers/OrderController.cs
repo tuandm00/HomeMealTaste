@@ -142,6 +142,13 @@ namespace HomeMealTaste.API.Controllers
             var result = await _orderService.GetAllOrderWithStatusCompleted();
             return Ok(result);
         }
+        
+        [HttpPatch("change-single-status-order")]
+        public async Task<IActionResult> ChangeSingleStatusOrder(int orderId, string status)
+        {
+             var result = await _orderService.ChangeSingleStatusOrder(orderId, status);
+            return Ok(result);
+        }
 
     }
 }

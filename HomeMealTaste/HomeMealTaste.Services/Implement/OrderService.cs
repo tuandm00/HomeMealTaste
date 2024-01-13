@@ -856,17 +856,17 @@ namespace HomeMealTaste.Services.Implement
                         list.Status = "ACCEPTED";
                         mealSession.Status = "COMPLETED";
                     }
-                    else if(status.Equals("COMPLETED", StringComparison.OrdinalIgnoreCase) && list.Status.Equals("ACCEPTED", StringComparison.OrdinalIgnoreCase))
+                    else if (status.Equals("COMPLETED", StringComparison.OrdinalIgnoreCase) && list.Status.Equals("ACCEPTED", StringComparison.OrdinalIgnoreCase))
                     {
                         list.Status = "COMPLETED";
                         mealSession.Status = "COMPLETED";
                     }
-                    else if(status.Equals("NOTEAT", StringComparison.OrdinalIgnoreCase) && list.Status.Equals("ACCEPTED", StringComparison.OrdinalIgnoreCase))
+                    else if (status.Equals("NOTEAT", StringComparison.OrdinalIgnoreCase) && list.Status.Equals("ACCEPTED", StringComparison.OrdinalIgnoreCase))
                     {
                         list.Status = "NOTEAT";
                         mealSession.Status = "COMPLETED";
                     }
-                    else if(status.Equals("CANCELLED", StringComparison.OrdinalIgnoreCase) && list.Status.Equals("PAID", StringComparison.OrdinalIgnoreCase))
+                    else if (status.Equals("CANCELLED", StringComparison.OrdinalIgnoreCase) && list.Status.Equals("PAID", StringComparison.OrdinalIgnoreCase))
                     {
                         list.Status = "CANCELLED";
                         mealSession.Status = "CANCELLED";
@@ -989,7 +989,7 @@ namespace HomeMealTaste.Services.Implement
 
             if (walletIdsOfCustomers != null && walletIdsOfCustomers.Any())
             {
-                
+
                 foreach (var orders in order)
                 {
                     var cusid = orders.CustomerId;
@@ -1271,7 +1271,7 @@ namespace HomeMealTaste.Services.Implement
                 CustomerId = x.CustomerId,
                 OrderId = x.OrderId,
                 Quantity = x.Quantity,
-                Status= x.Status,
+                Status = x.Status,
                 Time = ((DateTime)x.Time).ToString("dd-MM-yyyy HH:mm"),
                 TotalPrice = x.TotalPrice,
             }).ToList();
@@ -1344,6 +1344,46 @@ namespace HomeMealTaste.Services.Implement
             var mappedResult = result.Select(x => _mapper.Map<OrderResponseModel>(x)).ToList();
 
             return mappedResult;
+        }
+
+        public async Task<ChangeStatusOrderResponseModel> ChangeSingleStatusOrder(int orderId, string status)
+        {
+            var result = _context.Orders.Where(x => x.OrderId == orderId).FirstOrDefault();
+
+
+            if (result == null)
+            {
+                throw new Exception("Can not find Order");
+            }
+
+            var mealsessionId = _context.Orders.Where(x => x.OrderId == orderId).Select(x => x.MealSessionId).FirstOrDefault();
+            var sessionId = _context.MealSessions.Where(x => x.MealSessionId == mealsessionId).Select(x => x.SessionId).FirstOrDefault();
+            var statusSession = _context.Sessions.Where(x => x.SessionId == sessionId).Select(x => x.Status).FirstOrDefault();
+
+            if (statusSession != null && statusSession.Equals("ONGOING"))
+            {
+                if (result != null && status.Equals("ACCEPTED", StringComparison.OrdinalIgnoreCase) && result.Status.Equals("PAID"))
+                {
+                    result.Status = status.ToUpper();
+                }
+                else if (result != null && status.Equals("COMPLETED", StringComparison.OrdinalIgnoreCase) && result.Status.Equals("ACCEPTED"))
+                {
+                    result.Status = status.ToUpper();
+                }
+                else if (result != null && status.Equals("CANCELLED", StringComparison.OrdinalIgnoreCase) && result.Status.Equals("ACCEPTED"))
+                {
+                    result.Status = status.ToUpper();
+                }
+            }
+            else
+            {
+                throw new Exception("Status Session is Not ONGOING");
+            }
+
+            await _context.SaveChangesAsync();
+
+            var mapped = _mapper.Map<ChangeStatusOrderResponseModel>(result);
+            return mapped;
         }
     }
 }
