@@ -252,6 +252,12 @@ namespace HomeMealTaste.Services.Implement
             return mapped;
 
         }
+
+        public async Task<int> GetTotalPriceAllMealSessionByKitchenId(int kitchenId)
+        {
+            var result = _context.MealSessions.Where(x => x.KitchenId == kitchenId && x.Status.Equals("COMPLETED")).Select(x => x.Price).Sum();
+            return (int)result;
+        }
     }
 
 }

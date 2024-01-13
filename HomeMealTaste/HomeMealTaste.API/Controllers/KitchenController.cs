@@ -59,6 +59,12 @@ namespace HomeMealTaste.API.Controllers
             var result = await _kitchenService.GetAllKitchenByAreaId(areaId, sessionId);
             return Ok(result);
         }
+        [HttpGet("get-total-price-all-meal-session-by-kitchen-id")]
+        public async Task<IActionResult> GetTotalPriceAllMealSessionByKitchenId(int kitchenId)
+        { 
+            var result = await _kitchenService.GetTotalPriceAllMealSessionByKitchenId(kitchenId);
+            return Ok(result);
+        }
         public static DateTime TranferDateTimeByTimeZone(DateTime dateTime, string timezoneArea)
         {
 
