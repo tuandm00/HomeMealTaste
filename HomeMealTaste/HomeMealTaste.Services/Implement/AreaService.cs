@@ -122,16 +122,17 @@ namespace HomeMealTaste.Services.Implement
                 .Include(s => s.Session)
                 .ThenInclude(s => s.MealSessions)
                 .ThenInclude(s => s.Orders)
-                .Where(s => s.SessionId == sessionId && s.AreaId == compareArea)
+                .Where(s => s.SessionId == sessionId)
                 .Select(s => new GetAllAreaBySessionIdResponseModel
                 {
                     AreaId = s.Area.AreaId,
                     Address = s.Area.Address,
                     AreaName = s.Area.AreaName,
                     DistrictId = s.Area.DistrictId,
-                    TotalChefs = s.Session.MealSessions.Select(ms => ms.KitchenId).Distinct().Count(),
-                    TotalMealSessions = s.Session.MealSessions.Count(),
-                    TotalOrders = s.Session.MealSessions.SelectMany(ms => ms.Orders).Count(),
+                    Status = s.Status,
+                    TotalChefs = s.AreaId == compareArea ? s.Session.MealSessions.Select(ms => ms.KitchenId).Distinct().Count() : 0,
+                    TotalMealSessions = s.AreaId == compareArea ? s.Session.MealSessions.Count() : 0,
+                    TotalOrders = s.AreaId == compareArea ? s.Session.MealSessions.SelectMany(ms => ms.Orders).Count() : 0,
                 }).ToList();
 
             var totalPriceOrders = _context.SessionAreas
@@ -142,27 +143,27 @@ namespace HomeMealTaste.Services.Implement
                 .Sum();
 
             var totalOrdersWithStatusPaid = _context.SessionAreas
-    .Where(s => s.SessionId == sessionId && s.AreaId == compareArea)
+    .Where(s => s.SessionId == sessionId && getListAreaInSessionArea.Contains(s.AreaId))
     .SelectMany(s => s.Session.MealSessions.SelectMany(ms => ms.Orders))
     .Count(x => x.Status == "PAID");
 
             var totalOrdersWithStatusAccepted = _context.SessionAreas
-    .Where(s => s.SessionId == sessionId && s.AreaId == compareArea)
+    .Where(s => s.SessionId == sessionId && getListAreaInSessionArea.Contains(s.AreaId))
     .SelectMany(s => s.Session.MealSessions.SelectMany(ms => ms.Orders))
     .Count(x => x.Status == "ACCEPTED");
 
             var totalOrdersWithStatusCompleted = _context.SessionAreas
-    .Where(s => s.SessionId == sessionId && s.AreaId == compareArea)
+    .Where(s => s.SessionId == sessionId && getListAreaInSessionArea.Contains(s.AreaId))
     .SelectMany(s => s.Session.MealSessions.SelectMany(ms => ms.Orders))
     .Count(x => x.Status == "COMPLETED");
 
             var totalOrdersWithStatusCancelled = _context.SessionAreas
-    .Where(s => s.SessionId == sessionId && s.AreaId == compareArea)
+    .Where(s => s.SessionId == sessionId && getListAreaInSessionArea.Contains(s.AreaId))
     .SelectMany(s => s.Session.MealSessions.SelectMany(ms => ms.Orders))
     .Count(x => x.Status == "CANCELLED");
 
             var totalOrdersWithStatusNotEat = _context.SessionAreas
-    .Where(s => s.SessionId == sessionId && s.AreaId == compareArea)
+    .Where(s => s.SessionId == sessionId && getListAreaInSessionArea.Contains(s.AreaId))
     .SelectMany(s => s.Session.MealSessions.SelectMany(ms => ms.Orders))
     .Count(x => x.Status == "NOTEAT");
 
