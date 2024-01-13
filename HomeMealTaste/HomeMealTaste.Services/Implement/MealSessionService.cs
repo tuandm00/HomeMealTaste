@@ -394,10 +394,10 @@ namespace HomeMealTaste.Services.Implement
             UserId = gr.Session.UserId,
             Status = gr.Session.Status,
             SessionType = gr.Session.SessionType,
+            SessionName = gr.Session.SessionName,
         },
         KitchenDtoForMealSessions = new KitchenDtoForMealSessions
         {
-
             KitchenId = gr.Meal.Kitchen.KitchenId,
             UserId = gr.Meal.Kitchen.KitchenId,
             Name = gr.Meal.Kitchen.Name,

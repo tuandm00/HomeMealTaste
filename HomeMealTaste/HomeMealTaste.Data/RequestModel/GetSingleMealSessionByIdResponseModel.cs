@@ -42,6 +42,7 @@ namespace HomeMealTaste.Data.RequestModel
         public int? UserId { get; set; }
         public string? Status { get; set; }
         public string? SessionType { get; set; }
+        public string? SessionName { get; set; }
     }
 
     public class KitchenDtoForMealSessions
