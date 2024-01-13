@@ -1116,9 +1116,9 @@ namespace HomeMealTaste.Services.Implement
             return mapped;
         }
 
-        public async Task<List<MealSessionResponseModel>> GetAllMeallSessionWithNotStatusCompletedAndCancelled()
+        public async Task<List<MealSessionResponseModel>> GetAllMeallSessionWithNotStatusCompletedAndCancelledByKitchenId(int kitchenId)
         {
-            var result = _context.MealSessions.Include(x => x.Session).Where(x => !x.Status.Equals("COMPLETED") && !x.Status.Equals("CANCELLED")).Select(x => new MealSessionResponseModel
+            var result = _context.MealSessions.Include(x => x.Session).Where(x => !x.Status.Equals("COMPLETED") && !x.Status.Equals("CANCELLED") && x.KitchenId == kitchenId).Select(x => new MealSessionResponseModel
             {
                 MealSessionId = x.MealSessionId,
                 CreateDate = ((DateTime)x.CreateDate).ToString("dd-MM-yyyy"),

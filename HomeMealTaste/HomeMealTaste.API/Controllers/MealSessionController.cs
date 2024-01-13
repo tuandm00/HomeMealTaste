@@ -138,10 +138,10 @@ namespace HomeMealTaste.Controllers
             return Ok(result);
 
         }
-        [HttpGet("get-all-meal-session-with-not-status-completed-and-cancelled")]
-        public async Task<IActionResult> GetAllMeallSessionWithNotStatusCompletedAndCancelled()
+        [HttpGet("get-all-meal-session-with-not-status-completed-and-cancelled-by-kitchen-id")]
+        public async Task<IActionResult> GetAllMeallSessionWithNotStatusCompletedAndCancelledByKitchenId(int kitchenId)
         {
-            var result = await _mealSessionService.GetAllMeallSessionWithNotStatusCompletedAndCancelled();
+            var result = await _mealSessionService.GetAllMeallSessionWithNotStatusCompletedAndCancelledByKitchenId(kitchenId);
             return Ok(result);
 
         }
