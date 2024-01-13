@@ -371,25 +371,22 @@ namespace HomeMealTaste.Services.Implement
 
                     if (result != null && result.Status.Equals("OPEN", StringComparison.OrdinalIgnoreCase) && result.EndDate.Value.Date >= datenow.Date)
                     {
-                        if (autoCreatingstatus && request.status.Equals("BOOKING", StringComparison.OrdinalIgnoreCase))
+                        if (request.status.Equals("BOOKING", StringComparison.OrdinalIgnoreCase))
                         {
                             result.Status = "BOOKING";
                         }
-                        else if (autoCreatingstatus && request.status.Equals("CANCELLED", StringComparison.OrdinalIgnoreCase))
+                        else if (request.status.Equals("CANCELLED", StringComparison.OrdinalIgnoreCase))
                         {
                             result.Status = "CANCELLED";
                         }
                     }
                     else if (result != null && result.Status.Equals("BOOKING", StringComparison.OrdinalIgnoreCase) && result.EndDate.Value.Date >= datenow.Date)
                     {
-                        if (autoCreatingstatus && request.status.Equals("OPEN", StringComparison.OrdinalIgnoreCase))
+                        if (request.status.Equals("OPEN", StringComparison.OrdinalIgnoreCase))
                         {
                             result.Status = "OPEN";
                         }
-                    }
-                    else if (result != null && result.Status.Equals("BOOKING", StringComparison.OrdinalIgnoreCase) && result.EndDate.Value.Date >= datenow.Date)
-                    {
-                        if (autoCreatingstatus && request.status.Equals("ONGOING", StringComparison.OrdinalIgnoreCase))
+                        else if (request.status.Equals("ONGOING", StringComparison.OrdinalIgnoreCase))
                         {
                             result.Status = "ONGOING";
                         }
@@ -419,6 +416,10 @@ namespace HomeMealTaste.Services.Implement
                                 await CreateSessionForNextDay(sessionR);
                                 await _transactionService.SaveTotalPriceAfterFinishSession(sessionid);
                             }
+                        }
+                        else if(request.status.Equals("CLOSED", StringComparison.OrdinalIgnoreCase))
+                        {
+                            result.Status = "CLOSED";
                         }
                         else
                         {
