@@ -378,8 +378,13 @@ namespace HomeMealTaste.Services.Implement
                         else if (autoCreatingstatus && request.status.Equals("CANCELLED", StringComparison.OrdinalIgnoreCase))
                         {
                             result.Status = "CANCELLED";
-                            //hoan tien cho nay
-                            
+                        }
+                    }
+                    else if (result != null && result.Status.Equals("BOOKING", StringComparison.OrdinalIgnoreCase) && result.EndDate.Value.Date >= datenow.Date)
+                    {
+                        if (autoCreatingstatus && request.status.Equals("OPEN", StringComparison.OrdinalIgnoreCase))
+                        {
+                            result.Status = "OPEN";
                         }
                     }
                     else if (result != null && result.Status.Equals("BOOKING", StringComparison.OrdinalIgnoreCase) && result.EndDate.Value.Date >= datenow.Date)
