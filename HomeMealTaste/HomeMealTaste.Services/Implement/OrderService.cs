@@ -989,6 +989,7 @@ namespace HomeMealTaste.Services.Implement
 
             if (walletIdsOfCustomers != null && walletIdsOfCustomers.Any())
             {
+                
                 foreach (var orders in order)
                 {
                     var cusid = orders.CustomerId;
@@ -998,7 +999,6 @@ namespace HomeMealTaste.Services.Implement
                         var wallet = _context.Wallets.Where(w => w.UserId == i).FirstOrDefault();
                         if (wallet != null)
                         {
-
                             wallet.Balance += totalPriceList;
                             _context.Wallets.Update(wallet);
 
