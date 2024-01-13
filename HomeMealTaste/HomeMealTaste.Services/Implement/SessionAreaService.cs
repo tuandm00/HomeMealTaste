@@ -45,7 +45,7 @@ namespace HomeMealTaste.Services.Implement
                             {
                                 foreach(var r in result)
                                 {
-                                    r.Status = false;
+                                    r.Status = "FINISHED";
                                 }
                             }
                             else
@@ -123,9 +123,19 @@ namespace HomeMealTaste.Services.Implement
             }
             else
             {
-                foreach (var r in result)
+                if (result.Equals("OPEN") && request.Status.Equals("FINISHED", StringComparison.OrdinalIgnoreCase))
                 {
-                    r.Status = false;
+                    foreach (var r in result)
+                    {
+                        r.Status = "FINISHED";
+                    }
+                }
+                else if (result.Equals("OPEN") && request.Status.Equals("CANCELLED", StringComparison.OrdinalIgnoreCase))
+                {
+                    foreach (var r in result)
+                    {
+                        r.Status = "CANCELLED";
+                    }
                 }
 
                 await _context.SaveChangesAsync();

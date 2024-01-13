@@ -11,6 +11,6 @@ namespace HomeMealTaste.Data.ResponseModel
         public int SessionAreaId { get; set; }
         public int? SessionId { get; set; }
         public int? AreaId { get; set; }
-        public bool? Status { get; set; }
+        public string? Status { get; set; }
     }
 }

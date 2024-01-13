@@ -275,7 +275,7 @@ namespace HomeMealTaste.Services.Implement
                                 {
                                     SessionId = result.SessionId,
                                     AreaId = areaId,
-                                    Status = true,
+                                    Status = "OPEN",
                                 };
                                 await _context.AddAsync(sessionArea);
                             }
@@ -390,6 +390,10 @@ namespace HomeMealTaste.Services.Implement
                         {
                             result.Status = "ONGOING";
                         }
+                    }
+                    else if (datenow.Hour == result.StartTime?.Hour && result.Status.Equals("BOOKING"))
+                    {
+                        result.Status = "ONGOING";
                     }
                     else if (result != null && result.Status.Equals("ONGOING", StringComparison.OrdinalIgnoreCase) && result.EndDate.Value.Date >= datenow.Date)
                     {

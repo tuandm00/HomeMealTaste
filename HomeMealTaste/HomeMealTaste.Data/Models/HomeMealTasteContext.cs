@@ -289,6 +289,8 @@ namespace HomeMealTaste.Data.Models
 
                 entity.Property(e => e.SessionAreaId).HasColumnName("Session_AreaId");
 
+                entity.Property(e => e.Status).HasMaxLength(50);
+
                 entity.HasOne(d => d.Area)
                     .WithMany(p => p.SessionAreas)
                     .HasForeignKey(d => d.AreaId)
