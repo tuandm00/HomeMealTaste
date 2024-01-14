@@ -167,6 +167,26 @@ namespace HomeMealTaste.Services.Implement
     .SelectMany(s => s.Session.MealSessions.SelectMany(ms => ms.Orders))
     .Count(x => x.Status == "NOTEAT");
 
+            var totalMealSessionWithStatusProcessing = _context.MealSessions
+    .Where(x => x.SessionId == sessionId && x.AreaId == compareArea)
+    .Count(a => a.Status == "PROCESSING");
+
+            var totalMealSessionWithStatusApproved = _context.MealSessions
+    .Where(x => x.SessionId == sessionId && x.AreaId == compareArea)
+    .Count(a => a.Status == "APPROVED");
+
+            var totalMealSessionWithStatusCancelled = _context.MealSessions
+    .Where(x => x.SessionId == sessionId && x.AreaId == compareArea)
+    .Count(a => a.Status == "CANCELLED");
+
+            var totalMealSessionWithStatusMaking = _context.MealSessions
+    .Where(x => x.SessionId == sessionId && x.AreaId == compareArea)
+    .Count(a => a.Status == "MAKING");
+
+            var totalMealSessionWithStatusCompleted = _context.MealSessions
+    .Where(x => x.SessionId == sessionId && x.AreaId == compareArea)
+    .Count(a => a.Status == "COMPLETED");
+
             var sumTotalMealSessions = getListArea.Sum(a => a.TotalMealSessions) ?? 0;
             var sumTotalOrders = getListArea.Sum(a => a.TotalOrders) ?? 0;
             var sumTotalChefs = getListArea.Sum(a => a.TotalChefs) ?? 0;
@@ -180,6 +200,11 @@ namespace HomeMealTaste.Services.Implement
                 TotalOrdersWithStatusCancelled = totalOrdersWithStatusCancelled,
                 TotalOrdersWithStatusCompleted = totalOrdersWithStatusCompleted,
                 TotalOrdersWithStatusNotEat = totalOrdersWithStatusNotEat,
+                TotalMealSessionWithStatusProcessing = totalMealSessionWithStatusProcessing,
+                TotalMealSessionWithStatusApproved = totalMealSessionWithStatusApproved,
+                TotalMealSessionWithStatusMaking = totalMealSessionWithStatusMaking,
+                TotalMealSessionWithStatusCancelled = totalMealSessionWithStatusCancelled,
+                TotalMealSessionWithStatusCompleted = totalMealSessionWithStatusCompleted,
                 SumTotalChefs = sumTotalChefs,
                 SumTotalMealSessions = sumTotalMealSessions,
                 SumTotalOrders = sumTotalOrders,

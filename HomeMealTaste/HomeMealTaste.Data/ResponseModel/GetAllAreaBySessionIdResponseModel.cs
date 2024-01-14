@@ -26,6 +26,11 @@ namespace HomeMealTaste.Data.ResponseModel
         public int? TotalOrdersWithStatusCompleted { get; set; }
         public int? TotalOrdersWithStatusCancelled { get; set; }
         public int? TotalOrdersWithStatusNotEat { get; set; }
+        public int? TotalMealSessionWithStatusApproved { get; set; }
+        public int? TotalMealSessionWithStatusCancelled { get; set; }
+        public int? TotalMealSessionWithStatusMaking { get; set; }
+        public int? TotalMealSessionWithStatusCompleted { get; set; }
+        public int? TotalMealSessionWithStatusProcessing { get; set; }
         public int? SumTotalMealSessions { get; set; }
         public int? SumTotalOrders { get; set; }
         public int? SumTotalChefs { get; set; }

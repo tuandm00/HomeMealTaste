@@ -1204,7 +1204,6 @@ namespace HomeMealTaste.Services.Implement
         {
             var result = _context.Orders.Where(x => x.OrderId == orderId).FirstOrDefault();
 
-
             if (result == null)
             {
                 throw new Exception("Can not find Order");
