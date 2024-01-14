@@ -842,7 +842,6 @@ namespace HomeMealTaste.Services.Implement
             return mapped;
         }
 
-
         public async Task<List<ChangeStatusOrderToCompletedResponseModel>> ChangeStatusOrder(int mealsessionid, string status)
         {
             var listOrder = await _context.Orders.Where(x => x.MealSessionId == mealsessionid).ToListAsync();
@@ -854,7 +853,7 @@ namespace HomeMealTaste.Services.Implement
                     if (status.Equals("ACCEPTED", StringComparison.OrdinalIgnoreCase) && list.Status.Equals("PAID", StringComparison.OrdinalIgnoreCase))
                     {
                         list.Status = "ACCEPTED";
-                        mealSession.Status = "ACCEPTED";
+                        mealSession.Status = "MAKING";
                     }
                     //else if (status.Equals("COMPLETED", StringComparison.OrdinalIgnoreCase) && list.Status.Equals("ACCEPTED", StringComparison.OrdinalIgnoreCase))
                     //{
@@ -872,7 +871,6 @@ namespace HomeMealTaste.Services.Implement
                         mealSession.Status = "CANCELLED";
 
                         await ChefCancelledOrderRefundMoneyToCustomerV2(mealsessionid);
-
                     };
 
                     _context.MealSessions.Update(mealSession);
@@ -1385,14 +1383,30 @@ namespace HomeMealTaste.Services.Implement
         public async Task<List<GetAllOrderBySessionIdResponseModel>> GetAllOrderBySessionId(int sessionId)
         {
             var getMealSessionId = _context.MealSessions.Where(x => x.SessionId == sessionId).Select(x => x.MealSessionId).FirstOrDefault();
-            var result = _context.Orders.Include(x => x.MealSession).Where(x => x.MealSessionId == getMealSessionId).Select(x => new GetAllOrderBySessionIdResponseModel
+            var result = _context.Orders
+                .Include(x => x.MealSession)
+                .Where(x => x.MealSessionId == getMealSessionId).Select(x => new GetAllOrderBySessionIdResponseModel
             {
                 OrderId = x.OrderId,
-                CustomerId = x.CustomerId,
                 Quantity = x.Quantity,
                 Status = x.Status,
                 Time = ((DateTime)x.Time).ToString("dd-MM-yyyy HH:mm"),
                 TotalPrice = x.TotalPrice,
+                CustomerDtoForGetAllOrderBySessionId = new CustomerDtoForGetAllOrderBySessionId
+                {
+                    CustomerId = x.Customer.CustomerId,
+                    Name = x.Customer.Name,
+                    DistrictId = x.Customer.DistrictId,
+                    Phone = x.Customer.Phone,
+                    UserId = x.Customer.UserId,
+                    AreaDtoForGetAllOrderBySessionId = new AreaDtoForGetAllOrderBySessionId
+                    {
+                        AreaId = x.Customer.User.Area.AreaId,
+                        Address = x.Customer.User.Area.Address,
+                        AreaName = x.Customer.User.Area.AreaName,
+                        DistrictId = x.Customer.User.Area.DistrictId,
+                    },
+                },
                 MealSessionDtoGetAllOrderBySessionId = new MealSessionDtoGetAllOrderBySessionId
                 {
                     MealSessionId = x.MealSession.MealSessionId,

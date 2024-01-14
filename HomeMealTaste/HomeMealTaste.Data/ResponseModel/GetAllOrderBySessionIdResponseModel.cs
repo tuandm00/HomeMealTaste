@@ -9,12 +9,21 @@ namespace HomeMealTaste.Data.ResponseModel
     public class GetAllOrderBySessionIdResponseModel
     {
         public int OrderId { get; set; }
-        public int? CustomerId { get; set; }
+        public CustomerDtoForGetAllOrderBySessionId? CustomerDtoForGetAllOrderBySessionId { get; set; }
         public string? Status { get; set; }
         public MealSessionDtoGetAllOrderBySessionId? MealSessionDtoGetAllOrderBySessionId { get; set; }
         public int? TotalPrice { get; set; }
         public string? Time { get; set; }
         public int? Quantity { get; set; }
+    }
+    public class CustomerDtoForGetAllOrderBySessionId
+    {
+        public int CustomerId { get; set; }
+        public int? UserId { get; set; }
+        public string? Name { get; set; }
+        public string? Phone { get; set; }
+        public int? DistrictId { get; set; }
+        public AreaDtoForGetAllOrderBySessionId? AreaDtoForGetAllOrderBySessionId { get; set; }
     }
     public class MealSessionDtoGetAllOrderBySessionId
     {
