@@ -428,54 +428,57 @@ namespace HomeMealTaste.Services.Implement
                     .Select(x => x.Status)
                     .FirstOrDefault();
 
-                if (result != null && result.Status.Equals("COMPLETED", StringComparison.OrdinalIgnoreCase) && sessionStatus.Equals("OPEN"))
+                if ((result != null && result.Status.Equals("PROCESSING", StringComparison.OrdinalIgnoreCase)
+                                   || (result.Status.Equals("APPROVED", StringComparison.OrdinalIgnoreCase)))
+                                   && sessionStatus.Equals("OPEN"))
                 {
-                    throw new Exception("Can not Update Because Meal Session is COMPLETED");
+                    if (string.Equals("COMPLETED", request.status, StringComparison.OrdinalIgnoreCase))
+                    {
+                        throw new Exception("Can not Update Because Meal Session is COMPLETED");
+                    }
+                    else if (string.Equals("CANCELLED", request.status, StringComparison.OrdinalIgnoreCase))
+                    {
+                        throw new Exception("Can not Update Because Meal Session is CANCELLED");
+                    }
+                }
+
+                else if (result != null && result.Status.Equals("PROCESSING", StringComparison.OrdinalIgnoreCase) && sessionStatus.Equals("OPEN"))
+                {
+                    if (string.Equals("APPROVED", request.status, StringComparison.OrdinalIgnoreCase))
+                    {
+                        result.Status = "APPROVED";
+                    }
+                    else if (string.Equals("CANCELLED", request.status, StringComparison.OrdinalIgnoreCase))
+                    {
+                        result.Status = "CANCELLED";
+                    }
+
+                }
+                else if (result != null && result.Status.Equals("APPROVED", StringComparison.OrdinalIgnoreCase) && sessionStatus.Equals("OPEN"))
+                {
+                    if (string.Equals("APPROVED", request.status, StringComparison.OrdinalIgnoreCase))
+                    {
+                        result.Status = "APPROVED";
+                    }
+                    else if (string.Equals("CANCELLED", request.status, StringComparison.OrdinalIgnoreCase))
+                    {
+                        result.Status = "CANCELLED";
+                    }
+
                 }
                 else if (result != null && result.Status.Equals("CANCELLED", StringComparison.OrdinalIgnoreCase) && sessionStatus.Equals("OPEN"))
                 {
-                    throw new Exception("Can not Update Because Meal Session is CANCELLED");
+                    if (string.Equals("CANCELLED", request.status, StringComparison.OrdinalIgnoreCase))
+                    {
+                        result.Status = "CANCELLED";
+                    }
+                    else if (string.Equals("APPROVED", request.status, StringComparison.OrdinalIgnoreCase))
+                    {
+                        result.Status = "APPROVED";
+                    }
+
                 }
-                else
-                {
-                    if (result != null && result.Status.Equals("PROCESSING", StringComparison.OrdinalIgnoreCase) && sessionStatus.Equals("OPEN"))
-                    {
-                        if (string.Equals("APPROVED", request.status, StringComparison.OrdinalIgnoreCase))
-                        {
-                            result.Status = "APPROVED";
-                        }
-                        else if (string.Equals("CANCELLED", request.status, StringComparison.OrdinalIgnoreCase))
-                        {
-                            result.Status = "CANCELLED";
-                        }
-
-                    }
-                    else if (result != null && result.Status.Equals("APPROVED", StringComparison.OrdinalIgnoreCase) && sessionStatus.Equals("OPEN"))
-                    {
-                        if (string.Equals("APPROVED", request.status, StringComparison.OrdinalIgnoreCase))
-                        {
-                            result.Status = "APPROVED";
-                        }
-                        else if (string.Equals("CANCELLED", request.status, StringComparison.OrdinalIgnoreCase))
-                        {
-                            result.Status = "CANCELLED";
-                        }
-
-                    }
-                    else if (result != null && result.Status.Equals("CANCELLED", StringComparison.OrdinalIgnoreCase) && sessionStatus.Equals("OPEN"))
-                    {
-                        if (string.Equals("CANCELLED", request.status, StringComparison.OrdinalIgnoreCase))
-                        {
-                            result.Status = "CANCELLED";
-                        }
-                        else if (string.Equals("APPROVED", request.status, StringComparison.OrdinalIgnoreCase))
-                        {
-                            result.Status = "APPROVED";
-                        }
-
-                    }
-                    else throw new Exception("Session is NOT OPEN");
-                }
+                else throw new Exception("Session is NOT OPEN");
             }
             await _context.SaveChangesAsync();
         }
