@@ -46,10 +46,10 @@ namespace HomeMealTaste.API.Controllers
             return Ok(result);
         }
 
-        [HttpGet("get-order-by-kitchen-id")]
-        public async Task<IActionResult> GetOrderByKitchenId(int kitchenid)
+        [HttpGet("get-all-order-by-kitchen-id")]
+        public async Task<IActionResult> GetAllOrderByKitchenId(int kitchenid)
         {
-            var result = await _orderService.GetOrderByKitchenId(kitchenid);
+            var result = await _orderService.GetAllOrderByKitchenId(kitchenid);
             return Ok(result);
         }
         [HttpPost("create-order")]

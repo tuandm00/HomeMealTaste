@@ -251,7 +251,7 @@ namespace HomeMealTaste.Services.Implement
             return mappedResults;
         }
 
-        public Task<List<GetOrderByKitchenIdResponseModel>> GetOrderByKitchenId(int kitchenid)
+        public Task<List<GetOrderByKitchenIdResponseModel>> GetAllOrderByKitchenId(int kitchenid)
         {
             var result = _context.Orders
                 .Include(x => x.MealSession)
