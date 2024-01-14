@@ -1,4 +1,5 @@
 ﻿using CorePush.Google;
+using HomeMealTaste.Data.Models;
 using HomeMealTaste.Data.ResponseModel;
 using HomeMealTaste.Services.Interface;
 using Microsoft.Extensions.Configuration;
@@ -21,19 +22,20 @@ namespace HomeMealTaste.Services.Implement
     {
         private readonly FcmNotificationSetting _fcmNotificationSetting;
         private readonly IConfiguration _configuration;
-        public NotificationSerivce(IOptions<FcmNotificationSetting> settings, IConfiguration configuration)
+        private readonly HomeMealTasteContext _context;
+        public NotificationSerivce(IOptions<FcmNotificationSetting> settings, IConfiguration configuration, HomeMealTasteContext context)
         {
             _fcmNotificationSetting = settings.Value;
             _configuration = configuration;
+            _context = context;
         }
 
-        public async Task<ResponseModels> SendNotification(NotificationModel notificationModel)
+        public async Task<ResponseModels> SendNotificationForMealSession(int mealSessionId, string Status)
         {
             ResponseModels response = new ResponseModels();
             try
             {
-                if (notificationModel.IsAndroiodDevice)
-                {
+                
                     /* FCM Sender (Android Device) */
                     FcmSettings settings = new FcmSettings()
                     {
@@ -42,16 +44,38 @@ namespace HomeMealTaste.Services.Implement
                     };
                     HttpClient httpClient = new HttpClient();
 
+                var mealSession = _context.MealSessions.Where(x => x.MealSessionId == mealSessionId).FirstOrDefault();
+                var mealName = _context.Meals.Where(x => x.MealId == mealSession.MealId).Select(x => x.Name).FirstOrDefault();
+                var listCustomerId = _context.Orders.Where(x => x.MealSessionId == mealSessionId).Select(x => x.CustomerId).ToList();
+                var userId = _context.Customers.Where(x => listCustomerId.Contains(x.CustomerId)).Select(x => x.UserId).ToList();
+                var getDeviceToken = _context.Users.Where(x => userId.Contains(x.UserId)).Select(x => x.DeviceToken).ToList();
+                var getOrder = _context.Orders.Where(x => x.MealSessionId == mealSessionId).ToList();
+                if (Status.Equals("READY"))
+                {
+                    mealSession.Status = "COMPLETED";
+                    _context.MealSessions.Update(mealSession);
+                    await _context.SaveChangesAsync();
+
+                    foreach (var order in getOrder)
+                    {
+                        order.Status = "READY";
+                        _context.Orders.Update(order);
+                        await _context.SaveChangesAsync();
+                    }
+                }
+                
+                foreach (var tokens in getDeviceToken)
+                {
                     string authorizationKey = string.Format("keyy={0}", settings.ServerKey);
-                    string deviceToken = notificationModel.DeviceId;
+                    string deviceToken = tokens;
 
                     httpClient.DefaultRequestHeaders.TryAddWithoutValidation("Authorization", authorizationKey);
                     httpClient.DefaultRequestHeaders.Accept
                             .Add(new MediaTypeWithQualityHeaderValue("application/json"));
 
                     DataPayload dataPayload = new DataPayload();
-                    dataPayload.Title = notificationModel.Title;
-                    dataPayload.Body = notificationModel.Body;
+                    dataPayload.Title = $"Your Meal\"{mealName}\" is ready";
+                    dataPayload.Body = $"Please come to eat";
 
                     GoogleNotification notification = new GoogleNotification();
                     notification.Data = dataPayload;
@@ -75,14 +99,9 @@ namespace HomeMealTaste.Services.Implement
                         response.Message = fcmSendResponse.Results[0].Error;
                         return response;
                     }
+
                 }
-                else
-                {
-                    /* Code here for APN Sender (iOS Device) */
-                    //var apn = new ApnSender(apnSettings, httpClient);
-                    //await apn.SendAsync(notification, deviceToken);
-                }
-                return response;
+
             }
             catch (Exception ex)
             {
@@ -90,6 +109,7 @@ namespace HomeMealTaste.Services.Implement
                 response.Message = "Something went wrong";
                 return response;
             }
+            return null;
         }
     }
 }

@@ -854,35 +854,31 @@ namespace HomeMealTaste.Services.Implement
                     if (status.Equals("ACCEPTED", StringComparison.OrdinalIgnoreCase) && list.Status.Equals("PAID", StringComparison.OrdinalIgnoreCase))
                     {
                         list.Status = "ACCEPTED";
-                        mealSession.Status = "COMPLETED";
+                        mealSession.Status = "ACCEPTED";
                     }
-                    else if (status.Equals("COMPLETED", StringComparison.OrdinalIgnoreCase) && list.Status.Equals("ACCEPTED", StringComparison.OrdinalIgnoreCase))
-                    {
-                        list.Status = "COMPLETED";
-                        mealSession.Status = "COMPLETED";
-                    }
-                    else if (status.Equals("NOTEAT", StringComparison.OrdinalIgnoreCase) && list.Status.Equals("ACCEPTED", StringComparison.OrdinalIgnoreCase))
-                    {
-                        list.Status = "NOTEAT";
-                        mealSession.Status = "COMPLETED";
-                    }
+                    //else if (status.Equals("COMPLETED", StringComparison.OrdinalIgnoreCase) && list.Status.Equals("ACCEPTED", StringComparison.OrdinalIgnoreCase))
+                    //{
+                    //    list.Status = "COMPLETED";
+                    //    mealSession.Status = "COMPLETED";
+                    //}
+                    //else if (status.Equals("NOTEAT", StringComparison.OrdinalIgnoreCase) && list.Status.Equals("ACCEPTED", StringComparison.OrdinalIgnoreCase))
+                    //{
+                    //    list.Status = "NOTEAT";
+                    //    mealSession.Status = "COMPLETED";
+                    //}
                     else if (status.Equals("CANCELLED", StringComparison.OrdinalIgnoreCase) && list.Status.Equals("PAID", StringComparison.OrdinalIgnoreCase))
                     {
                         list.Status = "CANCELLED";
                         mealSession.Status = "CANCELLED";
+
+                        await ChefCancelledOrderRefundMoneyToCustomerV2(mealsessionid);
+
                     };
 
                     _context.MealSessions.Update(mealSession);
                     _context.Orders.Update(list);
                     await _context.SaveChangesAsync();
 
-                    await _postService.PostForAllCustomerWithOrderId((int)list.MealSessionId);
-
-                }
-                var Status = await _context.Orders.Where(x => x.MealSessionId == mealsessionid).Select(x => x.Status).FirstOrDefaultAsync();
-                if (Status.Equals("CANCELLED"))
-                {
-                    await ChefCancelledOrderRefundMoneyToCustomerV2(mealsessionid);
                 }
                 var mapped = listOrder.Select(l => _mapper.Map<ChangeStatusOrderToCompletedResponseModel>(l)).ToList();
                 return mapped;
@@ -1370,7 +1366,7 @@ namespace HomeMealTaste.Services.Implement
                 {
                     result.Status = status.ToUpper();
                 }
-                else if (result != null && status.Equals("CANCELLED", StringComparison.OrdinalIgnoreCase) && result.Status.Equals("ACCEPTED"))
+                else if (result != null && status.Equals("NOTEAT", StringComparison.OrdinalIgnoreCase) && result.Status.Equals("ACCEPTED"))
                 {
                     result.Status = status.ToUpper();
                 }

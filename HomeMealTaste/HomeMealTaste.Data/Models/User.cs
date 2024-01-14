@@ -25,6 +25,7 @@ namespace HomeMealTaste.Data.Models
         public int? RoleId { get; set; }
         public bool? Status { get; set; }
         public int? AreaId { get; set; }
+        public string? DeviceToken { get; set; }
 
         public virtual Area? Area { get; set; }
         public virtual District? District { get; set; }

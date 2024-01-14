@@ -8,11 +8,8 @@ namespace HomeMealTaste.Data.RequestModel
 {
     public class UserRequestModel
     {
-        
         public string? Password { get; set; }
-        
         public string? Phone { get; set; }
-        
-
+        public string? DeviceToken { get; set; }
     }
 }

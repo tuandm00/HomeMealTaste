@@ -107,6 +107,17 @@ namespace HomeMealTaste.Services.Implement
                         .Where(x => x.UserId == userIdOfCustomer)
                         .Select(x => x.Balance)
                         .FirstOrDefault();
+
+                    if(result.DeviceToken == null)
+                    {
+                        result.DeviceToken = userRequest.DeviceToken;
+                        _context.Users.Add(result);
+                    }
+                    else
+                    {
+                        result.DeviceToken = userRequest.DeviceToken;
+                        _context.Users.Update(result);
+                    }
                     return new UserResponseModel
                     {
                         Name = result.Name,
@@ -136,6 +147,16 @@ namespace HomeMealTaste.Services.Implement
                         .Where(x => x.UserId == userIdOfKitchen)
                         .Select(x => x.Balance)
                         .FirstOrDefault();
+                    if (result.DeviceToken == null)
+                    {
+                        result.DeviceToken = userRequest.DeviceToken;
+                        _context.Users.Add(result);
+                    }
+                    else
+                    {
+                        result.DeviceToken = userRequest.DeviceToken;
+                        _context.Users.Update(result);
+                    }
                     return new UserResponseModel
                     {
                         Name = result.Name,

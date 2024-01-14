@@ -29,9 +29,9 @@ namespace HomeMealTaste.API.Controllers
            
         }
         [HttpPost("send")]
-        public async Task<IActionResult> SendNotification(NotificationModel notificationModel)
+        public async Task<IActionResult> SendNotificationForMealSession(int mealSessionId, string Status)
         {
-            var result = await _notificationService.SendNotification(notificationModel);
+            var result = await _notificationService.SendNotificationForMealSession(mealSessionId, Status);
             return Ok(result);
         }
     }

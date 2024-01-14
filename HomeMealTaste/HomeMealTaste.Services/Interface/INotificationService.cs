@@ -9,7 +9,7 @@ namespace HomeMealTaste.Services.Interface
 {
     public interface INotificationService
     {
-        Task<ResponseModels> SendNotification(NotificationModel notificationModel);
+       Task<ResponseModels> SendNotificationForMealSession(int mealSessionId, string Status);
 
     }
 }
