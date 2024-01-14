@@ -150,5 +150,12 @@ namespace HomeMealTaste.API.Controllers
             return Ok(result);
         }
 
+        [HttpGet("get-all-order-by-session-id")]
+        public async Task<IActionResult> GetAllOrderBySessionId(int sessionId)
+        {
+             var result = await _orderService.GetAllOrderBySessionId(sessionId);
+            return Ok(result);
+        }
+
     }
 }

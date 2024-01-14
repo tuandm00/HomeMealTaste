@@ -1381,6 +1381,77 @@ namespace HomeMealTaste.Services.Implement
             var mapped = _mapper.Map<ChangeStatusOrderResponseModel>(result);
             return mapped;
         }
+
+        public async Task<List<GetAllOrderBySessionIdResponseModel>> GetAllOrderBySessionId(int sessionId)
+        {
+            var getMealSessionId = _context.MealSessions.Where(x => x.SessionId == sessionId).Select(x => x.MealSessionId).FirstOrDefault();
+            var result = _context.Orders.Include(x => x.MealSession).Where(x => x.MealSessionId == getMealSessionId).Select(x => new GetAllOrderBySessionIdResponseModel
+            {
+                OrderId = x.OrderId,
+                CustomerId = x.CustomerId,
+                Quantity = x.Quantity,
+                Status = x.Status,
+                Time = ((DateTime)x.Time).ToString("dd-MM-yyyy HH:mm"),
+                TotalPrice = x.TotalPrice,
+                MealSessionDtoGetAllOrderBySessionId = new MealSessionDtoGetAllOrderBySessionId
+                {
+                    MealSessionId = x.MealSession.MealSessionId,
+                    CreateDate = ((DateTime)x.MealSession.CreateDate).ToString("dd-MM-yyyy"),
+                    Price = x.MealSession.Price,
+                    Quantity = x.MealSession.Quantity,
+                    RemainQuantity = x.MealSession.RemainQuantity,
+                    Status = x.MealSession.Status,
+                    MealDtoForGetAllOrderBySessionId = new MealDtoForGetAllOrderBySessionId
+                    {
+                        MealId = x.MealSession.Meal.MealId,
+                        CreateDate = ((DateTime)x.MealSession.Meal.CreateDate).ToString("dd-MM-yyyy"),
+                        Description = x.MealSession.Meal.Description,
+                        Image = x.MealSession.Meal.Image,
+                        Name = x.MealSession.Meal.Name,
+                        KitchenDtoForGetAllOrderBySessionIdenId = new KitchenDtoForGetAllOrderBySessionId
+                        {
+                            KitchenId = x.MealSession.Meal.Kitchen.KitchenId,
+                            Name = x.MealSession.Meal.Kitchen.Name,
+                            Address = x.MealSession.Meal.Kitchen.Address,
+                            AreaId = x.MealSession.Meal.Kitchen.AreaId,
+                            DistrictId = x.MealSession.Meal.Kitchen.DistrictId,
+                            UserId = x.MealSession.Meal.Kitchen.UserId,
+                        }
+                    },
+                    AreaDtoForGetAllOrderBySessionId = new AreaDtoForGetAllOrderBySessionId
+                    {
+                        AreaId = x.MealSession.Area.AreaId,
+                        Address = x.MealSession.Area.Address,
+                        AreaName = x.MealSession.Area.AreaName,
+                        DistrictId = x.MealSession.Area.DistrictId,
+                    },
+                    KitchenDtoForGetAllOrderBySessionId = new KitchenDtoForGetAllOrderBySessionId
+                    {
+                        KitchenId = x.MealSession.Kitchen.KitchenId,
+                        Name = x.MealSession.Kitchen.Name,
+                        Address = x.MealSession.Kitchen.Address,
+                        AreaId = x.MealSession.Kitchen.AreaId,
+                        DistrictId = x.MealSession.Kitchen.DistrictId,
+                        UserId = x.MealSession.Kitchen.UserId,
+                    },
+                    SessionDtoGetAllOrderBySessionId = new SessionDtoGetAllOrderBySessionId
+                    {
+                        SessionId = x.MealSession.Session.SessionId,
+                        CreateDate = ((DateTime)x.MealSession.Session.CreateDate).ToString("dd-MM-yyyy"),
+                        StartTime = ((DateTime)x.MealSession.Session.StartTime).ToString("HH: mm"),
+                        EndTime = ((DateTime)x.MealSession.Session.EndTime).ToString("HH: mm"),
+                        EndDate = ((DateTime)x.MealSession.Session.EndDate).ToString("dd-MM-yyyy"),
+                        SessionName = x.MealSession.Session.SessionName,
+                        SessionType = x.MealSession.Session.SessionType,
+                        UserId = x.MealSession.Session.UserId,
+                        Status = x.MealSession.Session.Status,
+                    }
+                }
+            }).ToList();
+
+            var mapped = result.Select(r => _mapper.Map<GetAllOrderBySessionIdResponseModel>(r)).ToList();
+            return mapped;
+        }
     }
 }
 
