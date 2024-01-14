@@ -771,6 +771,11 @@ namespace HomeMealTaste.Services.Implement
                         list.Status = "ACCEPTED";
                         mealSession.Status = "MAKING";
                     }
+                    else if (status.Equals("READY", StringComparison.OrdinalIgnoreCase) && list.Status.Equals("ACCEPTED", StringComparison.OrdinalIgnoreCase))
+                    {
+                        list.Status = "READY";
+                        mealSession.Status = "COMPLETED";
+                    }
                     //else if (status.Equals("COMPLETED", StringComparison.OrdinalIgnoreCase) && list.Status.Equals("ACCEPTED", StringComparison.OrdinalIgnoreCase))
                     //{
                     //    list.Status = "COMPLETED";
@@ -908,111 +913,31 @@ namespace HomeMealTaste.Services.Implement
                 _context.Orders.Update(orderitem);
             }
 
-            var datenow = GetDateTimeTimeZoneVietNam();
-            var orderId = _context.Orders.Where(x => x.MealSessionId == mealsessionId).Select(x => x.OrderId).ToList();
-            var order = _context.Orders.Where(x => orderId.Contains(x.OrderId)).ToList();
-            var customerId = _context.Orders.Where(x => orderId.Contains(x.OrderId)).Select(x => x.CustomerId).ToList();
-            var userIdOfCustomer = _context.Customers.Where(x => customerId.Contains(x.CustomerId)).Select(x => x.UserId).ToList();
-            var walletIdsOfCustomers = order.Select(x => x.CustomerId).Distinct().Select(id => _context.Wallets.Where(w => w.UserId == id).Select(w => w.WalletId).FirstOrDefault()).ToList();
-            var totalPriceList = _context.Orders.Where(x => orderId.Contains(x.OrderId)).Select(x => x.TotalPrice).FirstOrDefault();
-
-            if (walletIdsOfCustomers != null && walletIdsOfCustomers.Any())
-            {
-
-                foreach (var orders in order)
-                {
-                    var cusid = orders.CustomerId;
-                    var userid = _context.Customers.Where(x => x.CustomerId == cusid).Select(x => x.UserId).ToList();
-                    foreach (var i in userid)
-                    {
-                        var wallet = _context.Wallets.Where(w => w.UserId == i).FirstOrDefault();
-                        if (wallet != null)
-                        {
-                            wallet.Balance += totalPriceList;
-                            _context.Wallets.Update(wallet);
-
-                            var addToTransactionCustomer = new Transaction
-                            {
-                                OrderId = orders.OrderId,
-                                WalletId = wallet.WalletId,
-                                Date = datenow,
-                                Amount = totalPriceList,
-                                Description = "DONE WITH REFUND FOR CUSTOMER",
-                                Status = "SUCCEED",
-                                TransactionType = "REFUNDED",
-                                UserId = wallet.UserId,
-                            };
-                            _context.Transactions.Add(addToTransactionCustomer);
-
-                        }
-                    }
-
-                }
-            }
-
-            // var totalPriceinOrder = await GetTotalPriceWithMealSessionByMealSessionId(mealsessionId);
-            var kitchenId = _context.MealSessions.Where(x => x.MealSessionId == mealsessionId).Select(x => x.KitchenId).FirstOrDefault();
-            var userIdOfKItchen = _context.Kitchens.Where(x => x.KitchenId == kitchenId).Select(x => x.UserId).FirstOrDefault();
-            var walletIdsOfKitchen = _context.Wallets.Where(x => x.UserId == userIdOfKItchen).Select(x => x.WalletId).FirstOrDefault();
-            var balanceOfKitchen = _context.Wallets.Where(x => x.WalletId == walletIdsOfKitchen).Select(x => x.Balance).FirstOrDefault();
-            var totalPriceListSum = _context.Orders.Where(x => orderId.Contains(x.OrderId)).Sum(x => x.TotalPrice);
-
-            if (walletIdsOfKitchen != null)
-            {
-                var afterCancelled = balanceOfKitchen - (totalPriceListSum + (totalPriceListSum * 10) / 100);
-
-                var walletOfUserIdOfKitchenWithOutSelect = await _context.Wallets
-                    .Where(x => x.UserId == userIdOfKItchen)
-                    .FirstOrDefaultAsync();
-                if (walletOfUserIdOfKitchenWithOutSelect != null)
-                {
-                    walletOfUserIdOfKitchenWithOutSelect.Balance = afterCancelled;
-                    _context.Wallets.Update(walletOfUserIdOfKitchenWithOutSelect);
-
-                    var addToTransactionKitchen = new Transaction
-                    {
-                        OrderId = null,
-                        WalletId = walletIdsOfKitchen,
-                        Date = datenow,
-                        Amount = (totalPriceListSum + (totalPriceListSum * 10) / 100),
-                        Description = "DONE WITH FINED KITCHEN WHEN KITCHEN CANCEL",
-                        Status = "SUCCEED",
-                        TransactionType = "REFUNDED",
-                        UserId = userIdOfKItchen,
-                    };
-                    _context.Transactions.Add(addToTransactionKitchen);
-                }
-            }
-
+            
             var userIdsOfAdmin = _context.Users.Where(x => x.RoleId == 1 && x.UserId == 2).Select(x => x.UserId).FirstOrDefault();
-            var walletIdsOfAdmin = _context.Wallets.Where(x => x.UserId == userIdsOfAdmin).Select(x => x.WalletId).FirstOrDefault();
-            var balanceOfAdmin = _context.Wallets.Where(x => x.WalletId == walletIdsOfAdmin).Select(x => x.Balance).FirstOrDefault();
+            var walletIdsOfAdmin = _context.Wallets.Where(x => x.UserId == userIdsOfAdmin).FirstOrDefault();
+            var countTotalPrice = _context.Orders.Where(x => x.MealSessionId == mealsessionId).Select(x => x.TotalPrice).ToList().Count();
 
             if (walletIdsOfAdmin != null)
             {
-                var afterCancelledAdmin = ((totalPriceListSum * 10) / 100);
-                var walletOfUserIdOfAdminWithOutSelect = await _context.Wallets
-                    .Where(x => x.UserId == userIdsOfAdmin)
-                    .FirstOrDefaultAsync();
-                if (walletOfUserIdOfAdminWithOutSelect != null)
-                {
-                    walletOfUserIdOfAdminWithOutSelect.Balance += afterCancelledAdmin;
-                    _context.Wallets.Update(walletOfUserIdOfAdminWithOutSelect);
+                var walletA = walletIdsOfAdmin.Balance - (countTotalPrice) + (countTotalPrice * (10/100));
+                _context.Wallets.Update(walletIdsOfAdmin);
+            }
 
-                    var addToTransactionAdmin = new Transaction
-                    {
-                        OrderId = null,
-                        WalletId = walletIdsOfAdmin,
-                        Date = datenow,
-                        Amount = ((totalPriceListSum * 10) / 100),
-                        Description = "DONE PROCESSS ADMIN WALLET WHEN CHEF CANCEL",
-                        Status = "SUCCEED",
-                        TransactionType = "REFUNDED",
-                        UserId = userIdsOfAdmin,
-                    };
-                    _context.Transactions.Add(addToTransactionAdmin);
+            
+            var getListCustomerId = _context.Orders.Where(x => x.MealSessionId == mealsessionId).Select(x => x.CustomerId).ToList();
+            var getListUserIdByCustomerId = _context.Customers.Where(x => getListCustomerId.Contains(x.CustomerId)).Select(x => x.UserId).ToList();
+            var getListWalletOfCustomer = _context.Wallets.Where(x => getListUserIdByCustomerId.Contains(x.UserId)).ToList();
+            if(getListWalletOfCustomer != null)
+            {
+                foreach (var cus in getListWalletOfCustomer)
+                {
+                    var listTotalPriceOfCustomer = _context.Orders.Where(x => getListCustomerId.Contains(x.CustomerId)).Select(x => x.TotalPrice).FirstOrDefault();
+                    var walletC = cus.Balance + listTotalPriceOfCustomer;
+                    _context.Wallets.Update(cus);
                 }
             }
+
 
             await _context.SaveChangesAsync();
             transaction.Commit();
