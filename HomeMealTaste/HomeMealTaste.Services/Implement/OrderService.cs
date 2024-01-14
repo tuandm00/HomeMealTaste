@@ -658,33 +658,7 @@ namespace HomeMealTaste.Services.Implement
             using Microsoft.EntityFrameworkCore.Storage.IDbContextTransaction? transaction = _context.Database.BeginTransaction();
             var entity = _mapper.Map<Order>(createOrderRequest);
             var mealSessionIdInOrder = _context.Orders.Select(x => x.MealSessionId).ToList();
-            //foreach (var id in mealSessionIdInOrder)
-            //{
-            //    if (entity.MealSessionId != id)
-            //    {
-            //        var sessionCheck1 = _context.MealSessions.Where(x => x.MealSessionId == entity.MealSessionId).Select(x => x.SessionId).FirstOrDefault();
-            //        var sessionCheck2 = _context.MealSessions.Where(x => x.MealSessionId == id).Select(x => x.SessionId).FirstOrDefault();
-            //        //var sessionCheck1 = _context.MealSessions
-            //        //    .Where(x => x.MealSessionId == entity.MealSessionId)
-            //        //    .Select(x => new { x.SessionId, x.Status })
-            //        //    .FirstOrDefault();
-
-            //        //var sessionCheck2 = _context.MealSessions
-            //        //    .Where(x => x.MealSessionId == id)
-            //        //    .Select(x => new { x.SessionId, x.Status })
-            //        //    .FirstOrDefault();
-            //        //if (sessionCheck1 != null && sessionCheck2 != null &&
-            //        //    sessionCheck1.SessionId == sessionCheck2.SessionId &&
-            //        //    sessionCheck1.Status == sessionCheck2.Status)
-            //        //{
-            //        //    throw new Exception("Cannot Order in the Same Session with the Same Status");
-            //        //}
-            //        if (sessionCheck1 == sessionCheck2)
-            //        {
-            //            throw new Exception("Can Not Order In Same Session");
-            //        }
-            //    }
-            //}
+            
             var customerid = _context.Customers.Where(customerid => customerid.CustomerId == entity.CustomerId).FirstOrDefault();
             var mealsessionid = _context.MealSessions
                 .Where(mealsession => mealsession.MealSessionId == entity.MealSessionId && mealsession.Status.Equals("APPROVED"))
@@ -713,7 +687,6 @@ namespace HomeMealTaste.Services.Implement
             //check mealsessionid then add order to table order
             var createOrder = new CreateOrderRequestModel
             {
-
                 CustomerId = entity.CustomerId,
                 TotalPrice = (int?)totalprice,
                 Time = GetDateTimeTimeZoneVietNam(),
@@ -740,85 +713,27 @@ namespace HomeMealTaste.Services.Implement
                     throw new Exception("YOUR BALANCE IS OUT OF AMOUNT");
                 }
             }
-            // save to admin wallet take 10%
-            //var admin = _context.Users.Where(x => x.RoleId == 1 && x.UserId == 2).FirstOrDefault();
-            //var priceToAdmin = (totalprice * 10) / 100;
 
-            //if (admin != null)
-            //{
-            //    // Check if the admin already has a wallet
-            //    var adminWallet = _context.Wallets.FirstOrDefault(w => w.UserId == admin.UserId);
-
-            //    if (adminWallet != null)
-            //    {
-            //        // Update the existing wallet
-            //        adminWallet.Balance += (int?)priceToAdmin;
-            //        _context.Wallets.Update(adminWallet);
-            //    }
-
-            //}
-
-            //then transfer price after 10 % of admin to kitchen
-            //var kitchen = _context.MealSessions
-            //    .Where(x => x.MealSessionId == entity.MealSessionId)
-            //    .Include(x => x.Kitchen)
-            //    .AsNoTracking()
-            //    .FirstOrDefault();
-            //var kitchenid = _context.MealSessions.Where(x => x.MealSessionId == entity.MealSessionId).Select(x => x.KitchenId).FirstOrDefault();
-            //var userIdChef = _context.Kitchens.Where(x => x.KitchenId == kitchenid).Select(x => x.UserId).FirstOrDefault();
-            //var walletOfUserIdOfKitchen = _context.Wallets.Where(x => x.UserId == userIdChef).Select(X => X.WalletId).FirstOrDefault();
-            //var priceToChef = totalprice - priceToAdmin;
-
-            //if (kitchen != null)
-            //{
-            //    var chefWallet = _context.Wallets.FirstOrDefault(w => w.UserId == kitchen.Kitchen.UserId);
-
-            //    if (chefWallet != null)
-            //    {
-            //        // Update the existing wallet
-            //        chefWallet.Balance += (int?)priceToChef;
-            //        _context.Wallets.Update(chefWallet);
-            //    }
-
-            //}
-
+            // cong tien(totalprice) vo vi admin
+            var userIdOfAdmin = _context.Users.Where(x => x.UserId == 2).Select(x => x.UserId).FirstOrDefault();
+            var walletOfUserIdOfAdmin = _context.Wallets.Where(x => x.UserId == userIdOfAdmin).Select(x => x.WalletId).FirstOrDefault();
+            var walletAdmin = _context.Wallets.Where(x => x.UserId == userIdOfAdmin).FirstOrDefault();
+            int afterBalanceAdmin = 0;
+            if (walletAdmin != null)
+            {
+                afterBalanceAdmin = (int)totalprice;
+                if (afterBalanceAdmin >= 0)
+                {
+                    walletAdmin.Balance += afterBalanceAdmin;
+                    _context.Wallets.Update(walletAdmin);
+                }
+            }
             _context.MealSessions.Update(mealsessionid);
             _context.Wallets.Update(walletid);
 
             var orderEntity = _mapper.Map<Order>(createOrder);
             await _context.AddAsync(orderEntity);
             await _context.SaveChangesAsync();
-
-            // Save to transaction for admin
-            //var transactionToAdmin = new Transaction
-            //{
-            //    OrderId = orderEntity.OrderId,
-            //    WalletId = walletid.WalletId,
-            //    Date = createOrder.Time,
-            //    Amount = (decimal?)priceToAdmin,
-            //    Description = "DONE WITH REVENUE",
-            //    Status = "SUCCEED",
-            //    TransactionType = "RR",
-            //    UserId = admin.UserId,
-            //};
-
-            //_context.Transactions.Add(transactionToAdmin);
-
-            //// Save to transaction for chef
-            //var transactionToChef = new Transaction
-            //{
-            //    OrderId = orderEntity.OrderId,
-            //    WalletId = walletOfUserIdOfKitchen,
-            //    Date = createOrder.Time,
-            //    Amount = (decimal?)priceToChef,
-            //    Description = "DONE WITH REVENUE",
-            //    Status = "SUCCEED",
-            //    TransactionType = "RR",
-            //    UserId = kitchen.Kitchen.UserId,
-            //};
-
-            //_context.Transactions.Add(transactionToChef);
-
 
             var useridwallet = _context.Wallets.Select(x => x.UserId).FirstOrDefault();
             //save to table transaction
@@ -846,6 +761,7 @@ namespace HomeMealTaste.Services.Implement
         {
             var listOrder = await _context.Orders.Where(x => x.MealSessionId == mealsessionid).ToListAsync();
             var mealSession = await _context.MealSessions.Where(x => x.MealSessionId == mealsessionid).FirstOrDefaultAsync();
+            int? count = 0;
             if (listOrder != null)
             {
                 foreach (var list in listOrder)
@@ -870,7 +786,27 @@ namespace HomeMealTaste.Services.Implement
                         list.Status = "CANCELLED";
                         mealSession.Status = "CANCELLED";
 
-                        await ChefCancelledOrderRefundMoneyToCustomerV2(mealsessionid);
+                        // huy order bi tru tien
+                        // lay ra list order, foreach cai list order nay, cong don vao bien count cua tung order quantity, check bien count voi quantity >= cua mealsession / 2 lay du, neu dung thi hoan tien lai customer , chef ko bi tru
+                        
+                        foreach(var l in listOrder)
+                        {
+                             count += l.Quantity;
+                            
+                            if(count >= (mealSession.Quantity) % 2)
+                            {
+                                // ham hoan tien customer ma ko tru tien chef
+
+                            }
+                            else
+                            {
+                                // hoan tien customer , tru tien chef
+                                await ChefCancelledOrderRefundMoneyToCustomerV2(mealsessionid);
+                            }
+                        }
+                        
+
+                        //huy order khong bi tru tien vi so luong mam khong du, se lay duoi 50% so mam
                     };
 
                     _context.MealSessions.Update(mealSession);
@@ -970,7 +906,6 @@ namespace HomeMealTaste.Services.Implement
                 var orderitem = _context.Orders.Where(x => x.OrderId == item.OrderId).FirstOrDefault();
                 orderitem.Status = "CANCELLED";
                 _context.Orders.Update(orderitem);
-
             }
 
             var datenow = GetDateTimeTimeZoneVietNam();
@@ -1465,6 +1400,68 @@ namespace HomeMealTaste.Services.Implement
 
             var mapped = result.Select(r => _mapper.Map<GetAllOrderBySessionIdResponseModel>(r)).ToList();
             return mapped;
+        }
+
+        public async Task ChefCancelledNotEnoughOrderRefundMoneyToCustomerV2(int mealsessionId)
+        {
+            using Microsoft.EntityFrameworkCore.Storage.IDbContextTransaction? transaction = _context.Database.BeginTransaction();
+            var getListOrder = await GetAllOrderByMealSessionId(mealsessionId);
+            var sessionid = _context.MealSessions.Where(x => x.MealSessionId == mealsessionId).Select(x => x.SessionId).FirstOrDefault();
+            var sessionStatus = _context.Sessions.Where(x => x.SessionId == sessionid).Select(x => x.Status).FirstOrDefault();
+            if (sessionStatus == null || sessionStatus.Equals(""))
+            {
+                throw new Exception("Can not CANCEL");
+            }
+            foreach (var item in getListOrder)
+            {
+                var orderitem = _context.Orders.Where(x => x.OrderId == item.OrderId).FirstOrDefault();
+                orderitem.Status = "CANCELLED";
+                _context.Orders.Update(orderitem);
+            }
+
+            var datenow = GetDateTimeTimeZoneVietNam();
+            var orderId = _context.Orders.Where(x => x.MealSessionId == mealsessionId).Select(x => x.OrderId).ToList();
+            var order = _context.Orders.Where(x => orderId.Contains(x.OrderId)).ToList();
+            var customerId = _context.Orders.Where(x => orderId.Contains(x.OrderId)).Select(x => x.CustomerId).ToList();
+            var userIdOfCustomer = _context.Customers.Where(x => customerId.Contains(x.CustomerId)).Select(x => x.UserId).ToList();
+            var walletIdsOfCustomers = order.Select(x => x.CustomerId).Distinct().Select(id => _context.Wallets.Where(w => w.UserId == id).Select(w => w.WalletId).FirstOrDefault()).ToList();
+            var totalPriceList = _context.Orders.Where(x => orderId.Contains(x.OrderId)).Select(x => x.TotalPrice).FirstOrDefault();
+
+            if (walletIdsOfCustomers != null && walletIdsOfCustomers.Any())
+            {
+
+                foreach (var orders in order)
+                {
+                    var cusid = orders.CustomerId;
+                    var userid = _context.Customers.Where(x => x.CustomerId == cusid).Select(x => x.UserId).ToList();
+                    foreach (var i in userid)
+                    {
+                        var wallet = _context.Wallets.Where(w => w.UserId == i).FirstOrDefault();
+                        if (wallet != null)
+                        {
+                            wallet.Balance += totalPriceList;
+                            _context.Wallets.Update(wallet);
+
+                            var addToTransactionCustomer = new Transaction
+                            {
+                                OrderId = orders.OrderId,
+                                WalletId = wallet.WalletId,
+                                Date = datenow,
+                                Amount = totalPriceList,
+                                Description = "DONE WITH REFUND FOR CUSTOMER",
+                                Status = "SUCCEED",
+                                TransactionType = "REFUNDED",
+                                UserId = wallet.UserId,
+                            };
+                            _context.Transactions.Add(addToTransactionCustomer);
+                        }
+                    }
+
+                }
+            }
+
+            await _context.SaveChangesAsync();
+            transaction.Commit();
         }
     }
 }
