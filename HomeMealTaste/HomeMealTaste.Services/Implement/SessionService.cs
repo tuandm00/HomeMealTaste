@@ -751,10 +751,18 @@ namespace HomeMealTaste.Services.Implement
             {
                 _context.Sessions.Remove(sessionIdd);
 
-                foreach (var sessionArea in sessionIdd.SessionAreas.ToList())
+                var listSessionArea = _context.SessionAreas.Where(x => x.SessionId == sessionIdd.SessionId).ToList();
+                if (listSessionArea.Count > 0)
                 {
-                    _context.SessionAreas.Remove(sessionArea);
+                    foreach (var area in listSessionArea)
+                    {
+                        _context.SessionAreas.Remove(area);
+                    }
                 }
+            }
+            else
+            {
+                throw new Exception("Session have Meal can not delete!");
             }
             _context.SaveChanges();
         }
