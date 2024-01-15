@@ -799,7 +799,7 @@ namespace HomeMealTaste.Services.Implement
                         {
                              count += l.Quantity;
                             
-                            if(count >= (mealSession.Quantity) % 2)
+                            if(count >= (mealSession.Quantity) % 2)     
                             {
                                 // ham hoan tien customer ma ko tru tien chef
 
@@ -939,6 +939,25 @@ namespace HomeMealTaste.Services.Implement
                 }
             }
 
+            var getListKitchenId = _context.MealSessions.Where(x => x.MealSessionId == mealsessionId).Select(x => x.KitchenId).ToList();
+            var getListUserIdByKitchenId = _context.Kitchens.Where(x => getListKitchenId.Contains(x.KitchenId)).Select(x => x.UserId).ToList();
+            var getListWalletOfKitchen = _context.Wallets.Where(x => getListUserIdByKitchenId.Contains(x.UserId)).ToList();
+
+            if(getListWalletOfKitchen != null)
+            {
+                foreach (var chefWallet in getListWalletOfKitchen)
+                {
+                    var ordersInKitchen = _context.Orders
+                        .Where(x => getListKitchenId.Contains(x.MealSession.KitchenId))
+                        .ToList();
+
+                    int totalDeduction = ((int)(ordersInKitchen.Sum(x => x.TotalPrice) * 0.1m)); 
+
+                    chefWallet.Balance -= totalDeduction;
+
+                    _context.Wallets.Update(chefWallet);
+                }
+            }
 
             await _context.SaveChangesAsync();
             transaction.Commit();
@@ -1216,15 +1235,15 @@ namespace HomeMealTaste.Services.Implement
 
             if (statusSession != null && statusSession.Equals("ONGOING"))
             {
-                if (result != null && status.Equals("ACCEPTED", StringComparison.OrdinalIgnoreCase) && result.Status.Equals("PAID"))
+                if (result != null && status.Equals("COMPLETED", StringComparison.OrdinalIgnoreCase) && result.Status.Equals("READY"))
                 {
                     result.Status = status.ToUpper();
                 }
-                else if (result != null && status.Equals("COMPLETED", StringComparison.OrdinalIgnoreCase) && result.Status.Equals("ACCEPTED"))
-                {
-                    result.Status = status.ToUpper();
-                }
-                else if (result != null && status.Equals("NOTEAT", StringComparison.OrdinalIgnoreCase) && result.Status.Equals("ACCEPTED"))
+                //else if (result != null && status.Equals("COMPLETED", StringComparison.OrdinalIgnoreCase) && result.Status.Equals("ACCEPTED"))
+                //{
+                //    result.Status = status.ToUpper();
+                //}
+                else if (result != null && status.Equals("NOTEAT", StringComparison.OrdinalIgnoreCase) && result.Status.Equals("READY"))
                 {
                     result.Status = status.ToUpper();
                 }
