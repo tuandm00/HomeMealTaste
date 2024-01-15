@@ -427,6 +427,7 @@ namespace HomeMealTaste.Services.Implement
                     .Where(x => x.SessionId == sessionId)
                     .Select(x => x.Status)
                     .FirstOrDefault();
+                
 
                 if ((result != null && result.Status.Equals("COMPLETED", StringComparison.OrdinalIgnoreCase)
                                    || (result.Status.Equals("CANCELLED", StringComparison.OrdinalIgnoreCase)))
@@ -460,7 +461,23 @@ namespace HomeMealTaste.Services.Implement
                     {
                         result.Status = "CANCELLED";
                     }
+                    //gia dinh truong hop chef quen completed  mam => admin vo completed mam va tat ca order se completed
+                    else if (string.Equals("COMPLETED", request.status, StringComparison.OrdinalIgnoreCase))
+                    {
+                        result.Status = "COMPLETED";
+
+                        var ordersToUpdate = _context.Orders
+                            .Where(x => x.MealSessionId == result.MealSessionId)
+                            .ToList();
+
+                        foreach (var order in ordersToUpdate)
+                        {
+                            order.Status = "COMPLETED";
+                        }
+                    }
                 }
+                
+                
                 else throw new Exception("Session is NOT OPEN");
             }
             await _context.SaveChangesAsync();
