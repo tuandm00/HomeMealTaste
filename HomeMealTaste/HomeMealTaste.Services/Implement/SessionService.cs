@@ -397,10 +397,10 @@ namespace HomeMealTaste.Services.Implement
                     //}
                     else if (result != null && result.Status.Equals("ONGOING", StringComparison.OrdinalIgnoreCase) && result.EndDate.Value.Date >= datenow.Date)
                     {
-                        if(autoCreatingstatus && request.status.Equals("CLOSED", StringComparison.OrdinalIgnoreCase))
+                        if (autoCreatingstatus && request.status.Equals("CLOSED", StringComparison.OrdinalIgnoreCase))
                         {
                             var checkSessionAreaFinalStatus = await _sessionAreaService.CheckChangeStatusSessionArea(sessionid);
-                            if(checkSessionAreaFinalStatus ==  true)
+                            if (checkSessionAreaFinalStatus == true)
                             {
                                 result.Status = "CLOSED";
                                 var areas = await _context.SessionAreas
@@ -421,7 +421,7 @@ namespace HomeMealTaste.Services.Implement
                                 await _transactionService.SaveTotalPriceAfterFinishSession(sessionid);
                             }
                         }
-                        else if(request.status.Equals("CLOSED", StringComparison.OrdinalIgnoreCase))
+                        else if (request.status.Equals("CLOSED", StringComparison.OrdinalIgnoreCase))
                         {
                             result.Status = "CLOSED";
                         }
@@ -522,7 +522,7 @@ namespace HomeMealTaste.Services.Implement
 
             var mappedResults = result.Select(session => _mapper.Map<GetAllSessionByAreaIdResponseModel>(session)).ToList();
             return Task.FromResult(mappedResults);
-        }   
+        }
 
         public async Task<GetSingleSessionBySessionIdResponseModel> GetSingleSessionBySessionId(int sessionid)
         {
@@ -638,13 +638,13 @@ namespace HomeMealTaste.Services.Implement
             var entity = _mapper.Map<Session>(request);
             var sessionId = _context.SessionAreas.Where(x => x.SessionId == request.SessionId).Select(x => x.SessionId).FirstOrDefault();
             var result = _context.Sessions.Where(x => x.SessionId == sessionId && x.EndDate.Value.Date >= datenow.Date).FirstOrDefault();
-            var sessionCreateDate = datenow;
+            var sessionCreateDate = datenow.Date;
             var sessionEndDate = DateTime.ParseExact(request.EndDate, "dd-MM-yyyy", CultureInfo.InvariantCulture);
             if (result != null)
             {
 
                 result.CreateDate = sessionCreateDate;
-                result.EndDate = sessionEndDate;
+                result.EndDate = sessionEndDate.Date;
                 result.SessionType = entity.SessionType;
                 if (string.Equals(result.SessionType, "lunch", StringComparison.OrdinalIgnoreCase))
                 {
@@ -746,23 +746,17 @@ namespace HomeMealTaste.Services.Implement
 
         public async Task DeleteSession(int sessionId)
         {
-            var session = _context.Sessions.Include(s => s.SessionAreas).FirstOrDefault(x => x.SessionId == sessionId);
-            if (session != null)
+            var sessionIdd = _context.Sessions.Include(x => x.SessionAreas).Where(x => x.SessionId == sessionId).FirstOrDefault();
+            if (sessionIdd != null)
             {
-                // Remove associated Meal_Session records
-                foreach (var mealSession in _context.MealSessions.Where(ms => ms.SessionId == sessionId).ToList())
-                {
-                    _context.MealSessions.Remove(mealSession);
-                }
+                _context.Sessions.Remove(sessionIdd);
 
-                _context.Sessions.Remove(session);
-
-                foreach (var sessionArea in session.SessionAreas.ToList())
+                foreach (var sessionArea in sessionIdd.SessionAreas.ToList())
                 {
                     _context.SessionAreas.Remove(sessionArea);
                 }
             }
-             _context.SaveChanges();
+            _context.SaveChanges();
         }
 
 
