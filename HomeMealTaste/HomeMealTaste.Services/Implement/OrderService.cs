@@ -807,6 +807,7 @@ namespace HomeMealTaste.Services.Implement
                             else
                             {
                                 // hoan tien customer , ko tru tien chef
+                                await ChefCancelledNotEnoughOrderRefundMoneyToCustomerV2(mealsessionid);
                             }
                         }
                         
@@ -1355,44 +1356,27 @@ namespace HomeMealTaste.Services.Implement
                 _context.Orders.Update(orderitem);
             }
 
-            var datenow = GetDateTimeTimeZoneVietNam();
-            var orderId = _context.Orders.Where(x => x.MealSessionId == mealsessionId).Select(x => x.OrderId).ToList();
-            var order = _context.Orders.Where(x => orderId.Contains(x.OrderId)).ToList();
-            var customerId = _context.Orders.Where(x => orderId.Contains(x.OrderId)).Select(x => x.CustomerId).ToList();
-            var userIdOfCustomer = _context.Customers.Where(x => customerId.Contains(x.CustomerId)).Select(x => x.UserId).ToList();
-            var walletIdsOfCustomers = order.Select(x => x.CustomerId).Distinct().Select(id => _context.Wallets.Where(w => w.UserId == id).Select(w => w.WalletId).FirstOrDefault()).ToList();
-            var totalPriceList = _context.Orders.Where(x => orderId.Contains(x.OrderId)).Select(x => x.TotalPrice).FirstOrDefault();
+            var userIdsOfAdmin = _context.Users.Where(x => x.RoleId == 1 && x.UserId == 2).Select(x => x.UserId).FirstOrDefault();
+            var walletIdsOfAdmin = _context.Wallets.Where(x => x.UserId == userIdsOfAdmin).FirstOrDefault();
+            var countTotalPrice = _context.Orders.Where(x => x.MealSessionId == mealsessionId).Select(x => x.TotalPrice).ToList().Sum();
 
-            if (walletIdsOfCustomers != null && walletIdsOfCustomers.Any())
+            if (walletIdsOfAdmin != null)
             {
+                walletIdsOfAdmin.Balance = (int?)(walletIdsOfAdmin.Balance - (countTotalPrice));
+                _context.Wallets.Update(walletIdsOfAdmin);
+            }
 
-                foreach (var orders in order)
+
+            var getListCustomerId = _context.Orders.Where(x => x.MealSessionId == mealsessionId).Select(x => x.CustomerId).ToList();
+            var getListUserIdByCustomerId = _context.Customers.Where(x => getListCustomerId.Contains(x.CustomerId)).Select(x => x.UserId).ToList();
+            var getListWalletOfCustomer = _context.Wallets.Where(x => getListUserIdByCustomerId.Contains(x.UserId)).ToList();
+            if (getListWalletOfCustomer != null)
+            {
+                foreach (var cus in getListWalletOfCustomer)
                 {
-                    var cusid = orders.CustomerId;
-                    var userid = _context.Customers.Where(x => x.CustomerId == cusid).Select(x => x.UserId).ToList();
-                    foreach (var i in userid)
-                    {
-                        var wallet = _context.Wallets.Where(w => w.UserId == i).FirstOrDefault();
-                        if (wallet != null)
-                        {
-                            wallet.Balance += totalPriceList;
-                            _context.Wallets.Update(wallet);
-
-                            var addToTransactionCustomer = new Transaction
-                            {
-                                OrderId = orders.OrderId,
-                                WalletId = wallet.WalletId,
-                                Date = datenow,
-                                Amount = totalPriceList,
-                                Description = "DONE WITH REFUND FOR CUSTOMER",
-                                Status = "SUCCEED",
-                                TransactionType = "REFUNDED",
-                                UserId = wallet.UserId,
-                            };
-                            _context.Transactions.Add(addToTransactionCustomer);
-                        }
-                    }
-
+                    var listTotalPriceOfCustomer = _context.Orders.Where(x => getListCustomerId.Contains(x.CustomerId) && x.MealSessionId == mealsessionId).Select(x => x.TotalPrice).FirstOrDefault();
+                    cus.Balance = cus.Balance + listTotalPriceOfCustomer;
+                    _context.Wallets.Update(cus);
                 }
             }
 
