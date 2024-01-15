@@ -23,7 +23,7 @@ namespace HomeMealTaste.Services.Interface
         Task<List<GetAllSessionByAreaIdResponseModel>> GetAllSessionByAreaIdWithStatusOpen(int areaid);
         Task<List<SessionResponseModel>> GetAllSessionWithStatusTrueAndBookingSlotTrue();
         //Task<List<GetAllSessionByAreaIdResponseModel>> GetAllSessionByAreaIdWithStatusTrueInDay(int areaid);
-        //Task DeleteSession(int sessionId);
+        Task DeleteSession(int sessionId);
         Task<GetSingleSessionBySessionIdResponseModel> GetSingleSessionBySessionId(int sessionid);
         Task<UpdateSessionAndAreaInSessionResponseModel> UpdateSessionAndAreaInSession(UpdateSessionAndAreaInSessionRequestModel request);
 

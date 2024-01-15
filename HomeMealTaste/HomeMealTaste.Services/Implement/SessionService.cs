@@ -522,13 +522,7 @@ namespace HomeMealTaste.Services.Implement
 
             var mappedResults = result.Select(session => _mapper.Map<GetAllSessionByAreaIdResponseModel>(session)).ToList();
             return Task.FromResult(mappedResults);
-        }
-
-        //public Task DeleteSession(int sessionId)
-        //{
-        //    var result = _sessionRepository.Delete(sessionId);
-        //    return result;
-        //}
+        }   
 
         public async Task<GetSingleSessionBySessionIdResponseModel> GetSingleSessionBySessionId(int sessionid)
         {
@@ -649,15 +643,6 @@ namespace HomeMealTaste.Services.Implement
             if (result != null)
             {
 
-                //if (request.EndDate.HasValue && DateTime.TryParseExact(request.EndDate.Value.ToString("dd-MM-yyyy"), "dd-MM-yyyy", CultureInfo.InvariantCulture, DateTimeStyles.None, out DateTime parsedCreateDate))
-                //{
-                //    result.CreateDate = parsedCreateDate;
-                //}
-                //if (request.EndDate.HasValue && DateTime.TryParseExact(request.EndDate.Value.ToString("dd-MM-yyyy"), "dd-MM-yyyy", CultureInfo.InvariantCulture, DateTimeStyles.None, out DateTime parsedEndDate))
-                //{
-                //    result.EndDate = parsedEndDate;
-                //}
-
                 result.CreateDate = sessionCreateDate;
                 result.EndDate = sessionEndDate;
                 result.SessionType = entity.SessionType;
@@ -757,6 +742,27 @@ namespace HomeMealTaste.Services.Implement
 
             var mapped = result.Select(r => _mapper.Map<SessionResponseModel>(r)).ToList();
             return mapped;
+        }
+
+        public async Task DeleteSession(int sessionId)
+        {
+            var session = _context.Sessions.Include(s => s.SessionAreas).FirstOrDefault(x => x.SessionId == sessionId);
+            if (session != null)
+            {
+                // Remove associated Meal_Session records
+                foreach (var mealSession in _context.MealSessions.Where(ms => ms.SessionId == sessionId).ToList())
+                {
+                    _context.MealSessions.Remove(mealSession);
+                }
+
+                _context.Sessions.Remove(session);
+
+                foreach (var sessionArea in session.SessionAreas.ToList())
+                {
+                    _context.SessionAreas.Remove(sessionArea);
+                }
+            }
+             _context.SaveChanges();
         }
 
 
