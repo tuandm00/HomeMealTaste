@@ -639,13 +639,15 @@ namespace HomeMealTaste.Services.Implement
             var sessionId = _context.SessionAreas.Where(x => x.SessionId == request.SessionId).Select(x => x.SessionId).FirstOrDefault();
             var result = _context.Sessions.Where(x => x.SessionId == sessionId && x.EndDate.Value.Date >= datenow.Date).FirstOrDefault();
             var sessionCreateDate = datenow.Date;
-            var sessionEndDate = DateTime.ParseExact(request.EndDate, "dd-MM-yyyy", CultureInfo.InvariantCulture);
-
+            //var sessionEndDate = DateTime.ParseExact(request.EndDate, "dd-MM-yyyy", CultureInfo.InvariantCulture);
+            if (DateTime.TryParseExact(request.EndDate, "dd-MM-yyyy", CultureInfo.InvariantCulture, DateTimeStyles.None, out DateTime parsedDate))
+            {
+                result.EndDate = parsedDate.Date;
+            }
             if (result != null)
             {
 
                 result.CreateDate = sessionCreateDate;
-                result.EndDate = sessionEndDate.Date;
                 result.SessionType = entity.SessionType;
                 if (string.Equals(result.SessionType, "lunch", StringComparison.OrdinalIgnoreCase))
                 {
