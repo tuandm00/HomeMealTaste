@@ -776,16 +776,17 @@ namespace HomeMealTaste.Services.Implement
                         list.Status = "READY";
                         mealSession.Status = "COMPLETED";
                     }
-                    //else if (status.Equals("COMPLETED", StringComparison.OrdinalIgnoreCase) && list.Status.Equals("ACCEPTED", StringComparison.OrdinalIgnoreCase))
-                    //{
-                    //    list.Status = "COMPLETED";
-                    //    mealSession.Status = "COMPLETED";
-                    //}
-                    //else if (status.Equals("NOTEAT", StringComparison.OrdinalIgnoreCase) && list.Status.Equals("ACCEPTED", StringComparison.OrdinalIgnoreCase))
-                    //{
-                    //    list.Status = "NOTEAT";
-                    //    mealSession.Status = "COMPLETED";
-                    //}
+                    else if (status.Equals("COMPLETED", StringComparison.OrdinalIgnoreCase) && list.Status.Equals("READY", StringComparison.OrdinalIgnoreCase))
+                    {
+                        list.Status = "COMPLETED";
+                        mealSession.Status = "COMPLETED";
+                    }
+                    else if (status.Equals("NOTEAT", StringComparison.OrdinalIgnoreCase) && list.Status.Equals("READY", StringComparison.OrdinalIgnoreCase))
+                    {
+                        list.Status = "NOTEAT";
+                        mealSession.Status = "COMPLETED";
+                    }
+                    
                     else if (status.Equals("CANCELLED", StringComparison.OrdinalIgnoreCase) && list.Status.Equals("PAID", StringComparison.OrdinalIgnoreCase))
                     {
                         list.Status = "CANCELLED";
