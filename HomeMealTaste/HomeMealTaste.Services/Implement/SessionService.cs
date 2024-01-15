@@ -242,8 +242,8 @@ namespace HomeMealTaste.Services.Implement
             var sessionTypeLower = entity.SessionType.ToLower();
             entity.CreateDate = GetDateTimeTimeZoneVietNam();
             entity.EndDate = DateTime.ParseExact(sessionRequest.Date, "dd-MM-yyyy", CultureInfo.InvariantCulture);
-            entity.Status = sessionRequest.Status?.ToString().ToLower() ?? "OPEN";
-            if(entity.Status == null)
+            entity.Status = (sessionRequest.Status?.ToString().ToLower() ?? "OPEN").ToUpperInvariant();
+            if (entity.Status == null)
             {
                 entity.Status = "OPEN";
             }

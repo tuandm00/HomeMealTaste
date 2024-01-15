@@ -428,8 +428,8 @@ namespace HomeMealTaste.Services.Implement
                     .Select(x => x.Status)
                     .FirstOrDefault();
 
-                if ((result != null && result.Status.Equals("PROCESSING", StringComparison.OrdinalIgnoreCase)
-                                   || (result.Status.Equals("APPROVED", StringComparison.OrdinalIgnoreCase)))
+                if ((result != null && result.Status.Equals("COMPLETED", StringComparison.OrdinalIgnoreCase)
+                                   || (result.Status.Equals("CANCELLED", StringComparison.OrdinalIgnoreCase)))
                                    && sessionStatus.Equals("OPEN"))
                 {
                     if (string.Equals("COMPLETED", request.status, StringComparison.OrdinalIgnoreCase))
@@ -442,7 +442,7 @@ namespace HomeMealTaste.Services.Implement
                     }
                 }
 
-                else if (result != null && result.Status.Equals("PROCESSING", StringComparison.OrdinalIgnoreCase) && sessionStatus.Equals("OPEN"))
+                if (result != null && result.Status.Equals("PROCESSING", StringComparison.OrdinalIgnoreCase) && sessionStatus.Equals("OPEN"))
                 {
                     if (string.Equals("APPROVED", request.status, StringComparison.OrdinalIgnoreCase))
                     {
@@ -454,29 +454,12 @@ namespace HomeMealTaste.Services.Implement
                     }
 
                 }
-                else if (result != null && result.Status.Equals("APPROVED", StringComparison.OrdinalIgnoreCase) && sessionStatus.Equals("OPEN"))
-                {
-                    if (string.Equals("APPROVED", request.status, StringComparison.OrdinalIgnoreCase))
-                    {
-                        result.Status = "APPROVED";
-                    }
-                    else if (string.Equals("CANCELLED", request.status, StringComparison.OrdinalIgnoreCase))
-                    {
-                        result.Status = "CANCELLED";
-                    }
-
-                }
-                else if (result != null && result.Status.Equals("CANCELLED", StringComparison.OrdinalIgnoreCase) && sessionStatus.Equals("OPEN"))
+                if (result != null && result.Status.Equals("APPROVED", StringComparison.OrdinalIgnoreCase) && sessionStatus.Equals("OPEN"))
                 {
                     if (string.Equals("CANCELLED", request.status, StringComparison.OrdinalIgnoreCase))
                     {
                         result.Status = "CANCELLED";
                     }
-                    else if (string.Equals("APPROVED", request.status, StringComparison.OrdinalIgnoreCase))
-                    {
-                        result.Status = "APPROVED";
-                    }
-
                 }
                 else throw new Exception("Session is NOT OPEN");
             }
