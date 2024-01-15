@@ -799,15 +799,14 @@ namespace HomeMealTaste.Services.Implement
                         {
                              count += l.Quantity;
                             
-                            if(count >= (mealSession.Quantity) % 2)     
+                            if(count >= (mealSession.Quantity * 0.4))     
                             {
-                                // ham hoan tien customer ma ko tru tien chef
-
+                                // ham hoan tien customer, tru tien chef
+                                await ChefCancelledOrderRefundMoneyToCustomerV2(mealsessionid);
                             }
                             else
                             {
-                                // hoan tien customer , tru tien chef
-                                await ChefCancelledOrderRefundMoneyToCustomerV2(mealsessionid);
+                                // hoan tien customer , ko tru tien chef
                             }
                         }
                         
@@ -917,11 +916,11 @@ namespace HomeMealTaste.Services.Implement
             
             var userIdsOfAdmin = _context.Users.Where(x => x.RoleId == 1 && x.UserId == 2).Select(x => x.UserId).FirstOrDefault();
             var walletIdsOfAdmin = _context.Wallets.Where(x => x.UserId == userIdsOfAdmin).FirstOrDefault();
-            var countTotalPrice = _context.Orders.Where(x => x.MealSessionId == mealsessionId).Select(x => x.TotalPrice).ToList().Count();
+            var countTotalPrice = _context.Orders.Where(x => x.MealSessionId == mealsessionId).Select(x => x.TotalPrice).ToList().Sum();
 
             if (walletIdsOfAdmin != null)
             {
-                var walletA = walletIdsOfAdmin.Balance - (countTotalPrice) + (countTotalPrice * (10/100));
+                walletIdsOfAdmin.Balance = (int?)(walletIdsOfAdmin.Balance - (countTotalPrice) + (countTotalPrice * 0.1));
                 _context.Wallets.Update(walletIdsOfAdmin);
             }
 
@@ -933,8 +932,8 @@ namespace HomeMealTaste.Services.Implement
             {
                 foreach (var cus in getListWalletOfCustomer)
                 {
-                    var listTotalPriceOfCustomer = _context.Orders.Where(x => getListCustomerId.Contains(x.CustomerId)).Select(x => x.TotalPrice).FirstOrDefault();
-                    var walletC = cus.Balance + listTotalPriceOfCustomer;
+                    var listTotalPriceOfCustomer = _context.Orders.Where(x => getListCustomerId.Contains(x.CustomerId) && x.MealSessionId == mealsessionId).Select(x => x.TotalPrice).FirstOrDefault();
+                    cus.Balance = cus.Balance + listTotalPriceOfCustomer;
                     _context.Wallets.Update(cus);
                 }
             }
@@ -947,14 +946,7 @@ namespace HomeMealTaste.Services.Implement
             {
                 foreach (var chefWallet in getListWalletOfKitchen)
                 {
-                    var ordersInKitchen = _context.Orders
-                        .Where(x => getListKitchenId.Contains(x.MealSession.KitchenId))
-                        .ToList();
-
-                    int totalDeduction = ((int)(ordersInKitchen.Sum(x => x.TotalPrice) * 0.1m)); 
-
-                    chefWallet.Balance -= totalDeduction;
-
+                    chefWallet.Balance = (int?)(chefWallet.Balance - (countTotalPrice * 0.1));
                     _context.Wallets.Update(chefWallet);
                 }
             }
