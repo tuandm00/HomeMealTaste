@@ -342,7 +342,7 @@ namespace HomeMealTaste.Services.Implement
         {
             var orders = _context.Orders.Where(x => x.MealSessionId == mealsessionid).ToList();
             bool check;
-            if(orders != null)
+            if(orders.Count > 0)
             {
                 check = true;
             }
