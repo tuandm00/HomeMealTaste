@@ -636,7 +636,6 @@ namespace HomeMealTaste.Services.Implement
         {
             var responseModel = new UpdateSessionAndAreaInSessionResponseModel();
             var datenow = GetDateTimeTimeZoneVietNam();
-            var entity = _mapper.Map<Session>(request);
             var sessionId = _context.SessionAreas.Where(x => x.SessionId == request.SessionId).Select(x => x.SessionId).FirstOrDefault();
             var result = _context.Sessions.Where(x => x.SessionId == sessionId && x.EndDate.Value.Date >= datenow.Date).FirstOrDefault();
             var sessionCreateDate = datenow;
@@ -646,7 +645,7 @@ namespace HomeMealTaste.Services.Implement
 
                 result.CreateDate = sessionCreateDate;
                 result.EndDate = sessionEndDate;
-                result.SessionType = entity.SessionType;
+                result.SessionType = request.SessionType;
                 if (string.Equals(result.SessionType, "lunch", StringComparison.OrdinalIgnoreCase))
                 {
                     result.StartTime = result.CreateDate?.Date.AddHours(10);
