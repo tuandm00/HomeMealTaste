@@ -762,61 +762,53 @@ namespace HomeMealTaste.Services.Implement
             var listOrder = await _context.Orders.Where(x => x.MealSessionId == mealsessionid).ToListAsync();
             var mealSession = await _context.MealSessions.Where(x => x.MealSessionId == mealsessionid).FirstOrDefaultAsync();
             int? count = 0;
+            foreach(var order in listOrder)
+            {
+                count += order.Quantity;
+            }
             if (listOrder != null)
             {
-                foreach (var list in listOrder)
+                foreach (var order in listOrder)
                 {
-                    if (status.Equals("ACCEPTED", StringComparison.OrdinalIgnoreCase) && list.Status.Equals("PAID", StringComparison.OrdinalIgnoreCase))
+                    if (status.Equals("ACCEPTED", StringComparison.OrdinalIgnoreCase) && order.Status.Equals("PAID", StringComparison.OrdinalIgnoreCase))
                     {
-                        list.Status = "ACCEPTED";
+                        order.Status = "ACCEPTED";
                         mealSession.Status = "MAKING";
                     }
-                    else if (status.Equals("READY", StringComparison.OrdinalIgnoreCase) && list.Status.Equals("ACCEPTED", StringComparison.OrdinalIgnoreCase))
+                    else if (status.Equals("READY", StringComparison.OrdinalIgnoreCase) && order.Status.Equals("ACCEPTED", StringComparison.OrdinalIgnoreCase))
                     {
-                        list.Status = "READY";
+                        order.Status = "READY";
                         mealSession.Status = "COMPLETED";
-                    }
-                    else if (status.Equals("COMPLETED", StringComparison.OrdinalIgnoreCase) && list.Status.Equals("READY", StringComparison.OrdinalIgnoreCase))
-                    {
-                        list.Status = "COMPLETED";
-                        mealSession.Status = "COMPLETED";
-                    }
-                    else if (status.Equals("NOTEAT", StringComparison.OrdinalIgnoreCase) && list.Status.Equals("READY", StringComparison.OrdinalIgnoreCase))
-                    {
-                        list.Status = "NOTEAT";
-                        mealSession.Status = "COMPLETED";
+                        //cam thong bao mealsession vao day
                     }
                     
-                    else if (status.Equals("CANCELLED", StringComparison.OrdinalIgnoreCase) && list.Status.Equals("PAID", StringComparison.OrdinalIgnoreCase))
+                    else if (status.Equals("CANCELLED", StringComparison.OrdinalIgnoreCase) && order.Status.Equals("PAID", StringComparison.OrdinalIgnoreCase))
                     {
-                        list.Status = "CANCELLED";
+                        order.Status = "CANCELLED";
                         mealSession.Status = "CANCELLED";
 
                         // huy order bi tru tien
                         // lay ra list order, foreach cai list order nay, cong don vao bien count cua tung order quantity, check bien count voi quantity >= cua mealsession / 2 lay du, neu dung thi hoan tien lai customer , chef ko bi tru
                         
-                        foreach(var l in listOrder)
-                        {
-                             count += l.Quantity;
-                            
+                             
                             if(count >= (mealSession.Quantity * 0.4))     
                             {
-                                // ham hoan tien customer, tru tien chef
-                                await ChefCancelledOrderRefundMoneyToCustomerV2(mealsessionid);
+                            // ham hoan tien customer, tru tien chef
+                            await RefundMoneyToSingleCustomerByOrderIdWhenChefCancelledOrderWithBookingSlotEnough(order.OrderId);
                             }
                             else
                             {
                                 // hoan tien customer , ko tru tien chef
-                                await ChefCancelledNotEnoughOrderRefundMoneyToCustomerV2(mealsessionid);
+                                await RefundMoneyToSingleCustomerByOrderIdWhenChefCancelledOrderWithBookingSlotNotEnough(order.OrderId);
                             }
-                        }
+                        
                         
 
                         //huy order khong bi tru tien vi so luong mam khong du, se lay duoi 50% so mam
                     };
 
                     _context.MealSessions.Update(mealSession);
-                    _context.Orders.Update(list);
+                    _context.Orders.Update(order);
                     await _context.SaveChangesAsync();
 
                 }
@@ -897,6 +889,128 @@ namespace HomeMealTaste.Services.Implement
             else throw new Exception("Can not Found");
         }
 
+        public async Task RefundMoneyToSingleCustomerByOrderIdWhenChefCancelledOrderWithBookingSlotEnough(int orderId)
+        {
+            using Microsoft.EntityFrameworkCore.Storage.IDbContextTransaction? transaction = _context.Database.BeginTransaction();
+            var orderitem = _context.Orders.Where(x => x.OrderId == orderId).FirstOrDefault();
+            var datenow = GetDateTimeTimeZoneVietNam();
+            //update wallet admin
+            var userIdsOfAdmin = _context.Users.Where(x => x.RoleId == 1 && x.UserId == 2).Select(x => x.UserId).FirstOrDefault();
+            var walletIdsOfAdmin = _context.Wallets.Where(x => x.UserId == userIdsOfAdmin).FirstOrDefault();
+            if (walletIdsOfAdmin != null)
+            {
+                walletIdsOfAdmin.Balance = (int?)(walletIdsOfAdmin.Balance - (orderitem.TotalPrice) + (orderitem.TotalPrice * 0.1));
+                _context.Wallets.Update(walletIdsOfAdmin);
+            }
+            var addToTransactionForAdmin = new Transaction
+            {
+                OrderId = orderId,
+                WalletId = walletIdsOfAdmin.WalletId,
+                Date = datenow,
+                Amount = ((decimal?)(orderitem.TotalPrice * 0.1)),
+                Description = "REFUND",
+                Status = "SUCCEED",
+                TransactionType = "REFUND",
+                UserId = userIdsOfAdmin,
+            };
+            _context.Transactions.Add(addToTransactionForAdmin);
+
+            //update wallet customer
+            var getCustomerId = _context.Orders.Where(x => x.OrderId == orderId).Select(x => x.CustomerId).FirstOrDefault();
+            var getUserIdByCustomerId = _context.Customers.Where(x => x.CustomerId==getCustomerId).Select(x => x.UserId).FirstOrDefault();
+            var getWalletOfCustomer = _context.Wallets.Where(x => x.UserId==getUserIdByCustomerId).FirstOrDefault();
+            getWalletOfCustomer.Balance += orderitem.TotalPrice;
+            _context.Wallets.Update(getWalletOfCustomer);
+
+            var addToTransactionForCustomer = new Transaction
+            {
+                OrderId = orderId,
+                WalletId = getWalletOfCustomer.WalletId,
+                Date = datenow,
+                Amount = orderitem.TotalPrice,
+                Description = "REFUND",
+                Status = "SUCCEED",
+                TransactionType = "REFUND",
+                UserId = getUserIdByCustomerId,
+            };
+            _context.Transactions.Add(addToTransactionForCustomer);
+            //update wallet chef Tru tien
+            var mealSessionId = _context.Orders.Where(x => x.OrderId == orderId).Select(x => x.MealSessionId).FirstOrDefault();
+            var getKitchenId = _context.MealSessions.Where(x => x.MealSessionId == mealSessionId).Select(x => x.KitchenId).FirstOrDefault();
+            var getUserIdByKitchenId = _context.Kitchens.Where(x => x.KitchenId == getKitchenId).Select(x => x.UserId).FirstOrDefault();
+            var getWalletOfKitchen = _context.Wallets.Where(x => x.UserId==getUserIdByKitchenId).FirstOrDefault();
+            getWalletOfKitchen.Balance = (int?)(getWalletOfKitchen.Balance -  (orderitem.TotalPrice * 0.1));
+            _context.Wallets.Update(getWalletOfCustomer);
+
+            var addToTransactionForChef = new Transaction
+            {
+                OrderId = orderId,
+                WalletId = getWalletOfKitchen.WalletId,
+                Date = datenow,
+                Amount = ((decimal?)(orderitem.TotalPrice * 0.1)),
+                Description = "FINED",
+                Status = "SUCCEED",
+                TransactionType = "FINED",
+                UserId = getUserIdByKitchenId,
+            };
+            _context.Transactions.Add(addToTransactionForChef);
+
+            //tao transaction hoan tien luu ve vi cua customer, admin :refund , vi cua chef fined 
+
+            await _context.SaveChangesAsync();
+            transaction.Commit();
+        }
+        public async Task RefundMoneyToSingleCustomerByOrderIdWhenChefCancelledOrderWithBookingSlotNotEnough(int orderId)
+        {
+            using Microsoft.EntityFrameworkCore.Storage.IDbContextTransaction? transaction = _context.Database.BeginTransaction();
+            var orderitem = _context.Orders.Where(x => x.OrderId == orderId).FirstOrDefault();
+            var datenow = GetDateTimeTimeZoneVietNam();
+            //update wallet admin
+            var userIdsOfAdmin = _context.Users.Where(x => x.RoleId == 1 && x.UserId == 2).Select(x => x.UserId).FirstOrDefault();
+            var walletIdsOfAdmin = _context.Wallets.Where(x => x.UserId == userIdsOfAdmin).FirstOrDefault();
+            if (walletIdsOfAdmin != null)
+            {
+                walletIdsOfAdmin.Balance = (int?)(walletIdsOfAdmin.Balance - (orderitem.TotalPrice));
+                _context.Wallets.Update(walletIdsOfAdmin);
+            }
+
+            var addToTransactionForAdmin = new Transaction
+            {
+                OrderId = orderId,
+                WalletId = walletIdsOfAdmin.WalletId,
+                Date = datenow,
+                Amount = (orderitem.TotalPrice),
+                Description = "REFUND",
+                Status = "SUCCEED",
+                TransactionType = "REFUND",
+                UserId = userIdsOfAdmin,
+            };
+            _context.Transactions.Add(addToTransactionForAdmin);
+
+            //update wallet customer
+            var getCustomerId = _context.Orders.Where(x => x.OrderId == orderId).Select(x => x.CustomerId).FirstOrDefault();
+            var getUserIdByCustomerId = _context.Customers.Where(x => x.CustomerId == getCustomerId).Select(x => x.UserId).FirstOrDefault();
+            var getWalletOfCustomer = _context.Wallets.Where(x => x.UserId == getUserIdByCustomerId).FirstOrDefault();
+            getWalletOfCustomer.Balance += orderitem.TotalPrice;
+            _context.Wallets.Update(getWalletOfCustomer);
+
+            var addToTransactionForCustomer = new Transaction
+            {
+                OrderId = orderId,
+                WalletId = getWalletOfCustomer.WalletId,
+                Date = datenow,
+                Amount = (orderitem.TotalPrice),
+                Description = "REFUND",
+                Status = "SUCCEED",
+                TransactionType = "REFUND",
+                UserId = getUserIdByCustomerId,
+            };
+            _context.Transactions.Add(addToTransactionForCustomer);
+            //tao transaction hoan tien luu ve vi cua customer, admin :refund , vi cua chef fined 
+
+            await _context.SaveChangesAsync();
+            transaction.Commit();
+        }
         public async Task ChefCancelledOrderRefundMoneyToCustomerV2(int mealsessionId)
         {
             using Microsoft.EntityFrameworkCore.Storage.IDbContextTransaction? transaction = _context.Database.BeginTransaction();
@@ -951,6 +1065,11 @@ namespace HomeMealTaste.Services.Implement
                     _context.Wallets.Update(chefWallet);
                 }
             }
+
+
+
+
+
 
             await _context.SaveChangesAsync();
             transaction.Commit();
@@ -1232,10 +1351,7 @@ namespace HomeMealTaste.Services.Implement
                 {
                     result.Status = status.ToUpper();
                 }
-                //else if (result != null && status.Equals("COMPLETED", StringComparison.OrdinalIgnoreCase) && result.Status.Equals("ACCEPTED"))
-                //{
-                //    result.Status = status.ToUpper();
-                //}
+                
                 else if (result != null && status.Equals("NOTEAT", StringComparison.OrdinalIgnoreCase) && result.Status.Equals("READY"))
                 {
                     result.Status = status.ToUpper();

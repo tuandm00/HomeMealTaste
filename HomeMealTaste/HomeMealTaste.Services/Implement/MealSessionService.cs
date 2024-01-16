@@ -422,6 +422,7 @@ namespace HomeMealTaste.Services.Implement
 
         public async Task UpdateStatusMeallSession(UpdateStatusMeallSessionRequestModel request)
         {
+            var orders = _context.Orders.Where(x => request.MealSessionIds.Contains((int)x.MealSessionId)).ToList();
             var results = await _context.MealSessions
                 .Where(x => request.MealSessionIds.Contains(x.MealSessionId))
                 .ToListAsync();
@@ -437,23 +438,8 @@ namespace HomeMealTaste.Services.Implement
                     .Where(x => x.SessionId == sessionId)
                     .Select(x => x.Status)
                     .FirstOrDefault();
-                
 
-                if ((result != null && result.Status.Equals("COMPLETED", StringComparison.OrdinalIgnoreCase)
-                                   || (result.Status.Equals("CANCELLED", StringComparison.OrdinalIgnoreCase)))
-                                   && sessionStatus.Equals("OPEN"))
-                {
-                    if (string.Equals("COMPLETED", request.status, StringComparison.OrdinalIgnoreCase))
-                    {
-                        throw new Exception("Can not Update Because Meal Session is COMPLETED");
-                    }
-                    else if (string.Equals("CANCELLED", request.status, StringComparison.OrdinalIgnoreCase))
-                    {
-                        throw new Exception("Can not Update Because Meal Session is CANCELLED");
-                    }
-                }
-
-                if (result != null && result.Status.Equals("PROCESSING", StringComparison.OrdinalIgnoreCase) && sessionStatus.Equals("OPEN"))
+                if (result != null && result.Status.Equals("PROCESSING", StringComparison.OrdinalIgnoreCase) && (sessionStatus.Equals("OPEN") || sessionStatus.Equals("BOOKING")) )
                 {
                     if (string.Equals("APPROVED", request.status, StringComparison.OrdinalIgnoreCase))
                     {
@@ -464,30 +450,28 @@ namespace HomeMealTaste.Services.Implement
                         result.Status = "REJECTED";
                     }
                 }
-                if (result != null && result.Status.Equals("APPROVED", StringComparison.OrdinalIgnoreCase) && sessionStatus.Equals("OPEN"))
+                else if (result != null && result.Status.Equals("PROCESSING", StringComparison.OrdinalIgnoreCase) && sessionStatus.Equals("ONGOING"))
+                {
+                    result.Status = "CANCELLED";
+                }
+                if (result != null && result.Status.Equals("APPROVED", StringComparison.OrdinalIgnoreCase) && sessionStatus.Equals("ONGOING"))
                 {
                     if (string.Equals("CANCELLED", request.status, StringComparison.OrdinalIgnoreCase))
                     {
-                        result.Status = "CANCELLED";
-                    }
-                    //gia dinh truong hop chef quen completed  mam => admin vo completed mam va tat ca order se completed
-                    else if (string.Equals("COMPLETED", request.status, StringComparison.OrdinalIgnoreCase))
-                    {
-                        result.Status = "COMPLETED";
-
-                        var ordersToUpdate = _context.Orders
-                            .Where(x => x.MealSessionId == result.MealSessionId)
-                            .ToList();
-
-                        foreach (var order in ordersToUpdate)
+                        if(orders.Count == 0)   
                         {
-                            order.Status = "COMPLETED";
+                            result.Status = "CANCELLED";
+                        }
+                        else
+                        {
+                            throw new Exception("Can not Cancelled Meal Session, please check it in Order of that Meal Session");
                         }
                     }
                 }
-                
-                
-                else throw new Exception("Session is NOT OPEN");
+                else
+                {
+                    throw new Exception("Session status must be ONGOING and change status of Meal session to Cancelled when chef forgot");
+                }
             }
             await _context.SaveChangesAsync();
         }

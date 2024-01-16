@@ -25,60 +25,81 @@ namespace HomeMealTaste.Services.Implement
             _sessionareaRepository = sessionAreaRepository;
         }
 
-        public async Task<bool> ChangeStatusSessionArea(int sessionId)
+        public async Task<bool> ChangeStatusSessionArea(List<int> sessionArea, string status)
         {
-            var getListArea = _context.SessionAreas.Where(x => x.SessionId == sessionId).Select(x => x.AreaId).ToList();
-            var result = _context.SessionAreas.Where(x => x.SessionId == sessionId).ToList();
-            foreach (var area in getListArea)
+            if (status.Equals("FINISH"))
             {
-                var getListMealSessionId = _context.MealSessions.Where(x => x.SessionId == sessionId && getListArea.Contains(x.AreaId)).Select(x => x.MealSessionId).ToList();
-                var getListStatusOfMealSession = _context.MealSessions.Where(x => x.SessionId == sessionId && getListArea.Contains(x.AreaId)).Select(x => x.Status).ToList();
-                var getListStatusOrder = _context.Orders.Where(x => getListMealSessionId.Contains((int)x.MealSessionId)).Select(x => x.Status).ToList();
-
-                foreach (var listStatusMealSession in getListStatusOfMealSession)
+                foreach (var sessionAreaItem in sessionArea)
                 {
-                    if (listStatusMealSession.Equals("COMPLETED", StringComparison.OrdinalIgnoreCase) || listStatusMealSession.Equals("CANCELLED", StringComparison.OrdinalIgnoreCase))
+                    var getSessionArea = _context.SessionAreas.Where(x => x.SessionAreaId == sessionAreaItem).FirstOrDefault();
+                    var getListMealSessionId = _context.MealSessions.Where(x => x.SessionId == getSessionArea.SessionId && x.AreaId == getSessionArea.AreaId).Select(x => x.MealSessionId).ToList();
+                    foreach (var mealSessionItem in getListMealSessionId)
                     {
-                        foreach(var listStatusOrder in getListStatusOrder)
+                        var getListOrder = _context.Orders.Where(x => x.MealSessionId == mealSessionItem).ToList();
+                        foreach (var orderItem in getListOrder)
                         {
-                            if (listStatusOrder.Equals("COMPLETED", StringComparison.OrdinalIgnoreCase) || listStatusOrder.Equals("CANCELLED", StringComparison.OrdinalIgnoreCase))
+                            if (orderItem.Status.Equals("COMPLETED") || orderItem.Status.Equals("CANCELLED") || orderItem.Status.Equals("NOTEAT"))
                             {
-                                foreach(var r in result)
-                                {
-                                    r.Status = "FINISHED";
-                                }
-                            }
-                            else
-                            {
-                                throw new Exception("Some Status Order is Not COMPLETED");
+
                             }
                         }
                     }
-                    else
-                    {
-                        throw new Exception("Some Status Meal Session is Not COMPLETED");
-                    }
+
                 }
-                await _context.SaveChangesAsync();
             }
+
+            //var getListArea = _context.SessionAreas.Where(x => x.SessionId == sessionId).Select(x => x.AreaId).ToList();
+            //var result = _context.SessionAreas.Where(x => x.SessionId == sessionId).ToList();
+            //foreach (var area in getListArea)
+            //{
+            //    var getListMealSessionId = _context.MealSessions.Where(x => x.SessionId == sessionId && getListArea.Contains(x.AreaId)).Select(x => x.MealSessionId).ToList();
+            //    var getListStatusOfMealSession = _context.MealSessions.Where(x => x.SessionId == sessionId && getListArea.Contains(x.AreaId)).Select(x => x.Status).ToList();
+            //    var getListStatusOrder = _context.Orders.Where(x => getListMealSessionId.Contains((int)x.MealSessionId)).Select(x => x.Status).ToList();
+
+            //    foreach (var listStatusMealSession in getListStatusOfMealSession)
+            //    {
+            //        if (listStatusMealSession.Equals("COMPLETED", StringComparison.OrdinalIgnoreCase) || listStatusMealSession.Equals("CANCELLED", StringComparison.OrdinalIgnoreCase))
+            //        {
+            //            foreach (var listStatusOrder in getListStatusOrder)
+            //            {
+            //                if (listStatusOrder.Equals("COMPLETED", StringComparison.OrdinalIgnoreCase) || listStatusOrder.Equals("CANCELLED", StringComparison.OrdinalIgnoreCase))
+            //                {
+            //                    foreach (var r in result)
+            //                    {
+            //                        r.Status = "FINISHED";
+            //                    }
+            //                }
+            //                else
+            //                {
+            //                    throw new Exception("Some Status Order is Not COMPLETED");
+            //                }
+            //            }
+            //        }
+            //        else
+            //        {
+            //            throw new Exception("Some Status Meal Session is Not COMPLETED");
+            //        }
+            //    }
+            //    await _context.SaveChangesAsync();
+            //}
             return true;
         }
 
         public async Task<bool> CheckChangeStatusSessionArea(int sessionId)
         {
-            try
-            {
-                bool result = await ChangeStatusSessionArea(sessionId);
+            //try
+            //{
+            //    bool result = await ChangeStatusSessionArea(sessionId);
 
-                if (result)
-                {
-                    return true;
-                }
-            }
-            catch (Exception ex)
-            {
+            //    if (result)
+            //    {
+            //        return true;
+            //    }
+            //}
+            //catch (Exception ex)
+            //{
 
-            }
+            //}
             return false;
         }
         public async Task<List<GetAllSessionAreaResponseModel>> GetAllSessionArea()

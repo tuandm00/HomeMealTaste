@@ -328,119 +328,88 @@ namespace HomeMealTaste.Services.Implement
 
         public async Task ChangeStatusSession(ChangeStatusSessionRequestModel request, bool autoCreatingstatus)
         {
-            //var result = await _context.Sessions.FindAsync(sessionid);
-            //var datenow = GetDateTimeTimeZoneVietNam();
-            //if (result != null && result.Status == true && result.EndDate.Value.Date >= datenow.Date)
-            //{
-            //    if (autoCreatingstatus == true)
-            //    {
-            //        result.Status = false;
-            //        await _transactionService.SaveTotalPriceAfterFinishSession(sessionid);
-
-            //        var areas = await _context.SessionAreas.Where(a => a.SessionId == sessionid).Select(a => a.AreaId).ToListAsync();
-            //        var areaIds = areas.Where(a => a.HasValue).Select(a => a.Value).ToList();
-
-            //        var sessionR = new SessionForChangeStatusRequestModel
-            //        {
-            //            SessionType = result.SessionType,
-            //            AreaIds = areaIds,
-            //            CreateDate = result.CreateDate,
-            //            EndDate = result.EndDate,
-            //        };
-            //        await CreateSessionForNextDay(sessionR);
-            //    }
-            //    else
-            //    {
-            //        result.Status = false;
-            //    }
-            //}
-            //else
-            //{
-            //    throw new Exception("Session is not In Day");
-            //}
-
-            //await _context.SaveChangesAsync();
-
             var datenow = GetDateTimeTimeZoneVietNam();
 
-            if (request.sessionIds != null && request.sessionIds.Any())
+            if (request.sessionId != null)
             {
-                foreach (var sessionid in request.sessionIds)
+
+                var resultSession = await _context.Sessions.FindAsync(request.sessionId);
+                var resultSessionArea = _context.SessionAreas.Where(x => x.SessionId == request.sessionId).ToList();
+
+                if (resultSession != null && resultSession.Status.Equals("OPEN", StringComparison.OrdinalIgnoreCase) && resultSession.EndDate.Value.Date >= datenow.Date)
                 {
-                    var result = await _context.Sessions.FindAsync(sessionid);
-
-                    if (result != null && result.Status.Equals("OPEN", StringComparison.OrdinalIgnoreCase) && result.EndDate.Value.Date >= datenow.Date)
+                    if (request.status.Equals("BOOKING", StringComparison.OrdinalIgnoreCase))
                     {
-                        if (request.status.Equals("BOOKING", StringComparison.OrdinalIgnoreCase))
-                        {
-                            result.Status = "BOOKING";
-                        }
-                        else if (request.status.Equals("CANCELLED", StringComparison.OrdinalIgnoreCase))
-                        {
-                            result.Status = "CANCELLED";
-                        }
+                        resultSession.Status = "BOOKING";
                     }
-                    else if (result != null && result.Status.Equals("BOOKING", StringComparison.OrdinalIgnoreCase) && result.EndDate.Value.Date >= datenow.Date)
+                    else if (request.status.Equals("CANCELLED", StringComparison.OrdinalIgnoreCase))
                     {
-                        if (request.status.Equals("OPEN", StringComparison.OrdinalIgnoreCase))
+                        if (resultSessionArea != null)
                         {
-                            result.Status = "OPEN";
-                        }
-                        else if (request.status.Equals("ONGOING", StringComparison.OrdinalIgnoreCase))
-                        {
-                            result.Status = "ONGOING";
-                        }
-                    }
-                    //else if (datenow.Hour == result.StartTime?.Hour && result.Status.Equals("BOOKING"))
-                    //{
-                    //    result.Status = "ONGOING";
-                    //}
-                    else if (result != null && result.Status.Equals("ONGOING", StringComparison.OrdinalIgnoreCase) && result.EndDate.Value.Date >= datenow.Date)
-                    {
-                        if (autoCreatingstatus && request.status.Equals("CLOSED", StringComparison.OrdinalIgnoreCase))
-                        {
-                            var checkSessionAreaFinalStatus = await _sessionAreaService.CheckChangeStatusSessionArea(sessionid);
-                            if (checkSessionAreaFinalStatus == true)
+                            bool allSameStatus = resultSessionArea != null &&
+                                    resultSessionArea.All(sessionareas => sessionareas.Status.Equals("CANCELLED"));
+                            if (allSameStatus == true)
                             {
-                                result.Status = "CLOSED";
-                                var areas = await _context.SessionAreas
-                                    .Where(a => a.SessionId == sessionid)
-                                    .Select(a => a.AreaId)
-                                    .ToListAsync();
-
-                                var areaIds = areas.Where(a => a.HasValue).Select(a => a.Value).ToList();
-
-                                var sessionR = new SessionForChangeStatusRequestModel
-                                {
-                                    SessionType = result.SessionType,
-                                    AreaIds = areaIds,
-                                    CreateDate = result.CreateDate,
-                                    EndDate = result.EndDate,
-                                };
-                                await CreateSessionForNextDay(sessionR);
-                                await _transactionService.SaveTotalPriceAfterFinishSession(sessionid);
+                                resultSession.Status = "CANCELLED";
+                            }
+                            else
+                            {
+                                throw new Exception("Can not change status Session to Cancelled because status in SessionArea is not Cancelled");
                             }
                         }
-                        else if (request.status.Equals("CLOSED", StringComparison.OrdinalIgnoreCase))
-                        {
-                            result.Status = "CLOSED";
-                        }
-                        else
-                        {
-                            throw new Exception("Status Session Area is not the final status");
-                        }
+
                     }
+                }
+                else if (resultSession != null && resultSession.Status.Equals("BOOKING", StringComparison.OrdinalIgnoreCase) && resultSession.EndDate.Value.Date >= datenow.Date)
+                {
+                    if (request.status.Equals("OPEN", StringComparison.OrdinalIgnoreCase))
+                    {
+                        resultSession.Status = "OPEN";
+                    }
+                    else if (request.status.Equals("ONGOING", StringComparison.OrdinalIgnoreCase))
+                    {
+                        resultSession.Status = "ONGOING";
+                    }
+                }
+
+                else if (resultSession != null && resultSession.Status.Equals("ONGOING", StringComparison.OrdinalIgnoreCase) && resultSession.EndDate.Value.Date >= datenow.Date)
+                {
+                    if (autoCreatingstatus && request.status.Equals("CLOSED", StringComparison.OrdinalIgnoreCase))
+                    {
+                        //var checkSessionAreaFinalStatus = await _sessionAreaService.CheckChangeStatusSessionArea(sessionid);
+                        //if (checkSessionAreaFinalStatus == true)
+                        //{
+                        //    resultSession.Status = "CLOSED";
+                        //    var areas = await _context.SessionAreas
+                        //        .Where(a => a.SessionId == sessionid)
+                        //        .Select(a => a.AreaId)
+                        //        .ToListAsync();
+
+                        //    var areaIds = areas.Where(a => a.HasValue).Select(a => a.Value).ToList();
+
+                        //    var sessionR = new SessionForChangeStatusRequestModel
+                        //    {
+                        //        SessionType = result.SessionType,
+                        //        AreaIds = areaIds,
+                        //        CreateDate = result.CreateDate,
+                        //        EndDate = result.EndDate,
+                        //    };
+                        //    await CreateSessionForNextDay(sessionR);
+                        //    await _transactionService.SaveTotalPriceAfterFinishSession(sessionid);
+                        //}
+                    }
+                    //else if (request.status.Equals("CLOSED", StringComparison.OrdinalIgnoreCase))
+                    //{
+                    //    result.Status = "CLOSED";
+                    //}
                     else
                     {
-                        throw new Exception($"Session with ID {sessionid} is not in the required state or within the specified date range.");
+                        throw new Exception("Status Session Area is not the final status");
                     }
                 }
 
                 await _context.SaveChangesAsync();
-            }
-            else
-            {
-                throw new Exception("No session IDs provided for status change.");
+
             }
         }
 
@@ -631,7 +600,7 @@ namespace HomeMealTaste.Services.Implement
 
         }
 
-        
+
         public async Task<UpdateSessionAndAreaInSessionResponseModel> UpdateSessionAndAreaInSession(UpdateSessionAndAreaInSessionRequestModel request)
         {
             var responseModel = new UpdateSessionAndAreaInSessionResponseModel();
