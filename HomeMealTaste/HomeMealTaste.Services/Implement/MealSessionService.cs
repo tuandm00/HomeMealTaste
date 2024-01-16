@@ -340,7 +340,16 @@ namespace HomeMealTaste.Services.Implement
 
         public async Task<GetSingleMealSessionByIdResponseModel> GetSingleMealSessionById(int mealsessionid)
         {
-
+            var orders = _context.Orders.Where(x => x.MealSessionId == mealsessionid).ToList();
+            bool check;
+            if(orders != null)
+            {
+                check = true;
+            }
+            else
+            {
+                check = false;
+            }
             var result = _context.MealSessions
     .Include(x => x.Meal).ThenInclude(x => x.MealDishes).ThenInclude(x => x.Dish)
     .Include(x => x.Session).ThenInclude(x => x.SessionAreas).ThenInclude(x => x.Area).ThenInclude(x => x.District)
@@ -354,6 +363,7 @@ namespace HomeMealTaste.Services.Implement
         RemainQuantity = gr.RemainQuantity,
         Status = gr.Status,
         CreateDate = ((DateTime)gr.CreateDate).ToString("dd-MM-yyyy"),
+        checkOrderExisted = check,
         AreaDtoForMealSessions = new AreaDtoForMealSessions
         {
             AreaId = gr.Area.AreaId,
@@ -449,11 +459,10 @@ namespace HomeMealTaste.Services.Implement
                     {
                         result.Status = "APPROVED";
                     }
-                    else if (string.Equals("CANCELLED", request.status, StringComparison.OrdinalIgnoreCase))
+                    else if (string.Equals("REJECTED", request.status, StringComparison.OrdinalIgnoreCase))
                     {
-                        result.Status = "CANCELLED";
+                        result.Status = "REJECTED";
                     }
-
                 }
                 if (result != null && result.Status.Equals("APPROVED", StringComparison.OrdinalIgnoreCase) && sessionStatus.Equals("OPEN"))
                 {

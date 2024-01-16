@@ -18,7 +18,7 @@ namespace HomeMealTaste.Data.RequestModel
         public string? CreateDate { get; set; }
         public KitchenDtoForMealSessions? KitchenDtoForMealSessions { get; set; }
         public AreaDtoForMealSessions? AreaDtoForMealSessions { get; set; }
-
+        public bool? checkOrderExisted { get; set; }
     }
 
     public class MealDtoForMealSessions
