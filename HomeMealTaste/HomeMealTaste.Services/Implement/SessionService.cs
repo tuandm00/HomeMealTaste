@@ -631,38 +631,16 @@ namespace HomeMealTaste.Services.Implement
 
         }
 
-        private void ConfigureAutoMapper()
-        {
-            _mapper.ConfigurationProvider.AssertConfigurationIsValid();
-
-            var typeMap = _mapper.ConfigurationProvider.FindTypeMapFor<UpdateSessionAndAreaInSessionRequestModel, Session>();
-            if (typeMap == null || !typeMap.IsKnown)
-            {
-                _mapper.ConfigurationProvider.CompileMappings();
-                typeMap = _mapper.ConfigurationProvider.FindTypeMapFor<UpdateSessionAndAreaInSessionRequestModel, Session>();
-                typeMap.AssertConfigurationIsValid();
-            }
-        }
-
-        private DateTime? ParseDateTime(string dateTimeString)
-        {
-            if (DateTime.TryParseExact(dateTimeString, "dd-MM-yyyy", CultureInfo.InvariantCulture, DateTimeStyles.None, out var parsedDateTime))
-            {
-                return parsedDateTime;
-            }
-            throw new FormatException($"Invalid date format for EndDate: {dateTimeString}. Please use the format dd-MM-yyyy.");
-        }
+        
         public async Task<UpdateSessionAndAreaInSessionResponseModel> UpdateSessionAndAreaInSession(UpdateSessionAndAreaInSessionRequestModel request)
         {
-            ConfigureAutoMapper();
             var responseModel = new UpdateSessionAndAreaInSessionResponseModel();
             var datenow = GetDateTimeTimeZoneVietNam();
             var entity = _mapper.Map<Session>(request);
             var sessionId = _context.SessionAreas.Where(x => x.SessionId == request.SessionId).Select(x => x.SessionId).FirstOrDefault();
             var result = _context.Sessions.Where(x => x.SessionId == sessionId && x.EndDate.Value.Date >= datenow.Date).FirstOrDefault();
             var sessionCreateDate = datenow;
-            //var sessionEndDate = DateTime.ParseExact(request.EndDate, "dd-MM-yyyy", CultureInfo.InvariantCulture);
-            var sessionEndDate = ParseDateTime(request.EndDate);
+            var sessionEndDate = DateTime.ParseExact(request.EndDate, "dd-MM-yyyy", CultureInfo.InvariantCulture);
             if (result != null)
             {
 
