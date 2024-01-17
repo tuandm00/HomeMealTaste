@@ -790,8 +790,6 @@ namespace HomeMealTaste.Services.Implement
                         order.Status = "CANCELLED";
                         mealSession.Status = "CANCELLED";
 
-                        // huy order bi tru tien
-                        // lay ra list order, foreach cai list order nay, cong don vao bien count cua tung order quantity, check bien count voi quantity >= cua mealsession / 2 lay du, neu dung thi hoan tien lai customer , chef ko bi tru
                         
                              
                             if(count >= (mealSession.Quantity * 0.4))     
@@ -804,10 +802,8 @@ namespace HomeMealTaste.Services.Implement
                                 // hoan tien customer , ko tru tien chef
                                 await RefundMoneyToSingleCustomerByOrderIdWhenChefCancelledOrderWithBookingSlotNotEnough(order.OrderId);
                             }
-                        
-                        
 
-                        //huy order khong bi tru tien vi so luong mam khong du, se lay duoi 50% so mam
+                        
                     };
 
                     _context.MealSessions.Update(mealSession);

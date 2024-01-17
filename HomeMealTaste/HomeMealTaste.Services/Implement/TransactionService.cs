@@ -249,15 +249,7 @@ namespace HomeMealTaste.Services.Implement
                     }
 
                 }
-
-                //then transfer price after 10 % of admin to kitchen
-                //var kitchen = _context.MealSessions
-                //    .Where(x => x.MealSessionId == entity.MealSessionId)
-                //    .Include(x => x.Kitchen)
-                //    .AsNoTracking()
-                //    .FirstOrDefault();
-                //var kitchenid = _context.MealSessions.Where(x => x.MealSessionId == entity.MealSessionId).Select(x => x.KitchenId).FirstOrDefault();
-                //var userIdChef = _context.Kitchens.Where(x => x.KitchenId == kitchenid).Select(x => x.UserId).FirstOrDefault();
+                
                 var walletOfUserIdOfKitchen = _context.Wallets.Where(x => x.UserId == i.UserId).Select(X => X.WalletId).FirstOrDefault();
                 var priceToChef = getTotal - priceToAdmin;
 

@@ -339,7 +339,7 @@ namespace HomeMealTaste.Services.Implement
 
                 if (resultSession != null)
                 {
-                    if (request.status.Equals("OPEN"))
+                    if (request.status.Equals("OPEN" ,StringComparison.OrdinalIgnoreCase))
                     {
                         if (resultSession.Status.Equals("BOOKING", StringComparison.OrdinalIgnoreCase) && resultSession.EndDate.Value.Date >= datenow.Date)
                         {
@@ -350,7 +350,7 @@ namespace HomeMealTaste.Services.Implement
                             throw new Exception($"Can not change status to OPEN because status of Session {resultSession.SessionId} is not Booking");
                         }
                     }
-                    else if (request.status.Equals("BOOKING"))
+                    else if (request.status.Equals("BOOKING", StringComparison.OrdinalIgnoreCase))
                     {
                         var check = false;
 
@@ -386,7 +386,7 @@ namespace HomeMealTaste.Services.Implement
                             _context.Sessions.Update(resultSession);
                         }
                     }
-                    else if (request.status.Equals("ONGOING"))
+                    else if (request.status.Equals("ONGOING", StringComparison.OrdinalIgnoreCase))
                     {
                         var check = false;
 
@@ -419,7 +419,7 @@ namespace HomeMealTaste.Services.Implement
                             _context.Sessions.Update(resultSession);
                         }
                     }
-                    else if (request.status.Equals("CLOSED"))
+                    else if (request.status.Equals("CLOSED", StringComparison.OrdinalIgnoreCase))
                     {
                         bool check = false;
                         if (resultSession.Status.Equals("ONGOING", StringComparison.OrdinalIgnoreCase) && resultSession.EndDate.Value.Date >= datenow.Date)
@@ -429,6 +429,8 @@ namespace HomeMealTaste.Services.Implement
                                 if (sessionAreas.Status.Equals("FINISHED") || sessionAreas.Status.Equals("CANCELLED"))
                                 {
                                     check = true;
+                                    // admin chuyen tien cho chef
+
                                 }
                                 else
                                 {
