@@ -129,6 +129,7 @@ namespace HomeMealTaste.Services.Implement
                     Address = s.Area.Address,
                     AreaName = s.Area.AreaName,
                     DistrictId = s.Area.DistrictId,
+                    SessionAreaId = s.SessionAreaId,
                     Status = s.Status,
                     TotalChefs = s.AreaId == compareArea ? s.Session.MealSessions.Select(ms => ms.KitchenId).Distinct().Count() : 0,
                     TotalMealSessions = s.AreaId == compareArea ? s.Session.MealSessions.Count() : 0,

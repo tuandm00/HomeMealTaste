@@ -223,7 +223,7 @@ namespace HomeMealTaste.Services.Implement
         //    return responseModels;
         //}
 
-        public async Task<List<SaveTotalPriceAfterFinishSessionResponseModel>> SaveTotalPriceAfterFinishSession(int sessionId)
+        public async Task<List<SaveTotalPriceAfterFinishSessionResponseModel>> TransferTotalPriceToChefAfterClosedSession(int sessionId)
         {
             var getAllKitchenBySession = await _kitchenService.GetAllKitchenBySessionId(sessionId);
             var savedTransactions = new List<Transaction>();
@@ -297,12 +297,10 @@ namespace HomeMealTaste.Services.Implement
             await _context.SaveChangesAsync();
             var responseModels = savedTransactions.Select(transaction => new SaveTotalPriceAfterFinishSessionResponseModel
             {
-                // Map properties from the transaction to the response model
                 TransactionId = transaction.TransactionId,
                 Amount = transaction.Amount,
                 Date = transaction.Date.ToString(),
                 Description = transaction.Description,
-                // Map other properties as needed
             }).ToList();
 
             return responseModels;

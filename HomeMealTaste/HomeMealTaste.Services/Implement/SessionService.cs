@@ -429,8 +429,6 @@ namespace HomeMealTaste.Services.Implement
                                 if (sessionAreas.Status.Equals("FINISHED") || sessionAreas.Status.Equals("CANCELLED"))
                                 {
                                     check = true;
-                                    // admin chuyen tien cho chef
-
                                 }
                                 else
                                 {
@@ -446,7 +444,9 @@ namespace HomeMealTaste.Services.Implement
                         }
                         if (check)
                         {
-                            resultSession.Status = "FINISHED";
+                            resultSession.Status = "CLOSED";
+                            //hoan tien o day
+
                             _context.Sessions.Update(resultSession);
                         }
 
