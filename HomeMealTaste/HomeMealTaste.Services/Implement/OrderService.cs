@@ -1536,6 +1536,10 @@ namespace HomeMealTaste.Services.Implement
                             order.Status = "CANCELLED";
                             await RefundMoneyToSingleCustomerByOrderIdWhenChefCancelledOrderWithBookingSlotEnough(order.OrderId);
                         }
+                        else
+                        {
+                            throw new Exception("Can not change to CANCELLED");
+                        }
                     }
 
                     foreach (var mealSession in getListMealSessionStatus)
