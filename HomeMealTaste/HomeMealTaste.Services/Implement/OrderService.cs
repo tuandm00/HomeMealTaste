@@ -1499,9 +1499,9 @@ namespace HomeMealTaste.Services.Implement
 
         public async Task<List<ChangeStatusOrderResponseModel>> ChangeListStatusOrderToCancelledForAdmin(ChangeListStatusOrderToCancelledForAdminRequestModel request)
         {
-            //var datenow = GetDateTimeTimeZoneVietNam();
+            var datenow = GetDateTimeTimeZoneVietNam();
             var getListOrderIds = _context.Orders
-                .Where(x => request.OrderIds.Contains(x.OrderId))
+                .Where(x => request.OrderIds.Contains(x.OrderId) && x.Time.Value.Date == datenow.Date)
                 .ToList();
 
             var getListMealSessionId = _context.Orders
