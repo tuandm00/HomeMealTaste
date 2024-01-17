@@ -10,6 +10,6 @@ namespace HomeMealTaste.Data.RequestModel
     {
         public string? Password { get; set; }
         public string? Phone { get; set; }
-        public string? DeviceToken { get; set; }
+        //public string? DeviceToken { get; set; }
     }
 }
