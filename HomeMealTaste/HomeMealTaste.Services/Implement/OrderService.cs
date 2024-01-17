@@ -1534,6 +1534,7 @@ namespace HomeMealTaste.Services.Implement
                         if (order.Status.Equals("PAID") || order.Status.Equals("ACCEPTED") || order.Status.Equals("READY"))
                         {
                             order.Status = "CANCELLED";
+                            await RefundMoneyToSingleCustomerByOrderIdWhenChefCancelledOrderWithBookingSlotEnough(order.OrderId);
                         }
                     }
 
@@ -1542,6 +1543,7 @@ namespace HomeMealTaste.Services.Implement
                         mealSession.Status = "CANCELLED";
                     }
                 }
+
             }
             else
             {
