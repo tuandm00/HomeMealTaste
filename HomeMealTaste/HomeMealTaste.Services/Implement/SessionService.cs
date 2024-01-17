@@ -226,10 +226,11 @@ namespace HomeMealTaste.Services.Implement
             //entity.Status = "OPEN";
             entity.UserId = 2;
         }
-        public async Task<SessionResponseModel> CreateSessionWithDay(SessionRequestModel sessionRequest)
+        public async Task<List<SessionResponseModel>> CreateSessionWithDay(SessionRequestModel sessionRequest)
         {
 
             var responseModel = new SessionResponseModel();
+            var resultList = new List<SessionResponseModel>();
             var currentDate = DateTime.UtcNow;
             var sessionDate = DateTime.ParseExact(sessionRequest.Date, "dd-MM-yyyy", CultureInfo.InvariantCulture);
 
@@ -238,7 +239,6 @@ namespace HomeMealTaste.Services.Implement
 
                 throw new Exception("Cannot create a session with a date in the past.");
             }
-            var resultList = new List<SessionResponseModel>();
             foreach (var sessionTypeItem in sessionRequest.SessionType)
             {
                 var entity = new Session();
@@ -297,7 +297,7 @@ namespace HomeMealTaste.Services.Implement
                     else throw new Exception("Session Type is Existed");
                 }
             }
-            return responseModel;
+            return resultList;
 
         }
 
