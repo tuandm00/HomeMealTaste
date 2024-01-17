@@ -227,74 +227,66 @@ namespace HomeMealTaste.Services.Implement
         {
             var getAllKitchenBySession = await _kitchenService.GetAllKitchenBySessionId(sessionId);
             var savedTransactions = new List<Transaction>();
-            foreach (var i in getAllKitchenBySession)
+
+            foreach (var kitchen in getAllKitchenBySession)
             {
-                var getTotal = await _orderService.GetTotalPriceWithMealSessionBySessionIdAndKitchenId(sessionId, i.KitchenId);
-                //var kitchen = await _context.Kitchens.Where(x => x.KitchenId == i.KitchenId).FirstOrDefaultAsync();
+                var getTotal = await _orderService.GetTotalPriceWithMealSessionBySessionIdAndKitchenId(sessionId, kitchen.KitchenId);
 
-                // save to admin wallet take 10 %
-                var admin = _context.Users.Where(x => x.RoleId == 1 && x.UserId == 2).FirstOrDefault();
+                // Calculate amounts
                 var priceToAdmin = (getTotal * 10) / 100;
-                var adminWallet = _context.Wallets.FirstOrDefault(w => w.UserId == admin.UserId);
-
-                if (admin != null)
-                {
-                    // Check if the admin already has a wallet
-
-                    if (adminWallet != null)
-                    {
-                        // Update the existing wallet
-                        adminWallet.Balance += (int?)priceToAdmin;
-                        _context.Wallets.Update(adminWallet);
-                    }
-
-                }
-                
-                var walletOfUserIdOfKitchen = _context.Wallets.Where(x => x.UserId == i.UserId).Select(X => X.WalletId).FirstOrDefault();
                 var priceToChef = getTotal - priceToAdmin;
 
+                // Transfer money to admin
+                var admin = _context.Users.FirstOrDefault(x => x.RoleId == 1 && x.UserId == 2);
+                var adminWallet = _context.Wallets.FirstOrDefault(w => w.UserId == admin.UserId);
 
-                var chefWallet = _context.Wallets.FirstOrDefault(w => w.UserId == i.UserId);
+                if (adminWallet != null)
+                {
+                    adminWallet.Balance += priceToAdmin;
+                    _context.Wallets.Update(adminWallet);
+
+                    // Save transaction for admin
+                    var transactionToAdmin = new Transaction
+                    {
+                        WalletId = adminWallet.UserId,
+                        Date = GetDateTimeTimeZoneVietNam(),
+                        Amount = priceToAdmin,
+                        Description = "DONE WITH REVENUE AFTER FINISH SESSION",
+                        Status = "SUCCEED",
+                        TransactionType = "REVENUE",
+                        UserId = admin.UserId,
+                    };
+                    _context.Transactions.Add(transactionToAdmin);
+                    savedTransactions.Add(transactionToAdmin);
+                }
+
+                // Transfer money to chef
+                var chefWallet = _context.Wallets.FirstOrDefault(w => w.UserId == kitchen.UserId);
 
                 if (chefWallet != null)
                 {
-                    // Update the existing wallet
-                    chefWallet.Balance += (int?)priceToChef;
+                    chefWallet.Balance += priceToChef;
                     _context.Wallets.Update(chefWallet);
+
+                    // Save transaction for chef
+                    var transactionToChef = new Transaction
+                    {
+                        OrderId = null,
+                        WalletId = chefWallet.WalletId,
+                        Date = GetDateTimeTimeZoneVietNam(),
+                        Amount = priceToChef,
+                        Description = "MONEY TRANSFER TO CHEF: " + kitchen.Name,
+                        Status = "SUCCEED",
+                        TransactionType = "TT",
+                        UserId = kitchen.UserId,
+                    };
+                    _context.Transactions.Add(transactionToChef);
+                    savedTransactions.Add(transactionToChef);
                 }
-
-                // Save to transaction for admin
-                var transactionToAdmin = new Transaction
-                {
-                    WalletId = adminWallet.UserId,
-                    Date = GetDateTimeTimeZoneVietNam(),
-                    Amount = (decimal?)priceToAdmin,
-                    Description = "DONE WITH REVENUE AFTER FINISH SESSION",
-                    Status = "SUCCEED",
-                    TransactionType = "REVENUE",
-                    UserId = admin.UserId,
-                };
-
-                _context.Transactions.Add(transactionToAdmin);
-
-                //// Save to transaction for chef
-                var user = await _context.Users.Where(u => u.UserId == i.UserId).Include(u => u.Wallets).FirstOrDefaultAsync();
-                var firstWallet = user.Wallets.First();
-                var saveToTransaction = new Transaction
-                {
-                    OrderId = null,
-                    WalletId = firstWallet.WalletId,
-                    Date = GetDateTimeTimeZoneVietNam(),
-                    Amount = priceToChef,
-                    Description = "MONEY TRANSFER TO CHEF: " + i.Name,
-                    Status = "SUCCEED",
-                    TransactionType = "TT",
-                    UserId = i.UserId,
-                };
-                _context.Transactions.Add(saveToTransaction);
-                savedTransactions.Add(saveToTransaction);
             }
+
             await _context.SaveChangesAsync();
+
             var responseModels = savedTransactions.Select(transaction => new SaveTotalPriceAfterFinishSessionResponseModel
             {
                 TransactionId = transaction.TransactionId,

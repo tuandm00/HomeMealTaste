@@ -445,8 +445,8 @@ namespace HomeMealTaste.Services.Implement
                         if (check)
                         {
                             resultSession.Status = "CLOSED";
-                            //hoan tien o day
-
+                            //chuyen tien cho chef tu vi admin o day
+                            await _transactionService.TransferTotalPriceToChefAfterClosedSession(resultSession.SessionId);
                             _context.Sessions.Update(resultSession);
                         }
 
