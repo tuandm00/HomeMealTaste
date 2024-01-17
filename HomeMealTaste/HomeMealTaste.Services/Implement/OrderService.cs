@@ -1496,6 +1496,29 @@ namespace HomeMealTaste.Services.Implement
             await _context.SaveChangesAsync();
             transaction.Commit();
         }
+
+        public async Task<List<ChangeStatusOrderResponseModel>> ChangeListStatusOrderToCancelledForAdmin(ChangeListStatusOrderToCancelledForAdminRequestModel request)
+        {
+            var datenow = GetDateTimeTimeZoneVietNam();
+            var getListOrderIds = _context.Orders.Where(x => request.OrderIds.Contains(x.OrderId) && x.Time.Value.Date == datenow.Date).ToList();
+            if(getListOrderIds.Count > 0)
+            {
+                foreach(var orderId in getListOrderIds)
+                {
+                    if(orderId.Status.Equals("PAID") || orderId.Status.Equals("ACCEPTED") || orderId.Status.Equals("READY"))
+                    {
+                        orderId.Status = "CANCELLED";
+                    }
+                }
+            }
+            else
+            {
+                throw new Exception("Can not find Order");
+            }
+            await _context.SaveChangesAsync();
+            var mapped = getListOrderIds.Select(g => _mapper.Map<ChangeStatusOrderResponseModel>(g)).ToList();
+            return mapped;
+        }
     }
 }
 

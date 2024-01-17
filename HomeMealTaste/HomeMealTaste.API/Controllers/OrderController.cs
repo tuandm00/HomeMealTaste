@@ -157,5 +157,12 @@ namespace HomeMealTaste.API.Controllers
             return Ok(result);
         }
 
+        [HttpPatch("change-list-status-order-to-cancelled-for-admin")]
+        public async Task<IActionResult> ChangeListStatusOrderToCancelledForAdmin(ChangeListStatusOrderToCancelledForAdminRequestModel request)
+        {
+             var result = await _orderService.ChangeListStatusOrderToCancelledForAdmin(request);
+            return Ok(result);
+        }
+
     }
 }
