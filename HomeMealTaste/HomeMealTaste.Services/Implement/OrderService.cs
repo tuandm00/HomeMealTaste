@@ -1499,15 +1499,47 @@ namespace HomeMealTaste.Services.Implement
 
         public async Task<List<ChangeStatusOrderResponseModel>> ChangeListStatusOrderToCancelledForAdmin(ChangeListStatusOrderToCancelledForAdminRequestModel request)
         {
-            var datenow = GetDateTimeTimeZoneVietNam();
-            var getListOrderIds = _context.Orders.Where(x => request.OrderIds.Contains(x.OrderId) && x.Time.Value.Date == datenow.Date).ToList();
-            if(getListOrderIds.Count > 0)
+            //var datenow = GetDateTimeTimeZoneVietNam();
+            var getListOrderIds = _context.Orders
+                .Where(x => request.OrderIds.Contains(x.OrderId))
+                .ToList();
+
+            var getListMealSessionId = _context.Orders
+                .Where(x => request.OrderIds.Contains(x.OrderId))
+                .Select(x => x.MealSessionId)
+                .ToList();
+
+            var getListMealSessionStatus = _context.MealSessions
+                .Where(x => getListMealSessionId.Contains(x.MealSessionId))
+                .ToList();
+
+            var getSessionIds = _context.MealSessions
+                .Where(x => getListMealSessionId.Contains(x.MealSessionId))
+                .Select(x => x.SessionId)
+                .Distinct()
+                .ToList();
+
+            var getListSessionStatus = _context.Sessions
+                .Where(x => getSessionIds.Contains(x.SessionId))
+                .ToList();
+
+            var isAnySessionOngoing = getListSessionStatus.Any(session => session.Status.Equals("ONGOING"));
+
+            if (getListOrderIds.Count > 0)
             {
-                foreach(var orderId in getListOrderIds)
+                if (isAnySessionOngoing)
                 {
-                    if(orderId.Status.Equals("PAID") || orderId.Status.Equals("ACCEPTED") || orderId.Status.Equals("READY"))
+                    foreach (var order in getListOrderIds)
                     {
-                        orderId.Status = "CANCELLED";
+                        if (order.Status.Equals("PAID") || order.Status.Equals("ACCEPTED") || order.Status.Equals("READY"))
+                        {
+                            order.Status = "CANCELLED";
+                        }
+                    }
+
+                    foreach (var mealSession in getListMealSessionStatus)
+                    {
+                        mealSession.Status = "CANCELLED";
                     }
                 }
             }
@@ -1515,7 +1547,9 @@ namespace HomeMealTaste.Services.Implement
             {
                 throw new Exception("Can not find Order");
             }
+
             await _context.SaveChangesAsync();
+
             var mapped = getListOrderIds.Select(g => _mapper.Map<ChangeStatusOrderResponseModel>(g)).ToList();
             return mapped;
         }
