@@ -1523,7 +1523,7 @@ namespace HomeMealTaste.Services.Implement
                 .Where(x => getSessionIds.Contains(x.SessionId))
                 .ToList();
 
-            var isAnySessionOngoing = getListSessionStatus.Any(session => session.Status.Equals("ONGOING"));
+            var isAnySessionOngoing = getListSessionStatus.Any(session => session.Status.Equals("BOOKING"));
 
             if (getListOrderIds.Count > 0)
             {
