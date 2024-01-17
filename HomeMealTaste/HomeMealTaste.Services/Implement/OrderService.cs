@@ -657,11 +657,10 @@ namespace HomeMealTaste.Services.Implement
         {
             using Microsoft.EntityFrameworkCore.Storage.IDbContextTransaction? transaction = _context.Database.BeginTransaction();
             var entity = _mapper.Map<Order>(createOrderRequest);
-            var mealSessionIdInOrder = _context.Orders.Select(x => x.MealSessionId).ToList();
             
             var customerid = _context.Customers.Where(customerid => customerid.CustomerId == entity.CustomerId).FirstOrDefault();
             var mealsessionid = _context.MealSessions
-                .Where(mealsession => mealsession.MealSessionId == entity.MealSessionId && mealsession.Status.Equals("APPROVED"))
+                .Where(mealsession => mealsession.MealSessionId == entity.MealSessionId && mealsession.Status.Equals("APPROVED") && (mealsession.Session.Status.Equals("BOOKING")))
                 .Include(mealsession => mealsession.Meal)
                     .ThenInclude(meal => meal.MealDishes)
                     .ThenInclude(mealDish => mealDish.Dish)
@@ -674,7 +673,9 @@ namespace HomeMealTaste.Services.Implement
 
             if (mealsessionid == null)
             {
-                throw new Exception("Session is not start");
+                var mealsessions = _context.MealSessions.Where(x => x.MealSessionId == entity.MealSessionId).FirstOrDefault();
+                var sessions = _context.Sessions.Where(x => x.SessionId == mealsessions.SessionId).FirstOrDefault();
+                throw new Exception($"Can not Create Order because status of MealSession is {mealsessions.Status} and status of Session is {sessions.Status}");
             }
             if (mealsessionid.RemainQuantity == 0)
             {
@@ -684,6 +685,9 @@ namespace HomeMealTaste.Services.Implement
             var remainquantity = mealsessionid.RemainQuantity;
             mealsessionid.RemainQuantity = remainquantity - createOrderRequest.Quantity;
             var totalprice = price * createOrderRequest.Quantity;
+
+             _context.MealSessions.Update(mealsessionid);
+
             //check mealsessionid then add order to table order
             var createOrder = new CreateOrderRequestModel
             {
@@ -728,7 +732,6 @@ namespace HomeMealTaste.Services.Implement
                     _context.Wallets.Update(walletAdmin);
                 }
             }
-            _context.MealSessions.Update(mealsessionid);
             _context.Wallets.Update(walletid);
 
             var orderEntity = _mapper.Map<Order>(createOrder);

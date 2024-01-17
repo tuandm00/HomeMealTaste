@@ -82,7 +82,7 @@ namespace HomeMealTaste.Services.Implement
                 if (mealSessions.Count > 0)
                 {
 
-                    foreach (var session in mealSessionRequest.SessionIds)
+                    foreach (var mealSession in mealSessionRequest.SessionIds)
                     {
                         //var statusExist = _context.MealSessions
                         //    .Where(x => x.CreateDate.Value.Date == datenow.Date && x.KitchenId == mealSessionRequest.KitchenId && x.SessionId == session)
@@ -94,18 +94,18 @@ namespace HomeMealTaste.Services.Implement
                         //    throw new Exception("");
                         //}
 
-                        var entityForSessionId = _mapper.Map<MealSession>(mealSessionRequest);
+                        var entityForMealSessionId = _mapper.Map<MealSession>(mealSessionRequest);
+                        var getKitchenArea = _context.Kitchens.Where(x => x.KitchenId == mealSessionRequest.KitchenId).Select(x => x.AreaId).FirstOrDefault();
+                        entityForMealSessionId.MealId = mealSessionRequest.MealId;
+                        entityForMealSessionId.SessionId = mealSession;
+                        entityForMealSessionId.Quantity = mealSessionRequest.Quantity;
+                        entityForMealSessionId.RemainQuantity = entityForMealSessionId.Quantity;
+                        entityForMealSessionId.KitchenId = mealSessionRequest.KitchenId;
+                        entityForMealSessionId.Status = "PROCESSING";
+                        entityForMealSessionId.CreateDate = GetDateTimeTimeZoneVietNam();
+                        entityForMealSessionId.AreaId = getKitchenArea;
 
-                        entityForSessionId.MealId = mealSessionRequest.MealId;
-                        entityForSessionId.SessionId = session;
-                        entityForSessionId.Quantity = mealSessionRequest.Quantity;
-                        entityForSessionId.RemainQuantity = entityForSessionId.Quantity;
-                        entityForSessionId.KitchenId = mealSessionRequest.KitchenId;
-                        entityForSessionId.Status = "PROCESSING";
-                        entityForSessionId.CreateDate = GetDateTimeTimeZoneVietNam();
-                        entityForSessionId.AreaId = mealSessionRequest.AreaId;
-
-                        var resultForSessionId = await _mealSessionRepository.Create(entityForSessionId, true);
+                        var resultForSessionId = await _mealSessionRepository.Create(entityForMealSessionId, true);
 
                         await _context.Entry(resultForSessionId).Reference(m => m.Meal).LoadAsync();
                         await _context.Entry(resultForSessionId).Reference(m => m.Session).LoadAsync();
@@ -144,20 +144,21 @@ namespace HomeMealTaste.Services.Implement
                 }
                 else
                 {
-                    foreach (var session in mealSessionRequest.SessionIds)
+                    foreach (var mealSession in mealSessionRequest.SessionIds)
                     {
-                        var entityForSessionId = _mapper.Map<MealSession>(mealSessionRequest);
+                        var entityForMealSessionId = _mapper.Map<MealSession>(mealSessionRequest);
+                        var getKitchenArea = _context.Kitchens.Where(x => x.KitchenId == mealSessionRequest.KitchenId).Select(x => x.AreaId).FirstOrDefault();
 
-                        entityForSessionId.MealId = mealSessionRequest.MealId;
-                        entityForSessionId.SessionId = session;
-                        entityForSessionId.Quantity = mealSessionRequest.Quantity;
-                        entityForSessionId.RemainQuantity = entityForSessionId.Quantity;
-                        entityForSessionId.KitchenId = mealSessionRequest.KitchenId;
-                        entityForSessionId.Status = "PROCESSING";
-                        entityForSessionId.CreateDate = GetDateTimeTimeZoneVietNam();
-                        entityForSessionId.AreaId = mealSessionRequest.AreaId;
+                        entityForMealSessionId.MealId = mealSessionRequest.MealId;
+                        entityForMealSessionId.SessionId = mealSession;
+                        entityForMealSessionId.Quantity = mealSessionRequest.Quantity;
+                        entityForMealSessionId.RemainQuantity = entityForMealSessionId.Quantity;
+                        entityForMealSessionId.KitchenId = mealSessionRequest.KitchenId;
+                        entityForMealSessionId.Status = "PROCESSING";
+                        entityForMealSessionId.CreateDate = GetDateTimeTimeZoneVietNam();
+                        entityForMealSessionId.AreaId = getKitchenArea;
 
-                        var resultForSessionId = await _mealSessionRepository.Create(entityForSessionId, true);
+                        var resultForSessionId = await _mealSessionRepository.Create(entityForMealSessionId, true);
 
                         await _context.Entry(resultForSessionId).Reference(m => m.Meal).LoadAsync();
                         await _context.Entry(resultForSessionId).Reference(m => m.Session).LoadAsync();
@@ -342,7 +343,7 @@ namespace HomeMealTaste.Services.Implement
         {
             var orders = _context.Orders.Where(x => x.MealSessionId == mealsessionid).ToList();
             bool check;
-            if(orders.Count > 0)
+            if (orders.Count > 0)
             {
                 check = true;
             }
@@ -422,57 +423,92 @@ namespace HomeMealTaste.Services.Implement
 
         public async Task UpdateStatusMeallSession(UpdateStatusMeallSessionRequestModel request)
         {
-            var orders = _context.Orders.Where(x => request.MealSessionIds.Contains((int)x.MealSessionId)).ToList();
-            var results = await _context.MealSessions
-                .Where(x => request.MealSessionIds.Contains(x.MealSessionId))
-                .ToListAsync();
-
-            foreach (var result in results)
+            if (request.status.Equals("APPROVED" ,StringComparison.OrdinalIgnoreCase))
             {
-                var sessionId = _context.MealSessions
-                    .Where(x => x.MealSessionId == result.MealSessionId)
-                    .Select(x => x.SessionId)
-                    .FirstOrDefault();
-
-                var sessionStatus = _context.Sessions
-                    .Where(x => x.SessionId == sessionId)
-                    .Select(x => x.Status)
-                    .FirstOrDefault();
-
-                if (result != null && result.Status.Equals("PROCESSING", StringComparison.OrdinalIgnoreCase) && (sessionStatus.Equals("OPEN") || sessionStatus.Equals("BOOKING")) )
+                bool check = false;
+                foreach (var mealSesssionIdItem in request.MealSessionIds)
                 {
-                    if (string.Equals("APPROVED", request.status, StringComparison.OrdinalIgnoreCase))
+                    var mealSessionItem = _context.MealSessions.Where(x => x.MealSessionId == mealSesssionIdItem).FirstOrDefault();
+                    var sessionItem = _context.Sessions
+                   .Where(x => x.SessionId == mealSessionItem.SessionId)
+                   .FirstOrDefault();
+                    if (mealSessionItem.Status.Equals("PROCESSING", StringComparison.OrdinalIgnoreCase) && sessionItem.Status.Equals("OPEN"))
                     {
-                        result.Status = "APPROVED";
+                        check = true;
                     }
-                    else if (string.Equals("REJECTED", request.status, StringComparison.OrdinalIgnoreCase))
+                    else
                     {
-                        result.Status = "REJECTED";
+                        check = false;
+                        throw new Exception($"Can not change status to APPROVED because Meal Session {mealSessionItem.MealSessionId} have Status is{mealSessionItem.Status} and Session {sessionItem} have Status is{sessionItem.Status}");
+                    }
+                    if (check)
+                    {
+                        mealSessionItem.Status = "APPROVED";
+                        _context.MealSessions.Update(mealSessionItem);
                     }
                 }
-                else if (result != null && result.Status.Equals("PROCESSING", StringComparison.OrdinalIgnoreCase) && sessionStatus.Equals("ONGOING"))
+            }
+            else if (request.status.Equals("REJECTED", StringComparison.OrdinalIgnoreCase))
+            {
+                bool check = false;
+                foreach (var mealSesssionIdItem in request.MealSessionIds)
                 {
-                    result.Status = "CANCELLED";
-                }
-                if (result != null && result.Status.Equals("APPROVED", StringComparison.OrdinalIgnoreCase) && sessionStatus.Equals("ONGOING"))
-                {
-                    if (string.Equals("CANCELLED", request.status, StringComparison.OrdinalIgnoreCase))
+                    var mealSessionItem = _context.MealSessions.Where(x => x.MealSessionId == mealSesssionIdItem).FirstOrDefault();
+                    var sessionItem = _context.Sessions
+                   .Where(x => x.SessionId == mealSessionItem.SessionId)
+                   .FirstOrDefault();
+                    if (mealSessionItem.Status.Equals("PROCESSING", StringComparison.OrdinalIgnoreCase) && sessionItem.Status.Equals("OPEN"))
                     {
-                        if(orders.Count == 0)   
+                        check = true;
+                    }
+                    else
+                    {
+                        check = false;
+                        throw new Exception($"Can not change status to REJECTED because Meal Session {mealSessionItem.MealSessionId} have Status is{mealSessionItem.Status} and Session {sessionItem} have Status is{sessionItem.Status}");
+                    }
+                    if (check)
+                    {
+                        mealSessionItem.Status = "REJECTED";
+                        _context.MealSessions.Update(mealSessionItem);
+                    }
+                }
+            }
+            else if (request.status.Equals("CANCELLED", StringComparison.OrdinalIgnoreCase))
+            {
+                bool check = false;
+                foreach (var mealSesssionIdItem in request.MealSessionIds)
+                {
+                    var mealSessionItem = _context.MealSessions.Where(x => x.MealSessionId == mealSesssionIdItem).FirstOrDefault();
+                    var sessionItem = _context.Sessions
+                   .Where(x => x.SessionId == mealSessionItem.SessionId)
+                   .FirstOrDefault();
+                    var orderList = _context.Orders.Where(x => x.MealSessionId == mealSessionItem.MealSessionId).ToList();
+                    if (orderList.Count == 0)
+                    {
+                        if (sessionItem.Status.Equals("BOOKING"))
                         {
-                            result.Status = "CANCELLED";
+                            check = true;
                         }
                         else
                         {
-                            throw new Exception("Can not Cancelled Meal Session, please check it in Order of that Meal Session");
+                            check = false;
+                            throw new Exception($"Can not change status to CANCELLED because Meal Session {mealSessionItem.MealSessionId} have Status is{mealSessionItem.Status} and Session {sessionItem} have Status is{sessionItem.Status}");
                         }
                     }
-                }
-                else
-                {
-                    throw new Exception("Session status must be ONGOING and change status of Meal session to Cancelled when chef forgot");
+                    else
+                    {
+                        check = false;
+                        throw new Exception("Can not change status to CANCELLED Please Check Status Order to final State ");
+                    }
+
+                    if (check)
+                    {
+                        mealSessionItem.Status = "CANCELLED";
+                        _context.MealSessions.Update(mealSessionItem);
+                    }
                 }
             }
+
             await _context.SaveChangesAsync();
         }
 

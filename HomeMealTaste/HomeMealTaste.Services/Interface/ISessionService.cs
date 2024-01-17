@@ -16,7 +16,7 @@ namespace HomeMealTaste.Services.Interface
         Task<SessionResponseModel> CreateSessionForNextDay(SessionForChangeStatusRequestModel sessionRequest);
         //Task<SessionResponseModel> UpdateEndTime(int sessionId, DateTime dateTime);
         //Task<PagedList<GetAllMealInCurrentSessionResponseModel>> GetAllMealInCurrentSession(GetAllMealRequest pagingParams);
-        Task ChangeStatusSession(ChangeStatusSessionRequestModel request , bool status);
+        Task ChangeStatusSession(ChangeStatusSessionRequestModel request);
         Task<List<GetAllSessionResponseModel>> GetAllSession();
         Task<List<GetAllSessionResponseModel>> GetAllSessionStatusBooking();
         Task<List<GetAllSessionByAreaIdResponseModel>> GetAllSessionByAreaId(int areaid);

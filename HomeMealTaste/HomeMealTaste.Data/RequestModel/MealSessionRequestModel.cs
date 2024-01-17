@@ -10,7 +10,6 @@ namespace HomeMealTaste.Data.RequestModel
     {
         public int? MealId { get; set; }
         public List<int>? SessionIds { get; set; }
-        public int AreaId { get; set; }
         public decimal? Price { get; set; }
         public int? Quantity { get; set; }
         public int? KitchenId { get; set; }

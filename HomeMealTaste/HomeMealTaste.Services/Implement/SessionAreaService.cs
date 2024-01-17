@@ -27,61 +27,142 @@ namespace HomeMealTaste.Services.Implement
 
         public async Task<bool> ChangeStatusSessionArea(List<int> sessionArea, string status)
         {
-            if (status.Equals("FINISH"))
+            bool check = false;
+            var sessionArea1 = sessionArea.FirstOrDefault();
+            var session1 = _context.SessionAreas.Where(x => x.SessionAreaId == sessionArea1).Select(x => x.SessionId).FirstOrDefault();
+            var SessionItem = _context.Sessions
+                                            .Where(x => x.SessionId == session1)
+                                            .FirstOrDefault();
+
+            if (status.Equals("FINISHED"))
             {
-                foreach (var sessionAreaItem in sessionArea)
+                if (SessionItem != null && SessionItem.Status.Equals("ONGOING"))
                 {
-                    var getSessionArea = _context.SessionAreas.Where(x => x.SessionAreaId == sessionAreaItem).FirstOrDefault();
-                    var getListMealSessionId = _context.MealSessions.Where(x => x.SessionId == getSessionArea.SessionId && x.AreaId == getSessionArea.AreaId).Select(x => x.MealSessionId).ToList();
-                    foreach (var mealSessionItem in getListMealSessionId)
+                    foreach (var sessionAreaItem in sessionArea)
                     {
-                        var getListOrder = _context.Orders.Where(x => x.MealSessionId == mealSessionItem).ToList();
-                        foreach (var orderItem in getListOrder)
+                        var getSessionArea = _context.SessionAreas.Where(x => x.SessionAreaId == sessionAreaItem).FirstOrDefault();
+                        var getListMealSession = _context.MealSessions
+                            .Where(x => x.SessionId == getSessionArea.SessionId && x.AreaId == getSessionArea.AreaId)
+                            .ToList();
+
+                        if (getListMealSession.Count > 0)
                         {
-                            if (orderItem.Status.Equals("COMPLETED") || orderItem.Status.Equals("CANCELLED") || orderItem.Status.Equals("NOTEAT"))
+
+
+                            foreach (var mealSessionItem in getListMealSession)
                             {
+                                var getListOrder = _context.Orders.Where(x => x.MealSessionId == mealSessionItem.MealSessionId).ToList();
+                                if (mealSessionItem.Status.Equals("COMPLETED"))
+                                {
+                                    if (getListOrder.Count > 0)
+                                    {
+                                        foreach (var orderItem in getListOrder)
+                                        {
+                                            if (orderItem.Status.Equals("COMPLETED") || orderItem.Status.Equals("CANCELLED") || orderItem.Status.Equals("NOTEAT"))
+                                            {
+                                                check = true;
+                                            }
+                                            else
+                                            {
+                                                check = false;
+                                                throw new Exception($"Can not change status to FINISHED because Order {orderItem.OrderId} is not final state");
+                                            }
+                                        }
+                                    }
+                                }
+                                else if (mealSessionItem.Status.Equals("CANCELLED"))
+                                {
+                                    if (getListOrder.Count > 0)
+                                    {
+                                        foreach (var orderItem in getListOrder)
+                                        {
+                                            if (orderItem.Status.Equals("CANCELLED"))
+                                            {
+                                                check = true;
+                                            }
+                                            else
+                                            {
+                                                check = false;
+                                                throw new Exception($"Can not change status to FINISHED because Order {orderItem.OrderId} is not final state");
+                                            }
+                                        }
+                                    }
+
+                                }
+                                else if (mealSessionItem.Status.Equals("REJECTED"))
+                                {
+                                    check = true;
+                                }
+                                else
+                                {
+                                    check = false;
+                                    throw new Exception($"Meal Session {mealSessionItem.MealSessionId} is not final state can not change status to FINISHED");
+                                }
 
                             }
+                        }
+                        else
+                        {
+                            check = true;
+                        }
+                        if (check)
+                        {
+                            getSessionArea.Status = "FINISHED";
+                            _context.SessionAreas.Update(getSessionArea);
+                        }
+                    }
+                }
+                else
+                {
+                    throw new Exception($"Can not change status to Cancelled because Session {SessionItem.SessionId} is Not ONGOING");
+                }
+            }
+            else if (status.Equals("CANCELLED"))
+            {
+
+                if (SessionItem != null && SessionItem.Status.Equals("OPEN"))
+                {
+                    foreach (var sessionAreaItem in sessionArea)
+                    {
+                        var getSessionArea = _context.SessionAreas.Where(x => x.SessionAreaId == sessionAreaItem).FirstOrDefault();
+                        var getListMealSession = _context.MealSessions
+                            .Where(x => x.SessionId == getSessionArea.SessionId && x.AreaId == getSessionArea.AreaId)
+                            .ToList();
+
+                        foreach (var listMS in getListMealSession)
+                        {
+                            if (listMS.Status.Equals("REJECTED"))
+                            {
+                                check = true;
+                            }
+                            else if (listMS.Status.Equals("CANCELLED"))
+                            {
+                                check = true;
+                            }
+                            else
+                            {
+                                check = false;
+                                throw new Exception("Can not change status to Cancelled because Meal Session must be REJECTED or CANCELLED without Order");
+                            }
+                        }
+                        if (check)
+                        {
+                            getSessionArea.Status = "CANCELLED";
+                            _context.SessionAreas.Update(getSessionArea);
                         }
                     }
 
                 }
+                else
+                {
+                    throw new Exception("Can not change status to Cancelled because Session is Not Open");
+                }
             }
-
-            //var getListArea = _context.SessionAreas.Where(x => x.SessionId == sessionId).Select(x => x.AreaId).ToList();
-            //var result = _context.SessionAreas.Where(x => x.SessionId == sessionId).ToList();
-            //foreach (var area in getListArea)
-            //{
-            //    var getListMealSessionId = _context.MealSessions.Where(x => x.SessionId == sessionId && getListArea.Contains(x.AreaId)).Select(x => x.MealSessionId).ToList();
-            //    var getListStatusOfMealSession = _context.MealSessions.Where(x => x.SessionId == sessionId && getListArea.Contains(x.AreaId)).Select(x => x.Status).ToList();
-            //    var getListStatusOrder = _context.Orders.Where(x => getListMealSessionId.Contains((int)x.MealSessionId)).Select(x => x.Status).ToList();
-
-            //    foreach (var listStatusMealSession in getListStatusOfMealSession)
-            //    {
-            //        if (listStatusMealSession.Equals("COMPLETED", StringComparison.OrdinalIgnoreCase) || listStatusMealSession.Equals("CANCELLED", StringComparison.OrdinalIgnoreCase))
-            //        {
-            //            foreach (var listStatusOrder in getListStatusOrder)
-            //            {
-            //                if (listStatusOrder.Equals("COMPLETED", StringComparison.OrdinalIgnoreCase) || listStatusOrder.Equals("CANCELLED", StringComparison.OrdinalIgnoreCase))
-            //                {
-            //                    foreach (var r in result)
-            //                    {
-            //                        r.Status = "FINISHED";
-            //                    }
-            //                }
-            //                else
-            //                {
-            //                    throw new Exception("Some Status Order is Not COMPLETED");
-            //                }
-            //            }
-            //        }
-            //        else
-            //        {
-            //            throw new Exception("Some Status Meal Session is Not COMPLETED");
-            //        }
-            //    }
-            //    await _context.SaveChangesAsync();
-            //}
+            else
+            {
+                throw new Exception("There area something wrong");
+            }
+            await _context.SaveChangesAsync();
             return true;
         }
 
@@ -121,8 +202,8 @@ namespace HomeMealTaste.Services.Implement
             var result = _context.SessionAreas.Where(x => x.SessionId == sessionId).Select(x => new GetAllSessionAreaBySessionIdResponseModel
             {
                 SessionAreaId = x.SessionAreaId,
-                SessionId=x.SessionId,
-                Status=x.Status,
+                SessionId = x.SessionId,
+                Status = x.Status,
                 AreaDtoForSessionArea = new AreaDtoForSessionArea
                 {
                     AreaId = x.Area.AreaId,
