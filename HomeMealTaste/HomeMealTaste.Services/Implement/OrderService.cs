@@ -800,8 +800,6 @@ namespace HomeMealTaste.Services.Implement
                             // hoan tien customer , ko tru tien chef
                             await RefundMoneyToSingleCustomerByOrderIdWhenChefCancelledOrderWithBookingSlotNotEnough(order.OrderId);
                         }
-
-
                     };
 
                     _context.MealSessions.Update(mealSession);

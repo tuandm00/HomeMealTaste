@@ -69,6 +69,11 @@ namespace HomeMealTaste.Services.Implement
                                             }
                                         }
                                     }
+                                    else
+                                    {
+                                        check = true;
+
+                                    }
                                 }
                                 else if (mealSessionItem.Status.Equals("CANCELLED"))
                                 {
@@ -86,6 +91,10 @@ namespace HomeMealTaste.Services.Implement
                                                 throw new Exception($"Can not change status to FINISHED because Order {orderItem.OrderId} is not final state");
                                             }
                                         }
+                                    }
+                                    else
+                                    {
+                                        check = true;
                                     }
 
                                 }
@@ -109,7 +118,10 @@ namespace HomeMealTaste.Services.Implement
                             getSessionArea.Status = "FINISHED";
                             _context.SessionAreas.Update(getSessionArea);
                             await _context.SaveChangesAsync();
-
+                        }
+                        else
+                        {
+                            throw new Exception("Can not change Status Session Area to FINISHED");
                         }
                     }
                 }
@@ -152,6 +164,10 @@ namespace HomeMealTaste.Services.Implement
                             _context.SessionAreas.Update(getSessionArea);
                             await _context.SaveChangesAsync();
 
+                        }
+                        else
+                        {
+                            throw new Exception("Can not change Status Sessioin Area to CANCELLED");
                         }
                     }
 
