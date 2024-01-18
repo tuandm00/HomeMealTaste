@@ -891,6 +891,12 @@ namespace HomeMealTaste.Services.Implement
             var datenow = GetDateTimeTimeZoneVietNam();
             //update wallet admin
             var userIdsOfAdmin = _context.Users.Where(x => x.RoleId == 1 && x.UserId == 2).Select(x => x.UserId).FirstOrDefault();
+            var getCustomer = _context.Orders.Where(x => x.OrderId == orderId).FirstOrDefault();
+            var getUserIdByCustomer = _context.Customers.Where(x => x.CustomerId == getCustomer.CustomerId).FirstOrDefault();
+
+
+            var mealSessionId = _context.Orders.Where(x => x.OrderId == orderId).Select(x => x.MealSessionId).FirstOrDefault();
+            var getKitchen = _context.MealSessions.Where(x => x.MealSessionId == mealSessionId).FirstOrDefault();
             var walletIdsOfAdmin = _context.Wallets.Where(x => x.UserId == userIdsOfAdmin).FirstOrDefault();
             if (walletIdsOfAdmin != null)
             {
@@ -903,7 +909,7 @@ namespace HomeMealTaste.Services.Implement
                 WalletId = walletIdsOfAdmin.WalletId,
                 Date = datenow,
                 Amount = ((decimal?)(orderitem.TotalPrice * 0.1)),
-                Description = "REFUND",
+                Description = $"REFUND TO CUSTOMER {getUserIdByCustomer.Name}",
                 Status = "SUCCEED",
                 TransactionType = "REFUND",
                 UserId = userIdsOfAdmin,
@@ -911,9 +917,7 @@ namespace HomeMealTaste.Services.Implement
             _context.Transactions.Add(addToTransactionForAdmin);
 
             //update wallet customer
-            var getCustomerId = _context.Orders.Where(x => x.OrderId == orderId).Select(x => x.CustomerId).FirstOrDefault();
-            var getUserIdByCustomerId = _context.Customers.Where(x => x.CustomerId == getCustomerId).Select(x => x.UserId).FirstOrDefault();
-            var getWalletOfCustomer = _context.Wallets.Where(x => x.UserId == getUserIdByCustomerId).FirstOrDefault();
+            var getWalletOfCustomer = _context.Wallets.Where(x => x.UserId == getUserIdByCustomer.UserId).FirstOrDefault();
             getWalletOfCustomer.Balance += orderitem.TotalPrice;
             _context.Wallets.Update(getWalletOfCustomer);
 
@@ -926,13 +930,12 @@ namespace HomeMealTaste.Services.Implement
                 Description = "REFUND",
                 Status = "SUCCEED",
                 TransactionType = "REFUND",
-                UserId = getUserIdByCustomerId,
+                UserId = getUserIdByCustomer.UserId,
             };
             _context.Transactions.Add(addToTransactionForCustomer);
             //update wallet chef Tru tien
-            var mealSessionId = _context.Orders.Where(x => x.OrderId == orderId).Select(x => x.MealSessionId).FirstOrDefault();
-            var getKitchenId = _context.MealSessions.Where(x => x.MealSessionId == mealSessionId).Select(x => x.KitchenId).FirstOrDefault();
-            var getUserIdByKitchenId = _context.Kitchens.Where(x => x.KitchenId == getKitchenId).Select(x => x.UserId).FirstOrDefault();
+           
+            var getUserIdByKitchenId = _context.Kitchens.Where(x => x.KitchenId == getKitchen.KitchenId).Select(x => x.UserId).FirstOrDefault();
             var getWalletOfKitchen = _context.Wallets.Where(x => x.UserId == getUserIdByKitchenId).FirstOrDefault();
             getWalletOfKitchen.Balance = (int?)(getWalletOfKitchen.Balance - (orderitem.TotalPrice * 0.1));
             _context.Wallets.Update(getWalletOfCustomer);
@@ -962,6 +965,11 @@ namespace HomeMealTaste.Services.Implement
             var datenow = GetDateTimeTimeZoneVietNam();
             //update wallet admin
             var userIdsOfAdmin = _context.Users.Where(x => x.RoleId == 1 && x.UserId == 2).Select(x => x.UserId).FirstOrDefault();
+            var getCustomer = _context.Orders.Where(x => x.OrderId == orderId).FirstOrDefault();
+            var getUserIdByCustomer = _context.Customers.Where(x => x.CustomerId == getCustomer.CustomerId).FirstOrDefault();
+
+
+            
             var walletIdsOfAdmin = _context.Wallets.Where(x => x.UserId == userIdsOfAdmin).FirstOrDefault();
             if (walletIdsOfAdmin != null)
             {
@@ -975,7 +983,7 @@ namespace HomeMealTaste.Services.Implement
                 WalletId = walletIdsOfAdmin.WalletId,
                 Date = datenow,
                 Amount = (orderitem.TotalPrice),
-                Description = "REFUND",
+                Description = $"REFUND TO CUSTOMER {getUserIdByCustomer.Name}",
                 Status = "SUCCEED",
                 TransactionType = "REFUND",
                 UserId = userIdsOfAdmin,
@@ -983,9 +991,8 @@ namespace HomeMealTaste.Services.Implement
             _context.Transactions.Add(addToTransactionForAdmin);
 
             //update wallet customer
-            var getCustomerId = _context.Orders.Where(x => x.OrderId == orderId).Select(x => x.CustomerId).FirstOrDefault();
-            var getUserIdByCustomerId = _context.Customers.Where(x => x.CustomerId == getCustomerId).Select(x => x.UserId).FirstOrDefault();
-            var getWalletOfCustomer = _context.Wallets.Where(x => x.UserId == getUserIdByCustomerId).FirstOrDefault();
+            
+            var getWalletOfCustomer = _context.Wallets.Where(x => x.UserId == getUserIdByCustomer.UserId).FirstOrDefault();
             getWalletOfCustomer.Balance += orderitem.TotalPrice;
             _context.Wallets.Update(getWalletOfCustomer);
 
@@ -998,7 +1005,7 @@ namespace HomeMealTaste.Services.Implement
                 Description = "REFUND",
                 Status = "SUCCEED",
                 TransactionType = "REFUND",
-                UserId = getUserIdByCustomerId,
+                UserId = getUserIdByCustomer.UserId,
             };
             _context.Transactions.Add(addToTransactionForCustomer);
             //tao transaction hoan tien luu ve vi cua customer, admin :refund , vi cua chef fined 
@@ -1600,6 +1607,8 @@ namespace HomeMealTaste.Services.Implement
 
             //update wallet admin
             var userIdsOfAdmin = _context.Users.Where(x => x.RoleId == 1 && x.UserId == 2).Select(x => x.UserId).FirstOrDefault();
+            var getCustomer = _context.Orders.Where(x => x.OrderId == orderId).FirstOrDefault();
+            var getUserIdByCustomer = _context.Customers.Where(x => x.CustomerId == getCustomer.CustomerId).FirstOrDefault();
             var walletIdsOfAdmin = _context.Wallets.Where(x => x.UserId == userIdsOfAdmin).FirstOrDefault();
             if (walletIdsOfAdmin != null)
             {
@@ -1613,7 +1622,7 @@ namespace HomeMealTaste.Services.Implement
                 WalletId = walletIdsOfAdmin.WalletId,
                 Date = datenow,
                 Amount = (orderitem.TotalPrice),
-                Description = "REFUND",
+                Description = $"REFUND TO CUSTOMER {getUserIdByCustomer.Name}",
                 Status = "SUCCEED",
                 TransactionType = "REFUND",
                 UserId = userIdsOfAdmin,
@@ -1621,9 +1630,8 @@ namespace HomeMealTaste.Services.Implement
             _context.Transactions.Add(addToTransactionForAdmin);
 
             //update wallet customer
-            var getCustomerId = _context.Orders.Where(x => x.OrderId == orderId).Select(x => x.CustomerId).FirstOrDefault();
-            var getUserIdByCustomerId = _context.Customers.Where(x => x.CustomerId == getCustomerId).Select(x => x.UserId).FirstOrDefault();
-            var getWalletOfCustomer = _context.Wallets.Where(x => x.UserId == getUserIdByCustomerId).FirstOrDefault();
+            
+            var getWalletOfCustomer = _context.Wallets.Where(x => x.UserId == getUserIdByCustomer.UserId).FirstOrDefault();
             getWalletOfCustomer.Balance += (int?)((orderitem.TotalPrice) * 0.9);
             _context.Wallets.Update(getWalletOfCustomer);
 
@@ -1633,10 +1641,10 @@ namespace HomeMealTaste.Services.Implement
                 WalletId = getWalletOfCustomer.WalletId,
                 Date = datenow,
                 Amount = (orderitem.TotalPrice),
-                Description = "REFUND",
+                Description = "REFUND With 90% Total Price Ordered",
                 Status = "SUCCEED",
                 TransactionType = "REFUND",
-                UserId = getUserIdByCustomerId,
+                UserId = getUserIdByCustomer.UserId,
             };
             _context.Transactions.Add(addToTransactionForCustomer);
             //tao transaction hoan tien luu ve vi cua customer, admin :refund , vi cua chef fined 
