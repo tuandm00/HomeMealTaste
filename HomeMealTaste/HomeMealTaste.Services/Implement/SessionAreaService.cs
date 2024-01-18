@@ -4,6 +4,7 @@ using HomeMealTaste.Data.Repositories;
 using HomeMealTaste.Data.RequestModel;
 using HomeMealTaste.Data.ResponseModel;
 using HomeMealTaste.Services.Interface;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -213,6 +214,44 @@ namespace HomeMealTaste.Services.Implement
             }).ToList();
 
             var mapped = result.Select(r => _mapper.Map<GetAllSessionAreaResponseModel>(r)).ToList();
+            return mapped;
+        }
+
+        public async Task<List<GetAllSessionAreaByAreaIdResponseModel>> GetAllSessionAreaByAreaId(int areaId)
+        {
+            var result = _context.SessionAreas
+                .Include(x => x.Area)
+                .ThenInclude(x => x.MealSessions)
+                .ThenInclude(x => x.Orders)
+                .Where(x => x.AreaId == areaId)
+                .Select(x => new GetAllSessionAreaByAreaIdResponseModel
+                {
+                    SessionAreaId = x.SessionAreaId,
+                    SessionId = x.SessionId,
+                    Status = x.Status,
+                    AreaDtoForSessionArea = new AreaDtoForSessionArea
+                    {
+                        AreaId = x.Area.AreaId,
+                        Address = x.Area.Address,
+                        AreaName = x.Area.AreaName,
+                    },
+                    GetAllSessionAreaByAreaIdResponseModelDto = x.Area.MealSessions.Select(ms => new GetAllSessionAreaByAreaIdResponseModelDto
+                    {
+                        KitchenDtoForSessionArea = new KitchenDtoForSessionArea
+                        {
+                            KitchenId = ms.Kitchen.KitchenId,
+                            UserId = ms.Kitchen.UserId,
+                            Name = ms.Kitchen.Name,
+                            Address = ms.Kitchen.Address,
+                            AreaId = ms.Kitchen.AreaId,
+                            DistrictId = ms.Kitchen.DistrictId,
+                        },
+                        SumOfMealSession = ms.Area.MealSessions.Count,
+                        SumOfOrder = ms.Orders.Count,
+                    }).ToList(),
+                }).ToList();
+
+            var mapped = result.Select(r => _mapper.Map<GetAllSessionAreaByAreaIdResponseModel>(r)).ToList();
             return mapped;
         }
 

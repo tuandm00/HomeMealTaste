@@ -42,5 +42,13 @@ namespace HomeMealTaste.API.Controllers
 
         }
 
+        [HttpGet("get-all-session-area-by-area-id")]
+        public async Task<IActionResult> GetAllSessionAreaByAreaId(int areaId)
+        {
+            var result = await _sessionAreaService.GetAllSessionAreaByAreaId(areaId);
+            return Ok(result);
+
+        }
+
     }
 }
