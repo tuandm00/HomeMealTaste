@@ -250,7 +250,9 @@ namespace HomeMealTaste.Services.Implement
                         SumOfOrder = ms.Orders
                     .Where(order => _context.MealSessions.Any(mealSession => mealSession.SessionId == x.SessionId && mealSession.AreaId == x.AreaId && order.MealSessionId == mealSession.MealSessionId))
                     .Count(),
-                    }).ToList(),
+                    }).GroupBy(dto => new { dto.KitchenDtoForSessionArea.KitchenId, dto.KitchenDtoForSessionArea.UserId, dto.KitchenDtoForSessionArea.Name, dto.KitchenDtoForSessionArea.Address, dto.KitchenDtoForSessionArea.AreaId})
+                .Select(group => group.First())
+                .ToList(),
                 }).FirstOrDefault();
 
             var mapped = _mapper.Map<GetSingleSessionAreaByAreaIdResponseModel>(result);
