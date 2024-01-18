@@ -232,11 +232,9 @@ namespace HomeMealTaste.Services.Implement
             {
                 var getTotal = await _orderService.GetTotalPriceWithMealSessionBySessionIdAndKitchenId(sessionId, kitchen.KitchenId);
 
-                // Calculate amounts
                 var priceToAdmin = (getTotal * 10) / 100;
                 var priceToChef = getTotal - priceToAdmin;
 
-                // Transfer money to admin
                 var admin = _context.Users.FirstOrDefault(x => x.RoleId == 1 && x.UserId == 2);
                 var adminWallet = _context.Wallets.FirstOrDefault(w => w.UserId == admin.UserId);
 
@@ -245,7 +243,6 @@ namespace HomeMealTaste.Services.Implement
                     adminWallet.Balance += priceToAdmin;
                     _context.Wallets.Update(adminWallet);
 
-                    // Save transaction for admin
                     var transactionToAdmin = new Transaction
                     {
                         WalletId = adminWallet.UserId,
@@ -260,7 +257,6 @@ namespace HomeMealTaste.Services.Implement
                     savedTransactions.Add(transactionToAdmin);
                 }
 
-                // Transfer money to chef
                 var chefWallet = _context.Wallets.FirstOrDefault(w => w.UserId == kitchen.UserId);
 
                 if (chefWallet != null)
@@ -268,7 +264,6 @@ namespace HomeMealTaste.Services.Implement
                     chefWallet.Balance += priceToChef;
                     _context.Wallets.Update(chefWallet);
 
-                    // Save transaction for chef
                     var transactionToChef = new Transaction
                     {
                         OrderId = null,
