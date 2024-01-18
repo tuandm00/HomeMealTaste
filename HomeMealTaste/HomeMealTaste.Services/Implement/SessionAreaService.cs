@@ -226,43 +226,87 @@ namespace HomeMealTaste.Services.Implement
 
         public async Task<GetSingleSessionAreaByAreaIdResponseModel> GetSingleSessionAreaBySessionAreaId(int sessionAreaId)
         {
-            var result = _context.SessionAreas
-                .Include(x => x.Area)
-                .ThenInclude(x => x.MealSessions)
-                .ThenInclude(x => x.Orders)
-                .Where(x => x.SessionAreaId == sessionAreaId)
-                .Select(x => new GetSingleSessionAreaByAreaIdResponseModel
-                {
-                    SessionAreaId = x.SessionAreaId,
-                    SessionId = x.SessionId,
-                    Status = x.Status,
-                    AreaDtoForSessionArea = new AreaDtoForSessionArea
-                    {
-                        AreaId = x.Area.AreaId,
-                        Address = x.Area.Address,
-                        AreaName = x.Area.AreaName,
-                    },
-                    GetAllKitchenByAreaIdResponseModelDto = x.Area.MealSessions.Select(ms => new GetAllKitchenByAreaIdResponseModelDto
-                    {
-                        KitchenDtoForSessionArea = new KitchenDtoForSessionArea
-                        {
-                            KitchenId = ms.Kitchen.KitchenId,
-                            UserId = ms.Kitchen.UserId,
-                            Name = ms.Kitchen.Name,
-                            Address = ms.Kitchen.Address,
-                            AreaId = ms.Kitchen.AreaId,
-                            DistrictId = ms.Kitchen.DistrictId,
-                        },
-                        SumOfMealSession = _context.MealSessions.Count(mealSession => mealSession.SessionId == x.SessionId && mealSession.AreaId == x.AreaId),
-                        SumOfOrder = ms.Orders
-                    .Where(order => _context.MealSessions.Any(mealSession => mealSession.SessionId == x.SessionId && mealSession.AreaId == x.AreaId))
-                    .Count(),
-                    }).GroupBy(dto => new { dto.KitchenDtoForSessionArea.KitchenId, dto.KitchenDtoForSessionArea.UserId, dto.KitchenDtoForSessionArea.Name, dto.KitchenDtoForSessionArea.Address, dto.KitchenDtoForSessionArea.AreaId})
-                .Select(group => group.First())
-                .ToList(),
-                }).FirstOrDefault();
+            //var result = _context.SessionAreas
+            //    .Include(x => x.Area)
+            //    .ThenInclude(x => x.MealSessions)
+            //    .ThenInclude(x => x.Orders)
+            //    .Where(x => x.SessionAreaId == sessionAreaId)
+            //    .Select(x => new GetSingleSessionAreaByAreaIdResponseModel
+            //    {
+            //        SessionAreaId = x.SessionAreaId,
+            //        SessionId = x.SessionId,
+            //        Status = x.Status,
+            //        AreaDtoForSessionArea = new AreaDtoForSessionArea
+            //        {
+            //            AreaId = x.Area.AreaId,
+            //            Address = x.Area.Address,
+            //            AreaName = x.Area.AreaName,
+            //        },
+            //        GetAllKitchenByAreaIdResponseModelDto = x.Area.MealSessions.Select(ms => new GetAllKitchenByAreaIdResponseModelDto
+            //        {
+            //            KitchenDtoForSessionArea = new KitchenDtoForSessionArea
+            //            {
+            //                KitchenId = ms.Kitchen.KitchenId,
+            //                UserId = ms.Kitchen.UserId,
+            //                Name = ms.Kitchen.Name,
+            //                Address = ms.Kitchen.Address,
+            //                AreaId = ms.Kitchen.AreaId,
+            //                DistrictId = ms.Kitchen.DistrictId,
+            //            },
+            //            SumOfMealSession = _context.MealSessions.Count(mealSession => mealSession.SessionId == x.SessionId && mealSession.AreaId == x.AreaId),
+            //            SumOfOrder = ms.Orders
+            //        .Where(order => _context.MealSessions.Any(mealSession => mealSession.SessionId == x.SessionId && mealSession.AreaId == x.AreaId))
+            //        .Count(),
+            //        }).GroupBy(dto => new { dto.KitchenDtoForSessionArea.KitchenId, dto.KitchenDtoForSessionArea.UserId, dto.KitchenDtoForSessionArea.Name, dto.KitchenDtoForSessionArea.Address, dto.KitchenDtoForSessionArea.AreaId})
+            //    .Select(group => group.First())
+            //    .ToList(),
+            //    }).FirstOrDefault();
 
-            var mapped = _mapper.Map<GetSingleSessionAreaByAreaIdResponseModel>(result);
+            //var mapped = _mapper.Map<GetSingleSessionAreaByAreaIdResponseModel>(result);
+            //return mapped;
+            var sessionArea = _context.SessionAreas.Where(x => x.SessionAreaId == sessionAreaId).FirstOrDefault();
+            var getArea = _context.Areas.Where(x => x.AreaId == sessionArea.AreaId).FirstOrDefault();
+            var listKitchenInArea = _context.Kitchens.Where(x => x.AreaId == getArea.AreaId).ToList();
+            var responeModel = new GetSingleSessionAreaByAreaIdResponseModel
+            {
+                SessionAreaId = sessionArea.SessionAreaId,
+                SessionId = sessionArea.SessionId,
+                Status = sessionArea.Status,
+                AreaDtoForSessionArea = new AreaDtoForSessionArea
+                {
+                    AreaId = getArea.AreaId,
+                    Address = getArea.Address,
+                    AreaName = getArea.AreaName,
+                },
+                GetAllKitchenByAreaIdResponseModelDto = new List<GetAllKitchenByAreaIdResponseModelDto>()
+            };
+            foreach (var kitchen in listKitchenInArea)
+            {
+                var kitchenDto = new KitchenDtoForSessionArea
+                {
+                    KitchenId = kitchen.KitchenId,
+                    UserId = kitchen.UserId,
+                    Name = kitchen.Name,
+                    Address = kitchen.Address,
+                    AreaId = kitchen.AreaId,
+                    DistrictId = kitchen.DistrictId,
+                };
+                var listMealSession = _context.MealSessions.Where(x => x.KitchenId == kitchen.KitchenId).ToList();
+                int count = 0;
+                foreach (var mealSession in listMealSession)
+                {
+                    var listOrder = _context.Orders.Where(x => x.MealSessionId == mealSession.MealSessionId).ToList();
+                    count += listOrder.Count();
+                }
+                var getAllSessionAreaDto = new GetAllKitchenByAreaIdResponseModelDto
+                {
+                    KitchenDtoForSessionArea = kitchenDto,
+                    SumOfMealSession = listMealSession.Count(),
+                    SumOfOrder = count,
+                };
+                responeModel.GetAllKitchenByAreaIdResponseModelDto.Add(getAllSessionAreaDto);
+            }
+            var mapped = _mapper.Map<GetSingleSessionAreaByAreaIdResponseModel>(responeModel);
             return mapped;
         }
 
