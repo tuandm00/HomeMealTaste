@@ -225,60 +225,137 @@ namespace HomeMealTaste.Services.Implement
 
         public async Task<List<SaveTotalPriceAfterFinishSessionResponseModel>> TransferTotalPriceToChefAfterClosedSession(int sessionId)
         {
-            var getAllKitchenBySession = await _kitchenService.GetAllKitchenBySessionId(sessionId);
-            var savedTransactions = new List<Transaction>();
-
-            foreach (var kitchen in getAllKitchenBySession)
+            var sessionAreaList = _context.SessionAreas.Where(x => x.SessionId == sessionId).ToList();
+            var userIdsOfAdmin = _context.Users.Where(x => x.RoleId == 1 && x.UserId == 2).Select(x => x.UserId).FirstOrDefault();
+            var walletIdsOfAdmin = _context.Wallets.Where(x => x.UserId == userIdsOfAdmin).FirstOrDefault();
+            var datenow = GetDateTimeTimeZoneVietNam();
+            foreach (var sessionArea in sessionAreaList)
             {
-                var getTotal = await _orderService.GetTotalPriceWithMealSessionBySessionIdAndKitchenId(sessionId, kitchen.KitchenId);
-
-                var priceToAdmin = (getTotal * 10) / 100;
-                var priceToChef = getTotal - priceToAdmin;
-
-                var admin = _context.Users.FirstOrDefault(x => x.RoleId == 1 && x.UserId == 2);
-                var adminWallet = _context.Wallets.FirstOrDefault(w => w.UserId == admin.UserId);
-
-                if (adminWallet != null)
+                if (sessionArea.Status.Equals("FINISHED"))
                 {
-                    adminWallet.Balance += priceToAdmin;
-                    _context.Wallets.Update(adminWallet);
+                    var listMealSession = _context.MealSessions.Where(x => x.SessionId == sessionArea.SessionId && x.AreaId == sessionArea.AreaId).ToList();
 
-                    var transactionToAdmin = new Transaction
+                    if (listMealSession.Count > 0)
                     {
-                        WalletId = adminWallet.UserId,
-                        Date = GetDateTimeTimeZoneVietNam(),
-                        Amount = priceToAdmin,
-                        Description = "DONE WITH REVENUE AFTER FINISH SESSION",
-                        Status = "SUCCEED",
-                        TransactionType = "REVENUE",
-                        UserId = admin.UserId,
-                    };
-                    _context.Transactions.Add(transactionToAdmin);
-                    savedTransactions.Add(transactionToAdmin);
-                }
+                        foreach (var mealSession in listMealSession)
+                        {
+                            var kitchen = _context.Kitchens.Where(z => z.KitchenId == mealSession.KitchenId).FirstOrDefault();
+                            var userKitchen = _context.Users.Where(x => x.UserId == kitchen.UserId).FirstOrDefault();
+                            var walletKitchen = _context.Wallets.Where(x => x.UserId == userKitchen.UserId).FirstOrDefault();
+                            var listOrder = _context.Orders.Where(x => x.MealSessionId == mealSession.MealSessionId).ToList();
+                            if (listOrder.Count > 0)
+                            {
+                                var totalPriceAllOrderOfMealSession = 0;
+                                foreach (var orderItem in listOrder)
+                                {
+                                    if (orderItem.Status.Equals("COMPLETED") || orderItem.Status.Equals("NOTEAT"))
+                                    {
+                                        totalPriceAllOrderOfMealSession += (int)orderItem.TotalPrice;
+                                        //Tru tien Admin chuyen ve lai cho chef
 
-                var chefWallet = _context.Wallets.FirstOrDefault(w => w.UserId == kitchen.UserId);
+                                        if (walletIdsOfAdmin != null)
+                                        {
+                                            walletIdsOfAdmin.Balance = (int?)(walletIdsOfAdmin.Balance - totalPriceAllOrderOfMealSession * 0.9);
+                                            _context.Wallets.Update(walletIdsOfAdmin);
+                                        }
+                                        var addToTransactionForAdmin = new Transaction
+                                        {
+                                            OrderId = orderItem.OrderId,
+                                            WalletId = walletIdsOfAdmin.WalletId,
+                                            Date = datenow,
+                                            Amount = ((decimal?)(totalPriceAllOrderOfMealSession)),
+                                            Description = $"TRANSFER TO CHEF {kitchen.Name}",
+                                            Status = "SUCCEED",
+                                            TransactionType = "TRANSFER",
+                                            UserId = userIdsOfAdmin,
+                                        };
+                                        _context.Transactions.Add(addToTransactionForAdmin);
 
-                if (chefWallet != null)
-                {
-                    chefWallet.Balance += priceToChef;
-                    _context.Wallets.Update(chefWallet);
+                                        // lay tien cua admin chuyen ve cho chef va tao transaction
+                                        walletKitchen.Balance = (int?)(walletKitchen.Balance + (totalPriceAllOrderOfMealSession * 0.9));
+                                        _context.Wallets.Update(walletKitchen);
 
-                    var transactionToChef = new Transaction
+                                        var addToTransactionForChef = new Transaction
+                                        {
+                                            OrderId = orderItem.OrderId,
+                                            WalletId = walletKitchen.WalletId,
+                                            Date = datenow,
+                                            Amount = ((decimal?)(totalPriceAllOrderOfMealSession * 0.9)),
+                                            Description = "RECEIVE MONEY FROM ADMIN AFTER SESSION CLOSED",
+                                            Status = "SUCCEED",
+                                            TransactionType = "TRANSFER",
+                                            UserId = userKitchen.UserId,
+                                        };
+                                        _context.Transactions.Add(addToTransactionForChef);
+                                    }
+                                    else
+                                    {
+                                        return null;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    else
                     {
-                        OrderId = null,
-                        WalletId = chefWallet.WalletId,
-                        Date = GetDateTimeTimeZoneVietNam(),
-                        Amount = priceToChef,
-                        Description = "MONEY TRANSFER TO CHEF: " + kitchen.Name,
-                        Status = "SUCCEED",
-                        TransactionType = "TT",
-                        UserId = kitchen.UserId,
-                    };
-                    _context.Transactions.Add(transactionToChef);
-                    savedTransactions.Add(transactionToChef);
+                        return null;
+                    }
                 }
             }
+            //var getAllKitchenBySession = await _kitchenService.GetAllKitchenBySessionId(sessionId);
+            var savedTransactions = new List<Transaction>();
+
+            //foreach (var kitchen in getAllKitchenBySession)
+            //{
+            //    var getTotal = await _orderService.GetTotalPriceWithMealSessionBySessionIdAndKitchenId(sessionId, kitchen.KitchenId);
+
+            //    var priceToAdmin = (getTotal * 10) / 100;
+            //    var priceToChef = getTotal - priceToAdmin;
+
+            //    var admin = _context.Users.FirstOrDefault(x => x.RoleId == 1 && x.UserId == 2);
+            //    var adminWallet = _context.Wallets.FirstOrDefault(w => w.UserId == admin.UserId);
+
+            //    if (adminWallet != null)
+            //    {
+            //        adminWallet.Balance += priceToAdmin;
+            //        _context.Wallets.Update(adminWallet);
+
+            //        var transactionToAdmin = new Transaction
+            //        {
+            //            WalletId = adminWallet.UserId,
+            //            Date = GetDateTimeTimeZoneVietNam(),
+            //            Amount = priceToAdmin,
+            //            Description = "DONE WITH REVENUE AFTER FINISH SESSION",
+            //            Status = "SUCCEED",
+            //            TransactionType = "REVENUE",
+            //            UserId = admin.UserId,
+            //        };
+            //        _context.Transactions.Add(transactionToAdmin);
+            //        savedTransactions.Add(transactionToAdmin);
+            //    }
+
+            //    var chefWallet = _context.Wallets.FirstOrDefault(w => w.UserId == kitchen.UserId);
+
+            //    if (chefWallet != null)
+            //    {
+            //        chefWallet.Balance += priceToChef;
+            //        _context.Wallets.Update(chefWallet);
+
+            //        var transactionToChef = new Transaction
+            //        {
+            //            OrderId = null,
+            //            WalletId = chefWallet.WalletId,
+            //            Date = GetDateTimeTimeZoneVietNam(),
+            //            Amount = priceToChef,
+            //            Description = "MONEY TRANSFER TO CHEF: " + kitchen.Name,
+            //            Status = "SUCCEED",
+            //            TransactionType = "TT",
+            //            UserId = kitchen.UserId,
+            //        };
+            //        _context.Transactions.Add(transactionToChef);
+            //        savedTransactions.Add(transactionToChef);
+            //    }
+            //}
 
             await _context.SaveChangesAsync();
 

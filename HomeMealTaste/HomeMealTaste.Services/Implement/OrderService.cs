@@ -734,9 +734,12 @@ namespace HomeMealTaste.Services.Implement
             }
             _context.Wallets.Update(walletid);
 
+            
+
             var orderEntity = _mapper.Map<Order>(createOrder);
             await _context.AddAsync(orderEntity);
             await _context.SaveChangesAsync();
+
 
             var useridwallet = _context.Wallets.Select(x => x.UserId).FirstOrDefault();
             //save to table transaction
@@ -746,12 +749,23 @@ namespace HomeMealTaste.Services.Implement
                 WalletId = walletOfUserIdOfCustomer,
                 Date = createOrder.Time,
                 Amount = (decimal?)totalprice,
-                Description = "DONE WITH PAYMENT",
+                Description = "ORDER SUCCESS",
                 Status = "SUCCEED",
                 TransactionType = "ORDERED",
                 UserId = user.UserId,
             };
 
+            var transactionAdmin = new Transaction
+            {
+                OrderId = orderEntity.OrderId,
+                WalletId = walletOfUserIdOfAdmin,
+                Date = createOrder.Time,
+                Amount = (decimal?)totalprice,
+                Description = $"RECEIVE MONEY WHEN CUSTOMER {customer.Name} CREATE ORDER",
+                Status = "SUCCEED",
+                TransactionType = "TRANSFER",
+                UserId = user.UserId,
+            };
             _context.Transactions.Add(transactionid);
 
             await _context.SaveChangesAsync();

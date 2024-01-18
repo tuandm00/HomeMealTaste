@@ -497,8 +497,18 @@ namespace HomeMealTaste.Services.Implement
                     }
                     else
                     {
-                        check = false;
-                        throw new Exception("Can not change status to CANCELLED Please Check Status Order to final State ");
+                        bool allOrdersCancelled = orderList.All(order => order.Status == "CANCELLED");
+
+                        if (allOrdersCancelled)
+                        {
+                            check = true;
+                        }
+                        else
+                        {
+                            check = false;
+                            throw new Exception("Can not change status to CANCELLED Please Check Status Order to final State ");
+                        }
+                      
                     }
 
                     if (check)
