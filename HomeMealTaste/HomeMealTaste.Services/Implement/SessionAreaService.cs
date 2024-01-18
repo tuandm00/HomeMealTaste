@@ -291,7 +291,7 @@ namespace HomeMealTaste.Services.Implement
                     AreaId = kitchen.AreaId,
                     DistrictId = kitchen.DistrictId,
                 };
-                var listMealSession = _context.MealSessions.Where(x => x.KitchenId == kitchen.KitchenId).ToList();
+                var listMealSession = _context.MealSessions.Where(x => x.KitchenId == kitchen.KitchenId && x.SessionId == sessionArea.SessionId && x.AreaId == sessionArea.AreaId).ToList();
                 int count = 0;
                 foreach (var mealSession in listMealSession)
                 {
