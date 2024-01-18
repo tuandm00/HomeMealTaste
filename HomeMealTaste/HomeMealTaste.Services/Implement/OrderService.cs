@@ -1608,7 +1608,7 @@ namespace HomeMealTaste.Services.Implement
 
             if (orderItem.Status.Equals("PAID"))
             {
-                orderItem.Status = "CANCELLED";
+                orderItem.Status = "CANCELLEDBYCUSTOMER";
                 await RefundMoneyToSingleCustomerByOrderIdWhenCustomerCancelledOrderWithStatusPaid(orderId);
 
                 var mealSession = _context.MealSessions.Where(x => x.MealSessionId == orderItem.MealSessionId).FirstOrDefault();
