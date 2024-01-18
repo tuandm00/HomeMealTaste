@@ -235,7 +235,7 @@ namespace HomeMealTaste.Services.Implement
                         Address = x.Area.Address,
                         AreaName = x.Area.AreaName,
                     },
-                    GetAllSessionAreaByAreaIdResponseModelDto = x.Area.MealSessions.Select(ms => new GetAllSessionAreaByAreaIdResponseModelDto
+                    GetAllKitchenByAreaIdResponseModelDto = x.Area.MealSessions.Select(ms => new GetAllKitchenByAreaIdResponseModelDto
                     {
                         KitchenDtoForSessionArea = new KitchenDtoForSessionArea
                         {

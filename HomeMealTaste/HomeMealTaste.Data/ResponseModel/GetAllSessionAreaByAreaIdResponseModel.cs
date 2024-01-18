@@ -12,10 +12,10 @@ namespace HomeMealTaste.Data.ResponseModel
         public int? SessionId { get; set; }
         public AreaDtoForSessionArea? AreaDtoForSessionArea { get; set; }
         public string? Status { get; set; }
-        public List<GetAllSessionAreaByAreaIdResponseModelDto>? GetAllSessionAreaByAreaIdResponseModelDto { get; set; }
+        public List<GetAllKitchenByAreaIdResponseModelDto>? GetAllKitchenByAreaIdResponseModelDto { get; set; }
     }
 
-    public class GetAllSessionAreaByAreaIdResponseModelDto
+    public class GetAllKitchenByAreaIdResponseModelDto
     {
         public KitchenDtoForSessionArea? KitchenDtoForSessionArea { get; set; }
         public int SumOfMealSession { get; set; }
