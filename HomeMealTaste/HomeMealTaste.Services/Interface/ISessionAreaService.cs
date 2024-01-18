@@ -12,7 +12,7 @@ namespace HomeMealTaste.Services.Interface
     {
         public Task<List<GetAllSessionAreaResponseModel>> GetAllSessionArea();
         public Task<List<GetAllSessionAreaBySessionIdResponseModel>> GetAllSessionAreaBySessionId(int sessionId);
-        public Task<List<GetAllSessionAreaByAreaIdResponseModel>> GetAllSessionAreaByAreaId(int areaId);
+        public Task<GetSingleSessionAreaByAreaIdResponseModel> GetSingleSessionAreaBySessionAreaId(int sessionAreaId);
         public Task<bool> ChangeStatusSessionArea(List<int> sessionArea, string status);
         public Task<bool> CheckChangeStatusSessionArea(int sessionId);
         public Task<List<GetAllSessionAreaResponseModel>> UpdateStatusSessionArea(UpdateStatusSessionAreaRequestModel request);

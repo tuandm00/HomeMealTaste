@@ -42,10 +42,10 @@ namespace HomeMealTaste.API.Controllers
 
         }
 
-        [HttpGet("get-all-session-area-by-area-id")]
-        public async Task<IActionResult> GetAllSessionAreaByAreaId(int areaId)
+        [HttpGet("get-single-session-area-by-session-area-id")]
+        public async Task<IActionResult> GetSingleSessionAreaBySessionAreaId(int sessionAreaId)
         {
-            var result = await _sessionAreaService.GetAllSessionAreaByAreaId(areaId);
+            var result = await _sessionAreaService.GetSingleSessionAreaBySessionAreaId(sessionAreaId);
             return Ok(result);
 
         }

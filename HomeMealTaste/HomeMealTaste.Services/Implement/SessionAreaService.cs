@@ -217,14 +217,14 @@ namespace HomeMealTaste.Services.Implement
             return mapped;
         }
 
-        public async Task<List<GetAllSessionAreaByAreaIdResponseModel>> GetAllSessionAreaByAreaId(int areaId)
+        public async Task<GetSingleSessionAreaByAreaIdResponseModel> GetSingleSessionAreaBySessionAreaId(int sessionAreaId)
         {
             var result = _context.SessionAreas
                 .Include(x => x.Area)
                 .ThenInclude(x => x.MealSessions)
                 .ThenInclude(x => x.Orders)
-                .Where(x => x.AreaId == areaId)
-                .Select(x => new GetAllSessionAreaByAreaIdResponseModel
+                .Where(x => x.SessionAreaId == sessionAreaId)
+                .Select(x => new GetSingleSessionAreaByAreaIdResponseModel
                 {
                     SessionAreaId = x.SessionAreaId,
                     SessionId = x.SessionId,
@@ -246,12 +246,14 @@ namespace HomeMealTaste.Services.Implement
                             AreaId = ms.Kitchen.AreaId,
                             DistrictId = ms.Kitchen.DistrictId,
                         },
-                        SumOfMealSession = ms.Area.MealSessions.Count,
-                        SumOfOrder = ms.Orders.Count,
+                        SumOfMealSession = _context.MealSessions.Count(mealSession => mealSession.SessionId == x.SessionId && mealSession.AreaId == x.AreaId),
+                        SumOfOrder = ms.Orders
+                    .Where(order => _context.MealSessions.Any(mealSession => mealSession.SessionId == x.SessionId && mealSession.AreaId == x.AreaId && order.MealSessionId == mealSession.MealSessionId))
+                    .Count(),
                     }).ToList(),
-                }).ToList();
+                }).FirstOrDefault();
 
-            var mapped = result.Select(r => _mapper.Map<GetAllSessionAreaByAreaIdResponseModel>(r)).ToList();
+            var mapped = _mapper.Map<GetSingleSessionAreaByAreaIdResponseModel>(result);
             return mapped;
         }
 

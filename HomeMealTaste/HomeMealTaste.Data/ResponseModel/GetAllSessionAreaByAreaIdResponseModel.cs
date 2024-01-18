@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace HomeMealTaste.Data.ResponseModel
 {
-    public class GetAllSessionAreaByAreaIdResponseModel
+    public class GetSingleSessionAreaByAreaIdResponseModel
     {
         public int SessionAreaId { get; set; }
         public int? SessionId { get; set; }
