@@ -1587,9 +1587,62 @@ namespace HomeMealTaste.Services.Implement
             if (checkOrderIsPaid.Status.Equals("PAID"))
             {
                 checkOrderIsPaid.Status = "CANCELLED";
-                await RefundMoneyToSingleCustomerByOrderIdWhenChefCancelledOrderWithBookingSlotNotEnough(orderId);
+                await RefundMoneyToSingleCustomerByOrderIdWhenCustomerCancelledOrderWithStatusPaid(orderId);
                 await _context.SaveChangesAsync();
             }
+        }
+
+        public async Task RefundMoneyToSingleCustomerByOrderIdWhenCustomerCancelledOrderWithStatusPaid(int orderId)
+        {
+            using Microsoft.EntityFrameworkCore.Storage.IDbContextTransaction? transaction = _context.Database.BeginTransaction();
+            var orderitem = _context.Orders.Where(x => x.OrderId == orderId).FirstOrDefault();
+            var datenow = GetDateTimeTimeZoneVietNam();
+
+            //update wallet admin
+            var userIdsOfAdmin = _context.Users.Where(x => x.RoleId == 1 && x.UserId == 2).Select(x => x.UserId).FirstOrDefault();
+            var walletIdsOfAdmin = _context.Wallets.Where(x => x.UserId == userIdsOfAdmin).FirstOrDefault();
+            if (walletIdsOfAdmin != null)
+            {
+                walletIdsOfAdmin.Balance = (int?)(walletIdsOfAdmin.Balance - ((orderitem.TotalPrice) * 0.9));
+                _context.Wallets.Update(walletIdsOfAdmin);
+            }
+
+            var addToTransactionForAdmin = new Transaction
+            {
+                OrderId = orderId,
+                WalletId = walletIdsOfAdmin.WalletId,
+                Date = datenow,
+                Amount = (orderitem.TotalPrice),
+                Description = "REFUND",
+                Status = "SUCCEED",
+                TransactionType = "REFUND",
+                UserId = userIdsOfAdmin,
+            };
+            _context.Transactions.Add(addToTransactionForAdmin);
+
+            //update wallet customer
+            var getCustomerId = _context.Orders.Where(x => x.OrderId == orderId).Select(x => x.CustomerId).FirstOrDefault();
+            var getUserIdByCustomerId = _context.Customers.Where(x => x.CustomerId == getCustomerId).Select(x => x.UserId).FirstOrDefault();
+            var getWalletOfCustomer = _context.Wallets.Where(x => x.UserId == getUserIdByCustomerId).FirstOrDefault();
+            getWalletOfCustomer.Balance += (int?)((orderitem.TotalPrice) * 0.9);
+            _context.Wallets.Update(getWalletOfCustomer);
+
+            var addToTransactionForCustomer = new Transaction
+            {
+                OrderId = orderId,
+                WalletId = getWalletOfCustomer.WalletId,
+                Date = datenow,
+                Amount = (orderitem.TotalPrice),
+                Description = "REFUND",
+                Status = "SUCCEED",
+                TransactionType = "REFUND",
+                UserId = getUserIdByCustomerId,
+            };
+            _context.Transactions.Add(addToTransactionForCustomer);
+            //tao transaction hoan tien luu ve vi cua customer, admin :refund , vi cua chef fined 
+
+            await _context.SaveChangesAsync();
+            transaction.Commit();
         }
     }
 }
