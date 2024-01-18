@@ -1521,15 +1521,36 @@ namespace HomeMealTaste.Services.Implement
                 .Where(x => getSessionIds.Contains(x.SessionId))
                 .ToList();
 
-            var isAnySessionOngoing = getListSessionStatus.Any(session => session.Status.Equals("BOOKING"));
+            var isAnySessionBooking = getListSessionStatus.Any(session => session.Status.Equals("BOOKING"));
+            var isAnySessionOngoing = getListSessionStatus.Any(session => session.Status.Equals("ONGOING"));
 
             if (getListOrderIds.Count > 0)
             {
-                if (isAnySessionOngoing)
+                if (isAnySessionBooking)
                 {
                     foreach (var order in getListOrderIds)
                     {
-                        if (order.Status.Equals("PAID") || order.Status.Equals("ACCEPTED") || order.Status.Equals("READY"))
+                        if (order.Status.Equals("PAID") || order.Status.Equals("ACCEPTED"))
+                        {
+                            order.Status = "CANCELLED";
+                            await RefundMoneyToSingleCustomerByOrderIdWhenChefCancelledOrderWithBookingSlotEnough(order.OrderId);
+                        }
+                        else
+                        {
+                            throw new Exception("Can not change to CANCELLED");
+                        }
+                    }
+
+                    foreach (var mealSession in getListMealSessionStatus)
+                    {
+                        mealSession.Status = "CANCELLED";
+                    }
+                }
+                else if (isAnySessionOngoing)
+                {
+                    foreach (var order in getListOrderIds)
+                    {
+                        if (order.Status.Equals("READY"))
                         {
                             order.Status = "CANCELLED";
                             await RefundMoneyToSingleCustomerByOrderIdWhenChefCancelledOrderWithBookingSlotEnough(order.OrderId);
@@ -1556,6 +1577,19 @@ namespace HomeMealTaste.Services.Implement
 
             var mapped = getListOrderIds.Select(g => _mapper.Map<ChangeStatusOrderResponseModel>(g)).ToList();
             return mapped;
+        }
+
+        public async Task ChangeStatusOrderToCancelledWhenOrderIsPaidByCustomer(int orderId)
+        {
+            var datenow = GetDateTimeTimeZoneVietNam();
+            var checkOrderIsPaid = _context.Orders.Where(x => x.OrderId == orderId && x.Time.Value.Date == datenow.Date).FirstOrDefault();
+
+            if (checkOrderIsPaid.Status.Equals("PAID"))
+            {
+                checkOrderIsPaid.Status = "CANCELLED";
+                await RefundMoneyToSingleCustomerByOrderIdWhenChefCancelledOrderWithBookingSlotNotEnough(orderId);
+                await _context.SaveChangesAsync();
+            }
         }
     }
 }

@@ -19,6 +19,7 @@ namespace HomeMealTaste.Services.Interface
         Task ChefCancelledOrderRefundMoneyToCustomer(RefundMoneyToWalletByOrderIdRequestModel refundRequest);
         Task ChefCancelledOrderRefundMoneyToCustomerV2(int mealsessionId);
         Task ChefCancelledNotEnoughOrderRefundMoneyToCustomerV2(int mealsessionId);
+        Task ChangeStatusOrderToCancelledWhenOrderIsPaidByCustomer(int orderId);
         Task<List<ChangeStatusOrderToCompletedResponseModel>> ChangeStatusOrder(int mealsessionid, string status);
         Task<ChangeStatusOrderResponseModel> ChangeSingleStatusOrder(int orderId , string status);
         Task<List<ChangeStatusOrderResponseModel>> ChangeListStatusOrderToCancelledForAdmin(ChangeListStatusOrderToCancelledForAdminRequestModel request);

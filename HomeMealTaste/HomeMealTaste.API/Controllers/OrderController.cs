@@ -164,5 +164,11 @@ namespace HomeMealTaste.API.Controllers
             return Ok(result);
         }
 
+        [HttpPatch("")]
+        public async Task ChangeStatusOrderToCancelledWhenOrderIsPaidByCustomer(int orderId)
+        {
+              await _orderService.ChangeStatusOrderToCancelledWhenOrderIsPaidByCustomer(orderId);
+        }
+
     }
 }
