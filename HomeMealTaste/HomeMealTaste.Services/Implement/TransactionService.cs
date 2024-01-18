@@ -229,6 +229,8 @@ namespace HomeMealTaste.Services.Implement
             var userIdsOfAdmin = _context.Users.Where(x => x.RoleId == 1 && x.UserId == 2).Select(x => x.UserId).FirstOrDefault();
             var walletIdsOfAdmin = _context.Wallets.Where(x => x.UserId == userIdsOfAdmin).FirstOrDefault();
             var datenow = GetDateTimeTimeZoneVietNam();
+            var savedTransactions = new List<Transaction>();
+
             foreach (var sessionArea in sessionAreaList)
             {
                 if (sessionArea.Status.Equals("FINISHED"))
@@ -251,111 +253,59 @@ namespace HomeMealTaste.Services.Implement
                                     if (orderItem.Status.Equals("COMPLETED") || orderItem.Status.Equals("NOTEAT"))
                                     {
                                         totalPriceAllOrderOfMealSession += (int)orderItem.TotalPrice;
-                                        //Tru tien Admin chuyen ve lai cho chef
 
-                                        if (walletIdsOfAdmin != null)
-                                        {
-                                            walletIdsOfAdmin.Balance = (int?)(walletIdsOfAdmin.Balance - totalPriceAllOrderOfMealSession * 0.9);
-                                            _context.Wallets.Update(walletIdsOfAdmin);
-                                        }
-                                        var addToTransactionForAdmin = new Transaction
-                                        {
-                                            OrderId = orderItem.OrderId,
-                                            WalletId = walletIdsOfAdmin.WalletId,
-                                            Date = datenow,
-                                            Amount = ((decimal?)(totalPriceAllOrderOfMealSession)),
-                                            Description = $"TRANSFER TO CHEF {kitchen.Name}",
-                                            Status = "SUCCEED",
-                                            TransactionType = "TRANSFER",
-                                            UserId = userIdsOfAdmin,
-                                        };
-                                        _context.Transactions.Add(addToTransactionForAdmin);
 
-                                        // lay tien cua admin chuyen ve cho chef va tao transaction
-                                        walletKitchen.Balance = (int?)(walletKitchen.Balance + (totalPriceAllOrderOfMealSession * 0.9));
-                                        _context.Wallets.Update(walletKitchen);
-
-                                        var addToTransactionForChef = new Transaction
-                                        {
-                                            OrderId = orderItem.OrderId,
-                                            WalletId = walletKitchen.WalletId,
-                                            Date = datenow,
-                                            Amount = ((decimal?)(totalPriceAllOrderOfMealSession * 0.9)),
-                                            Description = "RECEIVE MONEY FROM ADMIN AFTER SESSION CLOSED",
-                                            Status = "SUCCEED",
-                                            TransactionType = "TRANSFER",
-                                            UserId = userKitchen.UserId,
-                                        };
-                                        _context.Transactions.Add(addToTransactionForChef);
                                     }
                                     else
                                     {
                                         return null;
                                     }
                                 }
+                                if (walletIdsOfAdmin != null)
+                                {
+                                    walletIdsOfAdmin.Balance = (int?)(walletIdsOfAdmin.Balance - totalPriceAllOrderOfMealSession * 0.9);
+                                    _context.Wallets.Update(walletIdsOfAdmin);
+                                }
+                                var addToTransactionForAdmin = new Transaction
+                                {
+                                    OrderId = null,
+                                    WalletId = walletIdsOfAdmin.WalletId,
+                                    Date = datenow,
+                                    Amount = ((decimal?)(totalPriceAllOrderOfMealSession)),
+                                    Description = $"TRANSFER TO CHEF {kitchen.Name}",
+                                    Status = "SUCCEED",
+                                    TransactionType = "TRANSFER",
+                                    UserId = userIdsOfAdmin,
+                                };
+                                _context.Transactions.Add(addToTransactionForAdmin);
+                                savedTransactions.Add(addToTransactionForAdmin);
+
+                                // lay tien cua admin chuyen ve cho chef va tao transaction
+                                walletKitchen.Balance = (int?)(walletKitchen.Balance + (totalPriceAllOrderOfMealSession * 0.9));
+                                _context.Wallets.Update(walletKitchen);
+
+                                var addToTransactionForChef = new Transaction
+                                {
+                                    OrderId = null,
+                                    WalletId = walletKitchen.WalletId,
+                                    Date = datenow,
+                                    Amount = ((decimal?)(totalPriceAllOrderOfMealSession * 0.9)),
+                                    Description = "RECEIVE MONEY FROM ADMIN AFTER SESSION CLOSED",
+                                    Status = "SUCCEED",
+                                    TransactionType = "TRANSFER",
+                                    UserId = userKitchen.UserId,
+                                };
+                                _context.Transactions.Add(addToTransactionForChef);
+                                savedTransactions.Add(addToTransactionForChef);
+
                             }
                         }
                     }
-                    else
-                    {
-                        return null;
-                    }
+                
                 }
+           
             }
-            //var getAllKitchenBySession = await _kitchenService.GetAllKitchenBySessionId(sessionId);
-            var savedTransactions = new List<Transaction>();
-
-            //foreach (var kitchen in getAllKitchenBySession)
-            //{
-            //    var getTotal = await _orderService.GetTotalPriceWithMealSessionBySessionIdAndKitchenId(sessionId, kitchen.KitchenId);
-
-            //    var priceToAdmin = (getTotal * 10) / 100;
-            //    var priceToChef = getTotal - priceToAdmin;
-
-            //    var admin = _context.Users.FirstOrDefault(x => x.RoleId == 1 && x.UserId == 2);
-            //    var adminWallet = _context.Wallets.FirstOrDefault(w => w.UserId == admin.UserId);
-
-            //    if (adminWallet != null)
-            //    {
-            //        adminWallet.Balance += priceToAdmin;
-            //        _context.Wallets.Update(adminWallet);
-
-            //        var transactionToAdmin = new Transaction
-            //        {
-            //            WalletId = adminWallet.UserId,
-            //            Date = GetDateTimeTimeZoneVietNam(),
-            //            Amount = priceToAdmin,
-            //            Description = "DONE WITH REVENUE AFTER FINISH SESSION",
-            //            Status = "SUCCEED",
-            //            TransactionType = "REVENUE",
-            //            UserId = admin.UserId,
-            //        };
-            //        _context.Transactions.Add(transactionToAdmin);
-            //        savedTransactions.Add(transactionToAdmin);
-            //    }
-
-            //    var chefWallet = _context.Wallets.FirstOrDefault(w => w.UserId == kitchen.UserId);
-
-            //    if (chefWallet != null)
-            //    {
-            //        chefWallet.Balance += priceToChef;
-            //        _context.Wallets.Update(chefWallet);
-
-            //        var transactionToChef = new Transaction
-            //        {
-            //            OrderId = null,
-            //            WalletId = chefWallet.WalletId,
-            //            Date = GetDateTimeTimeZoneVietNam(),
-            //            Amount = priceToChef,
-            //            Description = "MONEY TRANSFER TO CHEF: " + kitchen.Name,
-            //            Status = "SUCCEED",
-            //            TransactionType = "TT",
-            //            UserId = kitchen.UserId,
-            //        };
-            //        _context.Transactions.Add(transactionToChef);
-            //        savedTransactions.Add(transactionToChef);
-            //    }
-            //}
+            
 
             await _context.SaveChangesAsync();
 
@@ -365,6 +315,10 @@ namespace HomeMealTaste.Services.Implement
                 Amount = transaction.Amount,
                 Date = transaction.Date.ToString(),
                 Description = transaction.Description,
+                TransactionType= transaction.TransactionType,
+                Status = transaction.Status,
+                WalletId = transaction.WalletId,
+                UserId = transaction.UserId,
             }).ToList();
 
             return responseModels;

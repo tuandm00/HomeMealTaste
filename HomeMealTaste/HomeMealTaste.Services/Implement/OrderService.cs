@@ -1603,12 +1603,18 @@ namespace HomeMealTaste.Services.Implement
         public async Task ChangeStatusOrderToCancelledWhenOrderIsPaidByCustomer(int orderId)
         {
             var datenow = GetDateTimeTimeZoneVietNam();
-            var checkOrderIsPaid = _context.Orders.Where(x => x.OrderId == orderId && x.Time.Value.Date == datenow.Date).FirstOrDefault();
+            var orderItem = _context.Orders.Where(x => x.OrderId == orderId && x.Time.Value.Date == datenow.Date).FirstOrDefault();
 
-            if (checkOrderIsPaid.Status.Equals("PAID"))
+
+            if (orderItem.Status.Equals("PAID"))
             {
-                checkOrderIsPaid.Status = "CANCELLED";
+                orderItem.Status = "CANCELLED";
                 await RefundMoneyToSingleCustomerByOrderIdWhenCustomerCancelledOrderWithStatusPaid(orderId);
+
+                var mealSession = _context.MealSessions.Where(x => x.MealSessionId == orderItem.MealSessionId).FirstOrDefault();
+                mealSession.RemainQuantity += orderItem.Quantity;
+                _context.MealSessions.Update(mealSession);
+
                 await _context.SaveChangesAsync();
             }
         }
