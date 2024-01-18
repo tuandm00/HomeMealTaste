@@ -142,23 +142,30 @@ namespace HomeMealTaste.Services.Implement
                         var getListMealSession = _context.MealSessions
                             .Where(x => x.SessionId == getSessionArea.SessionId && x.AreaId == getSessionArea.AreaId)
                             .ToList();
-
-                        foreach (var listMS in getListMealSession)
+                        if(getListMealSession.Count == 0)
                         {
-                            if (listMS.Status.Equals("REJECTED"))
+                            check = true;
+                        }
+                        else
+                        {
+                            foreach (var listMS in getListMealSession)
                             {
-                                check = true;
-                            }
-                            else if (listMS.Status.Equals("CANCELLED"))
-                            {
-                                check = true;
-                            }
-                            else
-                            {
-                                check = false;
-                                throw new Exception("Can not change status to Cancelled because Meal Session must be REJECTED or CANCELLED without Order");
+                                if (listMS.Status.Equals("REJECTED"))
+                                {
+                                    check = true;
+                                }
+                                else if (listMS.Status.Equals("CANCELLED"))
+                                {
+                                    check = true;
+                                }
+                                else
+                                {
+                                    check = false;
+                                    throw new Exception("Can not change status to Cancelled because Meal Session must be REJECTED or CANCELLED without Order");
+                                }
                             }
                         }
+                        
                         if (check)
                         {
                             getSessionArea.Status = "CANCELLED";
@@ -248,7 +255,7 @@ namespace HomeMealTaste.Services.Implement
                         },
                         SumOfMealSession = _context.MealSessions.Count(mealSession => mealSession.SessionId == x.SessionId && mealSession.AreaId == x.AreaId),
                         SumOfOrder = ms.Orders
-                    .Where(order => _context.MealSessions.Any(mealSession => mealSession.SessionId == x.SessionId && mealSession.AreaId == x.AreaId && order.MealSessionId == mealSession.MealSessionId))
+                    .Where(order => _context.MealSessions.Any(mealSession => mealSession.SessionId == x.SessionId && mealSession.AreaId == x.AreaId))
                     .Count(),
                     }).GroupBy(dto => new { dto.KitchenDtoForSessionArea.KitchenId, dto.KitchenDtoForSessionArea.UserId, dto.KitchenDtoForSessionArea.Name, dto.KitchenDtoForSessionArea.Address, dto.KitchenDtoForSessionArea.AreaId})
                 .Select(group => group.First())
