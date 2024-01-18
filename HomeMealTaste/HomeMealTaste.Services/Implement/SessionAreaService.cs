@@ -98,7 +98,6 @@ namespace HomeMealTaste.Services.Implement
                                     check = false;
                                     throw new Exception($"Meal Session {mealSessionItem.MealSessionId} is not final state can not change status to FINISHED");
                                 }
-
                             }
                         }
                         else
@@ -109,6 +108,8 @@ namespace HomeMealTaste.Services.Implement
                         {
                             getSessionArea.Status = "FINISHED";
                             _context.SessionAreas.Update(getSessionArea);
+                            await _context.SaveChangesAsync();
+
                         }
                     }
                 }
@@ -149,6 +150,8 @@ namespace HomeMealTaste.Services.Implement
                         {
                             getSessionArea.Status = "CANCELLED";
                             _context.SessionAreas.Update(getSessionArea);
+                            await _context.SaveChangesAsync();
+
                         }
                     }
 
@@ -163,7 +166,7 @@ namespace HomeMealTaste.Services.Implement
                 throw new Exception("There area something wrong");
             }
             await _context.SaveChangesAsync();
-            return true;
+            return check;
         }
 
         public async Task<bool> CheckChangeStatusSessionArea(int sessionId)

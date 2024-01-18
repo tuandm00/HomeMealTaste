@@ -66,7 +66,7 @@ namespace HomeMealTaste.Services.Implement
                 
                 foreach (var tokens in getDeviceToken)
                 {
-                    string authorizationKey = string.Format("keyy={0}", settings.ServerKey);
+                    string authorizationKey = string.Format("key={0}", settings.ServerKey);
                     string deviceToken = tokens;
 
                     httpClient.DefaultRequestHeaders.TryAddWithoutValidation("Authorization", authorizationKey);
@@ -74,7 +74,7 @@ namespace HomeMealTaste.Services.Implement
                             .Add(new MediaTypeWithQualityHeaderValue("application/json"));
 
                     DataPayload dataPayload = new DataPayload();
-                    dataPayload.Title = $"Your Meal\"{mealName}\" is ready";
+                    dataPayload.Title = $"Your Meal is ready";
                     dataPayload.Body = $"Please come to eat";
 
                     GoogleNotification notification = new GoogleNotification();

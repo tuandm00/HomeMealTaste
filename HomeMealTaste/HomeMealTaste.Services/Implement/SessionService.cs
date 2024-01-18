@@ -359,21 +359,26 @@ namespace HomeMealTaste.Services.Implement
                             foreach (var sessionArea in resultSessionArea)
                             {
                                 var mealSession = _context.MealSessions.Where(x => x.SessionId == sessionArea.SessionId && x.AreaId == sessionArea.AreaId).ToList();
-                                foreach(var mealSessionItem in mealSession)
+                                if(mealSession.Count > 0)
                                 {
-                                    if (!mealSessionItem.Status.Equals("PROCESSING"))
+                                    foreach (var mealSessionItem in mealSession)
                                     {
-                                        check = true;
-                                    }
-                                    else
-                                    {
-                                        check = false;
-                                        throw new Exception($"Can not change status to BOOKING because status of MealSession {mealSessionItem.MealSessionId} is Processing");
+                                        if (!mealSessionItem.Status.Equals("PROCESSING"))
+                                        {
+                                            check = true;
+                                        }
+                                        else
+                                        {
+                                            check = false;
+                                            throw new Exception($"Can not change status to BOOKING because status of MealSession {mealSessionItem.MealSessionId} is Processing");
+                                        }
                                     }
                                 }
+                                else
+                                {
+                                    check = true;
+                                }
                             }
-
-                   
                         }
                         else
                         {
@@ -395,18 +400,26 @@ namespace HomeMealTaste.Services.Implement
                             foreach (var sessionArea in resultSessionArea)
                             {
                                 var mealSession = _context.MealSessions.Where(x => x.SessionId == sessionArea.SessionId && x.AreaId == sessionArea.AreaId).ToList();
-                                foreach (var mealSessionItem in mealSession)
+                                if(mealSession.Count > 0)
                                 {
-                                    if (mealSessionItem.Status.Equals("REJECTED") || mealSessionItem.Status.Equals("CANCELLED") || mealSessionItem.Status.Equals("COMPLETED"))
+                                    foreach (var mealSessionItem in mealSession)
                                     {
-                                        check = true;
-                                    }
-                                    else
-                                    {
-                                        check = false;
-                                        throw new Exception($"Can not change status to BOOKING because status of MealSession {mealSessionItem.MealSessionId} is {mealSessionItem.Status}");
+                                        if (mealSessionItem.Status.Equals("REJECTED") || mealSessionItem.Status.Equals("CANCELLED") || mealSessionItem.Status.Equals("COMPLETED"))
+                                        {
+                                            check = true;
+                                        }
+                                        else
+                                        {
+                                            check = false;
+                                            throw new Exception($"Can not change status to BOOKING because status of MealSession {mealSessionItem.MealSessionId} is {mealSessionItem.Status}");
+                                        }
                                     }
                                 }
+                                else
+                                {
+                                    check = true;
+                                }
+                                
                             }
                         }
                         else
