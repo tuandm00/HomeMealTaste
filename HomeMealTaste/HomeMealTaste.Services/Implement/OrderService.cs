@@ -9,7 +9,7 @@ using HomeMealTaste.Services.Interface;
 using Microsoft.EntityFrameworkCore;
 using System.Collections.ObjectModel;
 using System.Globalization;
-
+using System.Linq;
 using System.Security.Claims;
 
 namespace HomeMealTaste.Services.Implement
@@ -1397,7 +1397,7 @@ namespace HomeMealTaste.Services.Implement
 
         public async Task<List<GetAllOrderBySessionIdResponseModel>> GetAllOrderBySessionId(int sessionId)
         {
-            var getMealSessionId = _context.MealSessions.Where(x => x.SessionId == sessionId).Select(x => x.MealSessionId).FirstOrDefault();
+            var getMealSessionId = _context.MealSessions.Where(x => x.SessionId == sessionId).Select(x => x.MealSessionId).ToList();
             var result = _context.Orders
                 .Include(x => x.MealSession)
         .Include(x => x.Customer.User.Area)
@@ -1405,7 +1405,7 @@ namespace HomeMealTaste.Services.Implement
         .Include(x => x.MealSession.Kitchen)
         .Include(x => x.MealSession.Session)
         .Include(x => x.MealSession.Area)
-                .Where(x => x.MealSessionId == getMealSessionId).Select(x => new GetAllOrderBySessionIdResponseModel
+                .Where(x => getMealSessionId.Contains((int)x.MealSessionId)).Select(x => new GetAllOrderBySessionIdResponseModel
                 {
                     OrderId = x.OrderId,
                     Quantity = x.Quantity,
