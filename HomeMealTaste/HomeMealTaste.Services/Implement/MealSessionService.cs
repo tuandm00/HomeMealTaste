@@ -1054,13 +1054,13 @@ namespace HomeMealTaste.Services.Implement
 
         }
 
-        public async Task<List<MealSessionResponseModel>> GetAllMealSessionWithStatusProcessing()
+        public async Task<List<MealSessionResponseModel>> GetAllMealSessionWithStatusProcessingByKitchenId(int kitchenId)
         {
             var result = _context.MealSessions
                 .Include(x => x.Meal)
                 .Include(x => x.Session)
                 .Include(x => x.Kitchen)
-                .Where(x => x.Status.Equals("PROCESSING")).Select(x => new MealSessionResponseModel
+                .Where(x => x.Status.Equals("PROCESSING") && x.KitchenId == kitchenId).Select(x => new MealSessionResponseModel
                 {
                     MealSessionId = x.MealSessionId,
                     CreateDate = ((DateTime)x.CreateDate).ToString("dd-MM-yyyy"),

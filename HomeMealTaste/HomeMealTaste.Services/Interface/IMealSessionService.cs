@@ -16,7 +16,7 @@ namespace HomeMealTaste.Services.Interface
         Task<GetSingleMealSessionByIdResponseModel> GetSingleMealSessionById(int mealsessionid);
 
         Task<List<MealSessionResponseModel>> GetAllMealSessionByStatus(string status);
-        Task<List<MealSessionResponseModel>> GetAllMealSessionWithStatusProcessing();
+        Task<List<MealSessionResponseModel>> GetAllMealSessionWithStatusProcessingByKitchenId(int kitchenId);
         Task<List<MealSessionResponseModel>> GetAllMealSessionByMealId(int mealId);
         Task UpdateStatusMeallSession(UpdateStatusMeallSessionRequestModel request);
         Task UpdateAreaAndAllMealSessionWithStatusProcessing(UpdateAreaAndAllMealSessionWithStatusProcessingRequestModel request);

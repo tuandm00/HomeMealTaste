@@ -108,16 +108,14 @@ namespace HomeMealTaste.Services.Implement
                         .Select(x => x.Balance)
                         .FirstOrDefault();
 
-                    if (result.DeviceToken == null)
+                    if (result.DeviceToken != userRequest.DeviceToken)
                     {
-                        result.DeviceToken = userRequest.DeviceToken;
-                        _context.Users.Update(result);
+                        var userToUpdate = _context.Users.Find(result.UserId);
+                        userToUpdate.DeviceToken = userRequest.DeviceToken;
+
+                        await _context.SaveChangesAsync();
                     }
-                    else
-                    {
-                        result.DeviceToken = userRequest.DeviceToken;
-                        _context.Users.Update(result);
-                    }
+                    
                     return new UserResponseModel
                     {
                         Name = result.Name,
@@ -147,15 +145,12 @@ namespace HomeMealTaste.Services.Implement
                         .Where(x => x.UserId == userIdOfKitchen)
                         .Select(x => x.Balance)
                         .FirstOrDefault();
-                    if (result.DeviceToken == null)
+                    if (result.DeviceToken != userRequest.DeviceToken)
                     {
-                        result.DeviceToken = userRequest.DeviceToken;
-                        _context.Users.Update(result);
-                    }
-                    else
-                    {
-                        result.DeviceToken = userRequest.DeviceToken;
-                        _context.Users.Update(result);
+                        var userToUpdate = _context.Users.Find(result.UserId);
+                        userToUpdate.DeviceToken = userRequest.DeviceToken;
+
+                        await _context.SaveChangesAsync();
                     }
                     return new UserResponseModel
                     {
