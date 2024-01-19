@@ -18,10 +18,11 @@ namespace HomeMealTaste.Services.Implement
         private readonly IDishRepository _dishRepository;
         private readonly IMealRepository _mealRepository;
         private readonly IMealDishRepository _mealDishRepository;
+        private readonly INotificationService _notificationService;
         private readonly HomeMealTasteContext _context;
 
         public MealSessionService(IMealSessionRepository mealSessionRepository, IMapper mapper,
-            IDishRepository dishRepository, IMealRepository mealRepository, IMealDishRepository mealDishRepository, HomeMealTasteContext context)
+            IDishRepository dishRepository, IMealRepository mealRepository, IMealDishRepository mealDishRepository, HomeMealTasteContext context, INotificationService notificationService)
         {
             _mealSessionRepository = mealSessionRepository;
             _mapper = mapper;
@@ -29,6 +30,7 @@ namespace HomeMealTaste.Services.Implement
             _mealRepository = mealRepository;
             _mealDishRepository = mealDishRepository;
             _context = context;
+            _notificationService = notificationService;
         }
         public static DateTime TranferDateTimeByTimeZone(DateTime dateTime, string timezoneArea)
         {
@@ -445,6 +447,7 @@ namespace HomeMealTaste.Services.Implement
                     {
                         mealSessionItem.Status = "APPROVED";
                         _context.MealSessions.Update(mealSessionItem);
+                        await _notificationService.SendNotificationForChefWhenMealSessionApproved(mealSessionItem.MealSessionId);
                     }
                 }
             }
@@ -470,6 +473,7 @@ namespace HomeMealTaste.Services.Implement
                     {
                         mealSessionItem.Status = "REJECTED";
                         _context.MealSessions.Update(mealSessionItem);
+                        await _notificationService.SendNotificationForChefWhenMealSessionRejected(mealSessionItem.MealSessionId);
                     }
                 }
             }
@@ -515,6 +519,7 @@ namespace HomeMealTaste.Services.Implement
                     {
                         mealSessionItem.Status = "CANCELLED";
                         _context.MealSessions.Update(mealSessionItem);
+                        await _notificationService.SendNotificationForChefWhenMealSessionCancelled(mealSessionItem.MealSessionId);
                     }
                 }
             }
@@ -1215,7 +1220,7 @@ namespace HomeMealTaste.Services.Implement
             {
                 foreach (var r in result)
                 {
-                    r.Status = "CANCELLED";
+                    r.Status = "CANCELLEDBYCHEF";
                 }
             }
             else

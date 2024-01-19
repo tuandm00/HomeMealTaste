@@ -11,6 +11,9 @@ namespace HomeMealTaste.Services.Interface
     {
        Task<ResponseModels> SendNotificationForOrderAcceptedAndMealSessionMaking(int mealSessionId);
        Task<ResponseModels> SendNotificationForOrderReadyAndMealSessionCompleted(int mealSessionId);
+       Task<ResponseModels> SendNotificationForChefWhenMealSessionApproved(int mealSessionId);
+       Task<ResponseModels> SendNotificationForChefWhenMealSessionRejected(int mealSessionId);
+       Task<ResponseModels> SendNotificationForChefWhenMealSessionCancelled(int mealSessionId);
 
     }
 }

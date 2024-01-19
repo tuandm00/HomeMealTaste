@@ -194,6 +194,252 @@ namespace HomeMealTaste.Services.Implement
             }
             return null;
         }
+
+        public async Task<ResponseModels> SendNotificationForChefWhenMealSessionApproved(int mealSessionId)
+        {
+            ResponseModels response = new ResponseModels();
+            try
+            {
+
+                /* FCM Sender (Android Device) */
+                FcmSettings settings = new FcmSettings()
+                {
+                    SenderId = _configuration["FcmNotification:SenderId"],
+                    ServerKey = _configuration["FcmNotification:ServerKey"],
+                };
+                HttpClient httpClient = new HttpClient();
+
+                var mealSession = _context.MealSessions.Where(x => x.MealSessionId == mealSessionId).FirstOrDefault();
+                var mealName = _context.Meals.Where(x => x.MealId == mealSession.MealId).Select(x => x.Name).FirstOrDefault();
+                var listCustomerId = _context.Orders.Where(x => x.MealSessionId == mealSessionId).Select(x => x.CustomerId).ToList();
+                var userId = _context.Customers.Where(x => listCustomerId.Contains(x.CustomerId)).Select(x => x.UserId).ToList();
+                var getDeviceToken = _context.Users.Where(x => userId.Contains(x.UserId)).Select(x => x.DeviceToken).ToList();
+                var getOrder = _context.Orders.Where(x => x.MealSessionId == mealSessionId).ToList();
+                //if (Status.Equals("READY"))
+                //{
+                //    mealSession.Status = "COMPLETED";
+                //    _context.MealSessions.Update(mealSession);
+                //    await _context.SaveChangesAsync();
+
+                //    foreach (var order in getOrder)
+                //    {
+                //        order.Status = "READY";
+                //        _context.Orders.Update(order);
+                //        await _context.SaveChangesAsync();
+                //    }
+                //}
+
+                foreach (var tokens in getDeviceToken)
+                {
+                    string authorizationKey = string.Format("key={0}", settings.ServerKey);
+                    string deviceToken = tokens;
+
+                    httpClient.DefaultRequestHeaders.TryAddWithoutValidation("Authorization", authorizationKey);
+                    httpClient.DefaultRequestHeaders.Accept
+                            .Add(new MediaTypeWithQualityHeaderValue("application/json"));
+
+                    DataPayload dataPayload = new DataPayload();
+                    dataPayload.Title = $"MealSession Approved";
+                    dataPayload.Body = $"Your MealSession is Approved by Admin";
+
+                    GoogleNotification notification = new GoogleNotification();
+                    notification.Data = dataPayload;
+                    notification.Notification = dataPayload;
+
+                    var fcm = new FcmSender(settings, httpClient);
+                    var fcmSendResponse = await fcm.SendAsync(deviceToken, notification);
+
+                    if (fcmSendResponse.IsSuccess())
+                    {
+                        response.IsSuccess = true;
+                        response.Message = "Notification sent successfully";
+                        return response;
+                    }
+                    else
+                    {
+                        // Log the detailed response for debugging
+                        Console.WriteLine("FCM Send Response: " + JsonConvert.SerializeObject(fcmSendResponse));
+
+                        response.IsSuccess = false;
+                        response.Message = fcmSendResponse.Results[0].Error;
+                        return response;
+                    }
+
+                }
+
+            }
+            catch (Exception ex)
+            {
+                response.IsSuccess = false;
+                response.Message = "Something went wrong";
+                return response;
+            }
+            return null;
+        }
+
+        public async Task<ResponseModels> SendNotificationForChefWhenMealSessionRejected(int mealSessionId)
+        {
+            ResponseModels response = new ResponseModels();
+            try
+            {
+
+                /* FCM Sender (Android Device) */
+                FcmSettings settings = new FcmSettings()
+                {
+                    SenderId = _configuration["FcmNotification:SenderId"],
+                    ServerKey = _configuration["FcmNotification:ServerKey"],
+                };
+                HttpClient httpClient = new HttpClient();
+
+                var mealSession = _context.MealSessions.Where(x => x.MealSessionId == mealSessionId).FirstOrDefault();
+                var mealName = _context.Meals.Where(x => x.MealId == mealSession.MealId).Select(x => x.Name).FirstOrDefault();
+                var listCustomerId = _context.Orders.Where(x => x.MealSessionId == mealSessionId).Select(x => x.CustomerId).ToList();
+                var userId = _context.Customers.Where(x => listCustomerId.Contains(x.CustomerId)).Select(x => x.UserId).ToList();
+                var getDeviceToken = _context.Users.Where(x => userId.Contains(x.UserId)).Select(x => x.DeviceToken).ToList();
+                var getOrder = _context.Orders.Where(x => x.MealSessionId == mealSessionId).ToList();
+                //if (Status.Equals("READY"))
+                //{
+                //    mealSession.Status = "COMPLETED";
+                //    _context.MealSessions.Update(mealSession);
+                //    await _context.SaveChangesAsync();
+
+                //    foreach (var order in getOrder)
+                //    {
+                //        order.Status = "READY";
+                //        _context.Orders.Update(order);
+                //        await _context.SaveChangesAsync();
+                //    }
+                //}
+
+                foreach (var tokens in getDeviceToken)
+                {
+                    string authorizationKey = string.Format("key={0}", settings.ServerKey);
+                    string deviceToken = tokens;
+
+                    httpClient.DefaultRequestHeaders.TryAddWithoutValidation("Authorization", authorizationKey);
+                    httpClient.DefaultRequestHeaders.Accept
+                            .Add(new MediaTypeWithQualityHeaderValue("application/json"));
+
+                    DataPayload dataPayload = new DataPayload();
+                    dataPayload.Title = $"MealSession Rejected";
+                    dataPayload.Body = $"Your MealSession is Rejected by Admin";
+
+                    GoogleNotification notification = new GoogleNotification();
+                    notification.Data = dataPayload;
+                    notification.Notification = dataPayload;
+
+                    var fcm = new FcmSender(settings, httpClient);
+                    var fcmSendResponse = await fcm.SendAsync(deviceToken, notification);
+
+                    if (fcmSendResponse.IsSuccess())
+                    {
+                        response.IsSuccess = true;
+                        response.Message = "Notification sent successfully";
+                        return response;
+                    }
+                    else
+                    {
+                        // Log the detailed response for debugging
+                        Console.WriteLine("FCM Send Response: " + JsonConvert.SerializeObject(fcmSendResponse));
+
+                        response.IsSuccess = false;
+                        response.Message = fcmSendResponse.Results[0].Error;
+                        return response;
+                    }
+
+                }
+
+            }
+            catch (Exception ex)
+            {
+                response.IsSuccess = false;
+                response.Message = "Something went wrong";
+                return response;
+            }
+            return null;
+        }
+
+        public async Task<ResponseModels> SendNotificationForChefWhenMealSessionCancelled(int mealSessionId)
+        {
+            ResponseModels response = new ResponseModels();
+            try
+            {
+
+                /* FCM Sender (Android Device) */
+                FcmSettings settings = new FcmSettings()
+                {
+                    SenderId = _configuration["FcmNotification:SenderId"],
+                    ServerKey = _configuration["FcmNotification:ServerKey"],
+                };
+                HttpClient httpClient = new HttpClient();
+
+                var mealSession = _context.MealSessions.Where(x => x.MealSessionId == mealSessionId).FirstOrDefault();
+                var mealName = _context.Meals.Where(x => x.MealId == mealSession.MealId).Select(x => x.Name).FirstOrDefault();
+                var listCustomerId = _context.Orders.Where(x => x.MealSessionId == mealSessionId).Select(x => x.CustomerId).ToList();
+                var userId = _context.Customers.Where(x => listCustomerId.Contains(x.CustomerId)).Select(x => x.UserId).ToList();
+                var getDeviceToken = _context.Users.Where(x => userId.Contains(x.UserId)).Select(x => x.DeviceToken).ToList();
+                var getOrder = _context.Orders.Where(x => x.MealSessionId == mealSessionId).ToList();
+                //if (Status.Equals("READY"))
+                //{
+                //    mealSession.Status = "COMPLETED";
+                //    _context.MealSessions.Update(mealSession);
+                //    await _context.SaveChangesAsync();
+
+                //    foreach (var order in getOrder)
+                //    {
+                //        order.Status = "READY";
+                //        _context.Orders.Update(order);
+                //        await _context.SaveChangesAsync();
+                //    }
+                //}
+
+                foreach (var tokens in getDeviceToken)
+                {
+                    string authorizationKey = string.Format("key={0}", settings.ServerKey);
+                    string deviceToken = tokens;
+
+                    httpClient.DefaultRequestHeaders.TryAddWithoutValidation("Authorization", authorizationKey);
+                    httpClient.DefaultRequestHeaders.Accept
+                            .Add(new MediaTypeWithQualityHeaderValue("application/json"));
+
+                    DataPayload dataPayload = new DataPayload();
+                    dataPayload.Title = $"MealSession Cancelled";
+                    dataPayload.Body = $"Your MealSession is Cancelled by Admin";
+
+                    GoogleNotification notification = new GoogleNotification();
+                    notification.Data = dataPayload;
+                    notification.Notification = dataPayload;
+
+                    var fcm = new FcmSender(settings, httpClient);
+                    var fcmSendResponse = await fcm.SendAsync(deviceToken, notification);
+
+                    if (fcmSendResponse.IsSuccess())
+                    {
+                        response.IsSuccess = true;
+                        response.Message = "Notification sent successfully";
+                        return response;
+                    }
+                    else
+                    {
+                        // Log the detailed response for debugging
+                        Console.WriteLine("FCM Send Response: " + JsonConvert.SerializeObject(fcmSendResponse));
+
+                        response.IsSuccess = false;
+                        response.Message = fcmSendResponse.Results[0].Error;
+                        return response;
+                    }
+
+                }
+
+            }
+            catch (Exception ex)
+            {
+                response.IsSuccess = false;
+                response.Message = "Something went wrong";
+                return response;
+            }
+            return null;
+        }
     }
 }
 
