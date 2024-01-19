@@ -111,7 +111,7 @@ namespace HomeMealTaste.Services.Implement
                     if (result.DeviceToken == null)
                     {
                         result.DeviceToken = userRequest.DeviceToken;
-                        _context.Users.Add(result);
+                        _context.Users.Update(result);
                     }
                     else
                     {
@@ -150,7 +150,7 @@ namespace HomeMealTaste.Services.Implement
                     if (result.DeviceToken == null)
                     {
                         result.DeviceToken = userRequest.DeviceToken;
-                        _context.Users.Add(result);
+                        _context.Users.Update(result);
                     }
                     else
                     {
