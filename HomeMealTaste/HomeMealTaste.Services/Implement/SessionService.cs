@@ -698,49 +698,9 @@ namespace HomeMealTaste.Services.Implement
             var responseModel = new UpdateSessionAndAreaInSessionResponseModel();
             var datenow = GetDateTimeTimeZoneVietNam();
             var sessionId = _context.SessionAreas.Where(x => x.SessionId == request.SessionId).Select(x => x.SessionId).FirstOrDefault();
-            var result = _context.Sessions.Where(x => x.SessionId == sessionId && x.EndDate.Value.Date >= datenow.Date && x.Status.Equals("OPEN")).FirstOrDefault();
-            var sessionCreateDate = datenow;
-            var sessionEndDate = DateTime.ParseExact(request.EndDate, "dd-MM-yyyy", CultureInfo.InvariantCulture);
-            if (result != null)
+            var resultSession = _context.Sessions.Where(x => x.SessionId == sessionId && x.EndDate.Value.Date >= datenow.Date && x.Status.Equals("OPEN")).FirstOrDefault();
+            if (resultSession != null)
             {
-
-                result.CreateDate = sessionCreateDate;
-                result.EndDate = sessionEndDate;
-                if (result.SessionType.Equals(request.SessionType, StringComparison.OrdinalIgnoreCase) && result.EndDate.Value.Date == DateTime.ParseExact(request.EndDate, "dd-MM-yyyy", CultureInfo.InvariantCulture).Date)
-                {
-                    throw new Exception("Can not Update because Session Type is existed on that day");
-                }
-                else
-                {
-                    result.SessionType = request.SessionType;
-                }
-                if (string.Equals(result.SessionType, "lunch", StringComparison.OrdinalIgnoreCase))
-                {
-                    result.StartTime = result.CreateDate?.Date.AddHours(10);
-                    result.EndTime = result.StartTime?.AddHours(2);
-                    result.SessionType = "Lunch";
-
-                }
-                else if (string.Equals(result.SessionType, "evening", StringComparison.OrdinalIgnoreCase))
-                {
-                    result.StartTime = result.CreateDate?.Date.AddHours(16);
-                    result.EndTime = result.StartTime?.AddHours(4);
-                    result.SessionType = "Evening";
-
-                }
-                else if (string.Equals(result.SessionType, "dinner", StringComparison.OrdinalIgnoreCase))
-                {
-                    result.StartTime = result.CreateDate?.Date.AddHours(17);
-                    result.EndTime = result.StartTime?.AddHours(2);
-                    result.SessionType = "Dinner";
-                }
-                result.SessionName = $"Session: {result.SessionType}, In: {((DateTime)result.EndDate).ToString("dd-MM-yyyy")}";
-                result.UserId = 2;
-                result.Status = request.Status;
-
-                _context.Sessions.Update(result);
-                await _context.SaveChangesAsync();
-
                 //find list areaIds among with sessionId inputed and update
                 var listAreaId = _context.SessionAreas.Where(x => x.SessionId == sessionId).ToList();
                 if (listAreaId.Count > 0)
@@ -764,11 +724,11 @@ namespace HomeMealTaste.Services.Implement
                 }
             }
             else throw new Exception("Can not Update Session in the past");
-            responseModel = _mapper.Map<UpdateSessionAndAreaInSessionResponseModel>(result);
-            responseModel.StartTime = result.StartTime?.ToString("HH:mm");
-            responseModel.EndTime = result.EndTime?.ToString("HH:mm");
-            responseModel.CreateDate = result.CreateDate?.ToString("dd-MM-yyyy");
-            responseModel.EndDate = result.EndDate?.ToString("dd-MM-yyyy");
+            responseModel = _mapper.Map<UpdateSessionAndAreaInSessionResponseModel>(resultSession);
+            responseModel.StartTime = resultSession.StartTime?.ToString("HH:mm");
+            responseModel.EndTime = resultSession.EndTime?.ToString("HH:mm");
+            responseModel.CreateDate = resultSession.CreateDate?.ToString("dd-MM-yyyy");
+            responseModel.EndDate = resultSession.EndDate?.ToString("dd-MM-yyyy");
 
             return responseModel;
         }

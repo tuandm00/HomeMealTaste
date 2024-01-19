@@ -9,9 +9,6 @@ namespace HomeMealTaste.Data.RequestModel
     public class UpdateSessionAndAreaInSessionRequestModel
     {
         public int SessionId { get; set; }
-        public string? EndDate { get; set; }
-        public string? Status { get; set; }
-        public string? SessionType { get; set; }
         public List<int>? AreaIds { get; set; }
     }
 }
