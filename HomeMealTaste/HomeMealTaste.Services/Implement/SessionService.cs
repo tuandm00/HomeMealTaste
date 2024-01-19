@@ -706,7 +706,14 @@ namespace HomeMealTaste.Services.Implement
 
                 result.CreateDate = sessionCreateDate;
                 result.EndDate = sessionEndDate;
-                result.SessionType = request.SessionType;
+                if (result.SessionType.Equals(request.SessionType, StringComparison.OrdinalIgnoreCase) && result.EndDate.Value.Date == DateTime.ParseExact(request.EndDate, "dd-MM-yyyy", CultureInfo.InvariantCulture).Date)
+                {
+                    throw new Exception("Can not Update because Session Type is existed on that day");
+                }
+                else
+                {
+                    result.SessionType = request.SessionType;
+                }
                 if (string.Equals(result.SessionType, "lunch", StringComparison.OrdinalIgnoreCase))
                 {
                     result.StartTime = result.CreateDate?.Date.AddHours(10);
