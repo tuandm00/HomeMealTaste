@@ -835,7 +835,7 @@ namespace HomeMealTaste.Services.Implement
 
         public async Task<List<GetAllOrderByMealSessionIdResponseModel>> GetAllOrderByMealSessionId(int mealsessionid)
         {
-            var result = _context.Orders.Where(x => x.MealSessionId == mealsessionid).Select(x => new GetAllOrderByMealSessionIdResponseModel
+            var result = _context.Orders.Where(x => x.MealSessionId == mealsessionid && !x.Status.Equals("CANCELLEDBYCUSTOMER")).Select(x => new GetAllOrderByMealSessionIdResponseModel
             {
                 OrderId = x.OrderId,
                 MealSessionId = mealsessionid,
@@ -951,9 +951,16 @@ namespace HomeMealTaste.Services.Implement
            
             var getUserIdByKitchenId = _context.Kitchens.Where(x => x.KitchenId == getKitchen.KitchenId).Select(x => x.UserId).FirstOrDefault();
             var getWalletOfKitchen = _context.Wallets.Where(x => x.UserId == getUserIdByKitchenId).FirstOrDefault();
-            getWalletOfKitchen.Balance = (int?)(getWalletOfKitchen.Balance - (orderitem.TotalPrice * 0.1));
-            _context.Wallets.Update(getWalletOfCustomer);
-
+            if(getWalletOfKitchen.Balance >= orderitem.TotalPrice)
+            {
+                getWalletOfKitchen.Balance = (int?)(getWalletOfKitchen.Balance - (orderitem.TotalPrice * 0.1));
+                _context.Wallets.Update(getWalletOfCustomer);
+            }
+            else
+            {
+                throw new Exception("Balance of chef is not enough, fined chef in next time");
+            }
+            
             var addToTransactionForChef = new Transaction
             {
                 OrderId = orderId,
