@@ -1400,6 +1400,11 @@ namespace HomeMealTaste.Services.Implement
             var getMealSessionId = _context.MealSessions.Where(x => x.SessionId == sessionId).Select(x => x.MealSessionId).FirstOrDefault();
             var result = _context.Orders
                 .Include(x => x.MealSession)
+        .Include(x => x.Customer.User.Area)
+        .Include(x => x.MealSession.Meal)
+        .Include(x => x.MealSession.Kitchen)
+        .Include(x => x.MealSession.Session)
+        .Include(x => x.MealSession.Area)
                 .Where(x => x.MealSessionId == getMealSessionId).Select(x => new GetAllOrderBySessionIdResponseModel
                 {
                     OrderId = x.OrderId,
