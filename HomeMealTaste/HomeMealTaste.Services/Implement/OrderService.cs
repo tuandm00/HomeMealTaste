@@ -955,7 +955,7 @@ namespace HomeMealTaste.Services.Implement
            
             var getUserIdByKitchenId = _context.Kitchens.Where(x => x.KitchenId == getKitchen.KitchenId).Select(x => x.UserId).FirstOrDefault();
             var getWalletOfKitchen = _context.Wallets.Where(x => x.UserId == getUserIdByKitchenId).FirstOrDefault();
-            if(getWalletOfKitchen.Balance >= orderitem.TotalPrice)
+            if(getWalletOfKitchen.Balance >= (orderitem.TotalPrice * 0.1))
             {
                 getWalletOfKitchen.Balance = (int?)(getWalletOfKitchen.Balance - (orderitem.TotalPrice * 0.1));
                 _context.Wallets.Update(getWalletOfCustomer);
