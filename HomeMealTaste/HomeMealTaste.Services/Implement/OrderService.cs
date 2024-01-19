@@ -94,7 +94,14 @@ namespace HomeMealTaste.Services.Implement
                                 UserId = x.MealSession.Meal.Kitchen.UserId,
                                 Name = x.MealSession.Meal.Kitchen.Name,
                                 Address = x.MealSession.Meal.Kitchen.Address,
-                                AreaId = x.MealSession.Meal.Kitchen.AreaId,
+                                AreaDto1 = new AreaDto1
+                                {
+                                    AreaId = x.MealSession.Meal.Kitchen.Area.AreaId,
+                                    AreaName = x.MealSession.Meal.Kitchen.Area.AreaName,
+                                    Address = x.MealSession.Meal.Kitchen.Area.Address,
+                                    DistrictId = x.MealSession.Meal.Kitchen.Area.DistrictId,
+
+                                }
                             },
                             CreateDate = ((DateTime)x.MealSession.Meal.CreateDate).ToString("dd-MM-yyyy"),
                             Description = x.MealSession.Meal.Description,
@@ -1328,7 +1335,14 @@ namespace HomeMealTaste.Services.Implement
                                 UserId = x.MealSession.Meal.Kitchen.UserId,
                                 Name = x.MealSession.Meal.Kitchen.Name,
                                 Address = x.MealSession.Meal.Kitchen.Address,
-                                AreaId = x.MealSession.Meal.Kitchen.AreaId,
+                                AreaDto1 = new AreaDto1
+                                {
+                                    AreaId = x.MealSession.Meal.Kitchen.Area.AreaId,
+                                    AreaName = x.MealSession.Meal.Kitchen.Area.AreaName,
+                                    Address = x.MealSession.Meal.Kitchen.Area.Address,
+                                    DistrictId = x.MealSession.Meal.Kitchen.Area.DistrictId,
+
+                                }
                             },
                             CreateDate = ((DateTime)x.MealSession.Meal.CreateDate).ToString("dd-MM-yyyy"),
                             Description = x.MealSession.Meal.Description,

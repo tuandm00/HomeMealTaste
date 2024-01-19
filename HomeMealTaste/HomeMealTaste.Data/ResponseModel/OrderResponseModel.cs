@@ -70,6 +70,14 @@ namespace HomeMealTaste.Data.ResponseModel
         public int? UserId { get; set; }
         public string? Name { get; set; }
         public string? Address { get; set; }
-        public int? AreaId { get; set; }
+        public AreaDto1? AreaDto1 { get; set; }
+
+    }
+    public class AreaDto1
+    {
+        public int AreaId { get; set; }
+        public string? Address { get; set; }
+        public string? AreaName { get; set; }
+        public int? DistrictId { get; set; }
     }
 }
