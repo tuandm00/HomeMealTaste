@@ -40,5 +40,24 @@ namespace HomeMealTaste.API.Controllers
             var result = await _notificationService.SendNotificationForOrderAcceptedAndMealSessionMaking(mealSessionId);
             return Ok(result);
         }
+        
+        [HttpPost("send-nofitfication-approved")]
+        public async Task<IActionResult> SendNotificationForChefWhenMealSessionApproved(int mealSessionId)
+        {
+            var result = await _notificationService.SendNotificationForChefWhenMealSessionApproved(mealSessionId);
+            return Ok(result);
+        }
+        [HttpPost("send-nofitfication-rejected")]
+        public async Task<IActionResult> SendNotificationForChefWhenMealSessionRejected(int mealSessionId)
+        {
+            var result = await _notificationService.SendNotificationForChefWhenMealSessionRejected(mealSessionId);
+            return Ok(result);
+        }
+        [HttpPost("send-nofitfication-cancelled")]
+        public async Task<IActionResult> SendNotificationForChefWhenMealSessionCancelled(int mealSessionId)
+        {
+            var result = await _notificationService.SendNotificationForChefWhenMealSessionCancelled(mealSessionId);
+            return Ok(result);
+        }
     }
 }

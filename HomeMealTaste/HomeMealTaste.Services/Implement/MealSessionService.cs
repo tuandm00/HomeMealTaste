@@ -489,7 +489,7 @@ namespace HomeMealTaste.Services.Implement
                     var orderList = _context.Orders.Where(x => x.MealSessionId == mealSessionItem.MealSessionId).ToList();
                     if (orderList.Count == 0)
                     {
-                        if (sessionItem.Status.Equals("BOOKING"))
+                        if (sessionItem.Status.Equals("BOOKING") || sessionItem.Status.Equals("OPEN"))
                         {
                             check = true;
                         }
