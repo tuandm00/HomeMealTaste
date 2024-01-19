@@ -698,7 +698,7 @@ namespace HomeMealTaste.Services.Implement
             var responseModel = new UpdateSessionAndAreaInSessionResponseModel();
             var datenow = GetDateTimeTimeZoneVietNam();
             var sessionId = _context.SessionAreas.Where(x => x.SessionId == request.SessionId).Select(x => x.SessionId).FirstOrDefault();
-            var result = _context.Sessions.Where(x => x.SessionId == sessionId && x.EndDate.Value.Date >= datenow.Date).FirstOrDefault();
+            var result = _context.Sessions.Where(x => x.SessionId == sessionId && x.EndDate.Value.Date >= datenow.Date && x.Status.Equals("OPEN")).FirstOrDefault();
             var sessionCreateDate = datenow;
             var sessionEndDate = DateTime.ParseExact(request.EndDate, "dd-MM-yyyy", CultureInfo.InvariantCulture);
             if (result != null)
@@ -738,12 +738,21 @@ namespace HomeMealTaste.Services.Implement
                 var listAreaId = _context.SessionAreas.Where(x => x.SessionId == sessionId).ToList();
                 if (listAreaId.Count > 0)
                 {
-                    for (int i = 0; i < listAreaId.Count && i < request.AreaIds.Count; i++)
-                    {
-                        listAreaId[i].AreaId = request.AreaIds[i];
-                        _context.SessionAreas.Update(listAreaId[i]);
-                    }
+                    // Remove existing SessionAreas
+                    _context.SessionAreas.RemoveRange(listAreaId);
+                    await _context.SaveChangesAsync();
 
+                    // Add new SessionAreas
+                    for (int i = 0; i < request.AreaIds.Count; i++)
+                    {
+                        var newSessionArea = new SessionArea
+                        {
+                            SessionId = sessionId,
+                            AreaId = request.AreaIds[i],
+                            Status = "OPEN",
+                        };
+                        _context.SessionAreas.Add(newSessionArea);
+                    }
                     await _context.SaveChangesAsync();
                 }
             }
