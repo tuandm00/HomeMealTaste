@@ -28,10 +28,16 @@ namespace HomeMealTaste.API.Controllers
             var result = _postService.PostForAllCustomerWithOrderId(mealsessionId);
            
         }
-        [HttpPost("send")]
-        public async Task<IActionResult> SendNotificationForMealSession(int mealSessionId, string Status)
+        [HttpPost("send-nofitfication-ready")]
+        public async Task<IActionResult> SendNotificationForOrderReadyAndMealSessionCompleted(int mealSessionId)
         {
-            var result = await _notificationService.SendNotificationForMealSession(mealSessionId, Status);
+            var result = await _notificationService.SendNotificationForOrderReadyAndMealSessionCompleted(mealSessionId);
+            return Ok(result);
+        }
+        [HttpPost("send-nofitfication-accepted")]
+        public async Task<IActionResult> SendNotificationForOrderAcceptedAndMealSessionMaking(int mealSessionId)
+        {
+            var result = await _notificationService.SendNotificationForOrderAcceptedAndMealSessionMaking(mealSessionId);
             return Ok(result);
         }
     }

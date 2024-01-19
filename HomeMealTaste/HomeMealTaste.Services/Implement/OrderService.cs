@@ -19,13 +19,15 @@ namespace HomeMealTaste.Services.Implement
         private readonly IOrderRepository _orderRepository;
         private readonly IMapper _mapper;
         private readonly IPostService _postService;
+        private readonly INotificationService _notificationService;
         private readonly HomeMealTasteContext _context;
-        public OrderService(IOrderRepository orderRepository, IMapper mapper, HomeMealTasteContext context, IPostService postService)
+        public OrderService(IOrderRepository orderRepository, IMapper mapper, HomeMealTasteContext context, IPostService postService, INotificationService notificationService)
         {
             _orderRepository = orderRepository;
             _mapper = mapper;
             _context = context;
             _postService = postService;
+            _notificationService = notificationService;
         }
         public static DateTime TranferDateTimeByTimeZone(DateTime dateTime, string timezoneArea)
         {
@@ -791,12 +793,14 @@ namespace HomeMealTaste.Services.Implement
                     {
                         order.Status = "ACCEPTED";
                         mealSession.Status = "MAKING";
+                        await _notificationService.SendNotificationForOrderAcceptedAndMealSessionMaking(mealsessionid);
                     }
                     else if (status.Equals("READY", StringComparison.OrdinalIgnoreCase) && order.Status.Equals("ACCEPTED", StringComparison.OrdinalIgnoreCase))
                     {
                         order.Status = "READY";
                         mealSession.Status = "COMPLETED";
                         //cam thong bao mealsession vao day
+                        await _notificationService.SendNotificationForOrderReadyAndMealSessionCompleted(mealsessionid);
                     }
 
                     else if (status.Equals("CANCELLED", StringComparison.OrdinalIgnoreCase) && order.Status.Equals("PAID", StringComparison.OrdinalIgnoreCase))
@@ -867,7 +871,7 @@ namespace HomeMealTaste.Services.Implement
             {
                 foreach (var q in getMealsessionId)
                 {
-                    if (q.Status.Equals("PAID", StringComparison.OrdinalIgnoreCase) || q.Status.Equals("DONE", StringComparison.OrdinalIgnoreCase))
+                    if (q.Status.Equals("NOTEAT", StringComparison.OrdinalIgnoreCase) || q.Status.Equals("COMLETED", StringComparison.OrdinalIgnoreCase))
                     {
                         sum += q.TotalPrice;
                     }
@@ -880,7 +884,7 @@ namespace HomeMealTaste.Services.Implement
         public async Task<int> GetTotalPriceWithMealSessionBySessionIdAndKitchenId(int sessionId, int kitchenId)
         {
             var datenow = GetDateTimeTimeZoneVietNam();
-            var listMealSession = _context.MealSessions.Where(x => x.SessionId == sessionId && x.KitchenId == kitchenId && x.Status.Equals("APPROVED") && x.CreateDate.Value.Date == datenow.Date).ToList();
+            var listMealSession = _context.MealSessions.Where(x => x.SessionId == sessionId && x.KitchenId == kitchenId && x.Status.Equals("COMPLETED") && x.CreateDate.Value.Date == datenow.Date).ToList();
             int sum = 0;
             if (listMealSession != null)
             {
